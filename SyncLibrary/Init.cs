@@ -54,15 +54,9 @@ namespace Hfa.SyncLibrary
             //Config Logger
             var loggerFactory = new LoggerFactory().AddConsole();
             if (IsDev(environment))
-            {
                 loggerFactory.AddDebug();
-                loggerFactory.AddFile(Configuration.GetSection("Logging"));
-
-            }
             else
-            {
                 loggerFactory.AddFile(Configuration.GetSection("Logging"));
-            }
 
             //Register Services IOC
             ServiceProvider = new ServiceCollection()
@@ -71,18 +65,9 @@ namespace Hfa.SyncLibrary
                 .AddOptions()
                 .Configure<ApplicationConfigData>(Configuration)
                 .AddSingleton<IMessagesService, MessagesService>()
-                .AddSingleton<IContextTvgMediaHandler>(sp =>
-                {
-                    var responseMediaConfig = ElasticConnectionClient.Client.SearchAsync<MediaConfiguration>(x => x.From(0).Size(1)).GetAwaiter().GetResult();
-                    var contextTvg = new ContextTvgMediaHandler();
-                    if (responseMediaConfig.Documents.Any())
-                    {
-                        contextTvg.MediaConfiguration = responseMediaConfig.Documents.FirstOrDefault();
-                    }
-                    return contextTvg;
-                })
+                .AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
+                .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
                 .BuildServiceProvider();
-
         }
 
         internal static void Build()

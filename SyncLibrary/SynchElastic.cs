@@ -20,32 +20,32 @@ using CommandLine;
 using Hfa.SyncLibrary.Messages;
 using Microsoft.Extensions.Logging;
 using static hfa.SyncLibrary.Global.Common;
+using Microsoft.Extensions.Options;
+using Hfa.SyncLibrary.Infrastructure;
 
 namespace SyncLibrary
 {
     class SynchElastic
     {
-        static IndexName DefaultIndex = new IndexName() { Name = ElasticConnectionClient.DEFAULT_INDEX };
         static CancellationTokenSource ts = new CancellationTokenSource();
+        static IMessagesService _messagesService;
+        static IElasticConnectionClient _elasticClient;
+        static IOptions<ApplicationConfigData> _config;
 
-        public static async Task ArgsParser(string[] args)
-        {
-            await Parser.Default.ParseArguments<PurgeTempFilesVerb, SyncElasticVerb, SaveNewConfigVerb>(args).MapResult(
-                 (PurgeTempFilesVerb opts) => PurgeTempFilesVerb.MainPurgeAsync(opts),
-                  (SyncElasticVerb opts) => SyncElasticAsync(opts),
-                  (SaveNewConfigVerb opts) => SaveConfigAsync(opts),
-                 errs => Task.FromResult(errs));
-        }
-        
         public static void Main(string[] args)
         {
             Init.Build();
 
             try
             {
-                var messageService = Init.ServiceProvider.GetService<IMessagesService>();
-                Common.Logger().LogInformation("sdq");
-                messageService.SendAsync(Message.PingMessage, ts.Token).GetAwaiter().GetResult();
+                _config = Init.ServiceProvider.GetService<IOptions<ApplicationConfigData>>();
+                _elasticClient = Init.ServiceProvider.GetService<IElasticConnectionClient>();
+                _messagesService = Init.ServiceProvider.GetService<IMessagesService>();
+
+                Logger(nameof(SynchElastic)).LogInformation("Init Synker...");
+
+                _messagesService.SendAsync(Message.PingMessage, ts.Token).GetAwaiter().GetResult();
+
                 ArgsParser(args).GetAwaiter().GetResult();
             }
             catch (OperationCanceledException ex)
@@ -60,11 +60,27 @@ namespace SyncLibrary
         }
 
         /// <summary>
-        /// Sync elastic 
+        /// Args Parser
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static async Task ArgsParser(string[] args)
+        {
+            await Parser.Default.ParseArguments<PurgeTempFilesVerb, SyncElasticVerb, SaveNewConfigVerb>(args).MapResult(
+                 (PurgeTempFilesVerb opts) => PurgeTempFilesVerb.MainPurgeAsync(opts),
+                  (SyncElasticVerb opts) => SyncElasticAsync(opts, _elasticClient, _config, ts.Token),
+                  (SaveNewConfigVerb opts) => SaveConfigAsync(opts),
+                 errs => Task.FromResult(errs));
+        }
+
+        /// <summary>
+        /// Sync elastic
         /// </summary>
         /// <param name="options"></param>
+        /// <param name="elasticClient"></param>
+        /// <param name="ts"></param>
         /// <returns></returns>
-        public static async Task SyncElasticAsync(SyncElasticVerb options)
+        public static async Task SyncElasticAsync(SyncElasticVerb options, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken ts)
         {
             var res = await SynchronizableConfigManager.LoadEncryptedConfig(options.FilePath, options.CertificateName);
             if (res != null & res.Sources.Any())
@@ -84,7 +100,7 @@ namespace SyncLibrary
                             var medias = (from c in pl select c).ToList();
 
                             //Faire passer les handlers
-                            var handler = FabricHandleMedias();
+                            var handler = FabricHandleMedias(elasticClient);
 
                             foreach (var media in medias)
                             {
@@ -93,9 +109,9 @@ namespace SyncLibrary
                                 {
                                     Logger(nameof(SyncElasticAsync)).LogInformation($"Treating media  => {media.Name} : {media.Url}");
 
-                                    var result = await ElasticConnectionClient.Client
+                                    var result = await elasticClient.Client
                                         .SearchAsync<TvgMedia>(x => x.Index<TvgMedia>()
-                                            .Query(q => q.Term(m => m.Url, media.Url)), ts.Token);
+                                            .Query(q => q.Term(m => m.Url, media.Url)), ts);
 
                                     if (result.Total < 1)
                                     {
@@ -107,8 +123,8 @@ namespace SyncLibrary
                                         {
                                             //Modification
                                             Logger(nameof(SyncElasticAsync)).LogInformation($"Updating media {result.Documents.SingleOrDefault().Id} in Elastic");
-                                            var response = await ElasticConnectionClient.Client.UpdateAsync<TvgMedia>(result.Documents.SingleOrDefault().Id,
-                                                m => m.Doc(new TvgMedia { Id = null, Name = media.Name, Lang = media.Lang }), ts.Token);
+                                            var response = await elasticClient.Client.UpdateAsync<TvgMedia>(result.Documents.SingleOrDefault().Id,
+                                                m => m.Doc(new TvgMedia { Id = null, Name = media.Name, Lang = media.Lang }), ts);
                                             response.AssertElasticResponse();
                                         }
                                     }
@@ -117,8 +133,8 @@ namespace SyncLibrary
                             if (newMedias.Any())
                             {
                                 //Push to Elastic
-                                var responseBulk = await ElasticConnectionClient.Client.BulkAsync(x => x.Index(DefaultIndex).CreateMany(newMedias,
-                                    (bd, q) => bd.Index(DefaultIndex)), ts.Token);
+                                var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(config.Value.DefaultIndex).CreateMany(newMedias,
+                                    (bd, q) => bd.Index(config.Value.DefaultIndex)), ts);
                                 responseBulk.AssertElasticResponse();
                             }
                         }
@@ -133,7 +149,7 @@ namespace SyncLibrary
         /// <param name="args"></param>
         /// <param name="ts"></param>
         /// <returns></returns>
-        public static async Task SyncEpgElasticAsync(string[] args, CancellationTokenSource ts)
+        public static async Task SyncEpgElasticAsync(string[] args, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken ts)
         {
             try
             {
@@ -144,7 +160,7 @@ namespace SyncLibrary
                     var ser = new XmlSerializer(typeof(tv));
                     var tvModel = (tv)ser.Deserialize(response);
                     //Sync Elastic
-                    var responseBulk = await ElasticConnectionClient.Client.BulkAsync(x => x.Index(DefaultIndex).CreateMany(tvModel.channel, (bd, q) => bd.Index(DefaultIndex)), ts.Token);
+                    var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(config.Value.DefaultIndex).CreateMany(tvModel.channel, (bd, q) => bd.Index(config.Value.DefaultIndex)), ts);
                     responseBulk.AssertElasticResponse();
                 }
             }
@@ -185,12 +201,12 @@ namespace SyncLibrary
         /// <summary>
         /// Fabriquer les medias handlers (clean names, match epg, etc ...)
         /// </summary>
-        private static TvgMediaHandler FabricHandleMedias()
+        private static TvgMediaHandler FabricHandleMedias(IElasticConnectionClient elasticConnectionClient)
         {
             var contextHandler = Init.ServiceProvider.GetService<IContextTvgMediaHandler>();
             var cleanNameHandler = new TvgMediaCleanNameHandler(contextHandler);
             var groupHandler = new TvgMediaGroupMatcherHandler(contextHandler);
-            var epgHandler = new TvgMediaEpgMatcherNameHandler(contextHandler);
+            var epgHandler = new TvgMediaEpgMatcherNameHandler(contextHandler, elasticConnectionClient);
             var langHandler = new TvgMediaLangMatcherHandler(contextHandler);
 
             langHandler.SetSuccessor(groupHandler);

@@ -26,18 +26,19 @@ namespace SyncLibrary.TvgMediaHandlers
             {
                 foreach (var tag in context.MediaConfiguration.Tags.OrderByDescending(x => x.Position))
                 {
-                    foreach (var matcher in tag.ChannelPatternMatcher)
-                    {
-                        var reg = new Regex(matcher, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
-                        if (reg.IsMatch(tvgMedia.Name))
+                    if (tag.ChannelPatternMatcher != null)
+                        foreach (var matcher in tag.ChannelPatternMatcher)
                         {
-                            tvgMedia.Lang = tag.Lang.FirstOrDefault();
-                            if (tvgMedia.Tags == null)
-                                tvgMedia.Tags = new List<string>();
-                            tvgMedia.Tags.Add(tag.Name);
-                            break;
+                            var reg = new Regex(matcher, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+                            if (reg.IsMatch(tvgMedia.Name) && tag.Lang != null && tag.Lang.Any())
+                            {
+                                tvgMedia.Lang = tag.Lang.FirstOrDefault();
+                                if (tvgMedia.Tags == null)
+                                    tvgMedia.Tags = new List<string>();
+                                tvgMedia.Tags.Add(tag.Name);
+                                break;
+                            }
                         }
-                    }
                 }
             }
             if (_successor != null)

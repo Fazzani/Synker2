@@ -2,18 +2,24 @@
 using PlaylistManager.Entities;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using Hfa.PlaylistBaseLibrary.Entities;
 using Nest;
+using hfa.SyncLibrary.Common;
 
 namespace SyncLibrary.TvgMediaHandlers
 {
     class ContextTvgMediaHandler : IContextTvgMediaHandler
     {
-        public ContextTvgMediaHandler()
+        public ContextTvgMediaHandler(IElasticConnectionClient elasticConnectionClient)
         {
             LastLang = "Ar";
+
+            var responseMediaConfig = elasticConnectionClient.Client.SearchAsync<MediaConfiguration>(x => x.From(0).Size(1)).GetAwaiter().GetResult();
+            if (responseMediaConfig.Documents.Any())
+                MediaConfiguration = responseMediaConfig.Documents.FirstOrDefault();
         }
+
         public string LastLang { get; set; }
         public string StartChannelsHeadLineLastMatched { get; set; }
         public MediaConfiguration MediaConfiguration { get; internal set; }

@@ -3,26 +3,31 @@ using PlaylistBaseLibrary.Entities;
 using PlaylistManager.Entities;
 using hfa.SyncLibrary.Global;
 using System;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Hfa.SyncLibrary.Infrastructure;
 
 namespace hfa.SyncLibrary.Common
 {
-    internal static class ElasticConnectionClient
+    internal class ElasticConnectionClient : IElasticConnectionClient
     {
-        internal const string DEFAULT_INDEX = "playlists";
-        private const string ElasticServerUrl = "http://155.ip-151-80-235.eu:9201";
-        private static ConnectionSettings _settings;
-        private static ElasticClient _client;
+        private ConnectionSettings _settings;
+        private ElasticClient _client;
         private static object syncRoot = new Object();
-
+        IOptions<ApplicationConfigData> _config;
+        ILoggerFactory _loggerFactory;
         static string[] stopWords = { "hd", "sd", "fhd", "ar", "fr", "fr:", "ar:", "1080p", "720p", "(fr)", "(ar)", "+1", "+2", "+4", "+6", "+8", "arb", "vip" };
 
-        static ElasticConnectionClient()
+        public ElasticConnectionClient(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory)
         {
-            _settings = new ConnectionSettings(new Uri(ElasticServerUrl));
+            _config = config;
+            _loggerFactory = loggerFactory;
+
+            _settings = new ConnectionSettings(new Uri(config.Value.ElasticUrl));
             _settings
-                .BasicAuthentication("heni", "Fezzeni")
+                .BasicAuthentication(config.Value.ElasticUser, config.Value.ElasticPassword)
                 .DisableDirectStreaming(true)
-                .DefaultIndex(DEFAULT_INDEX)
+                .DefaultIndex(config.Value.DefaultIndex)
                 .PrettyJson()
                 .RequestTimeout(TimeSpan.FromMinutes(2))
                 .EnableHttpCompression();
@@ -35,12 +40,13 @@ namespace hfa.SyncLibrary.Common
                 .InferMappingFor<TvgMedia>(m => m.IdProperty(p => p.Id))
                 .InferMappingFor<tvChannel>(m => m.IdProperty(p => p.id))
                 .InferMappingFor<Tvg>(m => m.IdProperty(p => p.Id));
+        }
 
-           // DeleteIndex();
-
+        public void MappingConfig(IOptions<ApplicationConfigData> config)
+        {
             var keywordProperty = new PropertyName("keyword");
 
-            var response = Client.CreateIndex(DEFAULT_INDEX, c => c
+            var response = Client.CreateIndex(config.Value.DefaultIndex, c => c
             .Settings(s => s
             .Setting("analysis.char_filter.drop_specChars.type", "pattern_replace")
             .Setting("analysis.char_filter.drop_specChars.pattern", "\\bbeinsports?\\b")
@@ -99,21 +105,19 @@ namespace hfa.SyncLibrary.Common
                              .SearchAnalyzer("channel_name_analyzer"))
 
                          )
-                     ))
-
-       );
+                     )));
 
             response.AssertElasticResponse();
         }
 
-        private static void DeleteIndex()
+        public void DeleteDefaultIndex()
         {
-            var indexExistsResponse = Client.IndexExists(DEFAULT_INDEX);
+            var indexExistsResponse = Client.IndexExists(_config.Value.DefaultIndex);
             if (indexExistsResponse.Exists)
-                Client.DeleteIndex(DEFAULT_INDEX, null);
+                Client.DeleteIndex(_config.Value.DefaultIndex, null);
         }
 
-        public static ElasticClient Client
+        public ElasticClient Client
         {
             get
             {

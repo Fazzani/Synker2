@@ -2,17 +2,17 @@
  - dotnet publish -r linux-arm -o Y:\SyncPlaylist
  - OCTOPUS deploy
 #### TODO
-- [x] Sync from local or remote files to Elastic
-- [ ] Add lang for epg and treat it on handler
 - [ ] Format all medias (Epg, Names, Group, etc)
-- [ ] Fix verbose log
 - [ ] Sync from Elastic to TVH
 - [ ] Diff
 - [ ] Load dynamicaly all handlers
-- [ ] Parametrer le script (-f force update, )
 - [ ] Use FormatableString for to string the different file's formats
 - [ ] Move mapping cache_filter to a simple file config
 - [ ] WebSockets when something started
+- [x] Sync from local or remote files to Elastic
+- [x] Add lang for epg and treat it on handler
+- [x] Parametrer le script (-f force update, )
+- [x] Fix verbose log
 - [x] Put all Logs to elastic logstash
 - [x] Put EPG referentiel to Elastic
 - [x] Mapping TvgMedia to Elastic
