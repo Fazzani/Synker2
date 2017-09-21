@@ -2,13 +2,13 @@
  - dotnet publish -r linux-arm -o Y:\SyncPlaylist
  - OCTOPUS deploy
 #### TODO
-- [ ] Format all medias (Epg, Names, Group, etc)
-- [ ] Sync from Elastic to TVH
-- [ ] Diff
-- [ ] Load dynamicaly all handlers
+- [ ] (API) Generate new m3u file for TVH
+- [ ] Diff to update properties only (epg, group, position, logo, urls for mutli) on (Elastic => TVH)
 - [ ] Use FormatableString for to string the different file's formats
 - [ ] Move mapping cache_filter to a simple file config
 - [ ] WebSockets when something started
+- [ ] Load dynamicaly all handlers
+- [x] Format all medias (Epg, Names, Group, etc)
 - [x] Sync from local or remote files to Elastic
 - [x] Add lang for epg and treat it on handler
 - [x] Parametrer le script (-f force update, )
@@ -16,7 +16,6 @@
 - [x] Put all Logs to elastic logstash
 - [x] Put EPG referentiel to Elastic
 - [x] Mapping TvgMedia to Elastic
-- [x] Installer FileBit sur le rasp https://www.elastic.co/guide/en/beats/filebeat/current/setup-repositories.html
 
 #### BUGS
 

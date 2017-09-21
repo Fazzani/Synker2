@@ -44,6 +44,7 @@ namespace TvheadendLibrary
         /// Get node list
         /// </summary>
         /// <param name="query"></param>
+        /// <param name="nodeType"></param>
         /// <returns></returns>
         public JToken Nodes(QueryParams query, string nodeType)
         {
@@ -58,6 +59,8 @@ namespace TvheadendLibrary
         /// Get Node list
         /// </summary>
         /// <param name="query"></param>
+        /// <param name="nodeType"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
         public async Task<JToken> NodesAsync(QueryParams query, string nodeType, CancellationToken token)
         {
@@ -222,7 +225,7 @@ namespace TvheadendLibrary
             //    dvr_pre_time =0,dvr_pst_time=0,epg_running=-1,epg_parent="", uuid ="5eb8a50fba0fafaa54e7c7876a6b996f"};
 
             var request = WebRequest.Create(uri);
-            var credentialCache = new CredentialCache
+            request.Credentials = new CredentialCache
             {
                 {
                     new Uri(uri.GetLeftPart(UriPartial.Authority)), // request url's host
@@ -231,7 +234,6 @@ namespace TvheadendLibrary
                 }
             };
 
-            request.Credentials = credentialCache;
             //request.Headers.Add("Authorization", "basic ")
             request.Method = "POST";
             var reqContent = new { node = data };

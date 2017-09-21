@@ -25,7 +25,7 @@ namespace hfa.SyncLibrary.Common
 
             _settings = new ConnectionSettings(new Uri(config.Value.ElasticUrl));
             _settings
-                .BasicAuthentication(config.Value.ElasticUser, config.Value.ElasticPassword)
+                .BasicAuthentication(config.Value.ElasticUserName, config.Value.ElasticPassword)
                 .DisableDirectStreaming(true)
                 .DefaultIndex(config.Value.DefaultIndex)
                 .PrettyJson()
