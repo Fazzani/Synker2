@@ -7,6 +7,9 @@ using PlaylistBaseLibrary.Entities;
 using Hfa.WebApi.Common;
 using Hfa.WebApi.Models;
 using hfa.SyncLibrary.Global;
+using hfa.WebApi.Common;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,6 +20,11 @@ namespace Hfa.WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class EpgController : BaseController
     {
+        public EpgController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient)
+            : base(config, loggerFactory, elasticConnectionClient)
+        {
+
+        }
         [HttpPost]
         [Route("_search")]
         public async Task<IActionResult> Search([FromBody] dynamic request)
@@ -31,7 +39,7 @@ namespace Hfa.WebApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var response = await ElasticConnectionClient.Client.SearchAsync<tvChannel>(rq => rq
+            var response = await _elasticConnectionClient.Client.SearchAsync<tvChannel>(rq => rq
                 .Size(query.PageSize)
                 .From(query.Skip)
                 .Sort(x => GetSortDescriptor(x, query.SortDict))
@@ -54,7 +62,7 @@ namespace Hfa.WebApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var response = await ElasticConnectionClient.Client.SearchAsync<tvChannel>(rq => rq
+            var response = await _elasticConnectionClient.Client.SearchAsync<tvChannel>(rq => rq
                 .From(0)
                 .Size(1)
                 .Index<tvChannel>()

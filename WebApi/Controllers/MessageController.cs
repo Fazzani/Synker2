@@ -9,6 +9,9 @@ using Hfa.WebApi.Models;
 using hfa.SyncLibrary.Global;
 using Hfa.SyncLibrary.Messages;
 using Nest;
+using hfa.WebApi.Common;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,6 +20,11 @@ namespace Hfa.WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class MessageController : BaseController
     {
+        public MessageController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient)
+            : base(config, loggerFactory, elasticConnectionClient)
+        {
+
+        }
         const string MessageIndex = "messages";
         /// <summary>
         /// Messages received from the batch
@@ -27,7 +35,7 @@ namespace Hfa.WebApi.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var response = await ElasticConnectionClient.Client.UpdateAsync<Message, Message>(new DocumentPath<Message>(message.Id), x => x.Index(MessageIndex).Doc(message).DocAsUpsert(), cancelToken.Token);
+            var response = await _elasticConnectionClient.Client.UpdateAsync<Message, Message>(new DocumentPath<Message>(message.Id), x => x.Index(MessageIndex).Doc(message).DocAsUpsert(), cancelToken.Token);
 
             //Notify clients
             cancelToken.Token.ThrowIfCancellationRequested();

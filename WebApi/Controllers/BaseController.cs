@@ -11,30 +11,29 @@ using Hfa.WebApi.Common;
 using System.Linq.Expressions;
 using System.Reflection;
 using hfa.SyncLibrary.Global;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using hfa.WebApi.Common;
+using Microsoft.Extensions.Options;
 
 namespace Hfa.WebApi.Controllers
 {
     public class BaseController : Controller
     {
-        protected readonly Microsoft.Extensions.Logging.ILogger _logger;
+        protected readonly ILogger _logger;
+        protected readonly IElasticConnectionClient _elasticConnectionClient;
+        protected CancellationTokenSource cancelToken;
+        IOptions<ApplicationConfigData> _config;
 
-        public BaseController(ILoggerFactory loggerFactory)
+        public BaseController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient)
         {
             _logger = loggerFactory.CreateLogger("BaseController");
-        }
-
-        protected CancellationTokenSource cancelToken;
-
-        public BaseController()
-        {
+            _elasticConnectionClient = elasticConnectionClient;
             cancelToken = new CancellationTokenSource();
+            _config = config;
         }
 
         internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query) where T : class
         {
-            var response = await ElasticConnectionClient.Client.LowLevel.SearchAsync<SearchResponse<T>>(ElasticConnectionClient.DEFAULT_INDEX, typeof(T).Name.ToLowerInvariant(), query);
+            var response = await _elasticConnectionClient.Client.LowLevel.SearchAsync<SearchResponse<T>>(_config.Value.DefaultIndex, typeof(T).Name.ToLowerInvariant(), query);
 
             cancelToken.Token.ThrowIfCancellationRequested();
 
@@ -85,5 +84,10 @@ namespace Hfa.WebApi.Controllers
             public T Value { get; }
         }
 
+    }
+
+    public class Constants
+    {
+        public const string ELK_KEYWORD_SUFFIX = "keyword";
     }
 }

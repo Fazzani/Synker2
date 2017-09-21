@@ -2,7 +2,6 @@
  - dotnet publish -r linux-arm -o Y:\SyncPlaylist
  - OCTOPUS deploy
 #### TODO
-- [ ] (API) Generate new m3u file for TVH
 - [ ] Diff to update properties only (epg, group, position, logo, urls for mutli) on (Elastic => TVH)
 - [ ] Use FormatableString for to string the different file's formats
 - [ ] Move mapping cache_filter to a simple file config

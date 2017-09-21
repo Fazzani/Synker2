@@ -9,11 +9,22 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
+using hfa.WebApi.Common;
 
 namespace Web
 {
     public class Startup
     {
+        internal static IConfiguration Configuration;
+
+        public Startup(IHostingEnvironment env)
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            Configuration = builder.Build();
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -46,11 +57,18 @@ namespace Web
                     .AllowCredentials());
             });
 
+           // services.AddOptions();
+
+            services.
+                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
+                .Configure<ApplicationConfigData>(Configuration)
+                .BuildServiceProvider();
+
             //services.AddApiVersioning();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseCors("CorsPolicy");
             app.UseSwagger();
@@ -62,12 +80,6 @@ namespace Web
             });
 
             app.UseMvc();
-
-
-            // Set up configuration sources.
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
         }
     }
 }

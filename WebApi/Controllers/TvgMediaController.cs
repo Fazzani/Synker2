@@ -12,6 +12,9 @@ using Nest;
 using Hfa.WebApi.Common.ActionsFilters;
 using Elasticsearch.Net;
 using Microsoft.AspNetCore.Cors;
+using hfa.WebApi.Common;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,6 +24,12 @@ namespace Hfa.WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class TvgMediaController : BaseController
     {
+        public TvgMediaController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient)
+            : base(config, loggerFactory, elasticConnectionClient)
+        {
+
+        }
+
         [HttpPost]
         [Route("_search")]
         public async Task<IActionResult> SearchAsync([FromBody]dynamic request)
@@ -36,7 +45,7 @@ namespace Hfa.WebApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var response = await ElasticConnectionClient.Client.SearchAsync<TvgMedia>(rq => rq
+            var response = await _elasticConnectionClient.Client.SearchAsync<TvgMedia>(rq => rq
                 .Size(query.PageSize)
                 .From(query.Skip)
                 .Sort(x => GetSortDescriptor(x, query.SortDict))
@@ -60,7 +69,7 @@ namespace Hfa.WebApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var response = await ElasticConnectionClient.Client.SearchAsync<TvgMedia>(rq => rq
+            var response = await _elasticConnectionClient.Client.SearchAsync<TvgMedia>(rq => rq
                 .From(0)
                 .Size(1)
                 .Index<TvgMedia>()
