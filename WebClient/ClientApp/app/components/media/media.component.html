@@ -1,0 +1,57 @@
+﻿<div class="site-container">
+    <md-toolbar>
+        <md-form-field floatPlaceholder="never">
+            <input mdInput #filter placeholder="Filter medias...">
+        </md-form-field>
+        <span class="spacer"></span>
+        <a md-icon-button>
+            <md-icon class="md-24" aria-label="Example icon-button with a heart icon">favorite</md-icon>
+        </a>
+        <a md-icon-button>
+            <md-icon class="md-24" aria-label="Example icon-button with a heart icon">delete</md-icon>
+        </a>
+    </md-toolbar>
+    <md-table #table [dataSource]="dataSource" mdSort>
+        <!-- position Column -->
+        <ng-container mdColumnDef="position" md-sort-header>
+            <md-header-cell *mdHeaderCellDef> Position </md-header-cell>
+            <md-cell *mdCellDef="let row"> {{row.position}} </md-cell>
+        </ng-container>
+
+        <!-- name Column -->
+        <ng-container mdColumnDef="name">
+            <md-header-cell *mdHeaderCellDef md-sort-header> Name </md-header-cell>
+            <md-cell *mdCellDef="let row"> {{row.name}} </md-cell>
+        </ng-container>
+
+        <!-- group Column -->
+        <ng-container mdColumnDef="group" md-sort-header>
+            <md-header-cell *mdHeaderCellDef> Group </md-header-cell>
+            <md-cell *mdCellDef="let row"> {{row.group}} </md-cell>
+        </ng-container>
+        <!-- Lang Column -->
+        <ng-container mdColumnDef="lang" md-sort-header>
+            <md-header-cell *mdHeaderCellDef> Lang </md-header-cell>
+            <md-cell *mdCellDef="let row"> {{row.lang}} </md-cell>
+        </ng-container>
+        <ng-container mdColumnDef="actions">
+            <md-header-cell *mdHeaderCellDef> Actions </md-header-cell>
+            <md-cell *mdCellDef="let row">
+                <button md-icon-button color="warn" (click)="openDialog(row)">
+                    <md-icon class="md-24" aria-label="Edit">edit</md-icon>
+                  </button>
+                <button md-icon-button color="primary" (click)="update(row)">
+                    <md-icon class="md-24" aria-label="">favorite</md-icon>
+                  </button>
+                <button md-icon-button color="accent" (click)="update(row)">
+                    <md-icon class="md-24" aria-label="">favorite</md-icon>
+                  </button>
+            </md-cell>
+        </ng-container>
+        <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
+        <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
+    </md-table>
+    <md-paginator #paginator [length]="dataSource.paginator.length" [pageIndex]="dataSource.paginator.pageIndex" [pageSize]="dataSource.paginator.pageSize"
+        [pageSizeOptions]="dataSource.paginator.pageSizeOptions">
+    </md-paginator>
+</div>

@@ -1,0 +1,38 @@
+<md-form-field>
+    <input mdInput [(ngModel)]="data.position" placeholder="Position...">
+</md-form-field>
+<md-form-field>
+    <input mdInput [(ngModel)]="data.name" placeholder="Name...">
+</md-form-field>
+<md-form-field>
+    <input mdInput [(ngModel)]="data.lang" placeholder="Lang...">
+</md-form-field>
+<md-form-field>
+    <input mdInput [(ngModel)]="data.group" placeholder="Group...">
+</md-form-field>
+<md-form-field>
+    <input mdInput [(ngModel)]="data.url" placeholder="Url...">
+</md-form-field>
+<md-expansion-panel>
+    <md-expansion-panel-header>
+        <md-panel-title>
+            Tvg
+        </md-panel-title>
+        <md-panel-description>
+            Media tvg informations
+        </md-panel-description>
+    </md-expansion-panel-header>
+    <md-form-field>
+        <input mdInput [(ngModel)]="data.tvg.id" placeholder="Tvg Id">
+    </md-form-field>
+    <md-form-field>
+        <input mdInput [(ngModel)]="data.tvg.name" placeholder="Tvg Name">
+    </md-form-field>
+    <md-form-field>
+        <input mdInput [(ngModel)]="data.tvg.tvgIdentify" placeholder="Tvg identifier">
+    </md-form-field>
+    <img [src]="data.tvg.logo" class="logo-medium" />
+</md-expansion-panel>
+<md-action-row>
+    <button md-raised-button (click)="dialogRef.close()">Close</button>
+</md-action-row>

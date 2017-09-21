@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "SyncLibrary": {
+      "commandName": "Project",
+      "commandLineArgs": "sync config1.pll",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

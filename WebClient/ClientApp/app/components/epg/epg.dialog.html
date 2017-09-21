@@ -1,0 +1,13 @@
+<md-form-field>
+    <input mdInput [(ngModel)]="data.id" placeholder="id...">
+</md-form-field>
+<md-form-field>
+    <input mdInput [(ngModel)]="data.displayname" placeholder="Name...">
+</md-form-field>
+<md-form-field>
+    <input mdInput [(ngModel)]="data.icon.src" placeholder="icon...">
+    <img [src]="data.icon.src" class="logo-medium" />
+</md-form-field>
+<md-action-row>
+    <button md-raised-button (click)="dialogRef.close()">Close</button>
+</md-action-row>

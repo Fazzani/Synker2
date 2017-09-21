@@ -1,0 +1,12 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<app asp-ng2-prerender-module="ClientApp/dist/main-server"></app>
+<div class="loading">
+    <h1>Synker...</h1>
+</div>
+<script src="~/dist/vendor.js" asp-append-version="true"></script>
+@section scripts {
+    <script src="~/dist/main-client.js" asp-append-version="true"></script>
+}

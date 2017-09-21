@@ -1,0 +1,177 @@
+﻿using PlaylistBaseLibrary.Entities;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+
+namespace PlaylistManager.Entities
+{
+    [Serializable]
+    public class Media : IComparable<Media>, IComparable, IValidatableObject, IEquatable<Media>, IEqualityComparer<Media>
+    {
+
+        public Media()
+        {
+            Tags = new List<string>();
+            Enabled = true;
+            MediaType = MediaType.LiveTv;
+            Lang = "fr";
+            IsValid = true;
+        }
+
+        public Media(string name, string url) : this()
+        {
+            DisplayName = Name = name;
+            Url = url;
+        }
+
+        #region Properties 
+        private string _id;
+        private string _dislayName;
+
+        public string Id
+        {
+            get
+            {
+                if (_id == null && !string.IsNullOrEmpty(Url))
+                    _id = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{new Uri(Url).IdnHost}{new Uri(Url).PathAndQuery}{Name}"), Base64FormattingOptions.None);
+                return _id;
+            }
+            set
+            {
+                _id = value;
+            }
+        }
+
+        /// <summary>
+        /// Is valid media
+        /// </summary>
+        public bool IsValid { get; set; }
+
+        /// <summary>
+        /// Header line separator
+        /// </summary>
+        public string StartLineHeader { get; set; }
+
+        /// <summary>
+        /// Culture
+        /// </summary>
+        public string Lang { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+
+        [Required]
+        public string DisplayName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_dislayName))
+                    _dislayName = Name;
+                return _dislayName;
+            }
+            set { _dislayName = value; }
+        }
+
+        /// <summary>
+        /// Position 
+        /// </summary>
+        public int Position { get; set; }
+
+        /// <summary>
+        /// Default Url
+        /// </summary>
+        [Required]
+        public string Url { get; set; }
+
+        public List<string> Tags { get; set; }
+
+        public bool Enabled { get; set; }
+
+        public MediaType MediaType { get; set; }
+
+        public string Group { get; set; }
+
+        #endregion
+
+        public int CompareTo(object obj)
+        {
+            if (obj == null)
+                return 1;
+            if (!(obj is Media))
+                throw new ArgumentException("Must be a media type");
+
+            return Position.CompareTo(((Media)obj).Position);
+        }
+
+        public int CompareTo(Media other)
+        {
+            if (other == null)
+                return 1;
+            return Url.CompareTo(other.Url);
+        }
+
+        public static bool operator ==(Media m1, Media m2) => m1?.Url == m2?.Url && m1?.Name == m1?.Name && m2?.Lang == m2?.Lang;
+        public static bool operator !=(Media m1, Media m2) => m1.Url != m2.Url || m1.Name != m2.Name || m1?.Lang != m2?.Lang;
+        public static bool operator >(Media m1, Media m2) => m1.Url.CompareTo(m2.Url) > 0;
+        public static bool operator <(Media m1, Media m2) => m1.Url.CompareTo(m2.Url) < 0;
+        public static bool operator >=(Media m1, Media m2) => m1.Url.CompareTo(m2.Url) >= 0;
+        public static bool operator <=(Media m1, Media m2) => m1.Url.CompareTo(m2.Url) <= 0;
+
+        public bool Equals(Media other) => Url.Equals(other.Url) && Name.Equals(other.Name) && Lang.Equals(other.Lang);
+
+        public override bool Equals(object obj)
+        {
+            Media m = obj as Media;
+            if (m == null)
+                return false;
+            return m.Url == Url && m.Name == Name && m.Lang == Lang;
+        }
+
+        public override int GetHashCode() => Url.GetHashCode();
+
+        public override string ToString() => $"{Position} {Name} ({Lang})";
+
+        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (string.IsNullOrEmpty(Name))
+                yield return new ValidationResult("Media name required");
+            if (string.IsNullOrEmpty(Url))
+                yield return new ValidationResult("Media url required");
+        }
+
+        public virtual string Format(IMediaFormatter mediaFormatter) => mediaFormatter.Format(this);
+
+        public bool Equals(Media x, Media y)
+        {
+            if (x == null && y == null)
+                return true;
+            else if (x == null | y == null)
+                return false;
+            else if (x.Url == y.Url && x.Name == y.Name && x.Lang == y.Lang)
+                return true;
+            return false;
+        }
+
+        public int GetHashCode(Media obj)
+        {
+            var code = obj.Url.GetHashCode() ^ obj.Name.GetHashCode() ^ obj.Lang.GetHashCode();
+            return code.GetHashCode();
+        }
+    }
+
+    public enum MediaType : Byte
+    {
+        LiveTv = 0,
+        Radio,
+        /// <summary>
+        /// video file
+        /// </summary>
+        Video,
+        /// <summary>
+        /// audio file
+        /// </summary>
+        Audio,
+        Other
+    }
+}
