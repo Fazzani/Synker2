@@ -7,7 +7,7 @@ using static TvheadendLibrary.QueryParams;
 
 namespace TvheadendLibrary.Common
 {
-    internal static class FactoryQueryParamsFilter
+    public static class FactoryQueryParamsFilter
     {
         public static IQueryParamsFilter CreateStringQueryParamsFilter(string field, string value) =>
             new StringQueryParamsFilter(field, value);

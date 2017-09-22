@@ -33,6 +33,8 @@ namespace TvheadendLibrary
         /// <param name="password"></param>
         public TvheadendService(string url, string username = "", string password = "")
         {
+            if (!url.EndsWith("/"))
+                url += "/";
             _url = url;
             _username = username;
             _password = password;
@@ -210,7 +212,7 @@ namespace TvheadendLibrary
         //    }
         //}
 
-        private JObject UpdateNode(object data)
+        public JObject UpdateNode(object data)
         {
             var uri = new Uri(_url + API_URLS.UPDATE);
             // uuid["scan_state"] = 2;
@@ -229,7 +231,7 @@ namespace TvheadendLibrary
             {
                 {
                     new Uri(uri.GetLeftPart(UriPartial.Authority)), // request url's host
-                    "Digest",  // authentication type 
+                    "Basic",  // authentication type 
                     new NetworkCredential(_username, _password) // credentials 
                 }
             };
@@ -318,6 +320,7 @@ namespace TvheadendLibrary
         /// <returns></returns>
         private WebResponse MakeHttpRequest(IQuery query, string pathUrl, string method = "POST")
         {
+            
             var uri = new Uri(_url + pathUrl);
             var request = WebRequest.Create(uri);
             request.Method = method;
@@ -361,7 +364,7 @@ namespace TvheadendLibrary
 
             var queryParams = new QueryParamsTranslator().Translate(expression);
 
-            var queryResult = Channels(queryParams as QueryParams).Select(item => new Media(item["name"].ToString(), item["uuid"].ToString()) { Position = (int)item["number"] });
+            var queryResult = Channels(queryParams as QueryParams).Select(item => new TvgMedia(item["name"].ToString(), item["uuid"].ToString()) { Position = (int)item["number"] });
 
             return Activator.CreateInstance(
               typeof(Playlist<>).MakeGenericType(elementType),
