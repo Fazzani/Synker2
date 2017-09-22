@@ -6,8 +6,8 @@ using System.Text;
 
 namespace Hfa.SyncLibrary.Verbs
 {
-    [Verb("sync", HelpText = "Sync from sources provided in config file to Elastic")]
-    class SyncElasticVerb : IOptions
+    [Verb("sync", HelpText = "Sync medias from sources provided in config file to Elastic")]
+    class SyncMediasElasticVerb : IOptions
     {
         public bool Verbose { get; set; }
         public bool Force { get; set; }
@@ -24,12 +24,12 @@ namespace Hfa.SyncLibrary.Verbs
         {
             get
             {
-                yield return new Example("Normal scenario", new SyncElasticVerb { FilePath="~/configFileName.pll" });
-                yield return new Example("Force update all", new SyncElasticVerb { Force = true });
-                yield return new Example("Specify certificate name for decrypt source input ", new SyncElasticVerb { CertificateName = "application_dev" });
-                yield return new Example("supress summary", UnParserSettings.WithGroupSwitchesOnly(), new SyncElasticVerb { });
+                yield return new Example("Normal scenario", new SyncMediasElasticVerb { FilePath="~/configFileName.pll" });
+                yield return new Example("Force update all", new SyncMediasElasticVerb { Force = true });
+                yield return new Example("Specify certificate name for decrypt source input ", new SyncMediasElasticVerb { CertificateName = "application_dev" });
+                yield return new Example("supress summary", UnParserSettings.WithGroupSwitchesOnly(), new SyncMediasElasticVerb { });
                 yield return new Example("read more lines", new[] { UnParserSettings.WithGroupSwitchesOnly(), UnParserSettings.WithUseEqualTokenOnly() },
-                    new SyncElasticVerb { });
+                    new SyncMediasElasticVerb { });
             }
         }
     }

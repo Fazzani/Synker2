@@ -10,7 +10,7 @@ namespace SyncLibrary.TvgMediaHandlers
 {
     class TvgMediaEpgMatcherNameHandler : TvgMediaHandler
     {
-         IElasticConnectionClient _elasticClient;
+        IElasticConnectionClient _elasticClient;
         public TvgMediaEpgMatcherNameHandler(IContextTvgMediaHandler contextTvgMediaHandler, IElasticConnectionClient elasticClient) : base(contextTvgMediaHandler)
         {
             _elasticClient = elasticClient;

@@ -5,8 +5,9 @@
 - [ ] Diff to update properties only (epg, group, position, logo, urls for mutli) on (Elastic => TVH)
 - [ ] Use FormatableString for to string the different file's formats
 - [ ] Move mapping cache_filter to a simple file config
-- [ ] WebSockets when something started
 - [ ] Load dynamicaly all handlers
+- [ ] Paralleize update medias
+- [x] WebSockets when something started
 - [x] Format all medias (Epg, Names, Group, etc)
 - [x] Sync from local or remote files to Elastic
 - [x] Add lang for epg and treat it on handler

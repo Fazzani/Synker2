@@ -54,6 +54,7 @@ namespace SyncLibrary
             }
             catch (Exception e)
             {
+                _messagesService.SendAsync(e.Message, MessageIdEnum.EXCEPTION.ToString(), ts.Token).GetAwaiter().GetResult();
                 Logger(nameof(SynchElastic)).LogCritical(e, e.Message);
                 throw;
             }
@@ -66,23 +67,27 @@ namespace SyncLibrary
         /// <returns></returns>
         public static async Task ArgsParser(string[] args)
         {
-            await Parser.Default.ParseArguments<PurgeTempFilesVerb, SyncElasticVerb, SaveNewConfigVerb>(args).MapResult(
+            await Parser.Default.ParseArguments<PurgeTempFilesVerb, SyncMediasElasticVerb, SaveNewConfigVerb>(args).MapResult(
                  (PurgeTempFilesVerb opts) => PurgeTempFilesVerb.MainPurgeAsync(opts),
-                  (SyncElasticVerb opts) => SyncElasticAsync(opts, _elasticClient, _config, ts.Token),
-                  (SaveNewConfigVerb opts) => SaveConfigAsync(opts),
+                  (SyncEpgElasticVerb opts) => SyncEpgElasticAsync(opts, _elasticClient, _config, ts.Token),
+                  (SyncMediasElasticVerb opts) => SyncMediasElasticAsync(opts, _elasticClient, _config, ts.Token),
+                  (SaveNewConfigVerb opts) => SaveConfigAsync(opts, ts.Token),
                  errs => Task.FromResult(errs));
         }
 
         /// <summary>
-        /// Sync elastic
+        /// Sync medias to elastic
         /// </summary>
         /// <param name="options"></param>
         /// <param name="elasticClient"></param>
-        /// <param name="ts"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        public static async Task SyncElasticAsync(SyncElasticVerb options, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken ts)
+        public static async Task SyncMediasElasticAsync(SyncMediasElasticVerb options, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken token)
         {
             var res = await SynchronizableConfigManager.LoadEncryptedConfig(options.FilePath, options.CertificateName);
+
+            await _messagesService.SendAsync($"Start Sync Elastic By {options.FilePath} config", MessageIdEnum.START_SYNC_MEDIAS.ToString(), token);
+
             if (res != null & res.Sources.Any())
             {
 #if DEBUG
@@ -107,11 +112,11 @@ namespace SyncLibrary
                                 handler.HandleTvgMedia(media);
                                 if (media.IsValid)
                                 {
-                                    Logger(nameof(SyncElasticAsync)).LogInformation($"Treating media  => {media.Name} : {media.Url}");
+                                    Logger(nameof(SyncMediasElasticAsync)).LogInformation($"Treating media  => {media.Name} : {media.Url}");
 
                                     var result = await elasticClient.Client
                                         .SearchAsync<TvgMedia>(x => x.Index<TvgMedia>()
-                                            .Query(q => q.Term(m => m.Url, media.Url)), ts);
+                                            .Query(q => q.Term(m => m.Url, media.Url)), token);
 
                                     if (result.Total < 1)
                                     {
@@ -122,9 +127,10 @@ namespace SyncLibrary
                                         if (options.Force && media != result.Documents.FirstOrDefault() || (media.Tvg?.Id != result.Documents.FirstOrDefault()?.Id))
                                         {
                                             //Modification
-                                            Logger(nameof(SyncElasticAsync)).LogInformation($"Updating media {result.Documents.SingleOrDefault().Id} in Elastic");
+                                            Logger(nameof(SyncMediasElasticAsync)).LogInformation($"Updating media {result.Documents.SingleOrDefault().Id} in Elastic");
+
                                             var response = await elasticClient.Client.UpdateAsync<TvgMedia>(result.Documents.SingleOrDefault().Id,
-                                                m => m.Doc(new TvgMedia { Id = null, Name = media.Name, Lang = media.Lang }), ts);
+                                                m => m.Doc(new TvgMedia { Id = null, Name = media.Name, Lang = media.Lang }), token);
                                             response.AssertElasticResponse();
                                         }
                                     }
@@ -134,33 +140,37 @@ namespace SyncLibrary
                             {
                                 //Push to Elastic
                                 var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(config.Value.DefaultIndex).CreateMany(newMedias,
-                                    (bd, q) => bd.Index(config.Value.DefaultIndex)), ts);
+                                    (bd, q) => bd.Index(config.Value.DefaultIndex)), token);
                                 responseBulk.AssertElasticResponse();
                             }
                         }
                     }
                 }
             }
+            await _messagesService.SendAsync($"End Sync Elastic By {options.FilePath} config", MessageIdEnum.END_SYNC_MEDIAS.ToString(), token);
         }
 
         /// <summary>
         /// sync EPG
         /// </summary>
-        /// <param name="args"></param>
-        /// <param name="ts"></param>
+        /// <param name="options"></param>
+        /// <param name="elasticClient"></param>
+        /// <param name="config"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        public static async Task SyncEpgElasticAsync(string[] args, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken ts)
+        public static async Task SyncEpgElasticAsync(SyncEpgElasticVerb options, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken token)
         {
             try
             {
+                await _messagesService.SendAsync($"Start Sync Xmltv file {options.FilePath} to Elastic", MessageIdEnum.START_SYNC_EPG_CONFIG.ToString(), token);
                 using (var client = new HttpClient())
                 {
-                    var response = await client.GetStreamAsync(new Uri(args[0]));
+                    var response = await client.GetStreamAsync(new Uri(options.FilePath));
 
                     var ser = new XmlSerializer(typeof(tv));
                     var tvModel = (tv)ser.Deserialize(response);
                     //Sync Elastic
-                    var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(config.Value.DefaultIndex).CreateMany(tvModel.channel, (bd, q) => bd.Index(config.Value.DefaultIndex)), ts);
+                    var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(config.Value.DefaultIndex).CreateMany(tvModel.channel, (bd, q) => bd.Index(config.Value.DefaultIndex)), token);
                     responseBulk.AssertElasticResponse();
                 }
             }
@@ -168,6 +178,7 @@ namespace SyncLibrary
             {
                 Logger(nameof(SyncEpgElasticAsync)).LogCritical(ex, ex.Message);
             }
+            await _messagesService.SendAsync($"END Sync Xmltv file {options.FilePath} to Elastic", MessageIdEnum.END_SYNC_EPG_CONFIG.ToString(), token);
         }
 
         /// <summary>
@@ -175,8 +186,9 @@ namespace SyncLibrary
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static async Task SaveConfigAsync(SaveNewConfigVerb options)
+        public static async Task SaveConfigAsync(SaveNewConfigVerb options, CancellationToken token)
         {
+            await _messagesService.SendAsync($"Start save new config {options.FilePath}", MessageIdEnum.END_CREATE_CONFIG.ToString(), token);
             //await SynchronizableConfigManager.SaveAndEncrypt(new ConfigSync
             //{
             //    Sources = new List<ISynchronizableConfig>
@@ -196,6 +208,7 @@ namespace SyncLibrary
 
             var res = await SynchronizableConfigManager.Load($"{options.FilePath}.loc");
             await SynchronizableConfigManager.SaveAndEncrypt(res, options.FilePath, options.CertificateName);
+            await _messagesService.SendAsync($"END save new config {options.FilePath}", MessageIdEnum.END_CREATE_CONFIG.ToString(), token);
         }
 
         /// <summary>

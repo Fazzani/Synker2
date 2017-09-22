@@ -17,6 +17,7 @@ namespace Hfa.SyncLibrary.Messages
     {
         IOptions<ApplicationConfigData> _config;
         ILogger Logger;
+
         public MessagesService(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory)
         {
             this._config = config;
@@ -27,7 +28,6 @@ namespace Hfa.SyncLibrary.Messages
         /// Send Message to api
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="config"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public async Task SendAsync(Message message, CancellationToken cancellationToken)
@@ -38,6 +38,15 @@ namespace Hfa.SyncLibrary.Messages
                 Logger.LogError(response.ReasonPhrase);
             }
         }
+
+        /// <summary>
+        /// Send Message to api
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public Task SendAsync(string message, string id, CancellationToken cancellationToken) =>
+             SendAsync(new Message { Content = message, Id = id, Status = MessageStatus.NotReaded, TimeStamp = DateTime.Now }, cancellationToken);
 
         /// <summary>
         /// Post

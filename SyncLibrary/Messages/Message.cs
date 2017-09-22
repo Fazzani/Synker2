@@ -14,6 +14,17 @@ namespace Hfa.SyncLibrary.Messages
         public MessageStatus Status { get; set; }
     }
 
+    public enum MessageIdEnum
+    {
+        START_SYNC_MEDIAS,
+        END_SYNC_MEDIAS,
+        START_CREATE_CONFIG,
+        END_CREATE_CONFIG,
+        START_SYNC_EPG_CONFIG,
+        END_SYNC_EPG_CONFIG,
+        EXCEPTION
+    }
+
     public enum MessageStatus
     {
         None = 0,

@@ -8,5 +8,6 @@ namespace Hfa.SyncLibrary.Messages
     {
         Task<HttpResponseMessage> PostAsync(object obj, string url, CancellationToken cancellationToken);
         Task SendAsync(Message message, CancellationToken cancellationToken);
+        Task SendAsync(string message, string id, CancellationToken cancellationToken);
     }
 }
