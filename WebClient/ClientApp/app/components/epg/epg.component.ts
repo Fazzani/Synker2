@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
-import { MdPaginator, PageEvent, MdSort, SelectionModel, MdDialog, MdDialogRef, MD_DIALOG_DATA, MdSnackBar } from '@angular/material';
+import { MdPaginator, PageEvent, MdSort, MdDialog, MdDialogRef, MD_DIALOG_DATA, MdSnackBar } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -29,7 +29,6 @@ export class EpgComponent implements OnInit, OnDestroy {
     @ViewChild(MdSort) sort: MdSort;
     @ViewChild('filter') filter: ElementRef;
     dataSource: EpgDataSource | null;
-    selection = new SelectionModel<string>(true, []);
     currentItem: tvChannel | null;
 
     /** media ctor */
