@@ -6,6 +6,7 @@ using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Hfa.SyncLibrary.Infrastructure;
+using Hfa.SyncLibrary.Messages;
 
 namespace hfa.WebApi.Common
 {
@@ -37,6 +38,7 @@ namespace hfa.WebApi.Common
 #endif
 
             _settings
+                .InferMappingFor<Message>(m => m.IndexName(config.Value.MessageIndex).IdProperty(p => p.Id))
                 .InferMappingFor<TvgMedia>(m => m.IdProperty(p => p.Id))
                 .InferMappingFor<tvChannel>(m => m.IdProperty(p => p.id))
                 .InferMappingFor<Tvg>(m => m.IdProperty(p => p.Id));

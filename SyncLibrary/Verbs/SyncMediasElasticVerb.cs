@@ -10,6 +10,7 @@ namespace Hfa.SyncLibrary.Verbs
     class SyncMediasElasticVerb : IOptions
     {
         public bool Verbose { get; set; }
+
         public bool Force { get; set; }
 
         public string CertificateName { get; set; } = "application_dev";
@@ -18,8 +19,8 @@ namespace Hfa.SyncLibrary.Verbs
          HelpText = "Config provider file to be processed.",
          Required = true)]
         public string FilePath { get; set; }
-        [Usage(ApplicationAlias = "synker.exe")]
 
+        [Usage(ApplicationAlias = "synker.exe")]
         public static IEnumerable<Example> Examples
         {
             get

@@ -2,7 +2,7 @@
   "profiles": {
     "SyncLibrary": {
       "commandName": "Project",
-      "commandLineArgs": "sync config1.pll",
+      "commandLineArgs": "epg \"Z:\\xmltv\\channelsEpgFile.xml\"",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

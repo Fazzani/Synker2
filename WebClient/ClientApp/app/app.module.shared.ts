@@ -13,6 +13,7 @@ import { EpgComponent, EpgModifyDialog } from './components/epg/epg.component';
 
 import { TvgMediaService } from './services/tvgmedia/tvgmedia.service';
 import { EpgService } from './services/epg/epg.service';
+import { MessageService } from './services/message/message.service';
 import { CommonService } from './services/common/common.service';
 import { BaseService } from './services/base/base.service';
 import { NgHttpLoaderModule } from 'ng-http-loader/ng-http-loader.module';
@@ -50,6 +51,7 @@ const appRoutes: Routes = [
         CommonService,
         TvgMediaService,
         CommonService,
+        MessageService,
         EpgService,
         {
             provide: HTTP_INTERCEPTORS,

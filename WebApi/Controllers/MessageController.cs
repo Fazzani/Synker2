@@ -20,12 +20,13 @@ namespace Hfa.WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class MessageController : BaseController
     {
+        const string MessageIndex = "messages";
         public MessageController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient)
             : base(config, loggerFactory, elasticConnectionClient)
         {
 
         }
-        const string MessageIndex = "messages";
+
         /// <summary>
         /// Messages received from the batch
         /// </summary>
@@ -47,14 +48,58 @@ namespace Hfa.WebApi.Controllers
         }
 
         /// <summary>
-        /// Send message to the batch
+        /// Get message by id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> Get(Guid id)
         {
-            return new OkObjectResult("OK");
+            var response = await _elasticConnectionClient.Client.SearchAsync<Message, Message>(doc =>
+                doc.Index<Message>(), cancelToken.Token);
+
+            if (!response.IsValid)
+                return BadRequest(response.DebugInformation);
+
+            return new OkObjectResult(response.GetResultListModel());
         }
+
+        /// <summary>
+        /// List Messages
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var response = await _elasticConnectionClient.Client.SearchAsync<Message, Message>(doc =>
+             doc.Index<Message>(),
+            cancelToken.Token);
+
+            if (!response.IsValid)
+                return BadRequest(response.DebugInformation);
+
+            return new OkObjectResult(response.GetResultListModel());
+        }
+
+        /// <summary>
+        /// Get Messages by status
+        /// </summary>
+        /// <param name="messageStatus"></param>
+        /// <returns></returns>
+        [HttpGet("status/{messageStatus:int}")]
+        public async Task<IActionResult> GetByStatus(MessageStatus messageStatus)
+        {
+            var response = await _elasticConnectionClient.Client.SearchAsync<Message>(doc =>
+            doc.Index<Message>().Query(q => q.Term(t => t.Field(f => f.Status).Value(messageStatus))),
+            cancelToken.Token);
+
+            response.AssertElasticResponse();
+
+            if (!response.IsValid)
+                return BadRequest(response.DebugInformation);
+
+            return new OkObjectResult(response.GetResultListModel());
+        }
+
     }
 }

@@ -32,10 +32,17 @@ namespace Hfa.SyncLibrary.Messages
         /// <returns></returns>
         public async Task SendAsync(Message message, CancellationToken cancellationToken)
         {
-            var response = await PostAsync(message, _config.Value.ApiUrlMessage, cancellationToken);
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                Logger.LogError(response.ReasonPhrase);
+                var response = await PostAsync(message, _config.Value.ApiUrlMessage, cancellationToken);
+                if (!response.IsSuccessStatusCode)
+                {
+                    Logger.LogError(response.ReasonPhrase);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, ex.Message);
             }
         }
 
@@ -45,8 +52,8 @@ namespace Hfa.SyncLibrary.Messages
         /// <param name="message"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task SendAsync(string message, string id, CancellationToken cancellationToken) =>
-             SendAsync(new Message { Content = message, Id = id, Status = MessageStatus.NotReaded, TimeStamp = DateTime.Now }, cancellationToken);
+        public Task SendAsync(string message, string type, CancellationToken cancellationToken) =>
+             SendAsync(new Message { Content = message, Type = type, Status = MessageStatus.NotReaded, TimeStamp = DateTime.Now }, cancellationToken);
 
         /// <summary>
         /// Post

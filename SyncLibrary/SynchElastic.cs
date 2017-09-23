@@ -22,6 +22,7 @@ using Microsoft.Extensions.Logging;
 using static hfa.SyncLibrary.Global.Common;
 using Microsoft.Extensions.Options;
 using Hfa.SyncLibrary.Infrastructure;
+using System.IO;
 
 namespace SyncLibrary
 {
@@ -67,12 +68,12 @@ namespace SyncLibrary
         /// <returns></returns>
         public static async Task ArgsParser(string[] args)
         {
-            await Parser.Default.ParseArguments<PurgeTempFilesVerb, SyncMediasElasticVerb, SaveNewConfigVerb>(args).MapResult(
+            await Parser.Default.ParseArguments<PurgeTempFilesVerb, SyncEpgElasticVerb, SyncMediasElasticVerb, SaveNewConfigVerb>(args).MapResult(
                  (PurgeTempFilesVerb opts) => PurgeTempFilesVerb.MainPurgeAsync(opts),
                   (SyncEpgElasticVerb opts) => SyncEpgElasticAsync(opts, _elasticClient, _config, ts.Token),
                   (SyncMediasElasticVerb opts) => SyncMediasElasticAsync(opts, _elasticClient, _config, ts.Token),
                   (SaveNewConfigVerb opts) => SaveConfigAsync(opts, ts.Token),
-                 errs => Task.FromResult(errs));
+                 errs => throw new AggregateException(errs.Select(e => new Exception(e.Tag.ToString()))));
         }
 
         /// <summary>
@@ -160,23 +161,36 @@ namespace SyncLibrary
         /// <returns></returns>
         public static async Task SyncEpgElasticAsync(SyncEpgElasticVerb options, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken token)
         {
+            Stream response = null;
+            await _messagesService.SendAsync($"Start Sync Xmltv file {options.FilePath} to Elastic", MessageIdEnum.START_SYNC_EPG_CONFIG.ToString(), token);
             try
             {
-                await _messagesService.SendAsync($"Start Sync Xmltv file {options.FilePath} to Elastic", MessageIdEnum.START_SYNC_EPG_CONFIG.ToString(), token);
-                using (var client = new HttpClient())
+                if (!File.Exists(options.FilePath))
                 {
-                    var response = await client.GetStreamAsync(new Uri(options.FilePath));
-
-                    var ser = new XmlSerializer(typeof(tv));
-                    var tvModel = (tv)ser.Deserialize(response);
-                    //Sync Elastic
-                    var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(config.Value.DefaultIndex).CreateMany(tvModel.channel, (bd, q) => bd.Index(config.Value.DefaultIndex)), token);
-                    responseBulk.AssertElasticResponse();
+                    using (var client = new HttpClient())
+                    {
+                        response = await client.GetStreamAsync(new Uri(options.FilePath));
+                    }
                 }
+                else
+                {
+                    response = File.OpenRead(options.FilePath);
+                }
+                var ser = new XmlSerializer(typeof(tv));
+                var tvModel = (tv)ser.Deserialize(response);
+
+                //Sync Elastic
+                var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(config.Value.DefaultIndex).CreateMany(tvModel.channel, (bd, q) => bd.Index(config.Value.DefaultIndex)), token);
+                responseBulk.AssertElasticResponse();
             }
             catch (Exception ex)
             {
                 Logger(nameof(SyncEpgElasticAsync)).LogCritical(ex, ex.Message);
+            }
+            finally
+            {
+                response?.Close();
+                response?.Dispose();
             }
             await _messagesService.SendAsync($"END Sync Xmltv file {options.FilePath} to Elastic", MessageIdEnum.END_SYNC_EPG_CONFIG.ToString(), token);
         }

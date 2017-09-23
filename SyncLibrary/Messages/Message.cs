@@ -1,13 +1,16 @@
-﻿using System;
+﻿using Nest;
+using System;
 
 namespace Hfa.SyncLibrary.Messages
 {
+    [ElasticsearchType(IdProperty = nameof(Id))]
     public class Message
     {
 
-        public static Message PingMessage => new Message { Content = "Ping", Id = "test", Status = MessageStatus.None, TimeStamp = DateTime.Now };
+        public static Message PingMessage => new Message { Content = "Ping", Type = "Ping", Status = MessageStatus.None, TimeStamp = DateTime.Now };
 
-        public string Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Type { get; set; }
         public string Content { get; set; }
         public DateTime TimeStamp { get; set; }
 

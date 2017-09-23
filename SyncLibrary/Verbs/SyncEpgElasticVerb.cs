@@ -11,7 +11,7 @@ namespace Hfa.SyncLibrary.Verbs
     {
         public bool Verbose { get; set; }
 
-        [Value(0, MetaName = "epg",
+        [Value(0, MetaName = "EPG list channels file",
          HelpText = "Xmltv file to be processed.",
          Required = true)]
         public string FilePath { get; set; }
