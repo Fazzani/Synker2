@@ -24,7 +24,7 @@ import { EventTargetLike } from "rxjs/observable/FromEventObservable";
 export class EpgComponent implements OnInit, OnDestroy {
     subscriptionTableEvent: Subscription;
 
-    displayedColumns = ['displayname', 'id', 'icon', 'actions'];
+    displayedColumns = ['icon', 'displayname', 'id', 'actions'];
     @ViewChild(MdPaginator) paginator: MdPaginator;
     @ViewChild(MdSort) sort: MdSort;
     @ViewChild('filter') filter: ElementRef;

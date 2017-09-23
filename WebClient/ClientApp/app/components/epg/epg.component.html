@@ -1,5 +1,5 @@
 ﻿<div class="site-container">
-    <md-toolbar color="accent">
+    <md-toolbar color="custom">
         <md-form-field floatPlaceholder="never">
             <input mdInput #filter placeholder="Filter medias...">
         </md-form-field>
@@ -12,6 +12,13 @@
         </a>
     </md-toolbar>
     <md-table #table [dataSource]="dataSource" mdSort>
+        <!-- icon Column -->
+        <ng-container mdColumnDef="icon" md-sort-header>
+            <md-header-cell *mdHeaderCellDef> icon </md-header-cell>
+            <md-cell *mdCellDef="let row">
+                <img [src]="row.icon?.src" class="logo-grid" />
+            </md-cell>
+        </ng-container>
         <!-- displayname Column -->
         <ng-container mdColumnDef="displayname" md-sort-header>
             <md-header-cell *mdHeaderCellDef> DisplayName </md-header-cell>
@@ -24,11 +31,6 @@
             <md-cell *mdCellDef="let row"> {{row.id}} </md-cell>
         </ng-container>
 
-        <!-- icon Column -->
-        <ng-container mdColumnDef="icon" md-sort-header>
-            <md-header-cell *mdHeaderCellDef> icon </md-header-cell>
-            <md-cell *mdCellDef="let row"> {{row.icon?.src}} </md-cell>
-        </ng-container>
         <ng-container mdColumnDef="actions">
             <md-header-cell *mdHeaderCellDef> Actions </md-header-cell>
             <md-cell *mdCellDef="let row">
