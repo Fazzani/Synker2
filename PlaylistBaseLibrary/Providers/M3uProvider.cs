@@ -136,7 +136,8 @@ namespace PlaylistBaseLibrary.Providers
             if (playlist == null)
                 throw new ArgumentNullException(nameof(playlist));
             var sb = new StringBuilder(HeaderFile);
-            var list = playlist.Where(x => x.Enabled).AsParallel().Select(x => sb.Append(x.Format(this))).ToList();
+            //TODO: FIX ToList (QueryProvider not working on where)
+            var list = playlist.ToList().Where(x => x.Enabled).Select(x => sb.Append(x.Format(this))).ToList();
             if (list.Any())
                 using (var sw = new StreamWriter(_sr, Encoding.UTF8, 4096, true))
                 {
@@ -151,13 +152,13 @@ namespace PlaylistBaseLibrary.Providers
 
             var sb = new StringBuilder(HeaderFile);
             sb.Append(Environment.NewLine);
-            var list = playlist.Where(x => x.Enabled).Select(x => sb.Append(x.Format(this))).ToList();
+            //TODO: FIX ToList (QueryProvider not working on where)
+            var list = playlist.ToList().Where(x => x.Enabled).Select(x => sb.Append(x.Format(this))).ToList();
             if (list.Any())
                 using (var sw = new StreamWriter(_sr, Encoding.UTF8, 4096, true))
                 {
                     await sw.WriteAsync(sb.ToString());
                 }
-            //return null;
         }
 
         public override Playlist<TvgMedia> Sync(Playlist<TvgMedia> playlist)

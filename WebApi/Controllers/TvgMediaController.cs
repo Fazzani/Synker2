@@ -15,6 +15,12 @@ using Microsoft.AspNetCore.Cors;
 using hfa.WebApi.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.IO;
+using System.Text;
+using PlaylistBaseLibrary.Providers;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -107,6 +113,33 @@ namespace Hfa.WebApi.Controllers
         public IActionResult Delete(int id)
         {
             return NoContent();
+        }
+
+        /// <summary>
+        /// Download medias list from elastic
+        /// </summary>
+        /// <param name="filename">Output filename</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("download/{filename}")]
+        public async Task<FileContentResult> Download(string filename)
+        {
+            var response = await _elasticConnectionClient.Client.SearchAsync<TvgMedia>(rq => rq
+               .From(0)
+               .Size(10000)
+               .Index<TvgMedia>()
+           , cancelToken.Token);
+
+            cancelToken.Token.ThrowIfCancellationRequested();
+
+            response.AssertElasticResponse();
+
+            using (var ms = new MemoryStream())
+            {
+                var provider = new M3uProvider(ms);
+                await provider.PushAsync(new Playlist<TvgMedia>(response.Documents), cancelToken.Token);
+                return File(ms.GetBuffer(), "application/octet-stream", filename);
+            }
         }
     }
 }

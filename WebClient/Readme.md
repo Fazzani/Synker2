@@ -7,7 +7,7 @@
 - [x] dev EPG component
 - [ ] animations
 - [ ] WebSockets
-- [ ] WebApi Auth
+- [ ] Auth
 - [ ] Actions :
     - [ ] Modify
     - [ ] Disable
