@@ -10,6 +10,7 @@ export interface ElasticQuery {
     from: number;
     size: number;
     query: Object | null;
+    sort: any;
 }
 
 /**

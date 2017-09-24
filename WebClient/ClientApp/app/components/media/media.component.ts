@@ -8,11 +8,17 @@ import { Subscription } from 'rxjs/Subscription';
 import { TvgMediaService } from '../../services/tvgmedia/tvgmedia.service';
 import { CommonService, Constants } from '../../services/common/common.service';
 import { Observable } from "rxjs/Observable";
-import { TvgMedia, ElasticQuery } from "../../types/elasticQuery.type";
+import { TvgMedia, ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/observable/merge';
+import 'rxjs/add/observable/merge';
+import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/startWith';
+import 'rxjs/add/operator/switchMap';
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
 
 @Component({
@@ -37,7 +43,6 @@ export class MediaComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         let storedQuery = this.commonService.JsonToObject<ElasticQuery>(localStorage.getItem(Constants.LS_MediaQueryKey));
         console.log("storedQuery ", storedQuery);
-
         this.paginator.pageIndex = storedQuery != null ? Math.floor(storedQuery.from / storedQuery.size) : 0;
         this.paginator.pageSizeOptions = [50, 100, 250, 1000];
         this.paginator.pageSize = storedQuery != null ? storedQuery.size : this.paginator.pageSizeOptions[0];
@@ -59,7 +64,7 @@ export class MediaComponent implements OnInit, OnDestroy {
                 let objectQuery = this.commonService.JsonToObject(this.filter.nativeElement.value);
                 console.log('objectQuery => ', objectQuery);
                 this.dataSource.filter = objectQuery != null ? objectQuery : this.filter.nativeElement.value;
-                this.dataSource.paginator = this.paginator;
+                // this.dataSource.paginator = this.paginator;
             });
     }
 
@@ -104,51 +109,78 @@ export class TvgMediaModifyDialog {
  * Media datasource for md-table component
  */
 export class MediaDataSource extends DataSource<TvgMedia> {
-
-    resultsLength = 0;
-    isLoadingResults = false;
-
-    medias = new BehaviorSubject<TvgMedia[]>([]);
+    took: number;
+    maxScore: number;
+    hits: number;
+    total: number;
+    isLoadingResults = true;
 
     _filterChange = new BehaviorSubject<Object | string>({});
     get filter(): Object | string { return this._filterChange.value; }
     set filter(filter: Object | string) { this._filterChange.next(filter); }
 
-    _paginator = new BehaviorSubject<MdPaginator>(<MdPaginator>{});
-    get paginator(): MdPaginator { return this._paginator.value; }
-    set paginator(paginator: MdPaginator) { this._paginator.next(paginator); }
-
     constructor(private tvgMediaService: TvgMediaService, private mdPaginator: MdPaginator, private _sort: MdSort) {
         super();
 
-        this.paginator = mdPaginator;
-        this._filterChange
-            .merge(this._paginator)
-            .debounceTime(300)
-            //.distinctUntilChanged()
-            .subscribe((x) => this.getData());
+        // this._filterChange
+        //     .merge(this.mdPaginator)
+        //     .debounceTime(300)
+        //     //.distinctUntilChanged()
+        //     .subscribe((x) => this.getData());
     }
 
     connect(): Observable<TvgMedia[]> {
         const displayDataChanges = [
-            this.medias,
-            this._sort.sortChange
+            this._sort.sortChange,
+            this.mdPaginator.page,
+            this.mdPaginator.pageSize
         ];
 
-        return Observable.merge(...displayDataChanges).map(() => {
-            return this.medias.value;
-        });
+        return Observable.merge(...displayDataChanges)
+            .startWith(null)
+            .switchMap(() => {
+                this.isLoadingResults = true;
+                return this.getData();
+            })
+            .map(data => {
+                console.dir(data);
+                // Flip flag to show that loading has finished.
+                this.isLoadingResults = false;
+                this.hits = data.hits;
+                this.maxScore = data.maxScore;
+                this.took = data.took;
+                this.total = data.total;
+
+                return data.result;
+            })
+            .catch(() => {
+                this.isLoadingResults = false;
+                // Catch if the GitHub API has reached its rate limit. Return empty data.
+                return Observable.of([]);
+            });
     }
     /**
      * Get medias list from webapi
      * @returns Obersvable<TvgMedia[]>
      */
-    getData(): Observable<TvgMedia[]> {
+    getData(): Observable<ElasticResponse<TvgMedia>> {
         this.isLoadingResults = true;
-        let pageSize = this.paginator.pageSize === undefined ? 25 : this.paginator.pageSize;
+
+        //TODO: à virer et la remplacer par un decorator
+        let defaultObjectTvgMedia = <TvgMedia>{ position: 0, name: 'jj', group: 'sd', lang: 'sq' };
+        let typeProp = typeof defaultObjectTvgMedia[this._sort.active];
+
+        let sortField = this._sort.active;
+        if (typeof defaultObjectTvgMedia[this._sort.active] === "string")
+            sortField += ".keyword";
+
+        let sortObject = JSON.parse('{"' + sortField + '" : {"order":"' + this._sort.direction + '"}}');
+
+        let pageSize = this.mdPaginator.pageSize === undefined ? 25 : this.mdPaginator.pageSize;
         let query = <ElasticQuery>{
-            from: pageSize * this.paginator.pageIndex,
-            size: pageSize
+            from: pageSize * this.mdPaginator.pageIndex,
+            size: pageSize,
+            sort: sortObject
         };
         if (typeof this.filter === "string") {
             if (this.filter !== undefined && this.filter != "")
@@ -160,16 +192,8 @@ export class MediaDataSource extends DataSource<TvgMedia> {
             query.query = this.filter;
         }
         localStorage.setItem(Constants.LS_MediaQueryKey, JSON.stringify(query));
-        let res = this.tvgMediaService.list(query).map((v, i) => {
-            console.log("recup medias ", v);
-            this._paginator.value.length = v.total;
-            this.isLoadingResults = false;
-            return v.result;
-        });
-        res.subscribe(x => { this.medias.next(x); });
-        return res;
+        return this.tvgMediaService.list(query);
     }
 
     disconnect() { }
 }
-

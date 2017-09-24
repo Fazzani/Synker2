@@ -54,7 +54,6 @@
         <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
         <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
     </md-table>
-    <md-paginator #paginator [length]="dataSource.paginator.length" [pageIndex]="dataSource.paginator.pageIndex" [pageSize]="dataSource.paginator.pageSize"
-        [pageSizeOptions]="dataSource.paginator.pageSizeOptions">
+    <md-paginator #paginator [length]="dataSource.total" [pageIndex]="paginator.pageIndex" [pageSize]="paginator.pageSize" [pageSizeOptions]="paginator.pageSizeOptions">
     </md-paginator>
 </div>

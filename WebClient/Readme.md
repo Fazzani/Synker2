@@ -3,10 +3,11 @@
 
 - [x] Fix pagination
 - [x] Fix query by json
-- [ ] Fix sort
+- [x] Fix sort
+- [ ] Typescript decorator for Sort (type:keyword or no)
 - [x] dev EPG component
 - [ ] animations
-- [ ] WebSockets
+- [ ] WebSockets (notification)
 - [ ] Auth
 - [ ] Angular universal (SEO, prerender server)
 - [ ] Actions :
