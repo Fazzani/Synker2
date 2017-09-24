@@ -47,6 +47,11 @@ export class MediaComponent implements OnInit, OnDestroy {
         this.paginator.pageSizeOptions = [50, 100, 250, 1000];
         this.paginator.pageSize = storedQuery != null ? storedQuery.size : this.paginator.pageSizeOptions[0];
         this.filter.nativeElement.value = storedQuery != null && storedQuery.query != null && storedQuery.query != {} ? JSON.stringify(storedQuery.query) : "";
+
+        if (storedQuery != null) {
+            this.sort.active = Object.keys(storedQuery.sort)[0];
+            this.sort.direction = storedQuery.sort[this.sort.active].order;
+        }
         storedQuery = null;
 
         this.dataSource = new MediaDataSource(this.tvgMediaService, this.paginator, this.sort);
