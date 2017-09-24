@@ -51,20 +51,15 @@ export class MediaComponent implements OnInit, OnDestroy {
 
         this.dataSource = new MediaDataSource(this.tvgMediaService, this.paginator, this.sort);
 
-        this.subscriptionTableEvent = this.paginator.page.asObservable()
-            .merge(Observable.fromEvent<EventTargetLike>(this.filter.nativeElement, 'keyup'))
+        this.subscriptionTableEvent = Observable.fromEvent<EventTargetLike>(this.filter.nativeElement, 'keyup')
             .debounceTime(1000)
             .distinctUntilChanged()
-            .subscribe((x) => {
+            .subscribe(x => {
                 if (!this.dataSource) { return; }
-                console.log("subscriptionTableEvent => ", x);
-                if ((x as PageEvent).length === undefined)
-                    this.paginator.pageIndex = 0;
-
                 let objectQuery = this.commonService.JsonToObject(this.filter.nativeElement.value);
                 console.log('objectQuery => ', objectQuery);
+                this.paginator.pageIndex = 0;
                 this.dataSource.filter = objectQuery != null ? objectQuery : this.filter.nativeElement.value;
-                // this.dataSource.paginator = this.paginator;
             });
     }
 
@@ -136,7 +131,7 @@ export class MediaDataSource extends DataSource<TvgMedia> {
             this.mdPaginator.pageSize
         ];
 
-        return Observable.merge(...displayDataChanges)
+        return this._filterChange.merge(Observable.merge(...displayDataChanges))
             .startWith(null)
             .switchMap(() => {
                 this.isLoadingResults = true;
@@ -182,6 +177,7 @@ export class MediaDataSource extends DataSource<TvgMedia> {
             size: pageSize,
             sort: sortObject
         };
+
         if (typeof this.filter === "string") {
             if (this.filter !== undefined && this.filter != "")
                 query.query = {
@@ -191,6 +187,7 @@ export class MediaDataSource extends DataSource<TvgMedia> {
         else {
             query.query = this.filter;
         }
+
         localStorage.setItem(Constants.LS_MediaQueryKey, JSON.stringify(query));
         return this.tvgMediaService.list(query);
     }
