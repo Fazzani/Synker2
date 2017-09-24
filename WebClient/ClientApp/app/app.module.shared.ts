@@ -1,4 +1,5 @@
-import { NgModule } from '@angular/core';
+import { ApplicationRef, NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -38,10 +39,11 @@ const appRoutes: Routes = [
         EpgModifyDialog
     ],
     imports: [
+        BrowserModule,
+        // BrowserAnimationsModule,
         CommonModule,
         HttpClientModule,
         FormsModule,
-        BrowserAnimationsModule,
         AppModuleMaterialModule,
         NavBarModule,
         RouterModule.forRoot(appRoutes, { enableTracing: false })
@@ -60,4 +62,5 @@ const appRoutes: Routes = [
         }]
 })
 export class AppModuleShared {
+    constructor(private _appRef: ApplicationRef) { }
 }

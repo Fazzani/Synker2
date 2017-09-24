@@ -8,6 +8,7 @@
 - [ ] animations
 - [ ] WebSockets
 - [ ] Auth
+- [ ] Angular universal (SEO, prerender server)
 - [ ] Actions :
     - [ ] Modify
     - [ ] Disable

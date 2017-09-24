@@ -13,15 +13,15 @@
     </md-toolbar>
     <md-table #table [dataSource]="dataSource" mdSort>
         <!-- icon Column -->
-        <ng-container mdColumnDef="icon" md-sort-header>
-            <md-header-cell *mdHeaderCellDef> icon </md-header-cell>
+        <ng-container mdColumnDef="icon">
+            <md-header-cell *mdHeaderCellDef md-sort-header> icon </md-header-cell>
             <md-cell *mdCellDef="let row">
                 <img [src]="row.icon?.src" class="logo-grid" />
             </md-cell>
         </ng-container>
         <!-- displayname Column -->
-        <ng-container mdColumnDef="displayname" md-sort-header>
-            <md-header-cell *mdHeaderCellDef> DisplayName </md-header-cell>
+        <ng-container mdColumnDef="displayname">
+            <md-header-cell *mdHeaderCellDef md-sort-header> DisplayName </md-header-cell>
             <md-cell *mdCellDef="let row"> {{row.displayname}} </md-cell>
         </ng-container>
 

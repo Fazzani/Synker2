@@ -11,10 +11,13 @@
             <md-icon class="md-24" aria-label="Example icon-button with a heart icon">delete</md-icon>
         </a>
     </md-toolbar>
-    <md-table #table [dataSource]="dataSource" mdSort>
+    <div class="example-loading-shade" *ngIf="dataSource.isLoadingResults">
+        <md-spinner *ngIf="dataSource.isLoadingResults"></md-spinner>
+    </div>
+    <md-table #table [dataSource]="dataSource" mdSort mdSortActive="position" mdSortDisableClear mdSortDirection="asc">
         <!-- position Column -->
-        <ng-container mdColumnDef="position" md-sort-header>
-            <md-header-cell *mdHeaderCellDef> Position </md-header-cell>
+        <ng-container mdColumnDef="position">
+            <md-header-cell *mdHeaderCellDef md-sort-header disableClear="true"> Position </md-header-cell>
             <md-cell *mdCellDef="let row"> {{row.position}} </md-cell>
         </ng-container>
 
@@ -25,13 +28,13 @@
         </ng-container>
 
         <!-- group Column -->
-        <ng-container mdColumnDef="group" md-sort-header>
-            <md-header-cell *mdHeaderCellDef> Group </md-header-cell>
+        <ng-container mdColumnDef="group">
+            <md-header-cell *mdHeaderCellDef md-sort-header> Group </md-header-cell>
             <md-cell *mdCellDef="let row"> {{row.group}} </md-cell>
         </ng-container>
         <!-- Lang Column -->
-        <ng-container mdColumnDef="lang" md-sort-header>
-            <md-header-cell *mdHeaderCellDef> Lang </md-header-cell>
+        <ng-container mdColumnDef="lang">
+            <md-header-cell *mdHeaderCellDef md-sort-header> Lang </md-header-cell>
             <md-cell *mdCellDef="let row"> {{row.lang}} </md-cell>
         </ng-container>
         <ng-container mdColumnDef="actions">

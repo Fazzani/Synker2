@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
-import { MdPaginator, PageEvent, MdSort, SelectionModel, MdDialog, MdDialogRef, MD_DIALOG_DATA, MdSnackBar } from '@angular/material';
+import { MdPaginator, PageEvent, MdSort, MdDialog, MdDialogRef, MD_DIALOG_DATA, MdSnackBar } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -12,7 +12,7 @@ import { TvgMedia, ElasticQuery } from "../../types/elasticQuery.type";
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/merge';
+import 'rxjs/add/observable/merge';
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
 
 @Component({
@@ -28,7 +28,6 @@ export class MediaComponent implements OnInit, OnDestroy {
     @ViewChild(MdSort) sort: MdSort;
     @ViewChild('filter') filter: ElementRef;
     dataSource: MediaDataSource | null;
-    selection = new SelectionModel<string>(true, []);
     currentItem: TvgMedia | null;
 
     /** media ctor */
@@ -45,7 +44,7 @@ export class MediaComponent implements OnInit, OnDestroy {
         this.filter.nativeElement.value = storedQuery != null && storedQuery.query != null && storedQuery.query != {} ? JSON.stringify(storedQuery.query) : "";
         storedQuery = null;
 
-        this.dataSource = new MediaDataSource(this.tvgMediaService, this.paginator);
+        this.dataSource = new MediaDataSource(this.tvgMediaService, this.paginator, this.sort);
 
         this.subscriptionTableEvent = this.paginator.page.asObservable()
             .merge(Observable.fromEvent<EventTargetLike>(this.filter.nativeElement, 'keyup'))
@@ -106,6 +105,9 @@ export class TvgMediaModifyDialog {
  */
 export class MediaDataSource extends DataSource<TvgMedia> {
 
+    resultsLength = 0;
+    isLoadingResults = false;
+
     medias = new BehaviorSubject<TvgMedia[]>([]);
 
     _filterChange = new BehaviorSubject<Object | string>({});
@@ -116,7 +118,7 @@ export class MediaDataSource extends DataSource<TvgMedia> {
     get paginator(): MdPaginator { return this._paginator.value; }
     set paginator(paginator: MdPaginator) { this._paginator.next(paginator); }
 
-    constructor(private tvgMediaService: TvgMediaService, private mdPaginator: MdPaginator) {
+    constructor(private tvgMediaService: TvgMediaService, private mdPaginator: MdPaginator, private _sort: MdSort) {
         super();
 
         this.paginator = mdPaginator;
@@ -127,13 +129,22 @@ export class MediaDataSource extends DataSource<TvgMedia> {
             .subscribe((x) => this.getData());
     }
 
-    connect(): Observable<TvgMedia[]> { return this.medias.asObservable() };
+    connect(): Observable<TvgMedia[]> {
+        const displayDataChanges = [
+            this.medias,
+            this._sort.sortChange
+        ];
 
+        return Observable.merge(...displayDataChanges).map(() => {
+            return this.medias.value;
+        });
+    }
     /**
      * Get medias list from webapi
      * @returns Obersvable<TvgMedia[]>
      */
     getData(): Observable<TvgMedia[]> {
+        this.isLoadingResults = true;
         let pageSize = this.paginator.pageSize === undefined ? 25 : this.paginator.pageSize;
         let query = <ElasticQuery>{
             from: pageSize * this.paginator.pageIndex,
@@ -152,6 +163,7 @@ export class MediaDataSource extends DataSource<TvgMedia> {
         let res = this.tvgMediaService.list(query).map((v, i) => {
             console.log("recup medias ", v);
             this._paginator.value.length = v.total;
+            this.isLoadingResults = false;
             return v.result;
         });
         res.subscribe(x => { this.medias.next(x); });

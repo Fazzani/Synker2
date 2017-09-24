@@ -83,3 +83,16 @@ img {
     width: 100%;
     background: $primary-color-bg-dark !important;
 }
+
+.example-loading-shade {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 56px;
+    right: 0;
+    background: $primary-color-bg-dark;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
