@@ -96,3 +96,17 @@ img {
     align-items: center;
     justify-content: center;
 }
+
+app-navbar {
+    color: rgba(255, 255, 255, 0.87);
+    position: relative;
+    z-index: 10;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+.site-container {
+    margin-top: 56px;
+}
