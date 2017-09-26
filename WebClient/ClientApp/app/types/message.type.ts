@@ -8,6 +8,7 @@ export interface Message {
     type: string;
     timeStamp: Date;
     status: MessageStatus
+    author: string
 }
 /**
  * MessageStatus (0: None, 1: NotReaded, 2: Readed).

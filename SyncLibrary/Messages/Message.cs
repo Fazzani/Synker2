@@ -15,6 +15,8 @@ namespace Hfa.SyncLibrary.Messages
         public DateTime TimeStamp { get; set; }
 
         public MessageStatus Status { get; set; }
+
+        public string Author { get; set; }
     }
 
     public enum MessageIdEnum
