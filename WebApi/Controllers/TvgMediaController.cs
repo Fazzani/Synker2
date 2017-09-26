@@ -21,6 +21,7 @@ using PlaylistBaseLibrary.Providers;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net;
+using hfa.WebApi.Dal;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -30,8 +31,8 @@ namespace Hfa.WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class TvgMediaController : BaseController
     {
-        public TvgMediaController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient)
-            : base(config, loggerFactory, elasticConnectionClient)
+        public TvgMediaController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+            : base(config, loggerFactory, elasticConnectionClient, context)
         {
 
         }

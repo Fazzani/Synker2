@@ -13,6 +13,8 @@ using hfa.WebApi.Common;
 using System.Net.WebSockets;
 using Microsoft.AspNetCore.Http;
 using System.Threading;
+using hfa.WebApi.Dal;
+using Microsoft.EntityFrameworkCore;
 
 namespace Web
 {
@@ -31,6 +33,8 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            //Logger
             var loggerFactory = new LoggerFactory();
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
@@ -64,8 +68,17 @@ namespace Web
 
             services.
                 AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
-                .Configure<ApplicationConfigData>(Configuration)
-                .BuildServiceProvider();
+                .Configure<ApplicationConfigData>(Configuration);
+                
+
+           var serviceProvider =  services.AddDbContext<SynkerDbContext>(options => options
+            .UseMySql(Configuration.GetConnectionString("PlDatabase"))
+            .UseLoggerFactory(loggerFactory))
+            .BuildServiceProvider();
+
+
+            var DB = serviceProvider.GetService<SynkerDbContext>();
+            DB.Database.EnsureCreated();
 
             //services.AddApiVersioning();
 

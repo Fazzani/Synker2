@@ -12,10 +12,15 @@ namespace hfa.WebApi.Dal
     {
         public DbSet<User> Users { get; set; }
 
-        public DbSet<Message> Message { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder
-                .UseMySql(@"Server=150.80.235.155;database=playlist;uid=pl;pwd=pl;");
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+            
+        //}
+
+        public SynkerDbContext(DbContextOptions opt) : base(opt) {
+            
+        }
     }
 }

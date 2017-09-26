@@ -55,7 +55,7 @@ namespace SyncLibrary
             }
             catch (Exception e)
             {
-                _messagesService.SendAsync(e.Message, MessageIdEnum.EXCEPTION.ToString(), ts.Token).GetAwaiter().GetResult();
+                _messagesService.SendAsync(e.Message, MessageTypeEnum.EXCEPTION, ts.Token).GetAwaiter().GetResult();
                 Logger(nameof(SynchElastic)).LogCritical(e, e.Message);
                 throw;
             }
@@ -87,7 +87,7 @@ namespace SyncLibrary
         {
             var res = await SynchronizableConfigManager.LoadEncryptedConfig(options.FilePath, options.CertificateName);
 
-            await _messagesService.SendAsync($"Start Sync Elastic By {options.FilePath} config", MessageIdEnum.START_SYNC_MEDIAS.ToString(), token);
+            await _messagesService.SendAsync($"Start Sync Elastic By {options.FilePath} config", MessageTypeEnum.START_SYNC_MEDIAS, token);
 
             if (res != null & res.Sources.Any())
             {
@@ -148,7 +148,7 @@ namespace SyncLibrary
                     }
                 }
             }
-            await _messagesService.SendAsync($"End Sync Elastic By {options.FilePath} config", MessageIdEnum.END_SYNC_MEDIAS.ToString(), token);
+            await _messagesService.SendAsync($"End Sync Elastic By {options.FilePath} config", MessageTypeEnum.END_SYNC_MEDIAS, token);
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace SyncLibrary
         public static async Task SyncEpgElasticAsync(SyncEpgElasticVerb options, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken token)
         {
             Stream response = null;
-            await _messagesService.SendAsync($"Start Sync Xmltv file {options.FilePath} to Elastic", MessageIdEnum.START_SYNC_EPG_CONFIG.ToString(), token);
+            await _messagesService.SendAsync($"Start Sync Xmltv file {options.FilePath} to Elastic", MessageTypeEnum.START_SYNC_EPG_CONFIG, token);
             try
             {
                 if (!File.Exists(options.FilePath))
@@ -192,7 +192,7 @@ namespace SyncLibrary
                 response?.Close();
                 response?.Dispose();
             }
-            await _messagesService.SendAsync($"END Sync Xmltv file {options.FilePath} to Elastic", MessageIdEnum.END_SYNC_EPG_CONFIG.ToString(), token);
+            await _messagesService.SendAsync($"END Sync Xmltv file {options.FilePath} to Elastic", MessageTypeEnum.END_SYNC_EPG_CONFIG, token);
         }
 
         /// <summary>
@@ -202,7 +202,7 @@ namespace SyncLibrary
         /// <returns></returns>
         public static async Task SaveConfigAsync(SaveNewConfigVerb options, CancellationToken token)
         {
-            await _messagesService.SendAsync($"Start save new config {options.FilePath}", MessageIdEnum.END_CREATE_CONFIG.ToString(), token);
+            await _messagesService.SendAsync($"Start save new config {options.FilePath}", MessageTypeEnum.END_CREATE_CONFIG, token);
             //await SynchronizableConfigManager.SaveAndEncrypt(new ConfigSync
             //{
             //    Sources = new List<ISynchronizableConfig>
@@ -222,7 +222,7 @@ namespace SyncLibrary
 
             var res = await SynchronizableConfigManager.Load($"{options.FilePath}.loc");
             await SynchronizableConfigManager.SaveAndEncrypt(res, options.FilePath, options.CertificateName);
-            await _messagesService.SendAsync($"END save new config {options.FilePath}", MessageIdEnum.END_CREATE_CONFIG.ToString(), token);
+            await _messagesService.SendAsync($"END save new config {options.FilePath}", MessageTypeEnum.END_CREATE_CONFIG, token);
         }
 
         /// <summary>

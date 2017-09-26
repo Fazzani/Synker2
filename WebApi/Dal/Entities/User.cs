@@ -8,6 +8,7 @@ namespace hfa.WebApi.Dal.Entities
 {
     public class User
     {
+        [Key]
         public int Id { get; set; }
 
         [MaxLength(64)]
@@ -22,6 +23,6 @@ namespace hfa.WebApi.Dal.Entities
 
         public DateTime BirthDay { get; set; }
 
-        public JsonObject<List<string>> Tags { get; set; }
+        public virtual JsonObject<List<string>> Tags { get; set; }
     }
 }

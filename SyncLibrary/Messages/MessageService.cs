@@ -52,8 +52,8 @@ namespace Hfa.SyncLibrary.Messages
         /// <param name="message"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task SendAsync(string message, string type, CancellationToken cancellationToken) =>
-             SendAsync(new Message { Content = message, Type = type, Status = MessageStatus.NotReaded, TimeStamp = DateTime.Now }, cancellationToken);
+        public Task SendAsync(string message, MessageTypeEnum messageTypeype, CancellationToken cancellationToken) =>
+             SendAsync(new Message { Content = message, MessageType = messageTypeype, Status = MessageStatus.NotReaded, TimeStamp = DateTime.Now }, cancellationToken);
 
         /// <summary>
         /// Post

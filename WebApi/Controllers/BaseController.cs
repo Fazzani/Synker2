@@ -13,6 +13,7 @@ using System.Reflection;
 using hfa.SyncLibrary.Global;
 using hfa.WebApi.Common;
 using Microsoft.Extensions.Options;
+using hfa.WebApi.Dal;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -22,13 +23,15 @@ namespace Hfa.WebApi.Controllers
         protected readonly IElasticConnectionClient _elasticConnectionClient;
         protected CancellationTokenSource cancelToken;
         IOptions<ApplicationConfigData> _config;
+        SynkerDbContext context;
 
-        public BaseController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient)
+        public BaseController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
         {
             _logger = loggerFactory.CreateLogger("BaseController");
             _elasticConnectionClient = elasticConnectionClient;
             cancelToken = new CancellationTokenSource();
             _config = config;
+            this.context = context;
         }
 
         internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query) where T : class
