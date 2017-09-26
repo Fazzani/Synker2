@@ -40,8 +40,8 @@ namespace Hfa.WebApi.Controllers
                 return BadRequest(ModelState);
             var result = await _dbContext.Messages.AddAsync(message, cancelToken.Token);
             var response = await _dbContext.SaveChangesAsync();
-            //response.AssertElasticResponse();
-            return new OkObjectResult(response);
+
+            return Ok(response);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Hfa.WebApi.Controllers
             var response = await _dbContext.Messages.FindAsync(id);
             if (response == null)
                 return NotFound(id);
-            //response.AssertElasticResponse();
+
             return Ok(response);
         }
 
@@ -70,6 +70,7 @@ namespace Hfa.WebApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var response = _dbContext.Messages.OrderByDescending(x => x.Id).Take(query.PageSize).Skip(query.Skip).ToList();
+
             return Ok(response);
         }
 
@@ -85,6 +86,7 @@ namespace Hfa.WebApi.Controllers
                 return BadRequest(ModelState);
             var response = _dbContext.Messages.OrderByDescending(x => x.Id).Where(x => x.Status == messageStatus)
                 .OrderByDescending(x => x.Id).Take(pageSize).Skip(pageSize * page).ToList();
+
             return Ok(response);
         }
 
