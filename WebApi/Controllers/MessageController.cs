@@ -13,6 +13,7 @@ using hfa.WebApi.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using hfa.WebApi.Dal;
+using hfa.WebApi.Dal.Entities;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -33,12 +34,12 @@ namespace Hfa.WebApi.Controllers
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public async Task<IActionResult> Post([FromBody] Message message, [FromServices]SynkerDbContext context)
+        public async Task<IActionResult> Post([FromBody] Message message)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var result = await context.Messages.AddAsync(message, cancelToken.Token);
-            var response = await context.SaveChangesAsync();
+            var result = await _dbContext.Messages.AddAsync(message, cancelToken.Token);
+            var response = await _dbContext.SaveChangesAsync();
             //response.AssertElasticResponse();
             return new OkObjectResult(response);
         }
@@ -49,9 +50,9 @@ namespace Hfa.WebApi.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get(int id, [FromServices]SynkerDbContext context)
+        public async Task<IActionResult> Get(int id)
         {
-            var response = await context.Messages.FindAsync(id);
+            var response = await _dbContext.Messages.FindAsync(id);
             if (response == null)
                 return NotFound(id);
             //response.AssertElasticResponse();
@@ -64,11 +65,11 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("search")]
-        public IActionResult List([FromBody] QueryListBaseModel query, [FromServices]SynkerDbContext context)
+        public IActionResult List([FromBody] QueryListBaseModel query)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var response = context.Messages.OrderByDescending(x => x.Id).Take(query.PageSize).Skip(query.Skip).ToList();
+            var response = _dbContext.Messages.OrderByDescending(x => x.Id).Take(query.PageSize).Skip(query.Skip).ToList();
             return Ok(response);
         }
 
@@ -78,11 +79,11 @@ namespace Hfa.WebApi.Controllers
         /// <param name="messageStatus"></param>
         /// <returns></returns>
         [HttpGet("status/{messageStatus:int}/{page:int?}/{pageSize:int?}")]
-        public IActionResult GetByStatus(MessageStatus messageStatus, [FromServices]SynkerDbContext context, int page = 0, int pageSize = 10)
+        public IActionResult GetByStatus(MessageStatus messageStatus, int page = 0, int pageSize = 10)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var response = context.Messages.OrderByDescending(x => x.Id).Where(x => x.Status == messageStatus)
+            var response = _dbContext.Messages.OrderByDescending(x => x.Id).Where(x => x.Status == messageStatus)
                 .OrderByDescending(x => x.Id).Take(pageSize).Skip(pageSize * page).ToList();
             return Ok(response);
         }

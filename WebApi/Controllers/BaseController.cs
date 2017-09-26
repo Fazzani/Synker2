@@ -23,7 +23,7 @@ namespace Hfa.WebApi.Controllers
         protected readonly IElasticConnectionClient _elasticConnectionClient;
         protected CancellationTokenSource cancelToken;
         IOptions<ApplicationConfigData> _config;
-        SynkerDbContext context;
+        readonly protected SynkerDbContext _dbContext;
 
         public BaseController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
         {
@@ -31,7 +31,7 @@ namespace Hfa.WebApi.Controllers
             _elasticConnectionClient = elasticConnectionClient;
             cancelToken = new CancellationTokenSource();
             _config = config;
-            this.context = context;
+            this._dbContext = context;
         }
 
         internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query) where T : class

@@ -14,13 +14,23 @@ namespace hfa.WebApi.Dal
 
         public DbSet<Message> Messages { get; set; }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
             
-        //}
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+            .HasIndex(b => b.Email).IsUnique();
+
+            modelBuilder.Entity<User>()
+            .HasIndex(b => new { b.FirstName, b.LasrName });
+
+            base.OnModelCreating(modelBuilder);
+        }
 
         public SynkerDbContext(DbContextOptions opt) : base(opt) {
-            
         }
     }
 }

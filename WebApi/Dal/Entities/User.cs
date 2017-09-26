@@ -12,17 +12,20 @@ namespace hfa.WebApi.Dal.Entities
         public int Id { get; set; }
 
         [MaxLength(64)]
+        [Required]
         public string FirstName { get; set; }
 
         [MaxLength(64)]
+        [Required]
         public string LasrName { get; set; }
 
+        [Required]
         public string Email { get; set; }
 
         public string Photo { get; set; }
 
         public DateTime BirthDay { get; set; }
 
-        public virtual JsonObject<List<string>> Tags { get; set; }
+       // public virtual JsonObject<List<string>> Tags { get; set; }
     }
 }
