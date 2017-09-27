@@ -7,9 +7,10 @@
 - [ ] Typescript decorator for Sort (type:keyword or no)
 - [x] dev EPG component
 - [ ] animations
-- [ ] WebSockets (notification)
+- [ ] WebSockets (notification) [link1](https://tutorialedge.net/typescript/angular/angular-websockets-tutorial/)
 - [ ] Auth
 - [ ] Angular universal (SEO, prerender server)
+- [ ] Modulate (preloading)
 - [ ] Actions :
     - [ ] Modify
     - [ ] Disable
