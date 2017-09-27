@@ -1,8 +1,10 @@
 ﻿### TODO
 - [x] Generate new m3u file for TVH
 - [ ] Compress and cache file response (Etag)
-- [ ] Auth [link1](https://blogs.msdn.microsoft.com/webdev/2017/04/06/jwt-validation-and-authorization-in-asp-net-core/ ) [link2](http://luizcarlosfaria.net/blog/jwt-no-asp-net-core-standalone/)
-- [ ] EF https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql/blob/master/README.md
+- [x] Auth [link1](https://blogs.msdn.microsoft.com/webdev/2017/04/06/jwt-validation-and-authorization-in-asp-net-core/ ) [link2](http://luizcarlosfaria.net/blog/jwt-no-asp-net-core-standalone/)
+- [ ] token encrypt by certif
+- [ ] Authorize based policy and roles
+- [ ] EF [link](https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql/blob/master/README.md)
 - [ ] Gestion des exceptions
 - [ ] Custom Security Providers [link](https://stormpath.com/blog/store-protect-sensitive-data-dotnet-core)
 - [ ] FIX ToList (QueryProvider not working on where) in Push Method of M3uProvider when downloading a file

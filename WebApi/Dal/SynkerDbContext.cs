@@ -25,7 +25,7 @@ namespace hfa.WebApi.Dal
             .HasIndex(b => b.Email).IsUnique();
 
             modelBuilder.Entity<User>()
-            .HasIndex(b => new { b.FirstName, b.LasrName });
+            .HasIndex(b => new { b.FirstName, b.LastName });
 
             base.OnModelCreating(modelBuilder);
         }

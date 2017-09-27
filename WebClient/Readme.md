@@ -9,6 +9,11 @@
 - [ ] animations
 - [ ] WebSockets (notification) [link1](https://tutorialedge.net/typescript/angular/angular-websockets-tutorial/)
 - [ ] Auth
+  - [ ] AuthService for all Http requests
+  - [ ] Connection page
+  - [ ] Register Page
+  - [ ] Display User infos
+  - [ ] Modify User
 - [ ] Angular universal (SEO, prerender server)
 - [ ] Modulate (preloading)
 - [ ] Actions :

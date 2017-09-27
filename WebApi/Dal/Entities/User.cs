@@ -6,18 +6,19 @@ using System.Threading.Tasks;
 
 namespace hfa.WebApi.Dal.Entities
 {
-    public class User
+    public class User: EntityBase
     {
-        [Key]
-        public int Id { get; set; }
-
+        public User()
+        {
+            Roles = new List<Role>();
+        }
         [MaxLength(64)]
         [Required]
         public string FirstName { get; set; }
 
         [MaxLength(64)]
         [Required]
-        public string LasrName { get; set; }
+        public string LastName { get; set; }
 
         [Required]
         public string Email { get; set; }
@@ -25,7 +26,12 @@ namespace hfa.WebApi.Dal.Entities
         public string Photo { get; set; }
 
         public DateTime BirthDay { get; set; }
+        public string UserName { get;  set; }
 
-       // public virtual JsonObject<List<string>> Tags { get; set; }
+        public string Password { get; set; }
+
+        public DateTime LastConnection { get; set; } = DateTime.Now;
+        public virtual ICollection<Role> Roles { get; set; }
+        // public virtual JsonObject<List<string>> Tags { get; set; }
     }
 }

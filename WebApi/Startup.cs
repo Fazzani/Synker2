@@ -15,6 +15,11 @@ using Microsoft.AspNetCore.Http;
 using System.Threading;
 using hfa.WebApi.Dal;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using hfa.WebApi.Common.Auth;
 
 namespace Web
 {
@@ -33,7 +38,7 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            ConfigSecurity(services);
             //Logger
             var loggerFactory = new LoggerFactory();
             loggerFactory.AddConsole();
@@ -68,8 +73,9 @@ namespace Web
 
             services.
                 AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
-                .Configure<ApplicationConfigData>(Configuration);
-                
+                .AddScoped<IAuthentificationService, AuthentificationService>()
+                .Configure<ApplicationConfigData>(Configuration)
+                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)));
 
            var serviceProvider =  services.AddDbContext<SynkerDbContext>(options => options
             .UseMySql(Configuration.GetConnectionString("PlDatabase"))
@@ -143,6 +149,36 @@ namespace Web
                 result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             }
             await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Configure Security
+        /// </summary>
+        /// <param name="services"></param>
+        private void ConfigSecurity(IServiceCollection services)
+        {
+            var securityOptions = new SecurityOptions();
+            var jwtAppSettingOptions = Configuration.GetSection(nameof(SecurityOptions));
+            jwtAppSettingOptions.Bind(securityOptions);
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(jwtBearerOptions =>
+            {
+                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                {
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityOptions.SymmetricSecurityKey)),
+                    ValidIssuer = securityOptions.Issuer,
+                    ValidAudience = securityOptions.Audience,
+                };
+            });
+
+            services.AddAuthorization(authorizationOptions =>
+            {
+                authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
+            });
         }
     }
 }
