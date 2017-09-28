@@ -27,6 +27,7 @@
     - [ ] Fix Names
 - [ ] Mode auto sync (synchro TVH après chaque modif ou par interval de temps)
 - [ ] Xmltv view component
+- [ ] Source-map-explorer test [link](https://www.npmjs.com/package/source-map-explorer)
 
 ### Notes
 https://blog.mariusschulz.com/2017/02/24/typescript-2-2-the-object-type
