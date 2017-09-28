@@ -1,4 +1,4 @@
-﻿
+﻿![alt text](https://github.com/Fazzani/Synker2/blob/master/WebClient/wwwroot/favicon-32x32.png?raw=true)
 ##### TODO
 
 - [x] Fix pagination
@@ -15,7 +15,7 @@
   - [ ] Display User infos
   - [ ] Modify User
 - [ ] Angular universal (SEO, prerender server)
-- [ ] Modulate (preloading)
+- [ ] Modulate (preloading, LazyLoading)
 - [ ] Actions :
     - [ ] Modify
     - [ ] Disable

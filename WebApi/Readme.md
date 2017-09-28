@@ -1,4 +1,5 @@
-﻿### TODO
+﻿![alt text](https://github.com/Fazzani/Synker2/blob/master/WebClient/wwwroot/favicon-32x32.png?raw=true)
+### TODO
 - [x] Generate new m3u file for TVH
 - [ ] Compress and cache file response (Etag)
 - [x] Auth [link1](https://blogs.msdn.microsoft.com/webdev/2017/04/06/jwt-validation-and-authorization-in-asp-net-core/ ) [link2](http://luizcarlosfaria.net/blog/jwt-no-asp-net-core-standalone/)
