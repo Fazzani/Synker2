@@ -29,6 +29,8 @@
 
   <ItemGroup>
     <None Remove="ClientApp\app\infrastructure\DefaultHttpInterceptor.ts" />
+    <None Remove="ClientApp\app\services\auth\auth.service.ts" />
+    <None Remove="ClientApp\app\services\auth\loginRouteGuard.service.ts" />
     <None Remove="ClientApp\app\services\common\common.service.spec.ts" />
     <None Remove="ClientApp\app\services\common\common.service.ts" />
     <None Remove="ClientApp\app\types\elasticQuery.type.ts" />
@@ -43,6 +45,9 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\app\infrastructure\DefaultHttpInterceptor.ts" />
+    <TypeScriptCompile Include="ClientApp\app\services\auth\auth.service.spec.ts" />
+    <TypeScriptCompile Include="ClientApp\app\services\auth\auth.service.ts" />
+    <TypeScriptCompile Include="ClientApp\app\services\auth\loginRouteGuard.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\base\base.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\common\common.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\common\common.service.ts" />

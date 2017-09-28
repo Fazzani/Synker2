@@ -32,30 +32,42 @@ namespace hfa.WebApi.Controllers
         [Route("token")]
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult GetToken([FromBody] AuthModel model)
+        public async Task<IActionResult> GetToken([FromBody] AuthModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = _authentificationService.Authenticate(model.UserName, model.Password);
-            if (result == null)
+            JwtReponse jwtReponse = null;
+
+            if (model.GrantType == GrantType.Password)
+            {
+                jwtReponse = _authentificationService.Authenticate(model.UserName, model.Password);
+            }
+            else
+            {
+                jwtReponse = _authentificationService.Authenticate(model.RefreshToken);
+            }
+
+            if (jwtReponse == null)
                 return new UnauthorizedResult();
-            return Ok(result);
+
+            await _dbContext.SaveChangesAsync();
+            return Ok(jwtReponse);
         }
 
         [Route("register")]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] User user)
+        public async Task<IActionResult> Register([FromBody] RegisterModel user)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (_dbContext.Users.Any(x => x.Email == user.Email) || _dbContext.Users.Any(x => x.UserName == user.UserName))
+            if (_dbContext.Users.Any(x => x.Email == user.Email) || _dbContext.Users.Any(x => x.ConnectionState.UserName == user.UserName))
                 return BadRequest($"User {user.UserName} already exist");
 
             user.Password = user.Password.HashPassword(_authentificationService.Salt);
-            var result = await _dbContext.Users.AddAsync(user);
+            var result = await _dbContext.Users.AddAsync(user.Entity);
 
             return Ok(await _dbContext.SaveChangesAsync());
         }
