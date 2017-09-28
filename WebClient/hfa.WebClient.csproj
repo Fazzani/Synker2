@@ -54,6 +54,7 @@
     <TypeScriptCompile Include="ClientApp\app\services\tvgmedia\tvgmedia.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\epg\epg.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\elasticQuery.type.ts" />
+    <TypeScriptCompile Include="ClientApp\app\types\auth.type.ts" />
   </ItemGroup>
 
   <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot\dist') ">

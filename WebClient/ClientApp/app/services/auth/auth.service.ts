@@ -1,6 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BaseService } from '../base/base.service';
+import { AuthResponse } from '../../types/auth.type';
 // All the RxJS stuff we need
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
@@ -14,15 +15,8 @@ export class AuthService extends BaseService {
         super(http);
     }
 
-    get(id: string): Observable<boolean> {
-        return this.http.get(BaseService.URL_API_BASE + 'epg/' + id).map(this.parseData)
+    Signin(userName: string, password: string): Observable<AuthResponse> {
+        return this.http.post(BaseService.URL_API_BASE + 'token', { userName, password }).map(this.parseData)
             .catch(this.handleError);
     }
-
-    list(query: ElasticQuery): Observable<ElasticResponse<tvChannel>> {
-        return this.http.post(BaseService.URL_API_BASE + 'epg/_search/', query).map(res => {
-            return res;
-        }).catch(this.handleError);
-    }
-
 }
