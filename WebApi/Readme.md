@@ -10,3 +10,8 @@
 - [ ] Custom Security Providers [link](https://stormpath.com/blog/store-protect-sensitive-data-dotnet-core)
 - [ ] FIX ToList (QueryProvider not working on where) in Push Method of M3uProvider when downloading a file
 - [ ] WebSockets [link1](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/websockets)
+- [ ] Xmltv services
+  - [ ] Upload files
+  - [ ] Config customs xmltv feeds from channels and by user
+  - [ ] Purge uploaded files
+  - [ ] Get Epg for XmltvCompnent by channel and dateTime range

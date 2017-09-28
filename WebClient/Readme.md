@@ -15,8 +15,10 @@
   - [ ] Display User infos
   - [ ] Modify User
 - [ ] Angular universal (SEO, prerender server)
-- [ ] Modulate (preloading, LazyLoading)
-- [ ] Actions :
+- [ ] Optim by angular module
+  - [ ] LazyLoading
+  - [ ] preloading
+- [ ] Toolbar actions :
     - [ ] Modify
     - [ ] Disable
     - [ ] Update TVH
@@ -24,6 +26,7 @@
     - [ ] Auto Group
     - [ ] Fix Names
 - [ ] Mode auto sync (synchro TVH après chaque modif ou par interval de temps)
+- [ ] Xmltv view component
 
 ### Notes
 https://blog.mariusschulz.com/2017/02/24/typescript-2-2-the-object-type
