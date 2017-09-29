@@ -1,0 +1,28 @@
+﻿<!--TODO add Gender input -->
+<md-select placeholder="Gender">
+    <md-option *ngFor="let gender of data.genders" [value]="data.gender">
+        {{ gender.viewValue }}
+    </md-option>
+</md-select>
+<md-form-field>
+    <input mdInput [(ngModel)]="data.firstname" placeholder="firstname...">
+</md-form-field>
+<md-form-field>
+    <input mdInput [(ngModel)]="data.lastname" placeholder="Lastname...">
+</md-form-field>
+<md-form-field>
+    <input mdInput [(ngModel)]="data.email" placeholder="Email...">
+</md-form-field>
+<md-form-field>
+    <input mdInput [mdDatepicker]="picker" placeholder="Choose a Birthday">
+    <md-datepicker-toggle mdSuffix [for]="picker"></md-datepicker-toggle>
+    <md-datepicker #picker></md-datepicker>
+</md-form-field>
+<md-form-field>
+    <input mdInput [(ngModel)]="data.photo" placeholder="Photo...">
+    <img [src]="data.photo" class="logo-medium" />
+</md-form-field>
+<md-action-row>
+    <button md-raised-button (click)="dialogRef.close()">Cancel</button>
+    <button md-raised-button (click)="dialogRef.save()">Save</button>
+</md-action-row>

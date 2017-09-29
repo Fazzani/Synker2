@@ -12,6 +12,7 @@ import { HomeComponent } from './components/home/home.component';
 import { MediaComponent, TvgMediaModifyDialog } from './components/media/media.component';
 import { EpgComponent, EpgModifyDialog } from './components/epg/epg.component';
 
+import { AuthService } from './services/auth/auth.service';
 import { TvgMediaService } from './services/tvgmedia/tvgmedia.service';
 import { EpgService } from './services/epg/epg.service';
 import { MessageService } from './services/message/message.service';
@@ -54,6 +55,7 @@ const appRoutes: Routes = [
         TvgMediaService,
         CommonService,
         MessageService,
+        AuthService,
         EpgService,
         {
             provide: HTTP_INTERCEPTORS,

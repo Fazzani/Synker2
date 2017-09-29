@@ -1,0 +1,9 @@
+﻿<md-form-field>
+    <input mdInput [(ngModel)]="data.username" placeholder="Username...">
+</md-form-field>
+<md-form-field>
+    <input mdInput type="password" [(ngModel)]="data.password" placeholder="Password...">
+</md-form-field>
+<md-action-row>
+    <button md-raised-button (click)="dialogRef.login()">Login</button>
+</md-action-row>
