@@ -15,13 +15,19 @@
             alt="GitHub">
           GitHub
         </a>
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown" *ngIf="isAuthenticated">
+            <img [src]="user.photo" class="profile-image img-circle">{{user.given_name}}</a>
     <a md-icon-button [mdMenuTriggerFor]="menu">
         <md-icon>more_vert</md-icon>
     </a>
     <md-menu #menu="mdMenu">
-        <button md-menu-item>
+        <button md-menu-item [routerLink]="['/signin', {modal: 'true', 'dialog': 'signin'}]">
                 <md-icon>fingerprint</md-icon>
                 <span>Login</span>
+            </button>
+        <button md-menu-item (click)="signout()">
+                <md-icon>fingerprint</md-icon>
+                <span>Sign out</span>
             </button>
         <button md-menu-item disabled>
                 <md-icon>announcement</md-icon>

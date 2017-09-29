@@ -22,6 +22,10 @@ namespace hfa.WebApi.Models
         Password = 0,
         RefreshToken
     }
+    public class TokenModel
+    {
+        public string Token { get; set; }
+    }
     public class RegisterModel
     {
         public RegisterModel()

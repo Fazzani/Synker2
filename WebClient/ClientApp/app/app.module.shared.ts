@@ -11,6 +11,8 @@ import { AppComponent } from './components/app/app.component';
 import { HomeComponent } from './components/home/home.component';
 import { MediaComponent, TvgMediaModifyDialog } from './components/media/media.component';
 import { EpgComponent, EpgModifyDialog } from './components/epg/epg.component';
+import { DialogComponent, LoginDialog } from './components/shared/dialogs/dialog.component';
+import { LoginRouteGuard } from './services/auth/loginRouteGuard.service';
 
 import { AuthService } from './services/auth/auth.service';
 import { TvgMediaService } from './services/tvgmedia/tvgmedia.service';
@@ -20,13 +22,16 @@ import { CommonService } from './services/common/common.service';
 import { BaseService } from './services/base/base.service';
 import { NgHttpLoaderModule } from 'ng-http-loader/ng-http-loader.module';
 import { NavBarModule } from './components/shared/navbar/navbar';
+
+import { TokenInterceptor } from './services/auth/token.interceptor';
 import { DefaultHttpInterceptor } from './infrastructure/DefaultHttpInterceptor'
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: 'home', component: HomeComponent },
-    { path: 'tvgmedia', component: MediaComponent },
-    { path: 'epg', component: EpgComponent },
+    { path: 'tvgmedia', component: MediaComponent, canActivate: [LoginRouteGuard] },
+    { path: 'epg', component: EpgComponent, canActivate: [LoginRouteGuard] },
+    { path: 'signin', component: DialogComponent },
     { path: '**', redirectTo: 'home' }
 ];
 
@@ -37,7 +42,9 @@ const appRoutes: Routes = [
         MediaComponent,
         EpgComponent,
         TvgMediaModifyDialog,
-        EpgModifyDialog
+        EpgModifyDialog,
+        DialogComponent,
+        LoginDialog
     ],
     imports: [
         BrowserModule,
@@ -49,17 +56,22 @@ const appRoutes: Routes = [
         NavBarModule,
         RouterModule.forRoot(appRoutes, { enableTracing: false })
     ],
-    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog],
+    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog],
     providers: [
         CommonService,
         TvgMediaService,
         CommonService,
         MessageService,
         AuthService,
+        LoginRouteGuard,
         EpgService,
         {
             provide: HTTP_INTERCEPTORS,
             useClass: DefaultHttpInterceptor,
+            multi: true
+        }, {
+            provide: HTTP_INTERCEPTORS,
+            useClass: TokenInterceptor,
             multi: true
         }]
 })

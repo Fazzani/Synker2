@@ -66,9 +66,28 @@ namespace hfa.WebApi.Common.Auth
             return null;
         }
 
+        /// <summary>
+        /// Revoke by  refreshtoken or accessToken
+        /// </summary>
+        /// <param name="AccessToken"></param>
+        /// <returns></returns>
+        public void RevokeToken(string accessTokenOrRefreshToken)
+        {
+            var user = _synkerDbContext
+                .Users
+                .Include(x => x.ConnectionState)
+                .SingleOrDefault(it => it.ConnectionState.AccessToken == accessTokenOrRefreshToken || it.ConnectionState.RefreshToken == accessTokenOrRefreshToken);
+
+            if (user != null && ValidateToken(user.ConnectionState.AccessToken))
+            {
+                user.ConnectionState.RefreshToken = null;
+                user.ConnectionState.AccessToken = null;
+            }
+        }
+
         private JwtReponse GenerateToken(Dal.Entities.User user)
         {
-            List<Claim> claims = GetClaims(user);
+            var claims = GetClaims(user);
 
             var jwt = new JwtSecurityToken(
                 issuer: _securityOptions.Value.Issuer,
@@ -101,10 +120,9 @@ namespace hfa.WebApi.Common.Auth
                     ValidateIssuerSigningKey = true
                 };
 
-                SecurityToken securityToken;
                 try
                 {
-                    var principal = jwtHandler.ValidateToken(accessToken, validationParameters, out securityToken);
+                    var principal = jwtHandler.ValidateToken(accessToken, validationParameters, out SecurityToken securityToken);
                     return securityToken != null;
                 }
                 catch (SecurityTokenException)
@@ -128,11 +146,14 @@ namespace hfa.WebApi.Common.Auth
                 new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
                 new Claim(JwtRegisteredClaimNames.Exp, Expiration.ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, IssuedAt.ToString()),
+                new Claim("photo", user.Photo),
+                new Claim("gender", user.Gender.ToString()),
                 new Claim(JwtRegisteredClaimNames.Nbf, DateTime.UtcNow.ToString())
                     };
             if (user.Roles.Any())
                 claims.AddRange(user.Roles.Select(x => new Claim("role", x.Libelle)));
             return claims;
+            
         }
     }
     public class JwtReponse

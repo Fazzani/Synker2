@@ -1,16 +1,21 @@
 import { Component, NgModule, OnInit, Inject } from '@angular/core';
-import { MdButtonModule, MdMenuModule, MdIconModule, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MdButtonModule, MdMenuModule, MdDialogRef, MD_DIALOG_DATA, MdSnackBar, MdDialog } from '@angular/material';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../../../services/auth/auth.service';
-
+import { AuthResponse, User } from '../../../types/auth.type';
+import { AppModuleMaterialModule } from '../../../app.module.material.module';
+import { Observable } from "rxjs/Observable";
 import './navbar.scss';
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
     selector: 'app-navbar',
     templateUrl: './navbar.html',
-    providers: [AuthService]
 })
 export class NavBar implements OnInit {
+    isAuthenticated: boolean;
+    user: User;
 
     color: string = "primary";
 
@@ -19,34 +24,20 @@ export class NavBar implements OnInit {
     }
 
     ngOnInit(): void {
-        var login = { username: "tunisienheni@outlook.com", password: "password2" };
-
-        this.authService.Signin(login.username, login.password).map(res => { console.log(res); });
+        this.user = this.authService.getUser();
+        this.isAuthenticated = this.authService.isAuthenticated();
     }
-}
 
-@Component({
-    selector: 'login-dialog',
-    templateUrl: './login.dialog.html'
-})
-export class LoginDialog {
-
-    constructor(
-        public dialogRef: MdDialogRef<any>,
-        @Inject(MD_DIALOG_DATA) public data: any) { }
-
-    onNoClick(): void {
-        this.dialogRef.login();
+    signout(): void {
+        this.authService.signout();
     }
 
 }
 
 @NgModule({
-    imports: [MdButtonModule, MdMenuModule, MdIconModule, RouterModule],
+    imports: [MdButtonModule, MdMenuModule, RouterModule, FormsModule, AppModuleMaterialModule, CommonModule],
     exports: [NavBar],
-    declarations: [NavBar],
+    declarations: [NavBar]
 })
 export class NavBarModule {
-
-
 }

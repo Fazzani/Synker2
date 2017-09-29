@@ -20,6 +20,13 @@ namespace hfa.WebApi.Common.Auth
         JwtReponse Authenticate(string refreshToken);
 
         /// <summary>
+        /// Revoke by  refreshtoken or accessToken
+        /// </summary>
+        /// <param name="AccessToken"></param>
+        /// <returns></returns>
+        void RevokeToken(string accessTokenOrRefreshToken);
+
+        /// <summary>
         /// Validate Access token
         /// </summary>
         /// <param name="accessToken"></param>

@@ -55,6 +55,19 @@ namespace hfa.WebApi.Controllers
             return Ok(jwtReponse);
         }
 
+        [Route("revoketoken")]
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> RevokeToken([FromBody] TokenModel tokenModel)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            _authentificationService.RevokeToken(tokenModel.Token);
+            await _dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
         [Route("register")]
         [AllowAnonymous]
         [HttpPost]

@@ -23,6 +23,6 @@
 
         public string SymmetricSecurityKey { get; set; }
         public string CertificateName { get; set; }
-        public double TokenLifetimeInMinutes { get; internal set; }
+        public int TokenLifetimeInMinutes { get;  set; }
     }
 }

@@ -48,7 +48,7 @@ export class MediaComponent implements OnInit, OnDestroy {
         this.paginator.pageSize = storedQuery != null ? storedQuery.size : this.paginator.pageSizeOptions[0];
         this.filter.nativeElement.value = storedQuery != null && storedQuery.query != null && storedQuery.query != {} ? JSON.stringify(storedQuery.query) : "";
 
-        if (storedQuery != null) {
+        if (storedQuery != null && storedQuery.sort !== undefined) {
             this.sort.active = Object.keys(storedQuery.sort)[0];
             this.sort.direction = storedQuery.sort[this.sort.active].order;
         }
