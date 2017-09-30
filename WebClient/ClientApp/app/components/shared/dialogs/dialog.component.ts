@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { MdButtonModule, MdMenuModule, MdDialogRef, MD_DIALOG_DATA, MdSnackBar, MdDialog } from '@angular/material';
 import { AuthService } from '../../../services/auth/auth.service';
+import { Login } from '../../../types/auth.type';
 
 @Component({
     selector: 'synker-dialog',
@@ -23,7 +24,7 @@ export class DialogComponent implements OnInit {
     }
 
     openLoginDialog(): void {
-        let data = { username: '', password: '' };
+        let data = new Login();
         setTimeout(() => {
             let dialogRef = this.dialog.open(LoginDialog, {
                 // width: '550px',

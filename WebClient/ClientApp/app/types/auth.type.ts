@@ -20,3 +20,6 @@ export interface User {
     Photo: string;
 }
 
+export class Login {
+    constructor(email?: string, password?: string) { }
+}

@@ -1,6 +1,7 @@
 ﻿# Notes
  - dotnet publish -r linux-arm -o Y:\SyncPlaylist
  - OCTOPUS deploy
+ - [Commande nuget package](https://github.com/gsscoder/commandline) used
 #### TODO
 - [ ] Diff to update properties only (epg, group, position, logo, urls for mutli) on (Elastic => TVH)
 - [ ] Use FormatableString for to string the different file's formats
