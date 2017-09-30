@@ -57,3 +57,39 @@ md-card {
 md-toolbar-row {
     justify-content: space-between;
 }
+
+.svg {
+    fill: #8c1212;
+    position: absolute;
+    height: 100%;
+    left: 80vh;
+    animation: kaboom 5s 0.5s ease infinite;
+}
+
+@keyframes kaboom {
+    30% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes popup {
+    0% {
+        transform: translateY(150px);
+    }
+
+    34% {
+        transform: translateY(20px);
+    }
+
+    37% {
+        transform: translateY(150px);
+    }
+
+    100% {
+        transform: translateY(150px);
+    }
+}
