@@ -1,41 +1,42 @@
 <!-- TODO: figure out if the <nav> should go inside of a <header> element. -->
 <nav class="docs-navbar">
     <a md-button class="docs-button" routerLink="/" aria-label="Synker">
-          <img class="docs-angular-logo"
-            src="../../../../../wwwroot/assets/img/Mj2wCGp6m8.svg"
-            alt="Synker">
-          <span>Synker</span>
-        </a>
+        <img class="docs-angular-logo svglogo"
+             src="../../../../../wwwroot/assets/img/Mj2wCGp6m8.svg"
+             alt="Synker">
+        <span>Synker</span>
+    </a>
     <a md-button class="docs-button" routerLink="/tvgmedia">Medias</a>
     <a md-button class="docs-button" routerLink="/epg">EPG</a>
     <div class="spacer"></div>
     <a md-button class="docs-button" href="https://github.com/Fazzani/Synker2" aria-label="GitHub Repository">
-          <img class="docs-github-logo"
-            src="../../../../../wwwroot/assets/img/bubbles2.svg"
-            alt="GitHub">
-          GitHub
-        </a>
+        <img class="docs-github-logo"
+             src="../../../../../wwwroot/assets/img/bubbles2.svg"
+             alt="GitHub">
+        GitHub
+    </a>
     <a href="#" class="dropdown-toggle" data-toggle="dropdown" *ngIf="isAuthenticated">
-            <img [src]="user.photo" class="profile-image img-circle">{{user.given_name}}</a>
+        <img [src]="user.photo" class="profile-image img-circle">
+    </a>
     <a md-icon-button [mdMenuTriggerFor]="menu">
         <md-icon>more_vert</md-icon>
     </a>
     <md-menu #menu="mdMenu">
-        <button md-menu-item [routerLink]="['/signin', {modal: 'true', 'dialog': 'signin'}]">
-                <md-icon>fingerprint</md-icon>
-                <span>Login</span>
-            </button>
-        <button md-menu-item (click)="signout()">
-                <md-icon>fingerprint</md-icon>
-                <span>Sign out</span>
-            </button>
-        <button md-menu-item disabled>
-                <md-icon>announcement</md-icon>
-                <span>Issues</span>
-            </button>
+        <button md-menu-item [routerLink]="['/signin', {modal: 'true', 'dialog': 'signin'}]" *ngIf="!isAuthenticated">
+            <md-icon>perm_identity</md-icon>
+            <span>Login</span>
+        </button>
+        <button md-menu-item *ngIf="isAuthenticated">
+            <img [src]="user.photo" class="profile-image img-circle">
+            <span>{{user.given_name}}</span>
+        </button>
         <button md-menu-item>
-                <md-icon>notifications_off</md-icon>
-                <span>Disable alerts</span>
-            </button>
+            <md-icon>notifications_off</md-icon>
+            <span>Disable alerts</span>
+        </button>
+        <button md-menu-item (click)="signout()" *ngIf="isAuthenticated">
+            <md-icon>power_settings_new</md-icon>
+            <span>Sign out</span>
+        </button>
     </md-menu>
 </nav>
