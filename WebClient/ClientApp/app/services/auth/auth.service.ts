@@ -108,7 +108,6 @@ export class AuthService extends BaseService {
     public revokeToken(): void {
 
         let token: string = this.getToken();
-        debugger;
         if (token != null) {
 
             // Revocation endpoint & params.  

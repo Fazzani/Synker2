@@ -24,19 +24,18 @@ export class DialogComponent implements OnInit {
 
     openLoginDialog(): void {
         let data = { username: '', password: '' };
-        let dialogRef = this.dialog.open(LoginDialog, {
-            // width: '550px',
-            // height: '500px',
-            data: data
+        setTimeout(() => {
+            let dialogRef = this.dialog.open(LoginDialog, {
+                // width: '550px',
+                // height: '500px',
+                data: data
+            }).afterClosed().subscribe(result => {
+                if (result) {
+
+                }
+            });
         });
 
-        dialogRef.afterClosed().subscribe(result => {
-            this.authService.Signin(data.username, data.password).subscribe(res => {
-                this.snackBar.open(`${res.accessToken} refreshToken ${res.refreshToken}`);
-                console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
-            },
-                err => console.log(err))
-        });
     }
 }
 
@@ -47,12 +46,15 @@ export class DialogComponent implements OnInit {
 })
 export class LoginDialog {
 
-    constructor(
-        public dialogRef: MdDialogRef<any>,
-        @Inject(MD_DIALOG_DATA) public data: any) { }
-
-    onNoClick(): void {
-        this.dialogRef.close();
+    constructor(public dialogRef: MdDialogRef<LoginDialog>, private authService: AuthService) {
     }
 
+    login(data: any): void {
+        if (data != '')
+            this.authService.Signin(data.value.username, data.value.password).subscribe(res => {
+                console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
+                this.dialogRef.close(true);
+            },
+                err => console.log(err))
+    }
 }
