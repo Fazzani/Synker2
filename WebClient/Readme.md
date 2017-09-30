@@ -9,11 +9,12 @@
 - [ ] animations
 - [ ] WebSockets (notification) [link1](https://tutorialedge.net/typescript/angular/angular-websockets-tutorial/)
 - [ ] Auth [link1](http://www.c-sharpcorner.com/article/authentication-with-angular-2-app-front-end-and-asp-net-webapi-backend/) [link2](https://github.com/auth0/angular2-jwt/tree/v1.0) [link3](https://auth0.com/blog/introducing-angular2-jwt-a-library-for-angular2-authentication/)
-  - [ ] AuthService for all Http requests 
-  - [ ] Connection page
+  - [x] AuthService for all Http requests 
+  - [x] Connection page
   - [ ] Register Page
   - [ ] Display User infos
   - [ ] Modify User
+  - [ ] schedule refresh token [link](http://blog.ionic.io/ionic-2-and-auth0/)
 - [ ] Angular universal (SEO, prerender server)
 - [ ] Optim by angular module [Link](https://angular.io/guide/ngmodule#feature-modules)
   - [ ] Modulariser l'application by Feature/Module

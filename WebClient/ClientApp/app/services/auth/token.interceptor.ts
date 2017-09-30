@@ -18,6 +18,8 @@ export class TokenInterceptor implements HttpInterceptor {
 
         this.auth = this.injector.get(AuthService);
 
+        console.log(TokenInterceptor.name);
+
         request = request.clone({
             setHeaders: {
                 Authorization: `Bearer ${this.auth.getToken()}`

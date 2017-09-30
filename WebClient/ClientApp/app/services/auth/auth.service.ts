@@ -1,4 +1,5 @@
 ﻿import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BaseService } from '../base/base.service';
 import { AuthResponse, User } from '../../types/auth.type';
@@ -6,11 +7,16 @@ import { AuthResponse, User } from '../../types/auth.type';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+
 
 import { JwtHelper, tokenNotExpired } from 'angular2-jwt';
 
 @Injectable()
 export class AuthService extends BaseService {
+
+    authenticated: BehaviorSubject<boolean>;
+    user: BehaviorSubject<User>;
 
     private TOKEN_ENDPOINT: string;
     private REVOCATION_ENDPOINT: string;
@@ -22,12 +28,13 @@ export class AuthService extends BaseService {
     /**
     * User's data. 
     */
-    private user: User;
 
-    constructor(protected http: HttpClient) {
+    constructor(protected http: HttpClient, private router: Router) {
         super(http);
         this.TOKEN_ENDPOINT = BaseService.URL_API_BASE + 'auth/token';
         this.REVOCATION_ENDPOINT = BaseService.URL_API_BASE + 'auth/revoketoken';
+        this.authenticated = new BehaviorSubject(false);
+        this.user = new BehaviorSubject(null);
     }
 
     public getToken(): string {
@@ -35,12 +42,16 @@ export class AuthService extends BaseService {
         return localStorage.getItem('accessToken');
     }
 
-
-    public isAuthenticated(): boolean {
+    public isAuthenticated(): void {
         // return a boolean reflecting 
         // whether or not the token is expired
-        var res = tokenNotExpired('accessToken');
-        return res;
+        let res = tokenNotExpired('accessToken');
+        if (!res) {
+            //Try to refresh it
+            this.getNewToken();
+            res = tokenNotExpired('accessToken');
+        }
+        this.decodeToken();
     }
 
     /**
@@ -58,7 +69,7 @@ export class AuthService extends BaseService {
 
                     // Stores access token & refresh token.  
                     this.store(res);
-
+                    this.router.navigateByUrl(this.redirectUrl);
                 }
                 return res;
             });
@@ -69,7 +80,7 @@ export class AuthService extends BaseService {
      */
     public getNewToken(): void {
 
-        let refreshToken: string = this.getToken();
+        let refreshToken: string = localStorage.getItem('refreshToken');
 
         if (refreshToken != null) {
 
@@ -77,25 +88,19 @@ export class AuthService extends BaseService {
             let tokenEndpoint: string = this.TOKEN_ENDPOINT;
 
             let params: any = {
-                grant_type: 1,
-                refresh_token: refreshToken
+                grantType: 1,
+                refreshToken: refreshToken
             };
 
-            // Encodes the parameters.  
-            let body: string = this.encodeParams(params);
-
-            this.http.post(tokenEndpoint, body)
+            this.http.post(tokenEndpoint, params)
                 .subscribe(
-                (res: Response) => {
-
-                    let body: any = res.json();
+                (res: AuthResponse) => {
 
                     // Successful if there's an access token in the response.  
-                    if (typeof body.access_token !== 'undefined') {
-
+                    if (typeof res.accessToken !== 'undefined') {
+                        this.decodeToken();
                         // Stores access token & refresh token.  
-                        this.store(body);
-
+                        this.store(res);
                     }
 
                 });
@@ -170,11 +175,10 @@ export class AuthService extends BaseService {
     /**
      * Get authenticated user
      */
-    public getUser(): User {
-        if (!this.user)
-            this.decodeToken();
-        return this.user;
+    public getUser(): void {
+        this.decodeToken();
     }
+
     /** 
      * Decodes token through JwtHelper. 
      */
@@ -185,8 +189,8 @@ export class AuthService extends BaseService {
             let token: string = this.getToken();
 
             let jwtHelper: JwtHelper = new JwtHelper();
-            this.user = jwtHelper.decodeToken(token);
-
+            this.authenticated.next(true);
+            this.user.next(jwtHelper.decodeToken(token));
         }
 
     }

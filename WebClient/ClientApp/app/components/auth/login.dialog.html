@@ -2,10 +2,10 @@
 <form #UserLogin="ngForm" (ngSubmit)="login(UserLogin.form)">
     <md-dialog-content>
         <md-form-field>
-            <input mdInput [(ngModel)]="username" name="username" placeholder="Username..." required>
+            <input mdInput [(ngModel)]="username" name="username" placeholder="Username...">
         </md-form-field>
         <md-form-field>
-            <input mdInput type="password" [(ngModel)]="password" name="password" placeholder="Password..." required>
+            <input mdInput type="password" [(ngModel)]="password" name="password" placeholder="Password...">
         </md-form-field>
     </md-dialog-content>
     <md-dialog-actions>
