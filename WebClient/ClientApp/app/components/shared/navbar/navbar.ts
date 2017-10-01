@@ -1,6 +1,6 @@
 import { Component, NgModule, OnInit, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MdButtonModule, MdMenuModule, MdDialogRef, MD_DIALOG_DATA, MdSnackBar, MdDialog } from '@angular/material';
 import { RouterModule } from '@angular/router';
 import { AppModuleMaterialModule } from '../../../app.module.material.module';
@@ -11,6 +11,7 @@ import './navbar.scss';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/first';
 import 'rxjs/add/operator/take';
+import { EqualValidator } from '../../../directives/equal-validator.directive';
 
 @Component({
     selector: 'app-navbar',
@@ -37,9 +38,10 @@ export class NavBar implements OnInit {
 }
 
 @NgModule({
-    imports: [MdButtonModule, MdMenuModule, RouterModule, FormsModule, AppModuleMaterialModule, CommonModule],
-    exports: [NavBar],
-    declarations: [NavBar]
+    imports: [MdButtonModule, MdMenuModule, RouterModule, FormsModule, AppModuleMaterialModule, CommonModule, ReactiveFormsModule],
+    exports: [NavBar, EqualValidator],
+    declarations: [NavBar, EqualValidator]
+
 })
 export class NavBarModule {
 }

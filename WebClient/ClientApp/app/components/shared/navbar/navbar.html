@@ -15,10 +15,19 @@
              alt="GitHub">
         GitHub
     </a>
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown" *ngIf="(isAuthenticated | async)">
+    <a md-button class="docs-button" [routerLink]="['/signin', {modal: 'true', 'dialog': 'signin'}]" aria-label="Sign in" *ngIf="!(isAuthenticated| async)">
+        <md-icon>perm_identity</md-icon>
+        <span>Sign in</span>
+    </a>
+    <a md-button class="docs-button" [routerLink]="['/register', {modal: 'true', 'dialog': 'register'}]" aria-label="Register"
+        *ngIf="!(isAuthenticated| async)">
+        <md-icon>fingerprint</md-icon>
+        <span>Register</span>
+    </a>
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
         <img [src]="(user | async)?.photo" class="profile-image img-circle">
     </a>
-    <a md-icon-button [mdMenuTriggerFor]="menu">
+    <a md-icon-button [mdMenuTriggerFor]="menu" *ngIf="(isAuthenticated | async)">
         <md-icon>more_vert</md-icon>
     </a>
     <md-menu #menu="mdMenu">

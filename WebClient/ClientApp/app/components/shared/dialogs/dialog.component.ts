@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
-import { MdButtonModule, MdMenuModule, MdDialogRef, MD_DIALOG_DATA, MdSnackBar, MdDialog } from '@angular/material';
+import { MdButtonModule, MdMenuModule, MdDialogRef, MD_DIALOG_DATA, MdSnackBar, MdDialog, MdDialogConfig } from '@angular/material';
 import { AuthService } from '../../../services/auth/auth.service';
-import { Login } from '../../../types/auth.type';
+import { Login, User, RegisterUser } from '../../../types/auth.type';
 
 @Component({
     selector: 'synker-dialog',
@@ -20,15 +20,23 @@ export class DialogComponent implements OnInit {
             if (params["modal"] == 'true' && params["dialog"] == 'signin') {
                 this.openLoginDialog();
             }
+            else
+                if (params["modal"] == 'true' && params["dialog"] == 'register') {
+                    this.openRegisterDialog();
+                }
         });
     }
 
+    /**
+     * Open login dialog
+     * 
+     * @memberof DialogComponent
+     */
     openLoginDialog(): void {
-        let data = new Login();
+        let data = <Login>{};
         setTimeout(() => {
-            let dialogRef = this.dialog.open(LoginDialog, {
-                // width: '550px',
-                // height: '500px',
+            let dialogRef = this.dialog.open(LoginDialog, <MdDialogConfig>{
+                disableClose: true,
                 data: data
             }).afterClosed().subscribe(result => {
                 if (result) {
@@ -36,7 +44,27 @@ export class DialogComponent implements OnInit {
                 }
             });
         });
+    }
 
+    /**
+     * Open Register dialog
+     * 
+     * @memberof DialogComponent
+     */
+    openRegisterDialog(): void {
+
+        let data = <RegisterUser>{};
+        data.genders = ["Mr, Mrs"];
+        setTimeout(() => {
+            let dialogRef = this.dialog.open(RegisterDialog, <MdDialogConfig>{
+                disableClose: true,
+                data: data
+            }).afterClosed().subscribe(result => {
+                if (result) {
+
+                }
+            });
+        });
     }
 }
 
@@ -50,9 +78,28 @@ export class LoginDialog {
     constructor(public dialogRef: MdDialogRef<LoginDialog>, private authService: AuthService) {
     }
 
-    login(data: any): void {
-        if (data != '')
-            this.authService.Signin(data.value.username, data.value.password).subscribe(res => {
+    login(user: Login): void {
+        if (user != null)
+            this.authService.Signin(user.username, user.password).subscribe(res => {
+                console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
+                this.dialogRef.close(true);
+            },
+                err => console.log(err))
+    }
+}
+
+@Component({
+    selector: 'regiser-dialog',
+    templateUrl: '../../../components/auth/register.dialog.html'
+})
+export class RegisterDialog {
+
+    constructor( @Inject(MD_DIALOG_DATA) public data: any, public dialogRef: MdDialogRef<RegisterDialog>, private authService: AuthService) {
+    }
+
+    register(registerUser: RegisterUser): void {
+        if (registerUser != null)
+            this.authService.Register(registerUser).subscribe(res => {
                 console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
                 this.dialogRef.close(true);
             },

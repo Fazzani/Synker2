@@ -20,6 +20,17 @@ export interface User {
     Photo: string;
 }
 
-export class Login {
-    constructor(email?: string, password?: string) { }
+export interface RegisterUser extends User, Login {
+
+    genders: string[];
+}
+/**
+* Login Model
+* 
+* @export
+* @class Login
+*/
+export interface Login {
+    username: string;
+    password: string;
 }

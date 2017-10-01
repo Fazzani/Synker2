@@ -1,6 +1,7 @@
 ﻿![alt text](https://github.com/Fazzani/Synker2/blob/master/WebClient/wwwroot/favicon-32x32.png?raw=true)
 ### TODO
 - [x] Generate new m3u file for TVH
+- [ ] Attach playlits to users (add user to playlists)
 - [ ] Compress and cache file response (Etag)
 - [x] Auth [link1](https://blogs.msdn.microsoft.com/webdev/2017/04/06/jwt-validation-and-authorization-in-asp-net-core/ ) [link2](http://luizcarlosfaria.net/blog/jwt-no-asp-net-core-standalone/)
 - [ ] token encrypt by certif
@@ -15,3 +16,5 @@
   - [ ] Config customs xmltv feeds from channels and by user
   - [ ] Purge uploaded files
   - [ ] Get Epg for XmltvCompnent by channel and dateTime range
+- [ ] Config SSL encrypt [link1](https://certbot.eff.org/#debianstretch-other)
+- [ ] Config smtp [link1](https://wiki.debian-fr.xyz/Configuration_d%27un_serveur_mail_avec_Postfix)

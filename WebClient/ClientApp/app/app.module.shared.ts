@@ -11,7 +11,7 @@ import { AppComponent } from './components/app/app.component';
 import { HomeComponent } from './components/home/home.component';
 import { MediaComponent, TvgMediaModifyDialog } from './components/media/media.component';
 import { EpgComponent, EpgModifyDialog } from './components/epg/epg.component';
-import { DialogComponent, LoginDialog } from './components/shared/dialogs/dialog.component';
+import { DialogComponent, LoginDialog, RegisterDialog } from './components/shared/dialogs/dialog.component';
 import { LoginRouteGuard } from './services/auth/loginRouteGuard.service';
 
 import { AuthService } from './services/auth/auth.service';
@@ -32,6 +32,7 @@ const appRoutes: Routes = [
     { path: 'tvgmedia', component: MediaComponent, canActivate: [LoginRouteGuard] },
     { path: 'epg', component: EpgComponent, canActivate: [LoginRouteGuard] },
     { path: 'signin', component: DialogComponent },
+    { path: 'register', component: DialogComponent },
     { path: '**', redirectTo: 'home' }
 ];
 
@@ -44,7 +45,8 @@ const appRoutes: Routes = [
         TvgMediaModifyDialog,
         EpgModifyDialog,
         DialogComponent,
-        LoginDialog
+        LoginDialog,
+        RegisterDialog
     ],
     imports: [
         BrowserModule,
@@ -56,7 +58,7 @@ const appRoutes: Routes = [
         NavBarModule,
         RouterModule.forRoot(appRoutes, { enableTracing: false })
     ],
-    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog],
+    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog],
     providers: [
         CommonService,
         TvgMediaService,

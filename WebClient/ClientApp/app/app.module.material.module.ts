@@ -1,4 +1,5 @@
 ﻿import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import {
 
     MdAutocompleteModule,
@@ -32,6 +33,7 @@ import {
     MdTooltipModule,
     MdStepperModule,
     MdLineModule,
+    MdNativeDateModule,
 
 
 } from '@angular/material';
@@ -85,6 +87,8 @@ import { PortalModule } from '@angular/cdk/portal';
         OverlayModule,
         PlatformModule,
         PortalModule,
+        MdNativeDateModule,
+        FlexLayoutModule
     ],
     exports: [
         MdAutocompleteModule,
@@ -125,6 +129,8 @@ import { PortalModule } from '@angular/cdk/portal';
         PortalModule,
         MdStepperModule,
         MdLineModule,
+        MdNativeDateModule,
+        FlexLayoutModule
     ]
 })
 export class AppModuleMaterialModule {
