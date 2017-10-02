@@ -54,7 +54,7 @@ export class DialogComponent implements OnInit {
     openRegisterDialog(): void {
 
         let data = <RegisterUser>{};
-        data.genders = ["Mr, Mrs"];
+        data.genders = [{ value: 0, viewValue: "Mr" }, { value: 0, viewValue: "Mrs" }];
         setTimeout(() => {
             let dialogRef = this.dialog.open(RegisterDialog, <MdDialogConfig>{
                 disableClose: true,
@@ -103,6 +103,6 @@ export class RegisterDialog {
                 console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
                 this.dialogRef.close(true);
             },
-                err => console.log(err))
+                err => console.log(err.error))
     }
 }

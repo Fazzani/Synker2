@@ -22,7 +22,7 @@ export interface User {
 
 export interface RegisterUser extends User, Login {
 
-    genders: string[];
+    genders: any[];
 }
 /**
 * Login Model

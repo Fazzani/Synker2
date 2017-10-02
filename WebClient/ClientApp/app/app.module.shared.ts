@@ -1,7 +1,7 @@
 import { ApplicationRef, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -56,6 +56,7 @@ const appRoutes: Routes = [
         FormsModule,
         AppModuleMaterialModule,
         NavBarModule,
+        ReactiveFormsModule,
         RouterModule.forRoot(appRoutes, { enableTracing: false })
     ],
     entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog],
