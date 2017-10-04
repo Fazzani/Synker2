@@ -27,8 +27,8 @@ namespace PlaylistBaseLibrary.Providers
         }
         public override object _(Expression expression)
         {
-            if (!IsQueryOverDataSource(expression))
-                throw new InvalidProgramException("No query over the data source was specified.");
+            //if (!IsQueryOverDataSource(expression))
+            //    throw new InvalidProgramException("No query over the data source was specified.");
 
             var res = Pull();
             var IqRes = res.AsQueryable();

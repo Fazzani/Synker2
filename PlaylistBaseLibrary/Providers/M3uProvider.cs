@@ -153,7 +153,7 @@ namespace PlaylistBaseLibrary.Providers
             var sb = new StringBuilder(HeaderFile);
             sb.Append(Environment.NewLine);
             //TODO: FIX ToList (QueryProvider not working on where)
-            var list = playlist.ToList().Where(x => x.Enabled).Select(x => sb.Append(x.Format(this))).ToList();
+            var list = playlist.ToList().Select(x => sb.Append(x.Format(this))).ToList();
             if (list.Any())
                 using (var sw = new StreamWriter(_sr, Encoding.UTF8, 4096, true))
                 {

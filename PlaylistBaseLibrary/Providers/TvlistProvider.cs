@@ -116,9 +116,5 @@ namespace PlaylistBaseLibrary.Providers
         public string Format(Media media) => 
             $"{media.Name.Trim()}{Environment.NewLine}{media.Url}{Environment.NewLine}";
 
-        public override object _(Expression expression)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
