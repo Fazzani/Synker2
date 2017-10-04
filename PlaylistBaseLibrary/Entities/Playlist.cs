@@ -1,5 +1,4 @@
-﻿using PlaylistManager.Providers;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 using PlaylistBaseLibrary.Providers.Linq;
+using hfa.PlaylistBaseLibrary.Providers;
 
 namespace PlaylistManager.Entities
 {

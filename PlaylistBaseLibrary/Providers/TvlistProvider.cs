@@ -9,9 +9,9 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace PlaylistBaseLibrary.Providers
+namespace hfa.PlaylistBaseLibrary.Providers
 {
-    public class TvlistProvider : File, IMediaFormatter
+    public class TvlistProvider : FileProvider, IMediaFormatter
     {
         private const int BufferSize = 4096;
 

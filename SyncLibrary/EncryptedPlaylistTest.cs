@@ -1,4 +1,5 @@
-﻿using PlaylistBaseLibrary.Providers;
+﻿using hfa.PlaylistBaseLibrary.Providers;
+using PlaylistBaseLibrary.Providers;
 using PlaylistBaseLibrary.Services;
 using PlaylistManager.Entities;
 using PlaylistManager.Services;

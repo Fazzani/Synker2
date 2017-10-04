@@ -1,6 +1,5 @@
 ﻿using PlaylistBaseLibrary.Providers.Linq;
 using PlaylistManager.Entities;
-using PlaylistManager.Providers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,13 +8,13 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
-namespace PlaylistBaseLibrary.Providers
+namespace hfa.PlaylistBaseLibrary.Providers
 {
-    public abstract class File : PlaylistProvider<Playlist<TvgMedia>, TvgMedia>
+    public abstract class FileProvider : PlaylistProvider<Playlist<TvgMedia>, TvgMedia>
     {
         private bool _disposed = false;
         protected Stream _sr;
-        protected File(Stream sr)
+        protected FileProvider(Stream sr)
         {
             _sr = sr;
         }

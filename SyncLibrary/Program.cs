@@ -17,6 +17,7 @@ using PlaylistBaseLibrary.Providers.Linq;
 using System.Linq.Expressions;
 using TvheadendLibrary;
 using Microsoft.Extensions.Logging;
+using hfa.PlaylistBaseLibrary.Providers;
 
 namespace SyncLibrary
 {
@@ -73,7 +74,7 @@ namespace SyncLibrary
                             if (key == ConsoleKey.NumPad6)
                                 TVHQueryProvider(ts.Token);
                             if (key == ConsoleKey.NumPad7)
-                                await ExportToM3u(tvlistFilePath, ts.Token);
+                                await ExportTvListToM3u(tvlistFilePath, ts.Token);
                         }
                     } while (!ts.Token.IsCancellationRequested);
                 }, ts.Token);
@@ -196,7 +197,7 @@ namespace SyncLibrary
             }
         }
 
-        private static async Task ExportToM3u(string filePath, CancellationToken ts)
+        private static async Task ExportTvListToM3u(string filePath, CancellationToken ts)
         {
             using (var tvlistFile = new Playlist<TvgMedia>(new TvlistProvider(new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))))
             {

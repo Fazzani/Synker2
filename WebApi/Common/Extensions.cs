@@ -13,13 +13,20 @@ namespace Hfa.WebApi.Common
         => new ListResultModel<T>(searchResponse);
     }
 
-
+   
 }
 
 namespace System
 {
     public static class Extensions
     {
+        public static string FirstCharToUpper(this string input)
+        {
+            if (String.IsNullOrEmpty(input))
+                throw new ArgumentException("ARGH!");
+            return input.First().ToString().ToUpper() + input.Substring(1);
+        }
+
         public static string HashPassword(this string password, string salt)
         {
             var bytes = new UTF8Encoding().GetBytes(salt + password);

@@ -1,4 +1,6 @@
-﻿namespace hfa.WebApi.Common
+﻿using System.Collections.Generic;
+
+namespace hfa.WebApi.Common
 {
     public class ApplicationConfigData
     {
@@ -24,5 +26,11 @@
         public string SymmetricSecurityKey { get; set; }
         public string CertificateName { get; set; }
         public int TokenLifetimeInMinutes { get;  set; }
+    }
+   
+    public class PlaylistProviderOption
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
     }
 }

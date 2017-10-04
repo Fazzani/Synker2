@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PlaylistManager.Providers
+namespace hfa.PlaylistBaseLibrary.Providers
 {
     public abstract class PlaylistProvider<TPlaylist, TMedia> : QueryProvider, IPlaylistProvider<TPlaylist, TMedia>
           where TPlaylist : Playlist<TMedia>

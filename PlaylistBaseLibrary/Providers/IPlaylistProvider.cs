@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PlaylistManager.Providers
+namespace hfa.PlaylistBaseLibrary.Providers
 {
     public interface IPlaylistProvider<TPlaylist, TMedia>: IDisposable 
         where TPlaylist : Playlist<TMedia> 

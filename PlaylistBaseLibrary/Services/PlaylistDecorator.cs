@@ -1,5 +1,4 @@
 ﻿using PlaylistManager.Entities;
-using PlaylistManager.Providers;
 using PlaylistManager.Services;
 using System;
 using System.Collections.Generic;

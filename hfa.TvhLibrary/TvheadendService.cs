@@ -11,10 +11,10 @@ using System.Text;
 using System.Threading.Tasks;
 using static TvheadendLibrary.Constants;
 using System.Linq.Expressions;
-using PlaylistManager.Providers;
 using PlaylistManager.Entities;
 using System.Threading;
 using System.Reflection;
+using hfa.PlaylistBaseLibrary.Providers;
 
 namespace TvheadendLibrary
 {

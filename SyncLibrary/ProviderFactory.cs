@@ -1,6 +1,6 @@
-﻿using PlaylistBaseLibrary.Providers;
+﻿using hfa.PlaylistBaseLibrary.Providers;
+using PlaylistBaseLibrary.Providers;
 using PlaylistManager.Entities;
-using PlaylistManager.Providers;
 using SyncLibrary.Configuration.Entites;
 using System;
 using System.Collections.Generic;

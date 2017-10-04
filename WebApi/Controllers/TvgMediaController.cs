@@ -22,6 +22,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net;
 using hfa.WebApi.Dal;
+using System.Reflection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using hfa.PlaylistBaseLibrary.Providers;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -142,5 +146,47 @@ namespace Hfa.WebApi.Controllers
                 return File(ms.GetBuffer(), "application/octet-stream", filename);
             }
         }
+
+#if DEBUG
+        [AllowAnonymous]
+#endif
+        [HttpPost]
+        [Route("export/{fromType}/{toType}")]
+        public async Task<IActionResult> Export(string fromType, string toType, IFormFile file, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions)
+        {
+            var sourceOption = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(fromType, StringComparison.InvariantCultureIgnoreCase));
+            if (sourceOption == null)
+                return BadRequest($"Source Provider not found : {fromType}");
+
+            var sourceProviderType = Type.GetType(sourceOption.Type, false, true);
+            if (sourceProviderType == null)
+                return BadRequest($"Source Provider not found : {fromType}");
+
+            var targtOption = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(toType, StringComparison.InvariantCultureIgnoreCase));
+            if (targtOption == null)
+                return BadRequest($"Source Provider not found : {toType}");
+
+            var targetProviderType = Type.GetType(targtOption.Type, false, true);
+            if (targetProviderType == null)
+                return BadRequest($"Target Provider not found : {toType}");
+
+            var sourceProvider = (FileProvider)Activator.CreateInstance(sourceProviderType, file.OpenReadStream());
+
+            using (var stream = new MemoryStream())
+            {
+                var targetProvider = (FileProvider)Activator.CreateInstance(targetProviderType, stream);
+
+                using (var sourcePlaylist = new Playlist<TvgMedia>(sourceProvider))
+                {
+                    var sourceList = await sourcePlaylist.PullAsync(cancelToken.Token);
+                    using (var targetPlaylist = new Playlist<TvgMedia>(targetProvider))
+                    {
+                        await targetPlaylist.PushAsync(sourcePlaylist, cancelToken.Token);
+                        return File(stream.GetBuffer(), "application/octet-stream", file.FileName);
+                    }
+                }
+            }
+        }
+
     }
 }

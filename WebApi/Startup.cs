@@ -74,13 +74,14 @@ namespace Web
             services.
                 AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                 .AddScoped<IAuthentificationService, AuthentificationService>()
+                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                 .Configure<ApplicationConfigData>(Configuration)
                 .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)));
 
-           var serviceProvider =  services.AddDbContext<SynkerDbContext>(options => options
+            var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
             .UseMySql(Configuration.GetConnectionString("PlDatabase"))
             .UseLoggerFactory(loggerFactory))
-            .BuildServiceProvider();
+             .BuildServiceProvider();
 
 
             var DB = serviceProvider.GetService<SynkerDbContext>();

@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using PlaylistManager.Entities;
-using PlaylistManager.Providers;
 
 namespace PlaylistManager.Services
 {

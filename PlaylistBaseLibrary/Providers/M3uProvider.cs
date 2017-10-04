@@ -10,9 +10,9 @@ using PlaylistBaseLibrary.Entities;
 using System.ComponentModel;
 using System.Linq.Expressions;
 
-namespace PlaylistBaseLibrary.Providers
+namespace hfa.PlaylistBaseLibrary.Providers
 {
-    public class M3uProvider : File, IMediaFormatter
+    public class M3uProvider : FileProvider, IMediaFormatter
     {
         public const string HeaderFile = "#EXTM3U";
         public const string HeaderUrl = "#EXTINF:";
