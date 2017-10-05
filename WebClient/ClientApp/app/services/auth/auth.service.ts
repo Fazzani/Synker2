@@ -2,7 +2,7 @@
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BaseService } from '../base/base.service';
-import { AuthResponse, User, RegisterUser } from '../../types/auth.type';
+import { AuthResponse, User, RegisterUser, Login } from '../../types/auth.type';
 // All the RxJS stuff we need
 import { JwtHelper, tokenNotExpired } from 'angular2-jwt';
 import { Observable } from 'rxjs/Observable';
@@ -78,7 +78,7 @@ export class AuthService extends BaseService {
         // whether or not the token is expired
         let res = tokenNotExpired('accessToken');
         if (!res) {
-            //Try to refresh it
+            console.log('Try to refresh it');
             this.getNewToken();
             res = tokenNotExpired('accessToken');
         }
@@ -87,15 +87,12 @@ export class AuthService extends BaseService {
 
     /**
      *  Sigin by password
-     * store access and refresh token
-     * 
-     * @param {string} username 
-     * @param {string} password 
-     * @returns {Observable<AuthResponse>} 
+      * store access and refresh token
+     * @param loginModel 
      * @memberof AuthService
      */
-    public Signin(username: string, password: string): Observable<AuthResponse> {
-        return this.http.post(this.TOKEN_ENDPOINT, { username, password })
+    public Signin(loginModel: Login): Observable<AuthResponse> {
+        return this.http.post(this.TOKEN_ENDPOINT, loginModel)
             .map((res: AuthResponse) => {
 
                 // Sign in successful if there's an access token in the response.  
@@ -119,7 +116,7 @@ export class AuthService extends BaseService {
     public Register(user: RegisterUser): Observable<any> {
         return this.http.post(this.REGISTER_ENDPONT, user)
             .switchMap((res: any) => {
-                return this.Signin(user.username, user.password);
+                return this.Signin(<Login>{ username: user.username, password: user.password });
             });
     }
 
@@ -152,7 +149,6 @@ export class AuthService extends BaseService {
                         // Stores access token & refresh token.  
                         this.store(res);
                     }
-
                 });
         }
     }
@@ -230,7 +226,7 @@ export class AuthService extends BaseService {
      * 
      * @memberof AuthService
      */
-    public getUser(): void {
+    public connect(): void {
         this.decodeToken();
     }
 
@@ -248,11 +244,15 @@ export class AuthService extends BaseService {
 
             let jwtHelper: JwtHelper = new JwtHelper();
             this.authenticated.next(true);
-            this.user.next(jwtHelper.decodeToken(token));
+            this.user.next(this.mapTokenToUserModel(jwtHelper.decodeToken(token)));
         }
 
     }
 
+    private mapTokenToUserModel(userToken: any) {
+        console.log(`${userToken.photo}`);
+        return <User>{ birthday: userToken.birthdate, lastName: userToken.family_name, firstName: userToken.given_name, photo: userToken.photo, email: userToken.email, gender: userToken.gender };
+    }
     /** 
      * Stores access token & refresh token. 
      * 

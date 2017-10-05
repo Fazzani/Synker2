@@ -14,6 +14,7 @@ using hfa.SyncLibrary.Global;
 using hfa.WebApi.Common;
 using Microsoft.Extensions.Options;
 using hfa.WebApi.Dal;
+using hfa.WebApi.Models;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -33,6 +34,8 @@ namespace Hfa.WebApi.Controllers
             _config = config;
             this._dbContext = context;
         }
+
+        
 
         internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query) where T : class
         {

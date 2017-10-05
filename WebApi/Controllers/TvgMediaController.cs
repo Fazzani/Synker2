@@ -147,6 +147,14 @@ namespace Hfa.WebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Export from provider to another
+        /// </summary>
+        /// <param name="fromType"></param>
+        /// <param name="toType"></param>
+        /// <param name="file"></param>
+        /// <param name="providersOptions"></param>
+        /// <returns></returns>
 #if DEBUG
         [AllowAnonymous]
 #endif

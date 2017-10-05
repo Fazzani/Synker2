@@ -80,7 +80,7 @@ export class LoginDialog {
 
     login(user: Login): void {
         if (user != null)
-            this.authService.Signin(user.username, user.password).subscribe(res => {
+            this.authService.Signin(user).subscribe(res => {
                 console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
                 this.dialogRef.close(true);
             },

@@ -26,7 +26,6 @@ namespace hfa.WebApi.Controllers
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _authentificationService = authentificationService;
-
         }
 
         [Route("token")]
@@ -77,7 +76,7 @@ namespace hfa.WebApi.Controllers
                 return BadRequest(ModelState);
 
             if (_dbContext.Users.Any(x => x.Email == user.Email) || _dbContext.Users.Any(x => x.ConnectionState.UserName == user.UserName))
-                return BadRequest($"User {user.UserName} already exist");
+                return BadRequest($"The user {user.UserName} is already exist");
 
             user.Password = user.Password.HashPassword(_authentificationService.Salt);
             var result = await _dbContext.Users.AddAsync(user.Entity);

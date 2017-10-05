@@ -39,6 +39,7 @@
 - [ ] Admin Area
   - [ ] Users
 - [ ] Angular universal (SEO, prerender server)
+- [ ] Angular to build a native iOS and Android app [link](https://www.nativescript.org/)
 
 ### Notes
 https://blog.mariusschulz.com/2017/02/24/typescript-2-2-the-object-type

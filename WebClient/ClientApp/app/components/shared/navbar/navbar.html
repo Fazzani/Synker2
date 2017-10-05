@@ -37,7 +37,7 @@
         </button>
         <button md-menu-item *ngIf="(isAuthenticated| async)">
             <img [src]="(user | async)?.photo" class="profile-image img-circle">
-            <span>{{(user | async)?.given_name}}</span>
+            <span>{{(user | async)?.firstName}} {{(user | async)?.lastName}}</span>
         </button>
         <button md-menu-item>
             <md-icon>notifications_off</md-icon>

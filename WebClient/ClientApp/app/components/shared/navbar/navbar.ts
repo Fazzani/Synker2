@@ -12,6 +12,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/first';
 import 'rxjs/add/operator/take';
 import { EqualValidator } from '../../../directives/equal-validator.directive';
+import { MessageService } from '../../../services/message/message.service';
 
 @Component({
     selector: 'app-navbar',
@@ -22,13 +23,22 @@ export class NavBar implements OnInit {
     isAuthenticated: BehaviorSubject<boolean>;
     user: BehaviorSubject<User>;
 
-    constructor(private authService: AuthService) {
+    constructor(private authService: AuthService, private messageService: MessageService) {
         this.isAuthenticated = this.authService.authenticated;
         this.user = this.authService.user;
+        this.authService.connect();
     }
 
     ngOnInit(): void {
-        this.authService.isAuthenticated();
+        this.user.subscribe(user => {
+            if (user != undefined) {
+                console.log(`User ${user.firstName} is authenticated...`);
+                this.messageService.listByStatus(0, 0, 10).subscribe(msg => {
+                    console.log(msg);
+                });
+            }
+        });
+
     }
 
     signout(): void {

@@ -17,7 +17,7 @@ export interface User {
     lastName: string;
     email: string;
     birthday: Date;
-    Photo: string;
+    photo: string;
 }
 
 export interface RegisterUser extends User, Login {

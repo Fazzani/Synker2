@@ -71,7 +71,10 @@ namespace Hfa.WebApi.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var response = _dbContext.Messages.OrderByDescending(x => x.Id).Take(query.PageSize).Skip(query.Skip).ToList();
+
+            var response = _dbContext.Messages
+                .OrderByDescending(x => x.Id)
+                .GetPaged(query.PageNumber, query.Skip);
 
             return Ok(response);
         }
@@ -86,11 +89,13 @@ namespace Hfa.WebApi.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var response = _dbContext.Messages.OrderByDescending(x => x.Id).Where(x => x.Status == messageStatus)
-                .OrderByDescending(x => x.Id).Take(pageSize).Skip(pageSize * page).ToList();
+
+            var response = _dbContext.Messages
+                .OrderByDescending(x => x.Id)
+                .Where(x => x.Status == messageStatus)
+                .GetPaged(page, pageSize);
 
             return Ok(response);
         }
-
     }
 }

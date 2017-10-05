@@ -112,3 +112,27 @@ export interface tvChannel {
 export interface tvChannelIcon {
     src: string;
 }
+
+/**
+ * PageResultBase
+ */
+export interface PagedResultBase {
+    CurrentPage: number;
+    PageCount: number;
+    PageSize: number;
+    RowCount: number;
+    FirstRowOnPage: number;
+    LastRowOnPage: number;
+}
+
+/**
+ * PageResult
+ * 
+ * @export
+ * @interface PagedResult
+ * @extends {PagedResultBase}
+ * @template T 
+ */
+export interface PagedResult<T> extends PagedResultBase {
+    Results: Array<T>;
+}

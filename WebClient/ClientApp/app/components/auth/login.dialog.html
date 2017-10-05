@@ -1,5 +1,5 @@
 ﻿<h2 md-dialog-title>Login</h2>
-<form #UserLogin="ngForm" (ngSubmit)="login(UserLogin.form)">
+<form #UserLogin="ngForm" (ngSubmit)="login(UserLogin.form.value)">
     <md-dialog-content>
         <md-form-field>
             <input mdInput [(ngModel)]="username" name="username" placeholder="Username...">
@@ -10,6 +10,6 @@
     </md-dialog-content>
     <md-dialog-actions>
         <button md-raised-button md-dialog-close>Cancel</button>
-        <button md-raised-button (click)="login(UserLogin.form)" [disabled]="!UserLogin.form.valid">Login</button>
+        <button md-raised-button [disabled]="!UserLogin.form.valid">Login</button>
     </md-dialog-actions>
 </form>
