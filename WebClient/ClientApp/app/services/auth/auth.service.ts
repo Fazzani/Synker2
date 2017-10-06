@@ -98,8 +98,11 @@ export class AuthService extends BaseService {
                 // Sign in successful if there's an access token in the response.  
                 if (typeof res.accessToken !== 'undefined') {
 
-                    // Stores access token & refresh token.  
+                    console.log(`Stores access token & refresh token.  `);
                     this.store(res);
+                    if (this.redirectUrl == undefined)
+                        this.redirectUrl = '/';
+                    console.log(`navigateByUrl ${this.redirectUrl}`);
                     this.router.navigateByUrl(this.redirectUrl);
                 }
                 return res;

@@ -1,17 +1,17 @@
 ﻿![alt text](https://github.com/Fazzani/Synker2/blob/master/WebClient/wwwroot/favicon-32x32.png?raw=true)
 ### TODO
 - [x] Generate new m3u file for TVH
-- [ ] Export Provider to Provider dynamiquement (ex: tvlist to m3u)
-- [ ] Attach playlits to users (add user to playlists)
+- [x] Export Provider to Provider dynamiquement (ex: tvlist to m3u)
+- [x] Auth [link1](https://blogs.msdn.microsoft.com/webdev/2017/04/06/jwt-validation-and-authorization-in-asp-net-core/ ) [link2](http://luizcarlosfaria.net/blog/jwt-no-asp-net-core-standalone/)
+  - [ ] Authorize based policy and roles
+  - [ ] token encrypt by certif
+  - [ ] Custom Security Providers [link](https://stormpath.com/blog/store-protect-sensitive-data-dotnet-core)
+- [ ] Attach playlists to users (add user to playlists)
 - [ ] Perf :
   - [ ] Compress
   - [ ] Cache file response (Etag)
-- [x] Auth [link1](https://blogs.msdn.microsoft.com/webdev/2017/04/06/jwt-validation-and-authorization-in-asp-net-core/ ) [link2](http://luizcarlosfaria.net/blog/jwt-no-asp-net-core-standalone/)
-- [ ] token encrypt by certif
-- [ ] Authorize based policy and roles
 - [ ] EF [link](https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql/blob/master/README.md)
 - [ ] Gestion des exceptions
-- [ ] Custom Security Providers [link](https://stormpath.com/blog/store-protect-sensitive-data-dotnet-core)
 - [ ] FIX ToList (QueryProvider not working on where) in Push Method of M3uProvider when downloading a file
 - [ ] WebSockets [link1](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/websockets)
 - [ ] Xmltv services

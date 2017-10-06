@@ -28,7 +28,8 @@ export class LoginRouteGuard implements CanActivate, CanActivateChild {
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | Observable<boolean> | Promise<boolean> {
         return this.authService.authenticated.map(x => {
             if (!x) {
-                // Stores the attempted URL for redirecting.  
+                // Stores the attempted URL for redirecting.
+                console.log(`Stores the attempted URL for redirecting`);
                 let url: string = state.url;
                 this.authService.redirectUrl = url;
                 // Not signed in so redirects to signin page.  

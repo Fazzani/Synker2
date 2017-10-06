@@ -110,3 +110,24 @@ app-navbar {
 .site-container {
     margin-top: 56px;
 }
+
+body {
+    background-color: $primary-color-bg-dark;
+}
+
+// Add this to your global stylesheet after your theme setup
+.myapp-no-padding-dialog .mat-dialog-container {
+    padding: 0;
+}
+
+.mat-card,
+.mat-menu-panel,
+.mat-dialog-container,
+.mat-fab,
+.mat-mini-fab,
+.mat-raised-button,
+.mat-datepicker-content,
+.mat-select-content,
+.mat-select-panel-done-animating {
+    background: $primary-color-bg !important;
+}

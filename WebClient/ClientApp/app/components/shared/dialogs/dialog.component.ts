@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { MdButtonModule, MdMenuModule, MdDialogRef, MD_DIALOG_DATA, MdSnackBar, MdDialog, MdDialogConfig } from '@angular/material';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Login, User, RegisterUser } from '../../../types/auth.type';
@@ -12,7 +12,7 @@ import { Login, User, RegisterUser } from '../../../types/auth.type';
 })
 export class DialogComponent implements OnInit {
 
-    constructor(private dialog: MdDialog, private authService: AuthService, public snackBar: MdSnackBar, private activatedRoute: ActivatedRoute) {
+    constructor(private dialog: MdDialog, private authService: AuthService, public snackBar: MdSnackBar, private activatedRoute: ActivatedRoute, private router: Router) {
     }
 
     ngOnInit() {
@@ -39,7 +39,8 @@ export class DialogComponent implements OnInit {
                 disableClose: true,
                 data: data
             }).afterClosed().subscribe(result => {
-                if (result) {
+                if (result == '') {
+                    this.router.navigateByUrl('/');
 
                 }
             });
@@ -60,8 +61,8 @@ export class DialogComponent implements OnInit {
                 disableClose: true,
                 data: data
             }).afterClosed().subscribe(result => {
-                if (result) {
-
+                if (result == '') {
+                    this.router.navigateByUrl('/');
                 }
             });
         });
@@ -75,7 +76,7 @@ export class DialogComponent implements OnInit {
 })
 export class LoginDialog {
 
-    constructor(public dialogRef: MdDialogRef<LoginDialog>, private authService: AuthService) {
+    constructor(public dialogRef: MdDialogRef<LoginDialog>, private authService: AuthService, private router: Router) {
     }
 
     login(user: Login): void {
