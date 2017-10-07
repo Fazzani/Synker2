@@ -26,7 +26,7 @@ before_build:
   - cmd: dotnet restore ./WebClient/hfa.WebClient.csproj --verbosity m
   - cmd: dotnet restore ./WebApi/hfa.WebApi.csproj --verbosity m
 build_script:
-  - cmd: cd ./WebClient/ && npm i && npm run configure && npm run publish && cd ..
+  - cmd: cd ./WebClient/ && npm i && npm run configure -dd && npm run publish -dd && cd ..
   - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj --verbosity m
 after_build:
   # For once the build has completed
