@@ -35,7 +35,7 @@ artifacts:
  - path: '\WebApi\bin\Release\netcoreapp2.0\publish'
    name: WebApi
    type: WebDeployPackage
-- path: '\WebClient\bin\Release\netcoreapp2.0\publish'
+ - path: '\WebClient\bin\Release\netcoreapp2.0\publish'
    name: WebClient
    type: WebDeployPackage
 clone_depth: 1
