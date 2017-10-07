@@ -4,6 +4,11 @@ configuration: Release
 branches:
   only:
   - master
+init:
+  # Good practise, because Windows line endings are different from Unix/Linux ones
+  - cmd: git config --global core.autocrlf true
+  - cmd: pwd
+clone_depth: 50
 # environment variables
 environment:
   nodejs_version: '8'
@@ -12,10 +17,6 @@ install:
   - ps: Install-Product node $Env:nodejs_version
   - npm i -g npm@latest
   - npm i -g webpack@latest
-init:
-  # Good practise, because Windows line endings are different from Unix/Linux ones
-  - cmd: git config --global core.autocrlf true
-  - cmd: pwd
 before_build:
   # Display .NET Core version
   - cmd: dotnet --version
@@ -23,7 +24,7 @@ before_build:
   - cmd: dotnet restore ./WebClient/hfa.WebClient.csproj --verbosity m
   - cmd: dotnet restore ./WebApi/hfa.WebApi.csproj --verbosity m
 build_script:
-  - cmd: cd ./WebClient/ && npm i -S && npm run configure -dd && npm run publish -dd && cd ..
+  - cmd: cd ./WebClient/ && npm i && npm run configure && npm run publish && cd ..
   - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj --verbosity m
 after_build:
   # For once the build has completed
@@ -34,7 +35,6 @@ artifacts:
  - path: '\WebClient\bin\Release\netcoreapp2.0\publish'
    name: WebClient
    type: WebDeployPackage
-clone_depth: 1
 test_script:
   # restore packages for our unit tests
   - cmd: dotnet restore ./hfa.tvhLibrary.test/hfa.tvhLibrary.test.csproj --verbosity m
