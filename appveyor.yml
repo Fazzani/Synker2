@@ -18,18 +18,12 @@ before_build:
   - cmd: dotnet restore ./WebApi/hfa.WebApi.csproj --verbosity m
 build_script:
   # output will be in ./src/bin/debug/netcoreapp1.1/publish
-  - cmd: dotnet publish ./WebApi/hfa.WebApi.csproj
-after_build:
-  # For once the build has completed
-artifacts:
- - path: '\src\bin\Release\netcoreapp2.0\publish'
-   name: WebSite
-   type: WebDeployPackage
-clone_depth: 1
+  - cmd: dotnet publish ./WebApi/hfa.WebApi.csproj  /p:PublishProfile=SynkerClientProd
+  - cmd: dotnet publish ./WebClient/hfa.WebClient.csproj  /p:PublishProfile=FolderProfile
 test_script:
   # restore packages for our unit tests
-  - cmd: dotnet restore ./hfa.tvhLibrary.test.csproj --verbosity m
-  - cmd: dotnet restore ./hfa.synker.batch.test.csproj --verbosity m
+  - cmd: dotnet restore ./hfa.tvhLibrary.test/hfa.tvhLibrary.test.csproj --verbosity m
+  - cmd: dotnet restore ./hfa.synker.batch.test/hfa.synker.batch.test.csproj --verbosity m
   # run the unit tests (requires changing into the test directory)
   - cmd: cd ./hfa.tvhLibrary.test/
   - cmd: dotnet xunit
