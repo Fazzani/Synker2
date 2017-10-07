@@ -36,6 +36,7 @@ namespace Hfa.WebApi.Controllers
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
+        [HttpPost]
         public async Task<IActionResult> Post([FromBody] Message message)
         {
             if (!ModelState.IsValid)

@@ -85,3 +85,34 @@ Sync entre 2 providers in manager
 
 3) EPG (Load, Match, etc)
 
+## DEPLOY PROD
+### APACHE2 CONFIG :/etc/apache2/sites-enabled# sudo nano 000-default.conf
+<pre>
+<code>
+<VirtualHost *:80>
+        ProxyPreserveHost On
+        #ProxyRequests Off
+        #RewriteEngine On
+        ProxyPass / http://0.0.0.0:56800/
+        ProxyPassReverse / http://0.0.0.0:56800/
+        ServerAdmin webmaster@localhost
+        ServerName api.synker.ovh
+        DocumentRoot /home/synker/WebApi
+        ErrorLog ${APACHE_LOG_DIR}/errorSynkerApi.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+<VirtualHost *:80>
+        ProxyPreserveHost On
+        #ProxyRequests Off
+        #RewriteEngine On
+        ProxyPass / http://0.0.0.0:56801/
+        ProxyPassReverse / http://0.0.0.0:56801/
+        ServerName synker.ovh
+        ServerAlias www.synker.ovh
+        ServerAdmin webmaster@localhost
+        DocumentRoot /home/synker/WebClient
+        ErrorLog ${APACHE_LOG_DIR}/errorSynkerClient.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+</code>
+</pre>
