@@ -14,11 +14,11 @@ before_build:
   # Display .NET Core version
   - cmd: dotnet --version
   # Display minimal restore text
-  - cmd: dotnet restore ./Web/hfa.WebClient.csproj --verbosity m
-  - cmd: dotnet restore ./Web/hfa.WebApi.csproj --verbosity m
+  - cmd: dotnet restore ./WebClient/hfa.WebClient.csproj --verbosity m
+  - cmd: dotnet restore ./WebApi/hfa.WebApi.csproj --verbosity m
 build_script:
   # output will be in ./src/bin/debug/netcoreapp1.1/publish
-  - cmd: dotnet publish .//Web/hfa.WebApi.csproj
+  - cmd: dotnet publish ./WebApi/hfa.WebApi.csproj
 after_build:
   # For once the build has completed
 artifacts:
@@ -28,10 +28,12 @@ artifacts:
 clone_depth: 1
 test_script:
   # restore packages for our unit tests
-  - cmd: dotnet restore ./Tests/hfa.tvhLibrary.test.csproj --verbosity m
-  - cmd: dotnet restore ./Tests/hfa.synker.batch.test.csproj --verbosity m
+  - cmd: dotnet restore ./hfa.tvhLibrary.test.csproj --verbosity m
+  - cmd: dotnet restore ./hfa.synker.batch.test.csproj --verbosity m
   # run the unit tests (requires changing into the test directory)
-  - cmd: cd Tests
+  - cmd: cd ./hfa.tvhLibrary.test/
+  - cmd: dotnet xunit
+  - cmd: cd ./hfa.synker.batch.test/
   - cmd: dotnet xunit
 on_finish :
   # any cleanup in here
