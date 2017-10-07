@@ -56,8 +56,8 @@ namespace Web
                     Title = "Synker API",
                     Description = "Synchronize playlists API",
                     TermsOfService = "None",
-                    Contact = new Contact { Name = "Fazzani Heni", Email = "fazzani.heni@outlook.fr", Url = "https://twitter.com/spboyer" },
-                    License = new License { Name = "Use under LICX", Url = "https://example.com/license" }
+                    Contact = new Contact { Name = "Fazzani Heni", Email = "fazzani.heni@outlook.fr", Url = "https://www.github.com/fazzani" },
+                    License = new License { Name = "Use under MIT", Url = "" }
                 });
             });
             services.AddCors(options =>

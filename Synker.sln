@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.travis.yml = .travis.yml
 		build.sh = build.sh
+		postDeployProd.sh = postDeployProd.sh
 		readme.md = readme.md
 		sonarCloud.bat = sonarCloud.bat
 	EndProjectSection
@@ -25,9 +26,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{78EF6AEE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hfa.TvhLibrary", "hfa.TvhLibrary\hfa.TvhLibrary.csproj", "{164EE07A-F29B-40D9-88C3-270BD9F28185}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hfa.tvhLibrary.test", "hfa.tvhLibrary.test\hfa.tvhLibrary.test.csproj", "{8F50C674-2455-422D-BF5B-3ACCD23F72D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hfa.tvhLibrary.test", "hfa.tvhLibrary.test\hfa.tvhLibrary.test.csproj", "{8F50C674-2455-422D-BF5B-3ACCD23F72D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hfa.synker.batch.test", "hfa.synker.batch.test\hfa.synker.batch.test.csproj", "{CFC79F77-DC24-4525-89CA-F20E0B7D7299}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hfa.synker.batch.test", "hfa.synker.batch.test\hfa.synker.batch.test.csproj", "{CFC79F77-DC24-4525-89CA-F20E0B7D7299}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
