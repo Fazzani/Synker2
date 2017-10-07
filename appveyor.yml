@@ -12,13 +12,6 @@ init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
   - cmd: pwd
-install:
-  - ps: Install-Product node $Env:nodejs_version
-  - npm i -g npm@latest
-  - npm i -g webpack@latest
-  - cd ./WebClient/
-  - npm i
-  - cd ../
 before_build:
   # Display .NET Core version
   - cmd: dotnet --version
@@ -26,9 +19,8 @@ before_build:
   - cmd: dotnet restore ./WebClient/hfa.WebClient.csproj --verbosity m
   - cmd: dotnet restore ./WebApi/hfa.WebApi.csproj --verbosity m
 build_script:
-  # output will be in ./src/bin/debug/netcoreapp1.1/publish 
-  - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj
-  - cmd: dotnet publish -c Release ./WebClient/hfa.WebClient.csproj
+  - cmd: npm run publish
+  - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj --verbosity m
 after_build:
   # For once the build has completed
 artifacts:
