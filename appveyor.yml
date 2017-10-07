@@ -7,6 +7,7 @@ branches:
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
+  - cmd: pwd
 install:
   # Install repo specific stuff here
 before_build:
