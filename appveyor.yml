@@ -8,6 +8,13 @@ branches:
 environment:
   nodejs_version: '6'
   ASPNETCORE_ENVIRONMENT: 'Production'
+install:
+  - ps: Install-Product node $Env:nodejs_version
+  - npm i -g npm@latest
+  - npm i -g webpack@latest
+  - cd ./WebClient/
+  - npm i
+  - cd ../
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
