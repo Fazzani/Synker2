@@ -35,8 +35,6 @@ namespace Hfa.WebApi.Controllers
             this._dbContext = context;
         }
 
-        
-
         internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query) where T : class
         {
             var response = await _elasticConnectionClient.Client.LowLevel.SearchAsync<SearchResponse<T>>(_config.Value.DefaultIndex, typeof(T).Name.ToLowerInvariant(), query);

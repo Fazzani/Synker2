@@ -1,4 +1,47 @@
-﻿Objectifs
+﻿[![Build status](https://ci.appveyor.com/api/projects/status/369mb12g7tgnut2i?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2)
+
+### CI & DEPLOY
+
+- [ ] Deploy by travis/appveyor [link appveyor](https://raw.githubusercontent.com/NLog/NLog/master/appveyor.yml)
+- [ ] CI
+- [ ] Config SSL encrypt [link1](https://certbot.eff.org/#debianstretch-other)
+- [ ] Config smtp [link1](https://wiki.debian-fr.xyz/Configuration_d%27un_serveur_mail_avec_Postfix)
+ 
+#### DEPLOY PROD Config
+###### APACHE2 CONFIG :/etc/apache2/sites-enabled# sudo nano 000-default.conf
+<pre>
+<code>
+<VirtualHost *:80>
+        ProxyPreserveHost On
+        #ProxyRequests Off
+        #RewriteEngine On
+        ProxyPass / http://0.0.0.0:56800/
+        ProxyPassReverse / http://0.0.0.0:56800/
+        ServerAdmin webmaster@localhost
+        ServerName api.synker.ovh
+        DocumentRoot /home/synker/WebApi
+        ErrorLog ${APACHE_LOG_DIR}/errorSynkerApi.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+<VirtualHost *:80>
+        ProxyPreserveHost On
+        #ProxyRequests Off
+        #RewriteEngine On
+        ProxyPass / http://0.0.0.0:56801/
+        ProxyPassReverse / http://0.0.0.0:56801/
+        ServerName synker.ovh
+        ServerAlias www.synker.ovh
+        ServerAdmin webmaster@localhost
+        DocumentRoot /home/synker/WebClient
+        ErrorLog ${APACHE_LOG_DIR}/errorSynkerClient.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+</code>
+</pre>
+
+
+
+Objectifs
 =========
 - [ ] Linq query
 - [ ] PDB file test debug a dll
@@ -31,34 +74,6 @@ Technical targets
 - [ ] Linq to m3u provider
 - [ ] Microservices architecture
 
-Functional targets
-===================
-- [x] Pull playlist        
-- [x] Push playlist
-- [x] Diff 2 playlist => new entries and deleted entries
-- [ ] Group by tag channels
-- [ ] Match with EPG
-- [ ] Auto-correct channel name
-- [ ] Auto match pictures
-- [ ] Sort channel
-- [ ] Generate EPG config file (WebGrab++ format) channel with time offset
-- [ ] Formatters, parsers (m3u, json, tvlist), support (file, url, webservice)
-- [ ] Tvheadend provider
-
-Tvheadend provider
-==================
-- [x] Select simple object
-- [ ] Select anonymous object
-- [ ] Select simple property
-- [x] OrderBy asc
-- [ ] OrderBy desc 
-- [x] Take, Skip
-- [ ] Where expression
-- [ ] SubQuery
-- [ ] GroupBy
-- [ ] Agregation (max, min, distinct, avg, etc..)
-- [ ] Mapping (muxes, services, channels, epg, etc...)
-
 NOTES
 =====
 
@@ -84,35 +99,3 @@ Serialiser, déserialiser :
 Sync entre 2 providers in manager
 
 3) EPG (Load, Match, etc)
-
-## DEPLOY PROD
-### APACHE2 CONFIG :/etc/apache2/sites-enabled# sudo nano 000-default.conf
-<pre>
-<code>
-<VirtualHost *:80>
-        ProxyPreserveHost On
-        #ProxyRequests Off
-        #RewriteEngine On
-        ProxyPass / http://0.0.0.0:56800/
-        ProxyPassReverse / http://0.0.0.0:56800/
-        ServerAdmin webmaster@localhost
-        ServerName api.synker.ovh
-        DocumentRoot /home/synker/WebApi
-        ErrorLog ${APACHE_LOG_DIR}/errorSynkerApi.log
-        CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-<VirtualHost *:80>
-        ProxyPreserveHost On
-        #ProxyRequests Off
-        #RewriteEngine On
-        ProxyPass / http://0.0.0.0:56801/
-        ProxyPassReverse / http://0.0.0.0:56801/
-        ServerName synker.ovh
-        ServerAlias www.synker.ovh
-        ServerAdmin webmaster@localhost
-        DocumentRoot /home/synker/WebClient
-        ErrorLog ${APACHE_LOG_DIR}/errorSynkerClient.log
-        CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-</code>
-</pre>

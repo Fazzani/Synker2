@@ -4,6 +4,8 @@
 - [ ] Dev Home page
   - [ ] charts [link](https://github.com/swimlane/ngx-charts)
 - [ ] Dev Xmltv page
+- [ ] SEO
+  - [ ] Angular universal (SEO, prerender server)
 - [ ] Form Validation [link](https://www.toptal.com/angular-js/angular-4-forms-validation) [validation password](https://medium.com/front-end-hacking/how-to-implement-custom-validator-confirm-password-in-angular2-rc-3-622288ba809d)
 - [ ] Dev lists page's
   - [x] Fix pagination
@@ -38,7 +40,6 @@
 - [ ] Source-map-explorer test [link](https://www.npmjs.com/package/source-map-explorer)
 - [ ] Admin Area
   - [ ] Users
-- [ ] Angular universal (SEO, prerender server)
 - [ ] Angular to build a native iOS and Android app [link](https://www.nativescript.org/)
 
 ### Notes

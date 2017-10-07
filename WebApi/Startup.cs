@@ -41,7 +41,8 @@ namespace Web
             ConfigSecurity(services);
             //Logger
             var loggerFactory = new LoggerFactory();
-            loggerFactory.AddConsole();
+            loggerFactory.AddFile(Configuration.GetSection("Logging"));
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
             services.AddMvc();
@@ -81,6 +82,7 @@ namespace Web
             var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
             .UseMySql(Configuration.GetConnectionString("PlDatabase"))
             .UseLoggerFactory(loggerFactory))
+            
              .BuildServiceProvider();
 
 

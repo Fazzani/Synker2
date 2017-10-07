@@ -19,5 +19,4 @@
   - [ ] Config customs xmltv feeds from channels and by user
   - [ ] Purge uploaded files
   - [ ] Get Epg for XmltvCompnent by channel and dateTime range
-- [ ] Config SSL encrypt [link1](https://certbot.eff.org/#debianstretch-other)
-- [ ] Config smtp [link1](https://wiki.debian-fr.xyz/Configuration_d%27un_serveur_mail_avec_Postfix)
+- [ ] Swagger auth token
