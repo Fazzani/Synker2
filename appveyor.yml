@@ -27,7 +27,7 @@ build_script:
   - cmd: cd ./WebClient/ 
   - cmd: npm install 
   - cmd: pwd
-  - cmd: npm run configure
+  - cmd: npm run configure && ls /node_modules/ && ls /node_modules/@angular/material/material
   - cmd: npm run publish 
   - cmd: cd ..
   - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj --verbosity m
