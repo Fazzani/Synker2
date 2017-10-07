@@ -29,7 +29,7 @@ build_script:
   # output will be in ./src/bin/debug/netcoreapp1.1/publish 
   - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj
   - cmd: dotnet publish -c Release ./WebClient/hfa.WebClient.csproj
- after_build:
+after_build:
   # For once the build has completed
 artifacts:
  - path: '\WebApi\bin\Release\netcoreapp2.0\publish'
