@@ -1,5 +1,6 @@
 ﻿[![Build status](https://ci.appveyor.com/api/projects/status/369mb12g7tgnut2i?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2)
 
+[link SEO](https://github.com/angular/universal/tree/master/modules/aspnetcore-engine)
 ### CI & DEPLOY
 
 - [ ] Deploy by travis/appveyor [link appveyor](https://raw.githubusercontent.com/NLog/NLog/master/appveyor.yml)

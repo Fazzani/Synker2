@@ -7,7 +7,7 @@ import { tvChannel, ElasticQuery, ElasticResponse } from "../../types/elasticQue
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
-
+import * as variables from '../../variables';
 
 @Injectable()
 export class EpgService extends BaseService {
@@ -17,12 +17,12 @@ export class EpgService extends BaseService {
     }
 
     get(id: string): Observable<ElasticResponse<tvChannel>> {
-        return this.http.get(BaseService.URL_API_BASE + 'epg/' + id).map(this.parseData)
+        return this.http.get(variables.BASE_API_URL + 'epg/' + id).map(this.parseData)
             .catch(this.handleError);
     }
 
     list(query: ElasticQuery): Observable<ElasticResponse<tvChannel>> {
-        return this.http.post(BaseService.URL_API_BASE + 'epg/_search/', query).map(res => {
+        return this.http.post(variables.BASE_API_URL + 'epg/_search/', query).map(res => {
             return res;
         }).catch(this.handleError);
     }

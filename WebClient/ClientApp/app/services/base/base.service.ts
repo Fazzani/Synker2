@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+﻿import { Injectable, Inject, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 // All the RxJS stuff we need
@@ -8,7 +8,7 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class BaseService {
-    static URL_API_BASE: string = 'http://localhost:56800/api/v1/';
+  //  static URL_API_BASE: string = 'http://localhost:56800/api/v1/';
 
     constructor(protected http: HttpClient) { }
 

@@ -34,6 +34,7 @@
     <None Remove="ClientApp\app\services\common\common.service.spec.ts" />
     <None Remove="ClientApp\app\services\common\common.service.ts" />
     <None Remove="ClientApp\app\types\elasticQuery.type.ts" />
+    <None Remove="ClientApp\app\variables.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,6 +56,7 @@
     <TypeScriptCompile Include="ClientApp\app\services\epg\epg.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\elasticQuery.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\auth.type.ts" />
+    <TypeScriptCompile Include="ClientApp\app\variables.ts" />
   </ItemGroup>
 
   <ItemGroup>

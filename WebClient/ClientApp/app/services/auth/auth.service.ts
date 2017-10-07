@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+﻿import { Injectable, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BaseService } from '../base/base.service';
@@ -10,8 +10,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
-
-
+import * as variables from "../../variables";
 
 @Injectable()
 export class AuthService extends BaseService {
@@ -46,13 +45,13 @@ export class AuthService extends BaseService {
      * User's data. 
      * @param {HttpClient} http 
      * @param {Router} router 
-     * @memberof AuthService
+     * @memberof AuthService    
      */
     constructor(protected http: HttpClient, private router: Router) {
         super(http);
-        this.REGISTER_ENDPONT = BaseService.URL_API_BASE + 'auth/register';
-        this.TOKEN_ENDPOINT = BaseService.URL_API_BASE + 'auth/token';
-        this.REVOCATION_ENDPOINT = BaseService.URL_API_BASE + 'auth/revoketoken';
+        this.REGISTER_ENDPONT = variables.BASE_API_URL + 'auth/register';
+        this.TOKEN_ENDPOINT = variables.BASE_API_URL + 'auth/token';
+        this.REVOCATION_ENDPOINT = variables.BASE_API_URL + 'auth/revoketoken';
         this.authenticated = new BehaviorSubject(false);
         this.user = new BehaviorSubject(null);
     }

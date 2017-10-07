@@ -23,6 +23,7 @@ import { BaseService } from './services/base/base.service';
 import { NgHttpLoaderModule } from 'ng-http-loader/ng-http-loader.module';
 import { NavBarModule } from './components/shared/navbar/navbar';
 
+import { BASE_URL, BASE_API_URL } from './variables';
 import { TokenInterceptor } from './services/auth/token.interceptor';
 import { DefaultHttpInterceptor } from './infrastructure/DefaultHttpInterceptor'
 

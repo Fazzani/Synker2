@@ -10,11 +10,12 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import { RequestOptions } from "@angular/http/http";
 import { HttpHeaders } from "@angular/common/http";
+import * as variables from "../../variables";
 
 @Injectable()
 export class MessageService extends BaseService {
 
-    url: string = BaseService.URL_API_BASE + 'message/status/';
+    url: string = variables.BASE_API_URL + 'message/status/';
 
     constructor(protected http: HttpClient) { super(http); }
 
