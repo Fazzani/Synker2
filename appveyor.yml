@@ -12,7 +12,8 @@ install:
   - ps: Install-Product node $env:nodejs_version x64
   - npm i -g npm@latest
   - cd ./WebClient/
-  - npm install
+  - npm i
+  - cd ../
 before_build:
   # Display .NET Core version
   - cmd: dotnet --version
@@ -30,7 +31,7 @@ test_script:
   # run the unit tests (requires changing into the test directory)
   - cmd: cd ./hfa.tvhLibrary.test/
   - cmd: dotnet xunit
-  - cmd: cd ./hfa.synker.batch.test/
+  - cmd: cd ../hfa.synker.batch.test/
   - cmd: dotnet xunit
 on_finish :
   # any cleanup in here
