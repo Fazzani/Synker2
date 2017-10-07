@@ -6,7 +6,7 @@ branches:
   - master
 # environment variables
 environment:
-  nodejs_version: '6'
+  nodejs_version: '8'
   ASPNETCORE_ENVIRONMENT: 'Production'
 install:
   - ps: Install-Product node $Env:nodejs_version
