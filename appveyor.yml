@@ -22,8 +22,8 @@ before_build:
   - cmd: dotnet restore ./WebApi/hfa.WebApi.csproj --verbosity m
 build_script:
   # output will be in ./src/bin/debug/netcoreapp1.1/publish 
-  - cmd: dotnet build -c Release /p:DeployOnBuild=true ./WebApi/hfa.WebApi.csproj  /p:PublishProfile=FolderProfile
-  - cmd: dotnet build -c Release /p:DeployOnBuild=true ./WebClient/hfa.WebClient.csproj  /p:PublishProfile=SynkerClientProd
+  - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj
+  - cmd: dotnet publish -c Release ./WebClient/hfa.WebClient.csproj
 test_script:
   # restore packages for our unit tests
   - cmd: dotnet restore ./hfa.tvhLibrary.test/hfa.tvhLibrary.test.csproj --verbosity m
