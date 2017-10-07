@@ -6,8 +6,8 @@ branches:
   - master
 # environment variables
 environment:
-  nodejs_version: "6"
-  ASPNETCORE_ENVIRONMENT:"Production"
+  nodejs_version: '6'
+  ASPNETCORE_ENVIRONMENT: 'Production'
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
