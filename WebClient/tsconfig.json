@@ -6,6 +6,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
     "lib": [ "es6", "dom" ],
     "types": [ "node" ]
   },
