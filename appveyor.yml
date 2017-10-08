@@ -13,7 +13,10 @@ clone_depth: 50
 environment:
   nodejs_version: '8'
   ASPNETCORE_ENVIRONMENT: 'Production'
+matrix:
+  fast_finish: true
 install:
+  - choco install googlechrome
   - ps: Install-Product node $Env:nodejs_version
   - npm i -g npm@latest
   - npm i -g webpack@latest
@@ -48,6 +51,7 @@ test_script:
   - cmd: dotnet xunit
   - cmd: cd ../hfa.synker.batch.test/
   - cmd: dotnet xunit
+  - cmd: cd ../WebClient && npm run test
 on_finish :
   # any cleanup in here
 deploy: off
