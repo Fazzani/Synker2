@@ -3,8 +3,8 @@
 [link SEO](https://github.com/angular/universal/tree/master/modules/aspnetcore-engine)
 ### CI & DEPLOY
 
-- [ ] CI & Deploy synker batch on appveyor 
-- [ ] Unit tests angular
+- [ ] CI & Deploy synker batch on appveyor && package nuget for library projects
+- [x] Unit tests angular
 - [ ] Config SSL encrypt [link1](https://certbot.eff.org/#debianstretch-other)
 - [ ] Config smtp [link1](https://wiki.debian-fr.xyz/Configuration_d%27un_serveur_mail_avec_Postfix)
  
