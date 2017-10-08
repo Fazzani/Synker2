@@ -26,7 +26,6 @@ before_build:
 build_script:
   - cmd: cd ./WebClient/ 
   - cmd: npm install 
-  - cmd: pwd
   - cmd: npm run configure
   - cmd: dotnet publish -c Release --verbosity m
   - cmd: cd ..
@@ -51,6 +50,23 @@ test_script:
   - cmd: dotnet xunit
 on_finish :
   # any cleanup in here
-deploy: off
+deploy:
+  provider: FTP
+  protocol: ftp
+  host: ftp.synker.ovh
+  username: synker
+  password:
+    secure: t3JDT7lkxppxrNp9sRp2Cw==
+  folder: WebClient
+  artifact: /.*WebClient\.zip/
+deploy:
+  provider: FTP
+  protocol: ftp
+  host: ftp.synker.ovh
+  username: synker
+  password:
+    secure: t3JDT7lkxppxrNp9sRp2Cw==
+  folder: WebApi
+  artifact: /.*WebApi\.zip/
 cache:
   - node_modules -> package-lock.json
