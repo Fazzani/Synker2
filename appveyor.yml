@@ -57,4 +57,4 @@ on_finish :
   # any cleanup in here
 deploy: off
 cache:
-  - \WebClient\node_modules -> package-lock.json
+  - \WebClient\node_modules -> \WebClient\package.json
