@@ -50,23 +50,6 @@ test_script:
   - cmd: dotnet xunit
 on_finish :
   # any cleanup in here
-deploy:
-  provider: FTP
-  protocol: ftp
-  host: ftp.synker.ovh
-  username: synker
-  password:
-    secure: t3JDT7lkxppxrNp9sRp2Cw==
-  folder: WebClient
-  artifact: /.*WebClient\.zip/
-deploy:
-  provider: FTP
-  protocol: ftp
-  host: ftp.synker.ovh
-  username: synker
-  password:
-    secure: t3JDT7lkxppxrNp9sRp2Cw==
-  folder: WebApi
-  artifact: /.*WebApi\.zip/
+deploy: off
 cache:
   - node_modules -> package-lock.json
