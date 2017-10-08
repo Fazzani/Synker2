@@ -51,7 +51,7 @@ test_script:
   - cmd: dotnet xunit
   - cmd: cd ../hfa.synker.batch.test/
   - cmd: dotnet xunit
-  - cmd: cd ../WebClient && npm test
+  - cmd: cd ../WebClient && npm run test:ci
 on_finish :
   # any cleanup in here
 deploy: off

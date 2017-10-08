@@ -12,6 +12,7 @@
   "license": "GPL-3.0",
   "scripts": {
     "test": "karma start ClientApp/test/karma.conf.js",
+    "test:ci": "karma start ClientApp/test/karma.conf.js --log-level debug --single-run",
     "configure": "webpack --config webpack.config.vendor.js",
     "start:watch": "npm run build:dev && dotnet watch run",
     "build:dev": "webpack --env=dev --progress --profile --colors",
