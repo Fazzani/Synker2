@@ -9,7 +9,7 @@ init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
   - cmd: pwd
-clone_depth: 50
+clone_depth: 10
 # environment variables
 environment:
   nodejs_version: '8'
@@ -57,4 +57,4 @@ on_finish :
   # any cleanup in here
 deploy: off
 cache:
-  - node_modules -> package-lock.json
+  - \WebClient\node_modules -> package-lock.json
