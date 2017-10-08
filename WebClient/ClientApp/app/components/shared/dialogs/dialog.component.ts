@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { MdButtonModule, MdMenuModule, MdDialogRef, MD_DIALOG_DATA, MdSnackBar, MdDialog, MdDialogConfig } from '@angular/material';
+import { MatButtonModule, MatMenuModule, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatDialog, MatDialogConfig } from '@angular/material';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Login, User, RegisterUser } from '../../../types/auth.type';
 
@@ -12,7 +12,7 @@ import { Login, User, RegisterUser } from '../../../types/auth.type';
 })
 export class DialogComponent implements OnInit {
 
-    constructor(private dialog: MdDialog, private authService: AuthService, public snackBar: MdSnackBar, private activatedRoute: ActivatedRoute, private router: Router) {
+    constructor(private dialog: MatDialog, private authService: AuthService, public snackBar: MatSnackBar, private activatedRoute: ActivatedRoute, private router: Router) {
     }
 
     ngOnInit() {
@@ -35,7 +35,7 @@ export class DialogComponent implements OnInit {
     openLoginDialog(): void {
         let data = <Login>{};
         setTimeout(() => {
-            let dialogRef = this.dialog.open(LoginDialog, <MdDialogConfig>{
+            let dialogRef = this.dialog.open(LoginDialog, <MatDialogConfig>{
                 disableClose: true,
                 data: data
             }).afterClosed().subscribe(result => {
@@ -57,7 +57,7 @@ export class DialogComponent implements OnInit {
         let data = <RegisterUser>{};
         data.genders = [{ value: 0, viewValue: "Mr" }, { value: 0, viewValue: "Mrs" }];
         setTimeout(() => {
-            let dialogRef = this.dialog.open(RegisterDialog, <MdDialogConfig>{
+            let dialogRef = this.dialog.open(RegisterDialog, <MatDialogConfig>{
                 disableClose: true,
                 data: data
             }).afterClosed().subscribe(result => {
@@ -76,7 +76,7 @@ export class DialogComponent implements OnInit {
 })
 export class LoginDialog {
 
-    constructor(public dialogRef: MdDialogRef<LoginDialog>, private authService: AuthService, private router: Router) {
+    constructor(public dialogRef: MatDialogRef<LoginDialog>, private authService: AuthService, private router: Router) {
     }
 
     login(user: Login): void {
@@ -95,7 +95,7 @@ export class LoginDialog {
 })
 export class RegisterDialog {
 
-    constructor( @Inject(MD_DIALOG_DATA) public data: any, public dialogRef: MdDialogRef<RegisterDialog>, private authService: AuthService) {
+    constructor( @Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<RegisterDialog>, private authService: AuthService) {
     }
 
     register(registerUser: RegisterUser): void {

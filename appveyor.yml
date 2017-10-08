@@ -28,7 +28,7 @@ build_script:
   - cmd: npm install 
   - cmd: pwd
   - cmd: npm run configure
-  - cmd: dotnet publish 
+  - cmd: dotnet publish -c Release --verbosity m
   - cmd: cd ..
   - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj --verbosity m
 after_build:

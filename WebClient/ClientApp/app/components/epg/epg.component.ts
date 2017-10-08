@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
-import { MdPaginator, PageEvent, MdSort, MdDialog, MdDialogRef, MD_DIALOG_DATA, MdSnackBar } from '@angular/material';
+import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -25,14 +25,14 @@ export class EpgComponent implements OnInit, OnDestroy {
     subscriptionTableEvent: Subscription;
 
     displayedColumns = ['icon', 'displayname', 'id', 'actions'];
-    @ViewChild(MdPaginator) paginator: MdPaginator;
-    @ViewChild(MdSort) sort: MdSort;
+    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
     dataSource: EpgDataSource | null;
     currentItem: tvChannel | null;
 
     /** media ctor */
-    constructor(private epgService: EpgService, private commonService: CommonService, public dialog: MdDialog, public snackBar: MdSnackBar) { }
+    constructor(private epgService: EpgService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar) { }
 
     /** Called by Angular after media component initialized */
     ngOnInit(): void {
@@ -92,8 +92,8 @@ export class EpgComponent implements OnInit, OnDestroy {
 export class EpgModifyDialog {
 
     constructor(
-        public dialogRef: MdDialogRef<EpgModifyDialog>,
-        @Inject(MD_DIALOG_DATA) public data: any) { }
+        public dialogRef: MatDialogRef<EpgModifyDialog>,
+        @Inject(MAT_DIALOG_DATA) public data: any) { }
 
     onNoClick(): void {
         this.dialogRef.close();
@@ -112,11 +112,11 @@ export class EpgDataSource extends DataSource<tvChannel> {
     get filter(): Object | string { return this._filterChange.value; }
     set filter(filter: Object | string) { this._filterChange.next(filter); }
 
-    _paginator = new BehaviorSubject<MdPaginator>(<MdPaginator>{});
-    get paginator(): MdPaginator { return this._paginator.value; }
-    set paginator(paginator: MdPaginator) { this._paginator.next(paginator); }
+    _paginator = new BehaviorSubject<MatPaginator>(<MatPaginator>{});
+    get paginator(): MatPaginator { return this._paginator.value; }
+    set paginator(paginator: MatPaginator) { this._paginator.next(paginator); }
 
-    constructor(private epgService: EpgService, private mdPaginator: MdPaginator) {
+    constructor(private epgService: EpgService, private mdPaginator: MatPaginator) {
         super();
 
         this.paginator = mdPaginator;

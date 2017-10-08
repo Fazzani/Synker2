@@ -1,7 +1,7 @@
 import { Component, NgModule, OnInit, Inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MdButtonModule, MdMenuModule, MdDialogRef, MD_DIALOG_DATA, MdSnackBar, MdDialog } from '@angular/material';
+import { MatButtonModule, MatMenuModule, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatDialog } from '@angular/material';
 import { RouterModule } from '@angular/router';
 import { AppModuleMaterialModule } from '../../../app.module.material.module';
 import { AuthResponse, User } from '../../../types/auth.type';
@@ -58,7 +58,7 @@ export class NavBar implements OnInit, OnDestroy {
 }
 
 @NgModule({
-    imports: [MdButtonModule, MdMenuModule, RouterModule, FormsModule, AppModuleMaterialModule, CommonModule, ReactiveFormsModule],
+    imports: [MatButtonModule, MatMenuModule, RouterModule, FormsModule, AppModuleMaterialModule, CommonModule, ReactiveFormsModule],
     exports: [NavBar, EqualValidator],
     declarations: [NavBar, EqualValidator]
 

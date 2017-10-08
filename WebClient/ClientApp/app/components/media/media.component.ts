@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
-import { MdPaginator, PageEvent, MdSort, MdDialog, MdDialogRef, MD_DIALOG_DATA, MdSnackBar } from '@angular/material';
+import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -30,14 +30,14 @@ export class MediaComponent implements OnInit, OnDestroy {
     subscriptionTableEvent: Subscription;
 
     displayedColumns = ['position', 'name', 'group', 'lang', 'actions'];
-    @ViewChild(MdPaginator) paginator: MdPaginator;
-    @ViewChild(MdSort) sort: MdSort;
+    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
     dataSource: MediaDataSource | null;
     currentItem: TvgMedia | null;
 
     /** media ctor */
-    constructor(private tvgMediaService: TvgMediaService, private commonService: CommonService, public dialog: MdDialog, public snackBar: MdSnackBar) { }
+    constructor(private tvgMediaService: TvgMediaService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar) { }
 
     /** Called by Angular after media component initialized */
     ngOnInit(): void {
@@ -96,8 +96,8 @@ export class MediaComponent implements OnInit, OnDestroy {
 export class TvgMediaModifyDialog {
 
     constructor(
-        public dialogRef: MdDialogRef<TvgMediaModifyDialog>,
-        @Inject(MD_DIALOG_DATA) public data: any) { }
+        public dialogRef: MatDialogRef<TvgMediaModifyDialog>,
+        @Inject(MAT_DIALOG_DATA) public data: any) { }
 
     onNoClick(): void {
         this.dialogRef.close();
@@ -119,11 +119,11 @@ export class MediaDataSource extends DataSource<TvgMedia> {
     get filter(): Object | string { return this._filterChange.value; }
     set filter(filter: Object | string) { this._filterChange.next(filter); }
 
-    constructor(private tvgMediaService: TvgMediaService, private mdPaginator: MdPaginator, private _sort: MdSort) {
+    constructor(private tvgMediaService: TvgMediaService, private MatPaginator: MatPaginator, private _sort: MatSort) {
         super();
 
         // this._filterChange
-        //     .merge(this.mdPaginator)
+        //     .merge(this.MatPaginator)
         //     .debounceTime(300)
         //     //.distinctUntilChanged()
         //     .subscribe((x) => this.getData());
@@ -132,8 +132,8 @@ export class MediaDataSource extends DataSource<TvgMedia> {
     connect(): Observable<TvgMedia[]> {
         const displayDataChanges = [
             this._sort.sortChange,
-            this.mdPaginator.page,
-            this.mdPaginator.pageSize
+            this.MatPaginator.page,
+            this.MatPaginator.pageSize
         ];
 
         return this._filterChange.merge(Observable.merge(...displayDataChanges))
@@ -176,9 +176,9 @@ export class MediaDataSource extends DataSource<TvgMedia> {
 
         let sortObject = JSON.parse('{"' + sortField + '" : {"order":"' + this._sort.direction + '"}}');
 
-        let pageSize = this.mdPaginator.pageSize === undefined ? 25 : this.mdPaginator.pageSize;
+        let pageSize = this.MatPaginator.pageSize === undefined ? 25 : this.MatPaginator.pageSize;
         let query = <ElasticQuery>{
-            from: pageSize * this.mdPaginator.pageIndex,
+            from: pageSize * this.MatPaginator.pageIndex,
             size: pageSize,
             sort: sortObject
         };
