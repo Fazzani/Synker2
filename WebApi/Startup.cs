@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using hfa.WebApi.Common.Auth;
+using hfa.WebApi.Common.Middleware;
 
 namespace Web
 {
@@ -75,6 +76,7 @@ namespace Web
             services.
                 AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                 .AddScoped<IAuthentificationService, AuthentificationService>()
+                .AddScoped<IWebHookService, WebHookServiceDefault>()
                 .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                 .Configure<ApplicationConfigData>(Configuration)
                 .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)));
@@ -82,15 +84,12 @@ namespace Web
             var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
             .UseMySql(Configuration.GetConnectionString("PlDatabase"))
             .UseLoggerFactory(loggerFactory))
-            
              .BuildServiceProvider();
-
 
             var DB = serviceProvider.GetService<SynkerDbContext>();
             DB.Database.EnsureCreated();
 
             //services.AddApiVersioning();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -99,19 +98,21 @@ namespace Web
             app.UseCors("CorsPolicy");
 
             #region WebSockets
-            var webSocketOptions = new WebSocketOptions()
+            var webSocketOptions = new WebSocketOptions
             {
                 KeepAliveInterval = TimeSpan.FromSeconds(120),
                 ReceiveBufferSize = 4 * 1024
             };
+
             app.UseWebSockets(webSocketOptions);
+
             app.Use(async (context, next) =>
             {
                 if (context.Request.Path == "/ws")
                 {
                     if (context.WebSockets.IsWebSocketRequest)
                     {
-                        WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                        var webSocket = await context.WebSockets.AcceptWebSocketAsync();
                         await Echo(context, webSocket);
                     }
                     else
@@ -123,9 +124,11 @@ namespace Web
                 {
                     await next();
                 }
-
             });
             #endregion
+
+            /** Web hooks **/
+            app.UseWebHooks(()=>"/api/v1/message", () => "qwertyuiopasdfghjklzxcvbnm123456");
 
             #region Swagger
 
@@ -141,6 +144,12 @@ namespace Web
             app.UseMvc();
         }
 
+        /// <summary>
+        /// Echo websokets
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="webSocket"></param>
+        /// <returns></returns>
         private async Task Echo(HttpContext context, WebSocket webSocket)
         {
             var buffer = new byte[1024 * 4];
