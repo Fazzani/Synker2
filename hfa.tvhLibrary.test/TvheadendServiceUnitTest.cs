@@ -16,7 +16,7 @@ namespace hfa.tvhLibrary.test
     {
         readonly TvheadendService _tvheadendService;
         private readonly Playlist<TvgMedia> _playlist;
-        const string TvhUrl = "http://192.168.1.29:9981";
+        const string TvhUrl = "http://heni.freeboxos.fr:9981";
         const string TvhUserName = "heni";
         const string TvhPassword = "heni";
 
@@ -45,7 +45,7 @@ namespace hfa.tvhLibrary.test
             });
 
             Assert.NotNull(res);
-            Assert.Equal(res.Count(), 20);
+            Assert.Equal(20, res.Count());
         }
 
         [Fact(DisplayName = "Update node")]
@@ -57,7 +57,7 @@ namespace hfa.tvhLibrary.test
                 Filters = new List<IQueryParamsFilter> { FactoryQueryParamsFilter.CreateStringQueryParamsFilter("name", "bein") }
             }, API_URLS.CHANNELS_LIST, CancellationToken.None);
 
-            Assert.Equal(res.Count(), 1);
+            Assert.Single(res);
 
             var expectedMediaName = (string)res.SingleOrDefault()["name"];
 
@@ -71,7 +71,7 @@ namespace hfa.tvhLibrary.test
                 Filters = new List<IQueryParamsFilter> { FactoryQueryParamsFilter.CreateStringQueryParamsFilter("name", nameof(UpdateNode)) }
             }, API_URLS.CHANNELS_LIST, CancellationToken.None);
 
-            Assert.Equal(res.Count(), 1);
+            Assert.Single(res);
             res.SingleOrDefault()["name"] = expectedMediaName;
             _tvheadendService.UpdateNode(res);
         }
