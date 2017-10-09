@@ -1,4 +1,5 @@
 ﻿using hfa.WebApi.Dal;
+using hfa.WebApi.Dal.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -26,6 +27,23 @@ namespace hfa.WebApi.Common.Auth
             _synkerDbContext = synkerDbContext;
             _securityOptions = securityOptions;
             ValidFor = TimeSpan.FromMinutes(_securityOptions.Value.TokenLifetimeInMinutes);
+        }
+
+        /// <summary>
+        /// Authenticate user with credentials
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="password">Password</param>
+        /// <returns>JWT Token</returns>
+        public User ResetPassword(string username, string password, string newPassword)
+        {
+            var user = _synkerDbContext.Users.Include(x => x.ConnectionState).SingleOrDefault(it => it.ConnectionState.UserName == username);
+            if (user != null && password.VerifyPassword(user.ConnectionState.Password, _securityOptions.Value.Salt))
+            {
+                user.ConnectionState.Password = newPassword.HashPassword(_securityOptions.Value.Salt);
+            }
+            _synkerDbContext.Users.Update(user);
+            return user;
         }
 
         /// <summary>

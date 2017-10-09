@@ -20,8 +20,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using hfa.WebApi.Common.Auth;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 
-namespace Web
+namespace hfa.WebApi
 {
     public class Startup
     {
@@ -31,13 +33,27 @@ namespace Web
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+
+            if (env.IsDevelopment())
+            {
+                builder.AddUserSecrets<Startup>();
+            }
+
             Configuration = builder.Build();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+//#if Release
+//            services.Configure<MvcOptions>(options =>
+//            {
+//                options.Filters.Add(new RequireHttpsAttribute());
+//            });
+//#endif
             ConfigSecurity(services);
             //Logger
             var loggerFactory = new LoggerFactory();
@@ -82,7 +98,7 @@ namespace Web
             var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
             .UseMySql(Configuration.GetConnectionString("PlDatabase"))
             .UseLoggerFactory(loggerFactory))
-            
+
              .BuildServiceProvider();
 
 
@@ -94,9 +110,17 @@ namespace Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseCors("CorsPolicy");
+
+
+
+            //Redirect HTTPS for PROD Env
+            if (!env.IsDevelopment())
+            {
+                app.UseRewriter(new RewriteOptions().AddRedirectToHttps());
+            }
 
             #region WebSockets
             var webSocketOptions = new WebSocketOptions()

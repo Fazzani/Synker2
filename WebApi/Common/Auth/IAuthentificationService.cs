@@ -1,9 +1,19 @@
-﻿using System;
+﻿using hfa.WebApi.Dal.Entities;
+using System;
+using System.Threading.Tasks;
 
 namespace hfa.WebApi.Common.Auth
 {
     public interface IAuthentificationService
     {
+        /// <summary>
+        /// Reset Password
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <param name="newPassword"></param>
+        /// <returns></returns>
+        User ResetPassword(string username, string password, string newPassword);
         /// <summary>
         /// Authenticate user with credentials
         /// </summary>

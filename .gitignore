@@ -269,3 +269,6 @@ __pycache__/
 *.tmp
 .vscode/
 *.log
+**/appsettings.development.json
+**/appsettings.staging.json
+**/appsettings.production.json

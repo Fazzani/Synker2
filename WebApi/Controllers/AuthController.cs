@@ -67,6 +67,11 @@ namespace hfa.WebApi.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Register new user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         [Route("register")]
         [AllowAnonymous]
         [HttpPost]
@@ -80,6 +85,26 @@ namespace hfa.WebApi.Controllers
 
             user.Password = user.Password.HashPassword(_authentificationService.Salt);
             var result = await _dbContext.Users.AddAsync(user.Entity);
+
+            return Ok(await _dbContext.SaveChangesAsync());
+        }
+
+        /// <summary>
+        /// Reset password
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        [Route("reset")]
+        [HttpPost]
+        public async Task<IActionResult> Reset([FromBody] ResetModel user)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_dbContext.Users.Any(x => x.ConnectionState.UserName == user.UserName))
+                return BadRequest($"The user {user.UserName} is not exist");
+
+            var userEntity = _authentificationService.ResetPassword(user.UserName, user.Password, user.NewPassword);
 
             return Ok(await _dbContext.SaveChangesAsync());
         }

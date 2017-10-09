@@ -6,6 +6,7 @@
   - [ ] Authorize based policy and roles
   - [ ] token encrypt by certif
   - [ ] Custom Security Providers [link](https://stormpath.com/blog/store-protect-sensitive-data-dotnet-core)
+  - [ ] Add filter for set the Principal from token
 - [ ] Attach playlists to users (add user to playlists)
 - [ ] Perf :
   - [ ] Compress
