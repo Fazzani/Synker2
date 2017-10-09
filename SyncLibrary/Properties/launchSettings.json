@@ -4,7 +4,7 @@
       "commandName": "Project",
       "commandLineArgs": "epg \"Z:\\xmltv\\channelsEpgFile.xml\"",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "development"
       }
     }
   }
