@@ -7,6 +7,67 @@
 - [x] Unit tests angular
 - [ ] Config SSL encrypt [link1](https://certbot.eff.org/#debianstretch-other)
 - [ ] Config smtp [link1](https://wiki.debian-fr.xyz/Configuration_d%27un_serveur_mail_avec_Postfix)
+- [ ] FileBeat all logs (batch + webApps)
+- [ ] dbForge Studio for MySQL (eq de SSDT)
+
+Objectifs
+=========
+- [ ] Linq query
+- [ ] PDB file test debug a dll
+- [ ] CodeDom
+- [ ] l'Objective 2.6: Manage the object life cycle à relire attentivement
+- [ ] Encryption sénario entre 2 app (Asym/Sym)
+- [ ] link to see https://msdn.microsoft.com/en-us/library/system.object.gethashcode(v=vs.110).aspx
+- [ ] Permissions/CAS
+- [x] TraceSource
+- [x] StringReader/StringWriter
+- [x] Threading and parallel
+- [x] ByteConverter : You should never create an instance of a ByteConverter. Instead, call the GetConverter method of TypeDescriptor.
+- [x] System.ComponentModel.DataAnnotations.IValidatableObject
+- [x] performancecountercategory
+- [ ] SecureString, ProtectedData, ProtectedMemory
+
+Technical targets
+=================
+- [x] Create collection channels with : IComparable, IEnumerable, Indexer, Equals, hashCode.
+- [x] Object validation
+- [ ] Serialize and deserialize channels list in file with permissions, buffering and crypto
+- [ ] Manipulate channels with linq (group, sort, join, etc...)
+- [x] Trace all the application.
+- [ ] Secure playlists exchange between two entities (asym/sym crypto, hash and certif)
+- [x] Perfermance metrics : PerformanceCounter, Stopwatch
+- [ ] Sign the library
+- [x] Diff 2 files m3u
+- [x] auto loader for providers and formatters (plugins by reflection)
+- [ ] Encryp with certif, convert to Base64 and verification
+- [x] Linq to m3u provider
+- [ ] Microservices architecture
+
+NOTES
+=====
+
+1) Providers
+
+Save and load data
+
+**Types** 
+
+- FileProvider (uri, local, crypto)
+- BaseProvider			
+- WebServiceProvider
+				
+2) Formaters
+Serialiser, déserialiser : 
+
+   - M3u
+   - tvlist
+   - Binary (objets)
+   - Json
+   - Xml
+		 
+Sync entre 2 providers in manager
+
+3) EPG (Load, Match, etc)
  
 #### DEPLOY PROD Config
 ###### APACHE2 CONFIG :/etc/apache2/sites-enabled# sudo nano 000-default.conf
@@ -39,64 +100,3 @@
 </VirtualHost>
 </code>
 </pre>
-
-
-
-Objectifs
-=========
-- [ ] Linq query
-- [ ] PDB file test debug a dll
-- [ ] CodeDom
-- [ ] l'Objective 2.6: Manage the object life cycle à relire attentivement
-- [ ] Encryption sénario entre 2 app (Asym/Sym)
-- [ ] link to see https://msdn.microsoft.com/en-us/library/system.object.gethashcode(v=vs.110).aspx
-- [ ] Permissions/CAS
-- [x] TraceSource
-- [x] StringReader/StringWriter
-- [x] Threading and parallel
-- [x] ByteConverter : You should never create an instance of a ByteConverter. Instead, call the GetConverter method of TypeDescriptor.
-- [x] System.ComponentModel.DataAnnotations.IValidatableObject
-- [x] performancecountercategory
-- [ ] SecureString, ProtectedData, ProtectedMemory
-
-Technical targets
-=================
-- [x] Create collection channels with : IComparable, IEnumerable, Indexer, Equals, hashCode.
-- [x] Object validation
-- [ ] Serialize and deserialize channels list in file with permissions, buffering and crypto
-- [ ] Manipulate channels with linq (group, sort, join, etc...)
-- [x] Trace all the application.
-- [ ] Secure playlists exchange between two entities (asym/sym crypto, hash and certif)
-- [x] Perfermance metrics : PerformanceCounter, Stopwatch
-- [ ] Sign the library
-- [x] Diff 2 files m3u
-- [ ] auto loader for providers and formatters (plugins by reflection)
-- [ ] Encryp with certif, convert to Base64 and verification
-- [ ] Linq to m3u provider
-- [ ] Microservices architecture
-
-NOTES
-=====
-
-1) Providers
-
-Save and load data
-
-**Types** 
-
-- FileProvider (uri, local, crypto)
-- BaseProvider			
-- WebServiceProvider
-				
-2) Formaters
-Serialiser, déserialiser : 
-
-   - M3u
-   - tvlist
-   - Binary (objets)
-   - Json
-   - Xml
-		 
-Sync entre 2 providers in manager
-
-3) EPG (Load, Match, etc)

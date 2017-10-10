@@ -43,7 +43,7 @@ namespace SyncLibrary
                 _elasticClient = Init.ServiceProvider.GetService<IElasticConnectionClient>();
                 _messagesService = Init.ServiceProvider.GetService<IMessagesService>();
 
-                Logger(nameof(SynchElastic)).LogInformation("Init Synker...");
+                Logger(nameof(SynchElastic)).LogInformation("Init batch Synker...");
 
                 _messagesService.SendAsync(Message.PingMessage, ts.Token).GetAwaiter().GetResult();
 
