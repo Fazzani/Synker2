@@ -1,13 +1,13 @@
-<mat-form-field>
+<md-form-field>
     <input mdInput [(ngModel)]="data.id" placeholder="id...">
-</mat-form-field>
-<mat-form-field>
+</md-form-field>
+<md-form-field>
     <input mdInput [(ngModel)]="data.displayname" placeholder="Name...">
-</mat-form-field>
-<mat-form-field>
+</md-form-field>
+<md-form-field>
     <input mdInput [(ngModel)]="data.icon.src" placeholder="icon...">
     <img [src]="data.icon.src" class="logo-medium" />
-</mat-form-field>
-<mat-action-row>
-    <button mat-raised-button (click)="dialogRef.close()">Close</button>
-</mat-action-row>
+</md-form-field>
+<md-action-row>
+    <button md-raised-button (click)="dialogRef.close()">Close</button>
+</md-action-row>

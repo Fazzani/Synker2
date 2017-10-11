@@ -1,15 +1,15 @@
 ﻿<h2 mat-dialog-title>Login</h2>
 <form #UserLogin="ngForm" (ngSubmit)="login(UserLogin.form.value)">
-    <mat-dialog-content>
-        <mat-form-field>
+    <md-dialog-content>
+        <md-form-field>
             <input mdInput [(ngModel)]="username" name="username" placeholder="Username...">
-        </mat-form-field>
-        <mat-form-field>
+        </md-form-field>
+        <md-form-field>
             <input mdInput type="password" [(ngModel)]="password" name="password" placeholder="Password...">
-        </mat-form-field>
-    </mat-dialog-content>
-    <mat-dialog-actions>
-        <button mat-raised-button mat-dialog-close>Cancel</button>
-        <button mat-raised-button [disabled]="!UserLogin.form.valid">Login</button>
-    </mat-dialog-actions>
+        </md-form-field>
+    </md-dialog-content>
+    <md-dialog-actions>
+        <button md-raised-button mat-dialog-close>Cancel</button>
+        <button md-raised-button [disabled]="!UserLogin.form.valid">Login</button>
+    </md-dialog-actions>
 </form>

@@ -1,65 +1,65 @@
-﻿<h2 mat-dialog-title>Register</h2>
+﻿<h2 md-dialog-title>Register</h2>
 <form #UserRegister="ngForm" (ngSubmit)="register(UserRegister.form.value)" novalidate>
-    <mat-dialog-content fxLayout='column'>
+    <md-dialog-content fxLayout='column'>
         <div fxLayout='row'>
-            <mat-select placeholder="Gender..." [(ngModel)]="gender" name="gender">
-                <mat-option *ngFor="let gender of data.genders" [value]="gender.value">
+            <md-select placeholder="Gender..." [(ngModel)]="gender" name="gender">
+                <md-option *ngFor="let gender of data.genders" [value]="gender.value">
                     {{ gender.viewValue }}
-                </mat-option>
-            </mat-select>
+                </md-option>
+            </md-select>
         </div>
         <div fxLayout='row'>
-            <mat-form-field>
+            <md-form-field>
                 <input mdInput [(ngModel)]="firstname" name="firstname" placeholder="Firstname..." required>
-            </mat-form-field>
+            </md-form-field>
 
-            <mat-form-field>
+            <md-form-field>
                 <input mdInput [(ngModel)]="lastname" name="lastname" placeholder="Lastname..." required>
-            </mat-form-field>
+            </md-form-field>
         </div>
         <div fxLayout='row'>
-            <mat-form-field>
+            <md-form-field>
                 <input mdInput [(ngModel)]="email" name="email" placeholder="Email..." required>
-            </mat-form-field>
-            <mat-form-field>
+            </md-form-field>
+            <md-form-field>
                 <input mdInput [mdDatepicker]="picker" name="birthday" placeholder="Choose a Birthday">
-                <mat-datepicker-toggle mdSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-            </mat-form-field>
-            <mat-form-field>
+                <md-datepicker-toggle mdSuffix [for]="picker"></md-datepicker-toggle>
+                <md-datepicker #picker></md-datepicker>
+            </md-form-field>
+            <md-form-field>
                 <input mdInput [(ngModel)]="photo" name="photo" placeholder="Photo...">
                 <img [src]="photo" class="logo-medium" />
-            </mat-form-field>
+            </md-form-field>
         </div>
         <div fxLayout='row'>
-            <mat-form-field>
+            <md-form-field>
                 <input mdInput [(ngModel)]="username" name="username" placeholder="Username..." required #usernameControl="ngModel">
-                <mat-error *ngIf="usernameControl.touched && usernameControl.invalid">
+                <md-error *ngIf="usernameControl.touched && usernameControl.invalid">
                     <span *ngIf="usernameControl.errors.required">
                                 username is required
                         </span>
-                </mat-error>
-            </mat-form-field>
-            <mat-form-field>
+                </md-error>
+            </md-form-field>
+            <md-form-field>
                 <input mdInput type="password" [(ngModel)]="password" validateEqual="confirmPassword" reverse="true" name="password" placeholder="Password..."
                     required>
-            </mat-form-field>
-            <mat-form-field>
+            </md-form-field>
+            <md-form-field>
                 <input mdInput type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm Password..." validateEqual="password"
                     reverse="false" #confirmPasswordControl="ngModel" required>
 
-                <mat-error *ngIf="confirmPasswordControl.touched && confirmPasswordControl.invalid">
+                <md-error *ngIf="confirmPasswordControl.touched && confirmPasswordControl.invalid">
                     <span *ngIf="confirmPasswordControl.errors.required">
                         Confirm password is required
                     </span>
-                </mat-error>
-            </mat-form-field>
+                </md-error>
+            </md-form-field>
         </div>
-    </mat-dialog-content>
-    <mat-dialog-actions>
-        <button mat-raised-button mat-dialog-close>Cancel</button>
-        <button mat-raised-button [disabled]="!UserRegister.form.valid">Register</button>
-    </mat-dialog-actions>
+    </md-dialog-content>
+    <md-dialog-actions>
+        <button md-raised-button md-dialog-close>Cancel</button>
+        <button md-raised-button [disabled]="!UserRegister.form.valid">Register</button>
+    </md-dialog-actions>
     <pre>
 </pre>
 </form>

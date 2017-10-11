@@ -1,38 +1,38 @@
-<mat-form-field>
+<md-form-field>
     <input mdInput [(ngModel)]="data.position" placeholder="Position...">
-</mat-form-field>
-<mat-form-field>
+</md-form-field>
+<md-form-field>
     <input mdInput [(ngModel)]="data.name" placeholder="Name...">
-</mat-form-field>
-<mat-form-field>
+</md-form-field>
+<md-form-field>
     <input mdInput [(ngModel)]="data.lang" placeholder="Lang...">
-</mat-form-field>
-<mat-form-field>
+</md-form-field>
+<md-form-field>
     <input mdInput [(ngModel)]="data.group" placeholder="Group...">
-</mat-form-field>
-<mat-form-field>
+</md-form-field>
+<md-form-field>
     <input mdInput [(ngModel)]="data.url" placeholder="Url...">
-</mat-form-field>
-<mat-expansion-panel>
-    <mat-expansion-panel-header>
-        <mat-panel-title>
+</md-form-field>
+<md-expansion-panel>
+    <md-expansion-panel-header>
+        <md-panel-title>
             Tvg
-        </mat-panel-title>
-        <mat-panel-description>
-            Media tvg informations
-        </mat-panel-description>
-    </mat-expansion-panel-header>
-    <mat-form-field>
+        </md-panel-title>
+        <md-panel-description>
+            Media tvg informdions
+        </md-panel-description>
+    </md-expansion-panel-header>
+    <md-form-field>
         <input mdInput [(ngModel)]="data.tvg.id" placeholder="Tvg Id">
-    </mat-form-field>
-    <mat-form-field>
+    </md-form-field>
+    <md-form-field>
         <input mdInput [(ngModel)]="data.tvg.name" placeholder="Tvg Name">
-    </mat-form-field>
-    <mat-form-field>
+    </md-form-field>
+    <md-form-field>
         <input mdInput [(ngModel)]="data.tvg.tvgIdentify" placeholder="Tvg identifier">
-    </mat-form-field>
+    </md-form-field>
     <img [src]="data.tvg.logo" class="logo-medium" />
-</mat-expansion-panel>
-<mat-action-row>
-    <button mat-raised-button (click)="dialogRef.close()">Close</button>
-</mat-action-row>
+</md-expansion-panel>
+<md-action-row>
+    <button md-raised-button (click)="dialogRef.close()">Close</button>
+</md-action-row>
