@@ -1,8 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>hfa.playlistbaselibrary</PackageId>
+    <PackageVersion>1.0.1</PackageVersion>
+    <Authors>Heni Fazzani</Authors>
+    <Description>Playlist library manager utility</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>First release</PackageReleaseNotes>
+    <Copyright>Copyright 2017 (c) Contoso Corporation. All rights reserved.</Copyright>
+    <PackageTags>Playlist, m3u, tvlist, Tvheadend, c#, linq</PackageTags>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
+    <Description>Playlist manager library</Description>
+    <RepositoryUrl>https://github/fazzani/synker2</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>Playlist, M3u, Tvlist, c#, Tvheadend, elasticsearch, Epg</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyOriginatorKeyFile>playlistlistLibrary.pfx</AssemblyOriginatorKeyFile>
+    <PackageProjectUrl>https://github/fazzani/synker2</PackageProjectUrl>
+    <PackageIconUrl>https://github.com/Fazzani/Synker2/raw/master/WebClient/wwwroot/favicon-32x32.png?raw=true</PackageIconUrl>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

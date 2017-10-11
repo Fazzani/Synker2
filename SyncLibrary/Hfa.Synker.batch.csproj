@@ -50,7 +50,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\hfa.TvhLibrary\hfa.TvhLibrary.csproj" />
-    <ProjectReference Include="..\PlaylistBaseLibrary\hfa.PlaylistBaseLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -10,9 +10,9 @@ un fichier ou une url. le providers doivent être injectés par DLL, pour que ce
 ---------------------------
 ## Notes
  - dotnet publish -r linux-arm -o Y:\SyncPlaylist
- - Appveyor deploy
  - [Commande nuget package](https://github.com/gsscoder/commandline) used
 #### TODO
+- [ ] Appveyor deploy
 - [ ] Diff to update properties only (epg, group, position, logo, urls for mutli) on (Elastic => TVH)
 - [ ] Use FormatableString for to string the different file's formats
 - [ ] Move mapping cache_filter to a simple file config

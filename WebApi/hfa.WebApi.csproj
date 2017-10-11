@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="hfa.playlistbaselibrary" Version="1.0.0-beta" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.0.0" />
@@ -25,7 +26,6 @@
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PlaylistBaseLibrary\hfa.PlaylistBaseLibrary.csproj" />
     <ProjectReference Include="..\SyncLibrary\hfa.Synker.batch.csproj" />
   </ItemGroup>
 
