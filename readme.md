@@ -10,6 +10,11 @@
 - [ ] FileBeat all logs (batch + webApps)
 - [ ] dbForge Studio for MySQL (eq de SSDT)
 
+### Package nuget PlaylistLibrary
+
+- dotnet pack hfa.PlaylistBaseLibrary.csproj /p:PackageVersion=1.0.0-beta -c Release
+- dotnet nuget push "bin\Release\hfa.playlistbaselibrary.1.0.0-beta.nupkg" -k ux16b846ggi3wy8arhuyxaqx -s https://ci.appveyor.com/nuget/fazzani-22jw22ht3p0v/api/v2/package
+
 Objectifs
 =========
 - [ ] Linq query
