@@ -10,7 +10,7 @@
     <Copyright>Copyright 2017 (c) Contoso Corporation. All rights reserved.</Copyright>
     <PackageTags>Playlist, m3u, tvlist, Tvheadend, c#, linq</PackageTags>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <Description>Playlist manager library</Description>
     <RepositoryUrl>https://github/fazzani/synker2</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
