@@ -102,7 +102,7 @@ export class EpgModifyDialog {
 }
 
 /**
- * Media datasource for md-table component
+ * Media datasource for mat-table component
  */
 export class EpgDataSource extends DataSource<tvChannel> {
 

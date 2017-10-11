@@ -50,13 +50,13 @@ app:empty + .loading > h1 {
     margin-bottom: 50px;
 }
 
-md-card {
+mat-card {
     max-width: 80%;
     margin: 2em auto;
     text-align: center;
 }
 
-md-toolbar-row {
+mat-toolbar-row {
     justify-content: space-between;
 }
 

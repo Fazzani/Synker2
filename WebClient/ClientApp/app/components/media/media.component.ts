@@ -106,7 +106,7 @@ export class TvgMediaModifyDialog {
 }
 
 /**
- * Media datasource for md-table component
+ * Media datasource for mat-table component
  */
 export class MediaDataSource extends DataSource<TvgMedia> {
     took: number;
