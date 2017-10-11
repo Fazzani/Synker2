@@ -1,0 +1,29 @@
+version: '1.0.{build}'
+image: Visual Studio 2017
+configuration: Release
+branches:
+  only:
+  - master
+  - Develop
+init:
+  # Good practise, because Windows line endings are different from Unix/Linux ones
+  - cmd: git config --global core.autocrlf true
+clone_depth: 10
+# environment variables
+environment:
+  nodejs_version: '8'
+  ASPNETCORE_ENVIRONMENT: 'Production'
+matrix:
+  fast_finish: true
+before_build:
+  # Display .NET Core version
+  - cmd: dotnet --version
+  # Display minimal restore text
+  - cmd: dotnet restore ./PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj --verbosity m
+build_script:
+  - cmd: dotnet pack ./PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj /p:PackageVersion=1.0.0-beta -c Release
+  - cmd: dotnet nuget push "PlaylistBaseLibrary\bin\Release\hfa.playlistbaselibrary*.nupkg" -k ux16b846ggi3wy8arhuyxaqx -s https://ci.appveyor.com/nuget/fazzani-22jw22ht3p0v/api/v2/package
+artifacts:
+ - path: '\PlaylistBaseLibrary\bin\Release\*.nukpg'
+   name: WebApi
+   type: nuget
