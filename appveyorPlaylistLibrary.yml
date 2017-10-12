@@ -19,11 +19,12 @@ matrix:
 before_build:
   # Display .NET Core version
   - cmd: dotnet --version
+  - cmd:PlaylistBaseLibrary
   # Display minimal restore text
-  - cmd: dotnet restore ./PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj --verbosity m
+  - cmd: dotnet restore ./hfa.PlaylistBaseLibrary.csproj --verbosity m
 build_script:
-  - cmd: dotnet build ./PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj
-  - cmd: dotnet pack ./PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj -c %CONFIGURATION% --no-build --version-suffix %LABEL% -o artifacts
+  - cmd: dotnet build ./hfa.PlaylistBaseLibrary.csproj
+  - cmd: dotnet pack ./hfa.PlaylistBaseLibrary.csproj -c %CONFIGURATION% --no-build --version-suffix %LABEL% -o artifacts
   - cmd: dotnet nuget push artifacts\**\*.nupkg -k ux16b846ggi3wy8arhuyxaqx -s https://ci.appveyor.com/nuget/fazzani/api/v2/package
 artifacts:
 - path: artifacts\**\*.*
