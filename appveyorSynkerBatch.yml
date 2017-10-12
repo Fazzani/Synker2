@@ -1,0 +1,50 @@
+version: '1.0.{build}'
+image: Visual Studio 2017
+configuration: Release
+branches:
+  only:
+  - master
+  - Develop
+init:
+  # Good practise, because Windows line endings are different from Unix/Linux ones
+  - cmd: git config --global core.autocrlf true
+# environment variables
+environment:
+  ASPNETCORE_ENVIRONMENT: 'Production'
+matrix:
+  fast_finish: true
+install: off
+before_build:
+  - echo ------------ Publish Sync batch version %APPVEYOR_BUILD_NUMBER% ----------
+  - cmd: ECHO Display .NET Core version
+  - cmd: dotnet --version
+  # Display minimal restore text
+  - cmd: dotnet restore ./SyncLibrary/Hfa.Synker.batch.csproj --verbosity m
+build_script:
+  - cmd: cd ./SyncLibrary/ 
+  - cmd: dotnet publish -c Release --verbosity m
+after_build: off
+  # For once the build has completed
+# enable patching of AssemblyInfo.* files
+assembly_info:
+  patch: true
+  file: AssemblyInfo.*
+  assembly_version: "1.0.{build}"
+  assembly_file_version: "{version}"
+  assembly_informational_version: "{version}"
+artifacts:
+ - path: '\SyncLibrary\bin\%CONFIGURATION%\netcoreapp2.0\publish'
+   name: SynkerBatch
+   type: zip
+test_script:
+  - cmd: ECHO restore packages for our unit tests
+  - cmd: dotnet restore ./hfa.synker.batch.test/hfa.synker.batch.test.csproj --verbosity m
+  - cmd: ECHO run the unit tests (requires changing into the test directory)
+  - cmd: cd ../hfa.synker.batch.test/
+  - cmd: dotnet xunit
+on_finish :
+  # any cleanup in here
+deploy: off
+cache:
+  - \WebClient\node_modules -> \WebClient\package.json
+  - '%USERPROFILE%\.nuget\packages'
