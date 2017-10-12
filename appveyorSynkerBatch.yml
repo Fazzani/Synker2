@@ -22,16 +22,16 @@ before_build:
 build_script:
   - cmd: dotnet publish -c %CONFIGURATION% -r linux-arm --verbosity m -o artifacts 
   - ls
-artifacts:
- - path: artifacts\*.*
-   name: SynkerBatch
-   type: zip
 test_script:
   - echo restore packages for our unit tests
   - cmd: cd ../hfa.synker.batch.test/
   - cmd: dotnet restore ./hfa.synker.batch.test.csproj --verbosity m
   - echo run the unit tests (requires changing into the test directory)
   - cmd: dotnet xunit
+artifacts:
+ - path: .\SyncLibrary\artifacts\*.*
+   name: SynkerBatch
+   type: zip
 on_finish :
   # any cleanup in here
 deploy: off
