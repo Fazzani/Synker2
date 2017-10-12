@@ -29,7 +29,7 @@ test_script:
   - echo run the unit tests (requires changing into the test directory)
   - cmd: dotnet xunit
 artifacts:
- - path: .\SyncLibrary\artifacts\*.*
+ - path: .\SyncLibrary\artifacts
    name: SynkerBatch
    type: zip
 on_finish :
