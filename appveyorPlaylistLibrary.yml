@@ -8,7 +8,7 @@ branches:
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
-  - ps: $Env:LABEL = "CI" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0")
+  - ps: $Env:LABEL = "beta" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0")
 clone_depth: 10
 # environment variables
 environment:
