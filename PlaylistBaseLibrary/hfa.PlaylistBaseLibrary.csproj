@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <PackageId>hfa.playlistbaselibrary</PackageId>
-    <PackageVersion>1.0.1</PackageVersion>
+    <!--<PackageVersion>1.0.1</PackageVersion>-->
     <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
     <Authors>Heni Fazzani</Authors>
     <Description>Playlist library manager utility</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
