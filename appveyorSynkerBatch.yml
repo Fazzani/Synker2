@@ -35,9 +35,9 @@ artifacts:
    type: zip
 test_script:
   - cmd: ECHO restore packages for our unit tests
+  - cmd: cd ../hfa.synker.batch.test/
   - cmd: dotnet restore ./hfa.synker.batch.test/hfa.synker.batch.test.csproj --verbosity m
   - cmd: ECHO run the unit tests (requires changing into the test directory)
-  - cmd: cd ../hfa.synker.batch.test/
   - cmd: dotnet xunit
 on_finish :
   # any cleanup in here
