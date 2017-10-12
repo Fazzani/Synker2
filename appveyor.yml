@@ -31,16 +31,16 @@ build_script:
   - cmd: cd ./WebClient/ 
   - cmd: npm install 
   - cmd: npm run configure
-  - cmd: dotnet publish -c Release --verbosity m
+  - cmd: dotnet publish -c Release --verbosity m -o artifactsWebClient
   - cmd: cd ..
-  - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj --verbosity m
+  - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj --verbosity m -o artifactsWebApi
 after_build:
   # For once the build has completed
 artifacts:
- - path: '\WebApi\bin\Release\netcoreapp2.0\publish'
+ - path: .\WebApi\artifactsWebApi
    name: WebApi
    type: WebDeployPackage
- - path: '\WebClient\bin\Release\netcoreapp2.0\publish'
+ - path: .\WebClient\artifactsWebClient
    name: WebClient
    type: WebDeployPackage
 test_script:
