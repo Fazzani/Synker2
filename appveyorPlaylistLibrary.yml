@@ -12,7 +12,6 @@ init:
 clone_depth: 10
 # environment variables
 environment:
-  nodejs_version: '8'
   ASPNETCORE_ENVIRONMENT: 'Production'
 matrix:
   fast_finish: true
@@ -25,7 +24,7 @@ before_build:
 build_script:
   - cmd: dotnet build ./hfa.PlaylistBaseLibrary.csproj
   - cmd: dotnet pack ./hfa.PlaylistBaseLibrary.csproj -c %CONFIGURATION% --no-build --version-suffix %LABEL% -o artifacts
-  - cmd: dotnet nuget push artifacts\**\*.nupkg -k ux16b846ggi3wy8arhuyxaqx -s https://ci.appveyor.com/nuget/fazzani/api/v2/package
+  - cmd: dotnet nuget push artifacts\**\*.* -k ux16b846ggi3wy8arhuyxaqx -s https://ci.appveyor.com/nuget/fazzani/api/v2/package
 artifacts:
 - path: artifacts\**\*.*
 cache:

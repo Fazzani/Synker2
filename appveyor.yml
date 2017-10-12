@@ -58,3 +58,4 @@ on_finish :
 deploy: off
 cache:
   - \WebClient\node_modules -> \WebClient\package.json
+  - '%USERPROFILE%\.nuget\packages'
