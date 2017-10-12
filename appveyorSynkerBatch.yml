@@ -13,20 +13,16 @@ environment:
   ASPNETCORE_ENVIRONMENT: 'Production'
 matrix:
   fast_finish: true
-install: off
 before_build:
   - echo ------------ Publish Sync batch version %APPVEYOR_BUILD_NUMBER% ----------
   - cmd: ECHO Display .NET Core version
   - cmd: dotnet --version
   - ls
   # Display minimal restore text
-  - cmd: dotnet restore ./SyncLibrary/Hfa.Synker.batch.csproj --verbosity m 
+  - cmd: cd ./SyncLibrary
+  - cmd: dotnet restore --verbosity m 
 build_script:
-  - cmd: cd ./SyncLibrary/ 
   - cmd: dotnet publish -c Release -r linux-arm --verbosity m -o artifacts 
-after_build: off
-  # For once the build has completed
-# enable patching of AssemblyInfo.* files
 assembly_info:
   patch: true
   file: ./SyncLibrary/**/AssemblyInfo.*
