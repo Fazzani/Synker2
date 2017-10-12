@@ -23,7 +23,7 @@ build_script:
   - cmd: dotnet publish -c %CONFIGURATION% -r linux-arm --verbosity m -o artifacts 
   - ls
 artifacts:
- - path: artifacts
+ - path: artifacts\*.*
    name: SynkerBatch
    type: zip
 test_script:
