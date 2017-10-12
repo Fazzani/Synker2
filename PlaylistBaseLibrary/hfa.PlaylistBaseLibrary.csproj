@@ -12,7 +12,7 @@
     <Copyright>Copyright 2017 (c) Contoso Corporation. All rights reserved.</Copyright>
     <PackageTags>Playlist, m3u, tvlist, Tvheadend, c#, linq</PackageTags>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
     <Description>Playlist manager library</Description>
     <RepositoryUrl>https://github/fazzani/synker2</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
@@ -21,6 +21,7 @@
     <AssemblyOriginatorKeyFile>playlistlistLibrary.pfx</AssemblyOriginatorKeyFile>
     <PackageProjectUrl>https://github/fazzani/synker2</PackageProjectUrl>
     <PackageIconUrl>https://github.com/Fazzani/Synker2/raw/master/WebClient/wwwroot/favicon-32x32.png?raw=true</PackageIconUrl>
+    <Company>Synker</Company>
     <!--<Version>1.0.1</Version>-->
   </PropertyGroup>
 
