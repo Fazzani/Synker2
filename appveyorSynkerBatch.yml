@@ -18,22 +18,23 @@ before_build:
   - echo ------------ Publish Sync batch version %APPVEYOR_BUILD_NUMBER% ----------
   - cmd: ECHO Display .NET Core version
   - cmd: dotnet --version
+  - ls
   # Display minimal restore text
-  - cmd: dotnet restore ./SyncLibrary/Hfa.Synker.batch.csproj --verbosity m
+  - cmd: dotnet restore ./SyncLibrary/Hfa.Synker.batch.csproj --verbosity m 
 build_script:
   - cmd: cd ./SyncLibrary/ 
-  - cmd: dotnet publish -c Release --verbosity m
+  - cmd: dotnet publish -c Release -r linux-arm --verbosity m -o artifacts 
 after_build: off
   # For once the build has completed
 # enable patching of AssemblyInfo.* files
 assembly_info:
   patch: true
-  file: AssemblyInfo.*
+  file: ./SyncLibrary/**/AssemblyInfo.*
   assembly_version: "1.0.{build}"
   assembly_file_version: "{version}"
   assembly_informational_version: "{version}"
 artifacts:
- - path: '\SyncLibrary\bin\%CONFIGURATION%\netcoreapp2.0\publish'
+ - path: './artifacts/'
    name: SynkerBatch
    type: zip
 test_script:
@@ -45,6 +46,3 @@ test_script:
 on_finish :
   # any cleanup in here
 deploy: off
-cache:
-  - \WebClient\node_modules -> \WebClient\package.json
-  - '%USERPROFILE%\.nuget\packages'
