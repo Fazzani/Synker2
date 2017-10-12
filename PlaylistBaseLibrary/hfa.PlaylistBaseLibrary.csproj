@@ -21,7 +21,7 @@
     <AssemblyOriginatorKeyFile>playlistlistLibrary.pfx</AssemblyOriginatorKeyFile>
     <PackageProjectUrl>https://github/fazzani/synker2</PackageProjectUrl>
     <PackageIconUrl>https://github.com/Fazzani/Synker2/raw/master/WebClient/wwwroot/favicon-32x32.png?raw=true</PackageIconUrl>
-    <Version>1.0.1</Version>
+    <!--<Version>1.0.1</Version>-->
   </PropertyGroup>
 
   <ItemGroup>
