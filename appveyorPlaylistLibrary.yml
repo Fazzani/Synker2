@@ -23,7 +23,7 @@ before_build:
 build_script:
   - cmd: dotnet build ./PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj
   - cmd: dotnet pack ./PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj -c Release /p:VersionSuffix={build} && ls "./PlaylistBaseLibrary/bin/Release/netstandard2.0/" && ls "./PlaylistBaseLibrary/bin/Release/"
-  - cmd: dotnet nuget push "./PlaylistBaseLibrary/bin/Release/hfa.playlistbaselibrary*.nupkg" -k ux16b846ggi3wy8arhuyxaqx -s https://ci.appveyor.com/nuget/fazzani/api/v2/package
+  - cmd: dotnet nuget push ./PlaylistBaseLibrary/bin/Release/hfa.playlistbaselibrary*.nupkg -k ux16b846ggi3wy8arhuyxaqx -s https://ci.appveyor.com/nuget/fazzani/api/v2/package
 artifacts:
  - path: '\PlaylistBaseLibrary\bin\Release\*.nukpg'
    name: WebApi
