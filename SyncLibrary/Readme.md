@@ -1,4 +1,6 @@
-﻿## Goals
+﻿[![Build status](https://ci.appveyor.com/api/projects/status/nnk28cpkyyh1tot4?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2-fmqp0)
+
+## Goals
 <pre>Créer un service système permettant la synchrnisation entre des providers différents. 
 Il faut que ce soit modulable, configurable et autonome.
 Il faut que ce soit configurable via un fichier de config (json de préférence).
