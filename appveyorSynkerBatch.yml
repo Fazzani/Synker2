@@ -25,7 +25,7 @@ build_script:
   - cmd: dotnet publish -c Release -r linux-arm --verbosity m -o artifacts 
 assembly_info:
   patch: true
-  file: ./SyncLibrary/**/AssemblyInfo.*
+  file: ./**/AssemblyInfo.*
   assembly_version: "1.0.{build}"
   assembly_file_version: "{version}"
   assembly_informational_version: "{version}"
