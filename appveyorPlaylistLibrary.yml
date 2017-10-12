@@ -19,7 +19,7 @@ matrix:
 before_build:
   # Display .NET Core version
   - cmd: dotnet --version
-  - cmd:PlaylistBaseLibrary
+  - cmd: cd PlaylistBaseLibrary
   # Display minimal restore text
   - cmd: dotnet restore ./hfa.PlaylistBaseLibrary.csproj --verbosity m
 build_script:
