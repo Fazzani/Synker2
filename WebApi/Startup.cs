@@ -124,10 +124,10 @@ namespace hfa.WebApi
                 app.UseCors("CorsPolicy");
 
             //Redirect HTTPS for PROD Env
-            if (!env.IsDevelopment())
-            {
-                app.UseRewriter(new RewriteOptions().AddRedirectToHttps());
-            }
+            //if (!env.IsDevelopment())
+            //{
+            //    app.UseRewriter(new RewriteOptions().AddRedirectToHttps());
+            //}
 
             #region WebSockets
             var webSocketOptions = new WebSocketOptions
