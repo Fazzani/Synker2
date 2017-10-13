@@ -62,7 +62,9 @@ namespace hfa.WebApi
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            services.AddMvc();
+            services.AddMvc(config => {
+                config.Filters.Add(typeof(GlobalExceptionFilter));
+            });
 
             //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?tabs=visual-studio
             services.AddSwaggerGen(c =>

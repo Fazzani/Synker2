@@ -12,7 +12,7 @@
   - [ ] Compress
   - [ ] Cache file response (Etag)
 - [ ] EF [link](https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql/blob/master/README.md)
-- [ ] Gestion des exceptions
+- [x] Gestion des exceptions
 - [ ] FIX ToList (QueryProvider not working on where) in Push Method of M3uProvider when downloading a file
 - [ ] WebSockets [link1](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/websockets)
 - [ ] Xmltv services
