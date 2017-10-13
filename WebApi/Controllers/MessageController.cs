@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 using hfa.WebApi.Dal;
 using hfa.WebApi.Dal.Entities;
 using Microsoft.AspNetCore.Authorization;
+using hfa.WebApi.Common.Filters;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -85,12 +86,10 @@ namespace Hfa.WebApi.Controllers
         /// </summary>
         /// <param name="messageStatus"></param>
         /// <returns></returns>
+        [ValidateModel]
         [HttpGet("status/{messageStatus:int}/{page:int?}/{pageSize:int?}")]
         public IActionResult GetByStatus(MessageStatus messageStatus, int page = 0, int pageSize = 10)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var response = _dbContext.Messages
                 .OrderByDescending(x => x.Id)
                 .Where(x => x.Status == messageStatus)

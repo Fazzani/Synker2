@@ -26,6 +26,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using hfa.PlaylistBaseLibrary.Providers;
+using hfa.WebApi.Common.Filters;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -50,12 +51,10 @@ namespace Hfa.WebApi.Controllers
 
         // [ElasticResult]
         [HttpPost]
+        [ValidateModel]
         [Route("search")]
         public async Task<IActionResult> SearchAsync([FromBody] QueryListBaseModel query)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var response = await _elasticConnectionClient.Client.SearchAsync<TvgMedia>(rq => rq
                 .Size(query.PageSize)
                 .From(query.Skip)
@@ -97,19 +96,16 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public IActionResult Post([FromBody]TvgMedia value)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             return Ok();
         }
 
         [HttpPut("{id}")]
+        [ValidateModel]
         public IActionResult Put(int id, [FromBody]TvgMedia value)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             return Ok();
         }
 

@@ -62,13 +62,11 @@ namespace hfa.WebApi
             ConfigSecurity(services);
             //Logger
             var loggerFactory = new LoggerFactory();
-            loggerFactory.AddFile(Configuration.GetSection("Logging"));
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+           
 
             services.AddMvc(config =>
             {
-                config.Filters.Add(typeof(GlobalExceptionFilter));
+                config.Filters.Add(typeof(GlobalExceptionFilterAttribute));
             });
 
             //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?tabs=visual-studio
@@ -105,8 +103,7 @@ namespace hfa.WebApi
                 .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)));
 
             var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
-            .UseMySql(Configuration.GetConnectionString("PlDatabase"))
-            .UseLoggerFactory(loggerFactory))
+            .UseMySql(Configuration.GetConnectionString("PlDatabase")))
              .BuildServiceProvider();
 
             var DB = serviceProvider.GetService<SynkerDbContext>();
@@ -116,41 +113,21 @@ namespace hfa.WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            app.UseCors("CorsPolicy");
-
-
+            loggerFactory.AddFile(Configuration.GetSection("Logging"));
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddDebug();
+            var log = loggerFactory.CreateLogger<Startup>();
+            try
+            {
+                app.UseCors("CorsPolicy");
 
             //Redirect HTTPS for PROD Env
             if (!env.IsDevelopment())
             {
                 app.UseRewriter(new RewriteOptions().AddRedirectToHttps());
             }
-
-            #region Exceptions
-            app.UseExceptionHandler(
-                 builder =>
-                 {
-                     builder.Run(
-                     async context =>
-                     {
-                         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                         context.Response.ContentType = "application/json";
-                         var ex = context.Features.Get<IExceptionHandlerFeature>();
-                         if (ex != null)
-                         {
-                             var err = JsonConvert.SerializeObject(new 
-                             {
-                                 Stacktrace = ex.Error.StackTrace,
-                                 Message = ex.Error.Message
-                             });
-                             await context.Response.Body.WriteAsync(Encoding.ASCII.GetBytes(err), 0, err.Length).ConfigureAwait(false);
-                         }
-                     });
-                 }
-);
-            #endregion
 
             #region WebSockets
             var webSocketOptions = new WebSocketOptions
@@ -197,6 +174,20 @@ namespace hfa.WebApi
 
             app.UseStaticFiles();
             app.UseMvc();
+            }
+            catch (Exception ex)
+            {
+                app.Run(
+                  async context =>
+                  {
+                      log.LogError($"{ex.Message}");
+
+                      context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                      context.Response.ContentType = "text/plain";
+                      await context.Response.WriteAsync(ex.Message).ConfigureAwait(false);
+                      await context.Response.WriteAsync(ex.StackTrace).ConfigureAwait(false);
+                  });
+            }
         }
 
         /// <summary>

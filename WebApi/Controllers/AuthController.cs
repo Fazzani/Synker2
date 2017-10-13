@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using hfa.WebApi.Common;
 using hfa.WebApi.Dal;
 using hfa.WebApi.Models;
+using hfa.WebApi.Common.Filters;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -31,11 +32,9 @@ namespace hfa.WebApi.Controllers
         [Route("token")]
         [AllowAnonymous]
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> GetToken([FromBody] AuthModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             JwtReponse jwtReponse = null;
 
             if (model.GrantType == GrantType.Password)
@@ -57,11 +56,9 @@ namespace hfa.WebApi.Controllers
         [Route("revoketoken")]
         [Authorize]
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> RevokeToken([FromBody] TokenModel tokenModel)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             _authentificationService.RevokeToken(tokenModel.Token);
             await _dbContext.SaveChangesAsync();
             return Ok();
@@ -75,11 +72,9 @@ namespace hfa.WebApi.Controllers
         [Route("register")]
         [AllowAnonymous]
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Register([FromBody] RegisterModel user)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             if (_dbContext.Users.Any(x => x.Email == user.Email) || _dbContext.Users.Any(x => x.ConnectionState.UserName == user.UserName))
                 return BadRequest($"The user {user.UserName} is already exist");
 
@@ -96,11 +91,9 @@ namespace hfa.WebApi.Controllers
         /// <returns></returns>
         [Route("reset")]
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Reset([FromBody] ResetModel user)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             if (!_dbContext.Users.Any(x => x.ConnectionState.UserName == user.UserName))
                 return BadRequest($"The user {user.UserName} is not exist");
 

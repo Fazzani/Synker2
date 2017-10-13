@@ -11,6 +11,7 @@ using hfa.WebApi.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using hfa.WebApi.Dal;
+using hfa.WebApi.Common.Filters;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -35,12 +36,10 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         [Route("search")]
         public async Task<IActionResult> SearchAsync([FromBody] QueryListBaseModel query)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var response = await _elasticConnectionClient.Client.SearchAsync<tvChannel>(rq => rq
                 .Size(query.PageSize)
                 .From(query.Skip)
@@ -58,12 +57,10 @@ namespace Hfa.WebApi.Controllers
             return new OkObjectResult(response.GetResultListModel());
         }
 
+        [ValidateModel]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var response = await _elasticConnectionClient.Client.SearchAsync<tvChannel>(rq => rq
                 .From(0)
                 .Size(1)
