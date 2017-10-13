@@ -23,6 +23,7 @@ using hfa.WebApi.Common.Auth;
 using Microsoft.AspNetCore.Mvc;
 using hfa.WebApi.Common.Middleware;
 using Microsoft.AspNetCore.Rewrite;
+using hfa.WebApi.Common.Filters;
 
 namespace hfa.WebApi
 {
