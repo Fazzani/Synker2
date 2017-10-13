@@ -24,6 +24,9 @@ using Microsoft.AspNetCore.Mvc;
 using hfa.WebApi.Common.Middleware;
 using Microsoft.AspNetCore.Rewrite;
 using hfa.WebApi.Common.Filters;
+using System.Net;
+using Microsoft.AspNetCore.Diagnostics;
+using Newtonsoft.Json;
 
 namespace hfa.WebApi
 {
@@ -50,12 +53,12 @@ namespace hfa.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-//#if Release
-//            services.Configure<MvcOptions>(options =>
-//            {
-//                options.Filters.Add(new RequireHttpsAttribute());
-//            });
-//#endif
+            //#if Release
+            //            services.Configure<MvcOptions>(options =>
+            //            {
+            //                options.Filters.Add(new RequireHttpsAttribute());
+            //            });
+            //#endif
             ConfigSecurity(services);
             //Logger
             var loggerFactory = new LoggerFactory();
@@ -63,7 +66,8 @@ namespace hfa.WebApi
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            services.AddMvc(config => {
+            services.AddMvc(config =>
+            {
                 config.Filters.Add(typeof(GlobalExceptionFilter));
             });
 
@@ -124,6 +128,30 @@ namespace hfa.WebApi
                 app.UseRewriter(new RewriteOptions().AddRedirectToHttps());
             }
 
+            #region Exceptions
+            app.UseExceptionHandler(
+                 builder =>
+                 {
+                     builder.Run(
+                     async context =>
+                     {
+                         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                         context.Response.ContentType = "application/json";
+                         var ex = context.Features.Get<IExceptionHandlerFeature>();
+                         if (ex != null)
+                         {
+                             var err = JsonConvert.SerializeObject(new 
+                             {
+                                 Stacktrace = ex.Error.StackTrace,
+                                 Message = ex.Error.Message
+                             });
+                             await context.Response.Body.WriteAsync(Encoding.ASCII.GetBytes(err), 0, err.Length).ConfigureAwait(false);
+                         }
+                     });
+                 }
+);
+            #endregion
+
             #region WebSockets
             var webSocketOptions = new WebSocketOptions
             {
@@ -155,7 +183,7 @@ namespace hfa.WebApi
             #endregion
 
             /** Web hooks **/
-            app.UseWebHooks(()=>"/api/v1/message", () => "qwertyuiopasdfghjklzxcvbnm123456");
+            app.UseWebHooks(() => "/api/v1/message", () => "qwertyuiopasdfghjklzxcvbnm123456");
 
             #region Swagger
 
