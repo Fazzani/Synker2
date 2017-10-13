@@ -17,7 +17,6 @@
 
 Objectifs
 =========
-- [ ] Linq query
 - [ ] PDB file test debug a dll
 - [ ] CodeDom
 - [ ] l'Objective 2.6: Manage the object life cycle à relire attentivement
@@ -32,48 +31,6 @@ Objectifs
 - [x] performancecountercategory
 - [ ] SecureString, ProtectedData, ProtectedMemory
 
-Technical targets
-=================
-- [x] Create collection channels with : IComparable, IEnumerable, Indexer, Equals, hashCode.
-- [x] Object validation
-- [ ] Serialize and deserialize channels list in file with permissions, buffering and crypto
-- [ ] Manipulate channels with linq (group, sort, join, etc...)
-- [x] Trace all the application.
-- [ ] Secure playlists exchange between two entities (asym/sym crypto, hash and certif)
-- [x] Perfermance metrics : PerformanceCounter, Stopwatch
-- [ ] Sign the library
-- [x] Diff 2 files m3u
-- [x] auto loader for providers and formatters (plugins by reflection)
-- [ ] Encryp with certif, convert to Base64 and verification
-- [x] Linq to m3u provider
-- [ ] Microservices architecture
-
-NOTES
-=====
-
-1) Providers
-
-Save and load data
-
-**Types** 
-
-- FileProvider (uri, local, crypto)
-- BaseProvider			
-- WebServiceProvider
-				
-2) Formaters
-Serialiser, déserialiser : 
-
-   - M3u
-   - tvlist
-   - Binary (objets)
-   - Json
-   - Xml
-		 
-Sync entre 2 providers in manager
-
-3) EPG (Load, Match, etc)
- 
 #### DEPLOY PROD Config
 ###### APACHE2 CONFIG :/etc/apache2/sites-enabled# sudo nano 000-default.conf
 <pre>
