@@ -1,7 +1,7 @@
 ﻿<div class="site-container">
     <mat-toolbar color="custom">
         <mat-form-field floatPlaceholder="never">
-            <input mdInput #filter placeholder="Filter medias...">
+            <input matInput #filter placeholder="Filter medias...">
         </mat-form-field>
         <span class="spacer"></span>
         <a mat-icon-button>
@@ -14,32 +14,32 @@
     <div class="example-loading-shade" *ngIf="dataSource.isLoadingResults">
         <mat-spinner *ngIf="dataSource.isLoadingResults"></mat-spinner>
     </div>
-    <mat-table #table [dataSource]="dataSource" mdSort mdSortActive="position" mdSortDisableClear mdSortDirection="asc">
+    <mat-table #table [dataSource]="dataSource" matSort matSortActive="position" matSortDisableClear matSortDirection="asc">
         <!-- position Column -->
-        <ng-container mdColumnDef="position">
-            <mat-header-cell *mdHeaderCellDef mat-sort-header disableClear="true"> Position </mat-header-cell>
-            <mat-cell *mdCellDef="let row"> {{row.position}} </mat-cell>
+        <ng-container matColumnDef="position">
+            <mat-header-cell *matHeaderCellDef mat-sort-header disableClear="true"> Position </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.position}} </mat-cell>
         </ng-container>
 
         <!-- name Column -->
-        <ng-container mdColumnDef="name">
-            <mat-header-cell *mdHeaderCellDef mat-sort-header> Name </mat-header-cell>
-            <mat-cell *mdCellDef="let row"> {{row.name}} </mat-cell>
+        <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
         </ng-container>
 
         <!-- group Column -->
-        <ng-container mdColumnDef="group">
-            <mat-header-cell *mdHeaderCellDef mat-sort-header> Group </mat-header-cell>
-            <mat-cell *mdCellDef="let row"> {{row.group}} </mat-cell>
+        <ng-container matColumnDef="group">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Group </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.group}} </mat-cell>
         </ng-container>
         <!-- Lang Column -->
-        <ng-container mdColumnDef="lang">
-            <mat-header-cell *mdHeaderCellDef mat-sort-header> Lang </mat-header-cell>
-            <mat-cell *mdCellDef="let row"> {{row.lang}} </mat-cell>
+        <ng-container matColumnDef="lang">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Lang </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.lang}} </mat-cell>
         </ng-container>
-        <ng-container mdColumnDef="actions">
-            <mat-header-cell *mdHeaderCellDef> Actions </mat-header-cell>
-            <mat-cell *mdCellDef="let row">
+        <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+            <mat-cell *matCellDef="let row">
                 <button mat-icon-button color="warn" (click)="openDialog(row)">
                     <mat-icon class="mat-24" aria-label="Edit">edit</mat-icon>
                   </button>
@@ -51,8 +51,8 @@
                   </button>
             </mat-cell>
         </ng-container>
-        <mat-header-row *mdHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *mdRowDef="let row; columns: displayedColumns;"></mat-row>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
     <mat-paginator #paginator [length]="dataSource.total" [pageIndex]="paginator.pageIndex" [pageSize]="paginator.pageSize" [pageSizeOptions]="paginator.pageSizeOptions">
     </mat-paginator>

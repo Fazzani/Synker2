@@ -1,65 +1,65 @@
-﻿<h2 md-dialog-title>Register</h2>
+﻿<h2 mat-dialog-title>Register</h2>
 <form #UserRegister="ngForm" (ngSubmit)="register(UserRegister.form.value)" novalidate>
-    <md-dialog-content fxLayout='column'>
+    <mat-dialog-content fxLayout='column'>
         <div fxLayout='row'>
-            <md-select placeholder="Gender..." [(ngModel)]="gender" name="gender">
-                <md-option *ngFor="let gender of data.genders" [value]="gender.value">
+            <mat-select placeholder="Gender..." [(ngModel)]="gender" name="gender">
+                <mat-option *ngFor="let gender of data.genders" [value]="gender.value">
                     {{ gender.viewValue }}
-                </md-option>
-            </md-select>
+                </mat-option>
+            </mat-select>
         </div>
         <div fxLayout='row'>
-            <md-form-field>
-                <input mdInput [(ngModel)]="firstname" name="firstname" placeholder="Firstname..." required>
-            </md-form-field>
+            <mat-form-field>
+                <input matInput [(ngModel)]="firstname" name="firstname" placeholder="Firstname..." required>
+            </mat-form-field>
 
-            <md-form-field>
-                <input mdInput [(ngModel)]="lastname" name="lastname" placeholder="Lastname..." required>
-            </md-form-field>
+            <mat-form-field>
+                <input matInput [(ngModel)]="lastname" name="lastname" placeholder="Lastname..." required>
+            </mat-form-field>
         </div>
         <div fxLayout='row'>
-            <md-form-field>
-                <input mdInput [(ngModel)]="email" name="email" placeholder="Email..." required>
-            </md-form-field>
-            <md-form-field>
-                <input mdInput [mdDatepicker]="picker" name="birthday" placeholder="Choose a Birthday">
-                <md-datepicker-toggle mdSuffix [for]="picker"></md-datepicker-toggle>
-                <md-datepicker #picker></md-datepicker>
-            </md-form-field>
-            <md-form-field>
-                <input mdInput [(ngModel)]="photo" name="photo" placeholder="Photo...">
+            <mat-form-field>
+                <input matInput [(ngModel)]="email" name="email" placeholder="Email..." required>
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput [matDatepicker]="picker" name="birthday" placeholder="Choose a Birthday">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput [(ngModel)]="photo" name="photo" placeholder="Photo...">
                 <img [src]="photo" class="logo-medium" />
-            </md-form-field>
+            </mat-form-field>
         </div>
         <div fxLayout='row'>
-            <md-form-field>
-                <input mdInput [(ngModel)]="username" name="username" placeholder="Username..." required #usernameControl="ngModel">
-                <md-error *ngIf="usernameControl.touched && usernameControl.invalid">
+            <mat-form-field>
+                <input matInput [(ngModel)]="username" name="username" placeholder="Username..." required #usernameControl="ngModel">
+                <mat-error *ngIf="usernameControl.touched && usernameControl.invalid">
                     <span *ngIf="usernameControl.errors.required">
                                 username is required
                         </span>
-                </md-error>
-            </md-form-field>
-            <md-form-field>
-                <input mdInput type="password" [(ngModel)]="password" validateEqual="confirmPassword" reverse="true" name="password" placeholder="Password..."
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput type="password" [(ngModel)]="password" validateEqual="confirmPassword" reverse="true" name="password" placeholder="Password..."
                     required>
-            </md-form-field>
-            <md-form-field>
-                <input mdInput type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm Password..." validateEqual="password"
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm Password..." validateEqual="password"
                     reverse="false" #confirmPasswordControl="ngModel" required>
 
-                <md-error *ngIf="confirmPasswordControl.touched && confirmPasswordControl.invalid">
+                <mat-error *ngIf="confirmPasswordControl.touched && confirmPasswordControl.invalid">
                     <span *ngIf="confirmPasswordControl.errors.required">
                         Confirm password is required
                     </span>
-                </md-error>
-            </md-form-field>
+                </mat-error>
+            </mat-form-field>
         </div>
-    </md-dialog-content>
-    <md-dialog-actions>
-        <button md-raised-button md-dialog-close>Cancel</button>
-        <button md-raised-button [disabled]="!UserRegister.form.valid">Register</button>
-    </md-dialog-actions>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <button mat-raised-button mat-dialog-close>Cancel</button>
+        <button mat-raised-button [disabled]="!UserRegister.form.valid">Register</button>
+    </mat-dialog-actions>
     <pre>
 </pre>
 </form>

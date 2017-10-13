@@ -1,38 +1,38 @@
-<md-form-field>
-    <input mdInput [(ngModel)]="data.position" placeholder="Position...">
-</md-form-field>
-<md-form-field>
-    <input mdInput [(ngModel)]="data.name" placeholder="Name...">
-</md-form-field>
-<md-form-field>
-    <input mdInput [(ngModel)]="data.lang" placeholder="Lang...">
-</md-form-field>
-<md-form-field>
-    <input mdInput [(ngModel)]="data.group" placeholder="Group...">
-</md-form-field>
-<md-form-field>
-    <input mdInput [(ngModel)]="data.url" placeholder="Url...">
-</md-form-field>
-<md-expansion-panel>
-    <md-expansion-panel-header>
-        <md-panel-title>
+<mat-form-field>
+    <input matInput [(ngModel)]="data.position" placeholder="Position...">
+</mat-form-field>
+<mat-form-field>
+    <input matInput [(ngModel)]="data.name" placeholder="Name...">
+</mat-form-field>
+<mat-form-field>
+    <input matInput [(ngModel)]="data.lang" placeholder="Lang...">
+</mat-form-field>
+<mat-form-field>
+    <input matInput [(ngModel)]="data.group" placeholder="Group...">
+</mat-form-field>
+<mat-form-field>
+    <input matInput [(ngModel)]="data.url" placeholder="Url...">
+</mat-form-field>
+<mat-expansion-panel>
+    <mat-expansion-panel-header>
+        <mat-panel-title>
             Tvg
-        </md-panel-title>
-        <md-panel-description>
+        </mat-panel-title>
+        <mat-panel-description>
             Media tvg informdions
-        </md-panel-description>
-    </md-expansion-panel-header>
-    <md-form-field>
-        <input mdInput [(ngModel)]="data.tvg.id" placeholder="Tvg Id">
-    </md-form-field>
-    <md-form-field>
-        <input mdInput [(ngModel)]="data.tvg.name" placeholder="Tvg Name">
-    </md-form-field>
-    <md-form-field>
-        <input mdInput [(ngModel)]="data.tvg.tvgIdentify" placeholder="Tvg identifier">
-    </md-form-field>
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-form-field>
+        <input matInput [(ngModel)]="data.tvg.id" placeholder="Tvg Id">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput [(ngModel)]="data.tvg.name" placeholder="Tvg Name">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput [(ngModel)]="data.tvg.tvgIdentify" placeholder="Tvg identifier">
+    </mat-form-field>
     <img [src]="data.tvg.logo" class="logo-medium" />
-</md-expansion-panel>
-<md-action-row>
-    <button md-raised-button (click)="dialogRef.close()">Close</button>
-</md-action-row>
+</mat-expansion-panel>
+<mat-action-row>
+    <button mat-raised-button (click)="dialogRef.close()">Close</button>
+</mat-action-row>

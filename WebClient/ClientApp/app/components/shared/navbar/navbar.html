@@ -1,57 +1,57 @@
 <!-- TODO: figure out if the <nav> should go inside of a <header> element. -->
 <nav class="docs-navbar">
-    <a md-button class="docs-button" routerLink="/" aria-label="Synker">
+    <a mat-button class="docs-button" routerLink="/" aria-label="Synker">
         <img class="docs-angular-logo svglogo"
              src="../../../../../wwwroot/assets/img/Mj2wCGp6m8.svg"
              alt="Synker">
         <span>Synker</span>
     </a>
-    <a md-button class="docs-button" routerLink="/tvgmedia">Medias</a>
-    <a md-button class="docs-button" routerLink="/epg">EPG</a>
+    <a mat-button class="docs-button" routerLink="/tvgmedia">Medias</a>
+    <a mat-button class="docs-button" routerLink="/epg">EPG</a>
     <div class="spacer"></div>
 
-    <a md-icon-button *ngIf="(isAuthenticated | async)" aria-hidden="true">
+    <a mat-icon-button *ngIf="(isAuthenticated | async)" aria-hidden="true">
          <span class="notif-number">{{messages?.rowCount}}</span>
-        <md-icon>message</md-icon> 
-        <span class="mderial-icons mdl-badge mdl-badge--overlap" mdTooltip="You have {{messages?.rowCount}} messages !" [attr.data-badge]="messages?.rowCount">message</span>
+        <mat-icon>message</mat-icon> 
+        <span class="mderial-icons mdl-badge mdl-badge--overlap" matTooltip="You have {{messages?.rowCount}} messages !" [attr.data-badge]="messages?.rowCount">message</span>
     </a>
 
-    <a md-button class="docs-button" [routerLink]="['/signin', {modal: 'true', 'dialog': 'signin'}]" aria-label="Sign in" *ngIf="!(isAuthenticated | async)">
-        <md-icon>perm_identity</md-icon>
+    <a mat-button class="docs-button" [routerLink]="['/signin', {modal: 'true', 'dialog': 'signin'}]" aria-label="Sign in" *ngIf="!(isAuthenticated | async)">
+        <mat-icon>perm_identity</mat-icon>
         <span>Sign in</span>
     </a>
-    <a md-button class="docs-button" [routerLink]="['/register', {modal: 'true', 'dialog': 'register'}]" aria-label="Register"
+    <a mat-button class="docs-button" [routerLink]="['/register', {modal: 'true', 'dialog': 'register'}]" aria-label="Register"
         *ngIf="!(isAuthenticated | async)">
-        <md-icon>fingerprint</md-icon>
+        <mat-icon>fingerprint</mat-icon>
         <span>Register</span>
     </a>
     <a href="#" class="dropdown-toggle" data-toggle="dropdown" *ngIf="(isAuthenticated | async)">
         <img [src]="(user | async)?.photo" class="profile-image img-circle">
     </a>
-    <a md-icon-button [mdMenuTriggerFor]="menu" *ngIf="(isAuthenticated | async)">
-        <md-icon>more_vert</md-icon>
+    <a mat-icon-button [matMenuTriggerFor]="menu" *ngIf="(isAuthenticated | async)">
+        <mat-icon>more_vert</mat-icon>
     </a>
 
-    <md-menu #menu="mdMenu">
-        <button md-menu-item [routerLink]="['/signin', {modal: 'true', 'dialog': 'signin'}]" *ngIf="!(isAuthenticated | async)">
-            <md-icon>perm_identity</md-icon>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item [routerLink]="['/signin', {modal: 'true', 'dialog': 'signin'}]" *ngIf="!(isAuthenticated | async)">
+            <mat-icon>perm_identity</mat-icon>
             <span>Login</span>
         </button>
-        <button md-menu-item *ngIf="(isAuthenticated | async)">
+        <button mat-menu-item *ngIf="(isAuthenticated | async)">
             <img [src]="(user | async)?.photo" class="profile-image img-circle">
             <span>{{(user | async)?.firstName}} {{(user | async)?.lastName}}</span>
         </button>
-        <button md-menu-item>
-            <md-icon>notifications_off</md-icon>
+        <button mat-menu-item>
+            <mat-icon>notifications_off</mat-icon>
             <span>Disable alerts</span>
         </button>
-        <a md-button href="https://github.com/Fazzani/Synker2" aria-label="GitHub Repository" *ngIf="(isAuthenticated | async)">
-            <md-icon>notifications_off</md-icon>
+        <a mat-button href="https://github.com/Fazzani/Synker2" aria-label="GitHub Repository" *ngIf="(isAuthenticated | async)">
+            <mat-icon>notifications_off</mat-icon>
             <span>Github</span>
         </a>
-        <button md-menu-item (click)="signout()" *ngIf="(isAuthenticated | async)">
-            <md-icon>power_settings_new</md-icon>
+        <button mat-menu-item (click)="signout()" *ngIf="(isAuthenticated | async)">
+            <mat-icon>power_settings_new</mat-icon>
             <span>Sign out</span>
         </button>
-    </md-menu>
+    </mat-menu>
 </nav>
