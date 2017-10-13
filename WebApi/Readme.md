@@ -1,4 +1,5 @@
 ﻿![alt text](https://github.com/Fazzani/Synker2/blob/master/WebClient/wwwroot/favicon-32x32.png?raw=true)
+[![Build status](https://ci.appveyor.com/api/projects/status/9drbo0ty6whivq12?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2)
 ### TODO
 - [x] Generate new m3u file for TVH
 - [x] Export Provider to Provider dynamiquement (ex: tvlist to m3u)
