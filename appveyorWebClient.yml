@@ -26,20 +26,12 @@ before_build:
   - cmd: dotnet --version
   # Display minimal restore text
   - cmd: dotnet restore ./WebClient/hfa.WebClient.csproj --verbosity m
-  - cmd: dotnet restore ./WebApi/hfa.WebApi.csproj --verbosity m
 build_script:
   - cmd: cd ./WebClient/ 
   - cmd: npm install 
   - cmd: npm run configure
   - cmd: dotnet publish -c Release --verbosity m -o artifactsWebClient
-  - cmd: cd ..
-  - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj --verbosity m -o artifactsWebApi
-after_build:
-  # For once the build has completed
 artifacts:
- - path: .\WebApi\artifactsWebApi
-   name: WebApi
-   type: WebDeployPackage
  - path: .\WebClient\artifactsWebClient
    name: WebClient
    type: WebDeployPackage
@@ -53,9 +45,3 @@ test_script:
   - cmd: cd ../hfa.synker.batch.test/
   - cmd: dotnet xunit
   - cmd: cd ../WebClient && npm run test:ci
-on_finish :
-  # any cleanup in here
-deploy: off
-cache:
-  - \WebClient\node_modules -> \WebClient\package.json
-  - '%USERPROFILE%\.nuget\packages'
