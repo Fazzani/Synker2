@@ -1,0 +1,27 @@
+version: '1.0.{build}'
+image: Visual Studio 2017
+configuration: Release
+branches:
+  only:
+  - master
+  - Develop
+init:
+  # Good practise, because Windows line endings are different from Unix/Linux ones
+  - cmd: git config --global core.autocrlf true
+  - cmd: pwd
+clone_depth: 10
+# environment variables
+environment:
+  nodejs_version: '8'
+  ASPNETCORE_ENVIRONMENT: 'Production'
+matrix:
+  fast_finish: true
+before_build:
+  - cmd: dotnet --version
+  - cmd: dotnet restore ./WebApi/hfa.WebApi.csproj --verbosity m
+build_script:
+  - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj --verbosity m -o artifactsWebApi
+artifacts:
+ - path: .\WebApi\artifactsWebApi
+   name: WebApi
+   type: WebDeployPackage
