@@ -21,12 +21,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using hfa.WebApi.Common.Auth;
 using Microsoft.AspNetCore.Mvc;
-using hfa.WebApi.Common.Middleware;
 using Microsoft.AspNetCore.Rewrite;
 using hfa.WebApi.Common.Filters;
 using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using Newtonsoft.Json;
+using AspNet.Core.Webhooks.Receivers;
 
 namespace hfa.WebApi
 {
@@ -53,16 +53,9 @@ namespace hfa.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //#if Release
-            //            services.Configure<MvcOptions>(options =>
-            //            {
-            //                options.Filters.Add(new RequireHttpsAttribute());
-            //            });
-            //#endif
             ConfigSecurity(services);
             //Logger
             var loggerFactory = new LoggerFactory();
-           
 
             services.AddMvc(config =>
             {
@@ -97,10 +90,30 @@ namespace hfa.WebApi
             services.
                 AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                 .AddScoped<IAuthentificationService, AuthentificationService>()
-                .AddScoped<IWebHookService, WebHookServiceDefault>()
+                //.AddScoped<IWebHookService, WebHookServiceDefault>()
                 .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                 .Configure<ApplicationConfigData>(Configuration)
                 .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)));
+
+            services.UseGithubWebhook(() => new GithubOptions
+            {
+                ApiKey = "test",
+                WebHookAction = async (context, message) =>
+                {
+                    context.Response.ContentType = "application/json";
+                    context.Response.StatusCode = StatusCodes.Status200OK;
+                    await context.Response.WriteAsync(JsonConvert.SerializeObject(new { source = nameof(GithubOptions), message = message }), CancellationToken.None);
+                }
+            }).UseAppVeyorWebhook(() => new AppveyorOptions
+            {
+                ApiKey = "qwertyuiopasdfghjklzxcvbnm123456",
+                WebHookAction = async (context, message) =>
+                                 {
+                                     context.Response.ContentType = "application/json";
+                                     context.Response.StatusCode = StatusCodes.Status200OK;
+                                     await context.Response.WriteAsync(JsonConvert.SerializeObject(new { source = nameof(AppveyorOptions), message = message }), CancellationToken.None);
+                                 }
+            });
 
             var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
             .UseMySql(Configuration.GetConnectionString("PlDatabase")))
@@ -119,61 +132,59 @@ namespace hfa.WebApi
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             var log = loggerFactory.CreateLogger<Startup>();
+
             try
             {
                 app.UseCors("CorsPolicy");
 
-            //Redirect HTTPS for PROD Env
-            //if (!env.IsDevelopment())
-            //{
-            //    app.UseRewriter(new RewriteOptions().AddRedirectToHttps());
-            //}
-
-            #region WebSockets
-            var webSocketOptions = new WebSocketOptions
-            {
-                KeepAliveInterval = TimeSpan.FromSeconds(120),
-                ReceiveBufferSize = 4 * 1024
-            };
-
-            app.UseWebSockets(webSocketOptions);
-
-            app.Use(async (context, next) =>
-            {
-                if (context.Request.Path == "/ws")
+                #region WebSockets
+                var webSocketOptions = new WebSocketOptions
                 {
-                    if (context.WebSockets.IsWebSocketRequest)
+                    KeepAliveInterval = TimeSpan.FromSeconds(120),
+                    ReceiveBufferSize = 4 * 1024
+                };
+
+                app.UseWebSockets(webSocketOptions);
+
+                app.Use(async (context, next) =>
+                {
+                    if (context.Request.Path == "/ws")
                     {
-                        var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                        await Echo(context, webSocket);
+                        if (context.WebSockets.IsWebSocketRequest)
+                        {
+                            var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                            await Echo(context, webSocket);
+                        }
+                        else
+                        {
+                            context.Response.StatusCode = 400;
+                        }
                     }
                     else
                     {
-                        context.Response.StatusCode = 400;
+                        await next();
                     }
-                }
-                else
+                });
+                #endregion
+
+                #region Swagger
+
+                app.UseSwagger();
+                // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+                app.UseSwaggerUI(c =>
                 {
-                    await next();
-                }
-            });
-            #endregion
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Synker API V1");
+                });
+                #endregion
 
-            /** Web hooks **/
-            app.UseWebHooks(() => "/api/v1/message", () => "qwertyuiopasdfghjklzxcvbnm123456");
+                app.UseStaticFiles();
+                app.UseWebHooks(typeof(AppveyorReceiver));
+                app.UseWebHooks(typeof(GithubReceiver));
+                app.UseMvc();
 
-            #region Swagger
+                //app.UseWebHooks(() => "/api/v1/message", () => "qwertyuiopasdfghjklzxcvbnm123456");
 
-            app.UseSwagger();
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Synker API V1");
-            });
-            #endregion
-
-            app.UseStaticFiles();
-            app.UseMvc();
+                //TODO : auto Resolver assemblies by interface IWebHookHandler
             }
             catch (Exception ex)
             {

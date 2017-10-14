@@ -26,6 +26,7 @@
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AspNet.Core.Webhooks\AspNet.Core.Webhooks.csproj" />
     <ProjectReference Include="..\SyncLibrary\hfa.Synker.batch.csproj" />
   </ItemGroup>
 

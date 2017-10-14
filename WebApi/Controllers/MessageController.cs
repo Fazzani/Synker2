@@ -98,7 +98,7 @@ namespace Hfa.WebApi.Controllers
             return Ok(response);
         }
 
-        [HttpPost("test"), AllowAnonymous]
+        [HttpGet("test"), AllowAnonymous]
         public ActionResult Test()
         {
             return Ok("Yesss");
