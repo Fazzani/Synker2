@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNet.Core.Webhooks" Version="1.0.0-beta00017" />
     <PackageReference Include="hfa.playlistbaselibrary" Version="1.0.0-beta" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.0.0" />
