@@ -40,7 +40,7 @@ test_script:
   - cmd: dotnet restore ./hfa.tvhLibrary.test/hfa.tvhLibrary.test.csproj --verbosity m
   - cmd: dotnet restore ./hfa.synker.batch.test/hfa.synker.batch.test.csproj --verbosity m
   # run the unit tests (requires changing into the test directory)
-  - cmd: cd ./hfa.tvhLibrary.test/
+  - cmd: cd ../hfa.tvhLibrary.test/
   - cmd: dotnet xunit
   - cmd: cd ../hfa.synker.batch.test/
   - cmd: dotnet xunit
