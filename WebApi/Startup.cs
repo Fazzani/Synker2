@@ -95,6 +95,7 @@ namespace hfa.WebApi
                 .Configure<ApplicationConfigData>(Configuration)
                 .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)));
 
+            #region Webhooks
             services.UseGithubWebhook(() => new GithubOptions
             {
                 ApiKey = "test",
@@ -114,6 +115,7 @@ namespace hfa.WebApi
                                      await context.Response.WriteAsync(JsonConvert.SerializeObject(new { source = nameof(AppveyorOptions), message = message }), CancellationToken.None);
                                  }
             });
+            #endregion
 
             var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
             .UseMySql(Configuration.GetConnectionString("PlDatabase")))
@@ -181,10 +183,6 @@ namespace hfa.WebApi
                 app.UseWebHooks(typeof(AppveyorReceiver));
                 app.UseWebHooks(typeof(GithubReceiver));
                 app.UseMvc();
-
-                //app.UseWebHooks(() => "/api/v1/message", () => "qwertyuiopasdfghjklzxcvbnm123456");
-
-                //TODO : auto Resolver assemblies by interface IWebHookHandler
             }
             catch (Exception ex)
             {

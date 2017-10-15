@@ -272,3 +272,4 @@ __pycache__/
 **/appsettings.development.json
 **/appsettings.staging.json
 **/appsettings.production.json
+log/
