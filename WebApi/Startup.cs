@@ -66,17 +66,17 @@ namespace hfa.WebApi
             //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?tabs=visual-studio
             services.AddSwaggerGen(c =>
             {
-                //c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
                 c.SwaggerDoc("v1", new Info
                 {
                     Version = "v1",
                     Title = "Synker API",
                     Description = "Synchronize playlists API",
                     TermsOfService = "None",
-                    Contact = new Contact { Name = "Fazzani Heni", Email = "fazzani.heni@outlook.fr", Url = "https://www.github.com/fazzani" },
+                    Contact = new Contact { Name = "Synker", Email = "contact@synker.ovh", Url = "https://www.github.com/fazzani/synker2" },
                     License = new License { Name = "Use under MIT", Url = "" }
                 });
             });
+
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -86,12 +86,9 @@ namespace hfa.WebApi
                     .AllowCredentials());
             });
 
-            // services.AddOptions();
-
             services.
                 AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                 .AddScoped<IAuthentificationService, AuthentificationService>()
-                //.AddScoped<IWebHookService, WebHookServiceDefault>()
                 .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                 .Configure<ApplicationConfigData>(Configuration)
                 .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)));
@@ -115,8 +112,6 @@ namespace hfa.WebApi
 
             var DB = serviceProvider.GetService<SynkerDbContext>();
             DB.Database.EnsureCreated();
-
-            //services.AddApiVersioning();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -239,7 +234,6 @@ namespace hfa.WebApi
                 authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
             });
         }
-
 
         #region WebHook Actions
         Action<HttpContext, AppveyorWebHookMessage> appveyorhHookAction = async (context, message) =>
