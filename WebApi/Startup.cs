@@ -28,6 +28,8 @@ using Microsoft.AspNetCore.Diagnostics;
 using Newtonsoft.Json;
 using AspNet.Core.Webhooks.Receivers;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Net.Http;
+using System.Net.Sockets;
 
 namespace hfa.WebApi
 {
@@ -94,20 +96,20 @@ namespace hfa.WebApi
                 .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)));
 
             #region Webhooks
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+           // services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.UseGithubWebhook(() => new GithubOptions
             {
                 ApiKey = Configuration.GetValue<string>("GitHubHookApiKey"),
-                WebHookAction = githubHookAction
+                WebHookAction = genericHookAction
             }).UseAppVeyorWebhook(() => new AppveyorOptions
             {
                 ApiKey = Configuration.GetValue<string>("AppveyorHookApiKey"),
-                WebHookAction = appveyorhHookAction
+                WebHookAction = genericHookAction
             });
             #endregion
 
             var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
-            .UseMySql(Configuration.GetConnectionString("PlDatabase")))
+             .UseMySql(Configuration.GetConnectionString("PlDatabase")))
              .BuildServiceProvider();
 
             var DB = serviceProvider.GetService<SynkerDbContext>();
@@ -127,33 +129,14 @@ namespace hfa.WebApi
                 app.UseCors("CorsPolicy");
 
                 #region WebSockets
-                var webSocketOptions = new WebSocketOptions
+
+                app.UseWebSockets(new WebSocketOptions
                 {
                     KeepAliveInterval = TimeSpan.FromSeconds(120),
                     ReceiveBufferSize = 4 * 1024
-                };
-
-                app.UseWebSockets(webSocketOptions);
-
-                app.Use(async (context, next) =>
-                {
-                    if (context.Request.Path == "/ws")
-                    {
-                        if (context.WebSockets.IsWebSocketRequest)
-                        {
-                            var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                            await Echo(context, webSocket);
-                        }
-                        else
-                        {
-                            context.Response.StatusCode = 400;
-                        }
-                    }
-                    else
-                    {
-                        await next();
-                    }
                 });
+
+                app.UseMiddleware<MessageWebSocketMiddleware>();
                 #endregion
 
                 #region Swagger
@@ -187,25 +170,6 @@ namespace hfa.WebApi
         }
 
         /// <summary>
-        /// Echo websokets
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="webSocket"></param>
-        /// <returns></returns>
-        private async Task Echo(HttpContext context, WebSocket webSocket)
-        {
-            var buffer = new byte[1024 * 4];
-            var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            while (!result.CloseStatus.HasValue)
-            {
-                await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
-
-                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            }
-            await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
-        }
-
-        /// <summary>
         /// Configure Security
         /// </summary>
         /// <param name="services"></param>
@@ -235,20 +199,54 @@ namespace hfa.WebApi
             });
         }
 
-        #region WebHook Actions
-        Action<HttpContext, AppveyorWebHookMessage> appveyorhHookAction = async (context, message) =>
+        #region WebHook Action
+        Action<HttpContext, object> genericHookAction = async (context, message) =>
         {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = StatusCodes.Status200OK;
-            await context.Response.WriteAsync(JsonConvert.SerializeObject(new { source = nameof(AppveyorOptions), message = message }), CancellationToken.None);
+            CancellationToken ct = context.RequestAborted;
+            var logger = context.RequestServices?.GetService<ILogger>();
+            try
+            {
+                var messageJson = string.Empty;
+                messageJson = JsonConvert.SerializeObject(message);
+                //Call webSocket to add new message (Db and trigger that for all observers)
+
+                if (message is AppveyorWebHookMessage appveyorMessage)
+                {
+                    logger?.LogInformation($"New WebSoket hook Message {nameof(AppveyorWebHookMessage)} : {messageJson}");
+                }
+                else if (message is GithubWebHookMessage githubMessage)
+                {
+                    logger?.LogInformation($"New WebSoket hook Message {nameof(GithubWebHookMessage)} : {messageJson}");
+                }
+
+                //Send to WebSocket
+                using (var socket = new ClientWebSocket())
+                {
+                    context.Response.ContentType = "application/json";
+                    context.Response.StatusCode = StatusCodes.Status200OK;
+                    await context.Response.WriteAsync(messageJson, ct);
+
+                    await socket.ConnectAsync(new Uri($"ws://{context.Request.Host}/ws"), ct);
+                    await MessageWebSocketMiddleware.SendStringAsync(socket, messageJson);
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", ct);
+                }
+            }
+            catch (WebSocketException wsex)
+            {
+                logger?.LogError(wsex.Message);
+            }
+            catch (Exception ex)
+            {
+                if (!context.Response.HasStarted)
+                {
+                    logger?.LogError(ex.Message);
+                    context.Response.ContentType = "application/json";
+                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                    await context.Response.WriteAsync(JsonConvert.SerializeObject(ex.Message), ct);
+                }
+            }
         };
 
-        Action<HttpContext, GithubWebHookMessage> githubHookAction = async (context, message) =>
-        {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = StatusCodes.Status200OK;
-            await context.Response.WriteAsync(JsonConvert.SerializeObject(new { source = nameof(GithubOptions), message = message }), CancellationToken.None);
-        };
         #endregion
     }
 }
