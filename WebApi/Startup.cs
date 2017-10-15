@@ -100,22 +100,12 @@ namespace hfa.WebApi
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.UseGithubWebhook(() => new GithubOptions
             {
-                ApiKey = "test",
-                WebHookAction = async (context, message) =>
-                {
-                    context.Response.ContentType = "application/json";
-                    context.Response.StatusCode = StatusCodes.Status200OK;
-                    await context.Response.WriteAsync(JsonConvert.SerializeObject(new { source = nameof(GithubOptions), message = message }), CancellationToken.None);
-                }
+                ApiKey = Configuration.GetValue<string>("GitHubHookApiKey"),
+                WebHookAction = githubHookAction
             }).UseAppVeyorWebhook(() => new AppveyorOptions
             {
-                ApiKey = "qwertyuiopasdfghjklzxcvbnm123456",
-                WebHookAction = async (context, message) =>
-                                 {
-                                     context.Response.ContentType = "application/json";
-                                     context.Response.StatusCode = StatusCodes.Status200OK;
-                                     await context.Response.WriteAsync(JsonConvert.SerializeObject(new { source = nameof(AppveyorOptions), message = message }), CancellationToken.None);
-                                 }
+                ApiKey = Configuration.GetValue<string>("AppveyorHookApiKey"),
+                WebHookAction = appveyorhHookAction
             });
             #endregion
 
@@ -249,5 +239,22 @@ namespace hfa.WebApi
                 authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
             });
         }
+
+
+        #region WebHook Actions
+        Action<HttpContext, AppveyorWebHookMessage> appveyorhHookAction = async (context, message) =>
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = StatusCodes.Status200OK;
+            await context.Response.WriteAsync(JsonConvert.SerializeObject(new { source = nameof(AppveyorOptions), message = message }), CancellationToken.None);
+        };
+
+        Action<HttpContext, GithubWebHookMessage> githubHookAction = async (context, message) =>
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = StatusCodes.Status200OK;
+            await context.Response.WriteAsync(JsonConvert.SerializeObject(new { source = nameof(GithubOptions), message = message }), CancellationToken.None);
+        };
+        #endregion
     }
 }
