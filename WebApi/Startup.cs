@@ -27,6 +27,7 @@ using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using Newtonsoft.Json;
 using AspNet.Core.Webhooks.Receivers;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace hfa.WebApi
 {
@@ -96,6 +97,7 @@ namespace hfa.WebApi
                 .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)));
 
             #region Webhooks
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.UseGithubWebhook(() => new GithubOptions
             {
                 ApiKey = "test",
