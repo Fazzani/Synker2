@@ -15,6 +15,8 @@ import { DialogComponent, LoginDialog, RegisterDialog } from './components/share
 import { LoginRouteGuard } from './services/auth/loginRouteGuard.service';
 
 import { AuthService } from './services/auth/auth.service';
+import { NotificationService } from './services/notification/notification.service';
+import { WebSocketService } from './services/websocket/websocket.service';
 import { TvgMediaService } from './services/tvgmedia/tvgmedia.service';
 import { EpgService } from './services/epg/epg.service';
 import { MessageService } from './services/message/message.service';
@@ -23,7 +25,7 @@ import { BaseService } from './services/base/base.service';
 import { NgHttpLoaderModule } from 'ng-http-loader/ng-http-loader.module';
 import { NavBarModule } from './components/shared/navbar/navbar';
 
-import { BASE_URL, BASE_API_URL } from './variables';
+import { BASE_URL, BASE_API_URL, BASE_WS_URL } from './variables';
 import { TokenInterceptor } from './services/auth/token.interceptor';
 import { DefaultHttpInterceptor } from './infrastructure/DefaultHttpInterceptor'
 
@@ -66,6 +68,8 @@ const appRoutes: Routes = [
         TvgMediaService,
         CommonService,
         MessageService,
+        NotificationService,
+        WebSocketService,
         AuthService,
         LoginRouteGuard,
         EpgService,

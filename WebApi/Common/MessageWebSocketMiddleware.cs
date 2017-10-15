@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -86,7 +87,7 @@ namespace hfa.WebApi.Common
 
         public static Task SendStringAsync(WebSocket socket, string data, CancellationToken ct = default(CancellationToken))
         {
-            var buffer = Encoding.UTF8.GetBytes(data);
+            var buffer = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
             var segment = new ArraySegment<byte>(buffer);
             return socket.SendAsync(segment, WebSocketMessageType.Text, true, ct);
         }

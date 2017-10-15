@@ -19,6 +19,7 @@ namespace webClient.Controllers
         public IActionResult Index()
         {
             ViewBag.ApiUrl = _configuration.GetValue<string>("ApiUrl");
+            ViewBag.WsUrl = _configuration.GetValue<string>("WsUrl");
             return View();
         }
 

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import 'hammerjs';
 import './app.component.css'
+import { NotificationService } from '../../services/notification/notification.service';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
     selector: 'app',
@@ -8,4 +10,9 @@ import './app.component.css'
 })
 export class AppComponent {
     color = 'primary';
+    constructor(private notifService: NotificationService, public snackBar: MatSnackBar) {
+        notifService.messages.subscribe(m => this.snackBar.open(m.content, null,{
+            duration: 3000,
+        }));
+    }
 }

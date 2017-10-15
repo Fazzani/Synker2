@@ -8,7 +8,8 @@ export interface Message {
     type: string;
     timeStamp: Date;
     status: MessageStatus
-    author: string
+    author: string,
+    objectContent:any
 }
 /**
  * MessageStatus (0: None, 1: NotReaded, 2: Readed).
@@ -19,3 +20,4 @@ export enum MessageStatus {
     NotReaded = 1,
     Readed = 2
 }
+

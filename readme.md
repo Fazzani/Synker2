@@ -4,7 +4,8 @@
 ### CI & DEPLOY
 
 - [x] CI & Deploy synker batch on appveyor && package nuget for library projects
-- [x] Unit tests angular
+- [ ] Auto restart service after new deploy (InCrontab)
+- [ ] Test Synker batch service
 - [ ] Config SSL encrypt [link1](https://certbot.eff.org/#debianstretch-other)
 - [ ] Config smtp [link1](https://wiki.debian-fr.xyz/Configuration_d%27un_serveur_mail_avec_Postfix)
 - [ ] FileBeat all logs (batch + webApps)

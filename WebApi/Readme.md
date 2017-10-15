@@ -10,15 +10,19 @@
   - [ ] Add filter for set the Principal from token
 - [ ] Attach playlists to users (add user to playlists)
 - [ ] Perf :
-  - [ ] Compress
+  - [ ] Compress response
   - [ ] Cache file response (Etag)
 - [ ] EF [link](https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql/blob/master/README.md)
 - [x] Gestion des exceptions
-- [ ] FIX ToList (QueryProvider not working on where) in Push Method of M3uProvider when downloading a file
-- [ ] WebSockets [link1](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/websockets)
+- [ ] Fix ToList (QueryProvider not working on where) in Push Method of M3uProvider when downloading a file
+- [x] WebSockets [link1](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/websockets)
+  - [ ] Fix Logger (RequestService problem)
+  - [ ] Sockets filtred by user
+  - [ ] SSL sockets
+  - [ ] Persist notificaton and send them after connection
 - [ ] Xmltv services
   - [ ] Upload files
   - [ ] Config customs xmltv feeds from channels and by user
   - [ ] Purge uploaded files
   - [ ] Get Epg for XmltvCompnent by channel and dateTime range
-- [ ] Swagger auth token
+- [ ] Swagger auth by token support

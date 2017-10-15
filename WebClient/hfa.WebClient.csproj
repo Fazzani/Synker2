@@ -34,6 +34,7 @@
     <None Remove="ClientApp\app\services\auth\loginRouteGuard.service.ts" />
     <None Remove="ClientApp\app\services\common\common.service.spec.ts" />
     <None Remove="ClientApp\app\services\common\common.service.ts" />
+    <None Remove="ClientApp\app\services\notification\notification.service.ts" />
     <None Remove="ClientApp\app\types\elasticQuery.type.ts" />
     <None Remove="ClientApp\app\variables.ts" />
   </ItemGroup>
@@ -41,6 +42,7 @@
   <ItemGroup>
     <Folder Include="ClientApp\app\pipes\" />
     <Folder Include="ClientApp\app\directives\" />
+    <Folder Include="ClientApp\app\services\websocket\" />
     <Folder Include="wwwroot\assets\images\" />
     <Folder Include="wwwroot\dist\" />
   </ItemGroup>
@@ -53,6 +55,7 @@
     <TypeScriptCompile Include="ClientApp\app\services\base\base.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\common\common.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\common\common.service.ts" />
+    <TypeScriptCompile Include="ClientApp\app\services\notification\notification.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\tvgmedia\tvgmedia.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\epg\epg.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\elasticQuery.type.ts" />
