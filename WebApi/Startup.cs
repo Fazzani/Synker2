@@ -96,7 +96,7 @@ namespace hfa.WebApi
                 .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)));
 
             #region Webhooks
-           // services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            // services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.UseGithubWebhook(() => new GithubOptions
             {
                 ApiKey = Configuration.GetValue<string>("GitHubHookApiKey"),
@@ -149,9 +149,11 @@ namespace hfa.WebApi
                 });
                 #endregion
 
-                app.UseStaticFiles();
                 app.UseWebHooks(typeof(AppveyorReceiver));
                 app.UseWebHooks(typeof(GithubReceiver));
+
+                app.UseStaticFiles();
+
                 app.UseMvc();
             }
             catch (Exception ex)

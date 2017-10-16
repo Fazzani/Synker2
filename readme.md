@@ -9,7 +9,7 @@
 - [ ] Config SSL encrypt [link1](https://certbot.eff.org/#debianstretch-other)
 - [ ] Config smtp [link1](https://wiki.debian-fr.xyz/Configuration_d%27un_serveur_mail_avec_Postfix)
 - [ ] FileBeat all logs (batch + webApps)
-- [ ] dbForge Studio for MySQL (eq de SSDT)
+- [ ] dbForge Studio for MySQL (eq de SSDT) DbUp
 
 ### Package nuget PlaylistLibrary
 
