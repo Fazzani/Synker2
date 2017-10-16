@@ -18,8 +18,8 @@
 - [ ] Animations
 - [ ] WebSockets (notification) [link1](https://tutorialedge.net/typescript/angular/angular-websockets-tutorial/)  [link2](https://radu-matei.com/blog/aspnet-core-websockets-middleware/)
   - [ ] Add a global model for notification
-  - [ ] Auto Reconnect for client side
-  - [ ] SSL support
+  - [x] Auto Reconnect for client side
+  - [x] SSL support
   - [ ] Send notification from the client
 - [ ] Auth [link1](http://www.c-sharpcorner.com/article/authentication-with-angular-2-app-front-end-and-asp-net-webapi-backend/) [link2](https://github.com/auth0/angular2-jwt/tree/v1.0) [link3](https://auth0.com/blog/introducing-angular2-jwt-a-library-for-angular2-authentication/)
   - [x] AuthService for all Http requests 

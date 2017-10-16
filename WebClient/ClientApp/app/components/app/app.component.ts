@@ -11,8 +11,13 @@ import { MatSnackBar } from '@angular/material';
 export class AppComponent {
     color = 'primary';
     constructor(private notifService: NotificationService, public snackBar: MatSnackBar) {
-        notifService.messages.subscribe(m => this.snackBar.open(m.content, null,{
-            duration: 3000,
-        }));
+        notifService.messages.subscribe(
+            m => {
+                console.log('new message ', m);
+                this.snackBar.open(m.content, null, {
+                    duration: 3000,
+                })
+            },
+            error => console.warn(error));
     }
 }

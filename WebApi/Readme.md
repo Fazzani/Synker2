@@ -18,7 +18,7 @@
 - [x] WebSockets [link1](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/websockets)
   - [ ] Fix Logger (RequestService problem)
   - [ ] Sockets filtred by user
-  - [ ] SSL sockets
+  - [x] SSL sockets
   - [ ] Persist notificaton and send them after connection
 - [ ] Xmltv services
   - [ ] Upload files

@@ -1,25 +1,54 @@
 ﻿import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs/Rx';
-import { WebSocketService } from '../websocket/websocket.service';
+import { RxWebsocketSubject } from '../websocket/wsReconnectionSubject.service';
 import { Message } from '../../types/message.type';
 
 import * as variables from "../../variables";
+import { BaseService } from "../base/base.service";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable()
-export class NotificationService {
-    public messages: Subject<Message>;
+export class NotificationService extends BaseService {
+    public messages: Observable<Message>;
 
-    constructor(wsService: WebSocketService) {
-        
-        this.messages = <Subject<Message>>wsService
-            .connect(variables.BASE_WS_URL)
-            .map((response: MessageEvent): Message => {
-                
-                let data = JSON.parse(response.data);
+    constructor(protected http: HttpClient) {
+        super(http);
+
+        let subject = new RxWebsocketSubject(variables.BASE_WS_URL);
+
+        this.messages = subject.map((response: MessageEvent|string): Message => {
+            console.log("new message event ", response);
+            if (this.IsJsonString((<MessageEvent>response).data)) {
+                let data = JSON.parse((<MessageEvent>response).data);
                 return <Message>{
                     author: <string>data.author,
                     content: <string>data.message
                 }
-            });
+            }
+            else {
+                return <Message>{ content: <string>response };
+            }
+        }).share();
+
+        subject.retry().subscribe(
+            function (e) {
+
+                console.log(`Message from server: "${e}"`);
+            },
+            function (e) {
+                console.log('Unclean close', e);
+            },
+            function () {
+                console.log('Closed');
+            }
+        );
+
+        subject.connectionStatus.subscribe((isConnected) => {
+            //textareaLog.disabled = sendMsgBtn.disabled = !isConnected;
+            let msg = isConnected ? 'Server connected' : 'Server disconnected';
+            console.log(msg);
+            //addLogMessage(msg);
+        });
+
     }
 }

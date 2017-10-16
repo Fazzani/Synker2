@@ -8,7 +8,7 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class BaseService {
-  //  static URL_API_BASE: string = 'http://localhost:56800/api/v1/';
+    //  static URL_API_BASE: string = 'http://localhost:56800/api/v1/';
 
     constructor(protected http: HttpClient) { }
 
@@ -29,4 +29,17 @@ export class BaseService {
         return res.json() || [];
     }
 
+    /**
+     * Is Json 
+     * @param {string} str
+     * @returns
+     */
+    protected IsJsonString(str: string): boolean {
+        try {
+            JSON.parse(str);
+        } catch (e) {
+            return false;
+        }
+        return true;
+    }
 }

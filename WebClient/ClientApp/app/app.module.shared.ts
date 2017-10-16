@@ -16,7 +16,6 @@ import { LoginRouteGuard } from './services/auth/loginRouteGuard.service';
 
 import { AuthService } from './services/auth/auth.service';
 import { NotificationService } from './services/notification/notification.service';
-import { WebSocketService } from './services/websocket/websocket.service';
 import { TvgMediaService } from './services/tvgmedia/tvgmedia.service';
 import { EpgService } from './services/epg/epg.service';
 import { MessageService } from './services/message/message.service';
@@ -69,7 +68,7 @@ const appRoutes: Routes = [
         CommonService,
         MessageService,
         NotificationService,
-        WebSocketService,
+        
         AuthService,
         LoginRouteGuard,
         EpgService,
