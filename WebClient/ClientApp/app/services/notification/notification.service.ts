@@ -1,6 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs/Rx';
-import { RxWebsocketSubject } from '../websocket/wsReconnectionSubject.service';
+import { RxWebsocketSubject } from '../../types/wsReconnectionSubject.type';
 import { Message } from '../../types/message.type';
 
 import * as variables from "../../variables";
