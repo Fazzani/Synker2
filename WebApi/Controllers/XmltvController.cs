@@ -1,0 +1,95 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using PlaylistBaseLibrary.Entities;
+using Hfa.WebApi.Common;
+using Hfa.WebApi.Models;
+using hfa.SyncLibrary.Global;
+using hfa.WebApi.Common;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using hfa.WebApi.Dal;
+using hfa.WebApi.Common.Filters;
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
+namespace Hfa.WebApi.Controllers
+{
+    //[ApiVersion("1.0")]
+    //[Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/v1/[controller]")]
+    public class XmltvController : BaseController
+    {
+        public XmltvController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+            : base(config, loggerFactory, elasticConnectionClient, context)
+        {
+
+        }
+
+        /// <summary>
+        /// Récupérer la liste des chaines présentes dans Site.pack and Site.user
+        /// Depuis ELasticsearch
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("chaines")]
+        public async Task<IActionResult> ListChaines()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// WebGrab a list of channels
+        /// Genetate a xml file config And run SSH webgrab on the server
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateModel]
+        [Route("webgrab")]
+        public async Task<IActionResult> Webgrab([FromBody] QueryListBaseModel query)
+        {
+            var response = await _elasticConnectionClient.Client.SearchAsync<tvChannel>(rq => rq
+                .Size(query.PageSize)
+                .From(query.Skip)
+                .Sort(x => GetSortDescriptor(x, query.SortDict))
+                .Query(q => q.Match(m => m.Field(ff => ff.displayname)
+                                          .Query(query.SearchDict.LastOrDefault().Value)))
+
+            , cancelToken.Token);
+
+            cancelToken.Token.ThrowIfCancellationRequested();
+
+            if (!response.IsValid)
+                return BadRequest(response.DebugInformation);
+            //response.AssertElasticResponse();
+            return new OkObjectResult(response.GetResultListModel());
+        }
+
+        /// <summary>
+        /// Get Xmltv by user (Principal) and xmltv tag
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(string id)
+        {
+            var response = await _elasticConnectionClient.Client.SearchAsync<tvChannel>(rq => rq
+                .From(0)
+                .Size(1)
+                .Index<tvChannel>()
+                .Query(q => q.Ids(ids => ids.Name(nameof(id)).Values(id)))
+            , cancelToken.Token);
+
+            cancelToken.Token.ThrowIfCancellationRequested();
+
+            response.AssertElasticResponse();
+            if (response.Documents.FirstOrDefault() == null)
+                return NotFound();
+
+            return new OkObjectResult(response.GetResultListModel());
+        }
+    }
+}
