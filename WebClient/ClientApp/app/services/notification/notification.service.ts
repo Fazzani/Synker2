@@ -1,11 +1,10 @@
 ﻿import { Injectable } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
 import { Observable, Subject } from 'rxjs/Rx';
 import { RxWebsocketSubject } from '../../types/wsReconnectionSubject.type';
 import { Message } from '../../types/message.type';
-
 import * as variables from "../../variables";
 import { BaseService } from "../base/base.service";
-import { HttpClient } from "@angular/common/http";
 
 @Injectable()
 export class NotificationService extends BaseService {
@@ -16,7 +15,7 @@ export class NotificationService extends BaseService {
 
         let subject = new RxWebsocketSubject(variables.BASE_WS_URL);
 
-        this.messages = subject.map((response: MessageEvent|string): Message => {
+        this.messages = subject.map((response: MessageEvent | string): Message => {
             console.log("new message event ", response);
             if (this.IsJsonString((<MessageEvent>response).data)) {
                 let data = JSON.parse((<MessageEvent>response).data);
