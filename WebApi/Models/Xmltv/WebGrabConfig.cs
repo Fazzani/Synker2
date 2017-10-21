@@ -25,7 +25,7 @@ namespace hfa.WebApi.Models.Xmltv
     }
 
     [XmlRoot(ElementName = "channel")]
-    public class Channel
+    public class SitePackChannel
     {
         [XmlAttribute(AttributeName = "update")]
         public string Update { get; set; }
@@ -36,7 +36,7 @@ namespace hfa.WebApi.Models.Xmltv
         [XmlAttribute(AttributeName = "xmltv_id")]
         public string Xmltv_id { get; set; }
         [XmlText]
-        public string Text { get; set; }
+        public string Channel_name { get; set; }
     }
 
     [XmlRoot(ElementName = "settings")]
@@ -61,6 +61,6 @@ namespace hfa.WebApi.Models.Xmltv
         [XmlElement(ElementName = "update")]
         public string Update { get; set; }
         [XmlElement(ElementName = "channel")]
-        public List<Channel> Channel { get; set; }
+        public List<SitePackChannel> Channel { get; set; }
     }
 }

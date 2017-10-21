@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using hfa.WebApi.Dal;
 using hfa.WebApi.Common.Filters;
+using hfa.WebApi.Models.Xmltv;
+using System.Threading;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,10 +24,19 @@ namespace Hfa.WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class XmltvController : BaseController
     {
+        private const string IndexName = "sitepack-*";
+
         public XmltvController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
 
+        }
+
+        [HttpPost]
+        [Route("channels/_search")]
+        public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
+        {
+            return await SearchAsync<SitePackChannel>(request.ToString(), IndexName, cancellationToken);
         }
 
         /// <summary>
@@ -33,11 +44,25 @@ namespace Hfa.WebApi.Controllers
         /// Depuis ELasticsearch
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        [Route("chaines")]
-        public async Task<IActionResult> ListChaines()
+        [HttpPost]
+        [ValidateModel]
+        [Route("channels")]
+        public async Task<IActionResult> ListChaines([FromBody] QueryListBaseModel query, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var response = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(rq => rq
+                .Size(query.PageSize)
+                .From(query.Skip)
+                .Sort(x => GetSortDescriptor(x, query.SortDict))
+                .Query(q => q.Match(m => m.Field(ff => ff.Site)
+                                          .Query(query.SearchDict.LastOrDefault().Value)))
+
+            , HttpContext.RequestAborted);
+
+            if (!response.IsValid)
+                return BadRequest(response.DebugInformation);
+
+            //response.AssertElasticResponse();
+            return new OkObjectResult(response.GetResultListModel());
         }
 
         /// <summary>
@@ -49,7 +74,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [ValidateModel]
         [Route("webgrab")]
-        public async Task<IActionResult> Webgrab([FromBody] QueryListBaseModel query)
+        public async Task<IActionResult> Webgrab([FromBody] QueryListBaseModel query, CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.SearchAsync<tvChannel>(rq => rq
                 .Size(query.PageSize)

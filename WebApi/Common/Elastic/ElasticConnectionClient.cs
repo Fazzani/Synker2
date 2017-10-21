@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Hfa.SyncLibrary.Infrastructure;
 using Hfa.SyncLibrary.Messages;
+using hfa.WebApi.Models.Xmltv;
 
 namespace hfa.WebApi.Common
 {
@@ -15,20 +16,21 @@ namespace hfa.WebApi.Common
         private ConnectionSettings _settings;
         private ElasticClient _client;
         private static object syncRoot = new Object();
-        IOptions<ApplicationConfigData> _config;
+        ApplicationConfigData _config;
         ILoggerFactory _loggerFactory;
         static string[] stopWords = { "hd", "sd", "fhd", "ar", "fr", "fr:", "ar:", "1080p", "720p", "(fr)", "(ar)", "+1", "+2", "+4", "+6", "+8", "arb", "vip" };
 
         public ElasticConnectionClient(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory)
         {
-            _config = config;
+            _config = config.Value;
             _loggerFactory = loggerFactory;
 
-            _settings = new ConnectionSettings(new Uri(config.Value.ElasticUrl));
+            _settings = new ConnectionSettings(new Uri(_config.ElasticUrl));
             _settings
-                .BasicAuthentication(config.Value.ElasticUserName, config.Value.ElasticPassword)
+                .BasicAuthentication(_config.ElasticUserName, _config.ElasticPassword)
                 .DisableDirectStreaming(true)
-                .DefaultIndex(config.Value.DefaultIndex)
+                .DefaultIndex(_config.DefaultIndex)
+                .MapDefaultTypeIndices(x=> x.Add(typeof(SitePackChannel), "sitepack-*"))
                 .PrettyJson()
                 .RequestTimeout(TimeSpan.FromMinutes(2))
                 .EnableHttpCompression();
@@ -36,19 +38,20 @@ namespace hfa.WebApi.Common
 #if DEBUG
             _settings.EnableDebugMode();
 #endif
-
             _settings
-                .InferMappingFor<Message>(m => m.IndexName(config.Value.MessageIndex).IdProperty(p => p.Id))
+                .InferMappingFor<Message>(m => m.IndexName(_config.MessageIndex).IdProperty(p => p.Id))
                 .InferMappingFor<TvgMedia>(m => m.IdProperty(p => p.Id))
                 .InferMappingFor<tvChannel>(m => m.IdProperty(p => p.id))
-                .InferMappingFor<Tvg>(m => m.IdProperty(p => p.Id));
-        }
+                .InferMappingFor<Tvg>(m => m.IdProperty(p => p.Id))
+                .InferMappingFor<SitePackChannel>(m => m.IdProperty(p => p.Site_id));
 
-        public void MappingConfig(IOptions<ApplicationConfigData> config)
+            //MappingConfig();
+        }
+        private void MappingConfig()
         {
             var keywordProperty = new PropertyName("keyword");
 
-            var response = Client.CreateIndex(config.Value.DefaultIndex, c => c
+            var response = Client.CreateIndex(_config.DefaultIndex, c => c
             .Settings(s => s
             .Setting("analysis.char_filter.drop_specChars.type", "pattern_replace")
             .Setting("analysis.char_filter.drop_specChars.pattern", "\\bbeinsports?\\b")
@@ -114,9 +117,9 @@ namespace hfa.WebApi.Common
 
         public void DeleteDefaultIndex()
         {
-            var indexExistsResponse = Client.IndexExists(_config.Value.DefaultIndex);
+            var indexExistsResponse = Client.IndexExists(_config.DefaultIndex);
             if (indexExistsResponse.Exists)
-                Client.DeleteIndex(_config.Value.DefaultIndex, null);
+                Client.DeleteIndex(_config.DefaultIndex, null);
         }
 
         public ElasticClient Client

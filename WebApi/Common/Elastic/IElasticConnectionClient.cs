@@ -10,6 +10,5 @@ namespace hfa.WebApi.Common
 
         void DeleteDefaultIndex();
 
-        void MappingConfig(IOptions<ApplicationConfigData> config);
     }
 }

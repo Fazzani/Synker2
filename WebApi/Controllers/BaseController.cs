@@ -45,6 +45,17 @@ namespace Hfa.WebApi.Controllers
             return new OkObjectResult(response.Body.GetResultListModel());
         }
 
+        internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query, string indexName,  CancellationToken cancellationToken) where T : class
+        {
+            var response = await _elasticConnectionClient.Client.LowLevel.SearchAsync<SearchResponse<T>>(indexName, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
+
+            if (!response.SuccessOrKnownError)
+                return BadRequest(response.DebugInformation);
+
+            response.Body.AssertElasticResponse();
+            return new OkObjectResult(response.Body.GetResultListModel());
+        }
+
         protected static IPromise<IList<ISort>> GetSortDescriptor<T>(SortDescriptor<T> me, Dictionary<string, SortDirectionEnum> dictionary) where T : class
         {
             if (dictionary != null)
