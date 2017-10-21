@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using hfa.WebApi.Dal;
 using hfa.WebApi.Common.Filters;
+using System.Threading;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -32,13 +33,13 @@ namespace Hfa.WebApi.Controllers
         [Route("_search")]
         public async Task<IActionResult> Search([FromBody] dynamic request)
         {
-            return await SearchAsync<tvChannel>(request.ToString());
+            return await SearchAsync<tvChannel>(request.ToString(), HttpContext.RequestAborted);
         }
 
         [HttpPost]
         [ValidateModel]
         [Route("search")]
-        public async Task<IActionResult> SearchAsync([FromBody] QueryListBaseModel query)
+        public async Task<IActionResult> SearchAsync([FromBody] QueryListBaseModel query, CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.SearchAsync<tvChannel>(rq => rq
                 .Size(query.PageSize)
@@ -47,9 +48,7 @@ namespace Hfa.WebApi.Controllers
                 .Query(q => q.Match(m => m.Field(ff => ff.displayname)
                                           .Query(query.SearchDict.LastOrDefault().Value)))
 
-            , cancelToken.Token);
-
-            cancelToken.Token.ThrowIfCancellationRequested();
+            , cancellationToken);
 
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);
@@ -59,16 +58,14 @@ namespace Hfa.WebApi.Controllers
 
         [ValidateModel]
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.SearchAsync<tvChannel>(rq => rq
                 .From(0)
                 .Size(1)
                 .Index<tvChannel>()
                 .Query(q => q.Ids(ids => ids.Name(nameof(id)).Values(id)))
-            , cancelToken.Token);
-
-            cancelToken.Token.ThrowIfCancellationRequested();
+            , cancellationToken);
 
             response.AssertElasticResponse();
             if (response.Documents.FirstOrDefault() == null)

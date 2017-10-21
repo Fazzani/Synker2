@@ -58,9 +58,7 @@ namespace Hfa.WebApi.Controllers
                 .Query(q => q.Match(m => m.Field(ff => ff.displayname)
                                           .Query(query.SearchDict.LastOrDefault().Value)))
 
-            , cancelToken.Token);
-
-            cancelToken.Token.ThrowIfCancellationRequested();
+            , HttpContext.RequestAborted);
 
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);
@@ -81,9 +79,7 @@ namespace Hfa.WebApi.Controllers
                 .Size(1)
                 .Index<tvChannel>()
                 .Query(q => q.Ids(ids => ids.Name(nameof(id)).Values(id)))
-            , cancelToken.Token);
-
-            cancelToken.Token.ThrowIfCancellationRequested();
+            , HttpContext.RequestAborted);
 
             response.AssertElasticResponse();
             if (response.Documents.FirstOrDefault() == null)

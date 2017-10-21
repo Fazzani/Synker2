@@ -56,6 +56,20 @@ namespace hfa.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.
+               AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
+               .AddSingleton<IAuthentificationService, AuthentificationService>()
+               .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
+               .Configure<ApplicationConfigData>(Configuration)
+               .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)));
+
+            var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
+             .UseMySql(Configuration.GetConnectionString("PlDatabase")))
+             .BuildServiceProvider();
+
+            var DB = serviceProvider.GetService<SynkerDbContext>();
+            DB.Database.EnsureCreated();
+
             ConfigSecurity(services);
             //Logger
             var loggerFactory = new LoggerFactory();
@@ -88,13 +102,6 @@ namespace hfa.WebApi
                     .AllowCredentials());
             });
 
-            services.
-                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
-                .AddScoped<IAuthentificationService, AuthentificationService>()
-                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
-                .Configure<ApplicationConfigData>(Configuration)
-                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)));
-
             #region Webhooks
             // services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.UseGithubWebhook(() => new GithubOptions
@@ -107,13 +114,6 @@ namespace hfa.WebApi
                 WebHookAction = genericHookAction
             });
             #endregion
-
-            var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
-             .UseMySql(Configuration.GetConnectionString("PlDatabase")))
-             .BuildServiceProvider();
-
-            var DB = serviceProvider.GetService<SynkerDbContext>();
-            DB.Database.EnsureCreated();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -177,9 +177,10 @@ namespace hfa.WebApi
         /// <param name="services"></param>
         private void ConfigSecurity(IServiceCollection services)
         {
-            var securityOptions = new SecurityOptions();
-            var jwtAppSettingOptions = Configuration.GetSection(nameof(SecurityOptions));
-            jwtAppSettingOptions.Bind(securityOptions);
+            var sp = services.BuildServiceProvider();
+
+            // Resolve the services from the service provider
+            var authService = sp.GetService<IAuthentificationService>();
 
             services.AddAuthentication(options =>
             {
@@ -187,12 +188,10 @@ namespace hfa.WebApi
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(jwtBearerOptions =>
             {
-                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
-                {
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityOptions.SymmetricSecurityKey)),
-                    ValidIssuer = securityOptions.Issuer,
-                    ValidAudience = securityOptions.Audience,
-                };
+                jwtBearerOptions.SaveToken = true;
+                //jwtBearerOptions.BackchannelHttpHandler
+                jwtBearerOptions.RequireHttpsMetadata = true;
+                jwtBearerOptions.TokenValidationParameters = authService.Parameters;
             });
 
             services.AddAuthorization(authorizationOptions =>

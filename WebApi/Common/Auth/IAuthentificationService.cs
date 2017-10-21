@@ -1,4 +1,5 @@
 ﻿using hfa.WebApi.Dal.Entities;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Threading.Tasks;
 
@@ -7,34 +8,27 @@ namespace hfa.WebApi.Common.Auth
     public interface IAuthentificationService
     {
         /// <summary>
-        /// Reset Password
+        /// Verify Salt password
         /// </summary>
-        /// <param name="username"></param>
         /// <param name="password"></param>
-        /// <param name="newPassword"></param>
+        /// <param name="password64"></param>
         /// <returns></returns>
-        User ResetPassword(string username, string password, string newPassword);
+        bool VerifyPassword(string password, string password64);
+
         /// <summary>
-        /// Authenticate user with credentials
+        /// Generate user's token
         /// </summary>
-        /// <param name="username">Username</param>
-        /// <param name="password">Password</param>
-        /// <returns>JWT Token</returns>
-        JwtReponse Authenticate(string username, string password);
+        /// <param name="user"></param>
+        /// <returns></returns>
+        JwtReponse GenerateToken(Dal.Entities.User user);
 
         /// <summary>
         /// Authenticate by refresh token
         /// </summary>
         /// <param name="refreshToken"></param>
+        /// <param name="user"></param>
         /// <returns></returns>
-        JwtReponse Authenticate(string refreshToken);
-
-        /// <summary>
-        /// Revoke by  refreshtoken or accessToken
-        /// </summary>
-        /// <param name="AccessToken"></param>
-        /// <returns></returns>
-        void RevokeToken(string accessTokenOrRefreshToken);
+        JwtReponse Authenticate(string refreshToken, User user);
 
         /// <summary>
         /// Validate Access token
@@ -47,5 +41,10 @@ namespace hfa.WebApi.Common.Auth
         /// prefix
         /// </summary>
         string Salt { get; }
+
+        /// <summary>
+        /// Token validation parameters
+        /// </summary>
+        TokenValidationParameters Parameters { get; }
     }
 }

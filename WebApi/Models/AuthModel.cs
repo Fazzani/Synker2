@@ -24,6 +24,7 @@ namespace hfa.WebApi.Models
     }
     public class TokenModel
     {
+        [Required]
         public string Token { get; set; }
     }
     public class RegisterModel

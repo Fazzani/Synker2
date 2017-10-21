@@ -15,6 +15,7 @@ using hfa.WebApi.Common;
 using Microsoft.Extensions.Options;
 using hfa.WebApi.Dal;
 using hfa.WebApi.Models;
+using System.Security.Claims;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -22,7 +23,6 @@ namespace Hfa.WebApi.Controllers
     {
         protected readonly ILogger _logger;
         protected readonly IElasticConnectionClient _elasticConnectionClient;
-        protected CancellationTokenSource cancelToken;
         IOptions<ApplicationConfigData> _config;
         readonly protected SynkerDbContext _dbContext;
 
@@ -30,16 +30,13 @@ namespace Hfa.WebApi.Controllers
         {
             _logger = loggerFactory.CreateLogger("BaseController");
             _elasticConnectionClient = elasticConnectionClient;
-            cancelToken = new CancellationTokenSource();
             _config = config;
-            this._dbContext = context;
+            _dbContext = context;
         }
 
-        internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query) where T : class
+        internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query, CancellationToken cancellationToken) where T : class
         {
-            var response = await _elasticConnectionClient.Client.LowLevel.SearchAsync<SearchResponse<T>>(_config.Value.DefaultIndex, typeof(T).Name.ToLowerInvariant(), query);
-
-            cancelToken.Token.ThrowIfCancellationRequested();
+            var response = await _elasticConnectionClient.Client.LowLevel.SearchAsync<SearchResponse<T>>(_config.Value.DefaultIndex, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
 
             if (!response.SuccessOrKnownError)
                 return BadRequest(response.DebugInformation);

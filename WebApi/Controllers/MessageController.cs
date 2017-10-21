@@ -16,6 +16,7 @@ using hfa.WebApi.Dal;
 using hfa.WebApi.Dal.Entities;
 using Microsoft.AspNetCore.Authorization;
 using hfa.WebApi.Common.Filters;
+using System.Threading;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -38,13 +39,13 @@ namespace Hfa.WebApi.Controllers
         /// <param name="message"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Message message)
+        public async Task<IActionResult> Post([FromBody] Message message, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var result = await _dbContext.Messages.AddAsync(message, cancelToken.Token);
-            var response = await _dbContext.SaveChangesAsync();
 
+            var result = await _dbContext.Messages.AddAsync(message, cancellationToken);
+            var response = await _dbContext.SaveChangesAsync(HttpContext.RequestAborted);
             return Ok(response);
         }
 
@@ -54,9 +55,9 @@ namespace Hfa.WebApi.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
         {
-            var response = await _dbContext.Messages.FindAsync(id);
+            var response = await _dbContext.Messages.FindAsync(id, cancellationToken);
             if (response == null)
                 return NotFound(id);
 
@@ -96,12 +97,6 @@ namespace Hfa.WebApi.Controllers
                 .GetPaged(page, pageSize);
 
             return Ok(response);
-        }
-
-        [HttpGet("test"), AllowAnonymous]
-        public ActionResult Test()
-        {
-            return Ok("Yesss");
         }
 
     }

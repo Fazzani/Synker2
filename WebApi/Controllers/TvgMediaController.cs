@@ -44,16 +44,16 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [Route("_search")]
-        public async Task<IActionResult> SearchAsync([FromBody]dynamic request)
+        public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
         {
-            return await SearchAsync<TvgMedia>(request.ToString());
+            return await SearchAsync<TvgMedia>(request.ToString(), cancellationToken);
         }
 
         // [ElasticResult]
         [HttpPost]
         [ValidateModel]
         [Route("search")]
-        public async Task<IActionResult> SearchAsync([FromBody] QueryListBaseModel query)
+        public async Task<IActionResult> SearchAsync([FromBody] QueryListBaseModel query, CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.SearchAsync<TvgMedia>(rq => rq
                 .Size(query.PageSize)
@@ -63,9 +63,7 @@ namespace Hfa.WebApi.Controllers
                 .Query(q => q.Match(m => m.Field(ff => ff.Name)
                                           .Query(query.SearchDict.LastOrDefault().Value)))
 
-            , cancelToken.Token);
-
-            cancelToken.Token.ThrowIfCancellationRequested();
+            , cancellationToken);
 
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);
@@ -74,7 +72,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -84,9 +82,7 @@ namespace Hfa.WebApi.Controllers
                 .Size(1)
                 .Index<TvgMedia>()
                 .Query(q => q.Ids(ids => ids.Name(nameof(id)).Values(id)))
-            , cancelToken.Token);
-
-            cancelToken.Token.ThrowIfCancellationRequested();
+            , cancellationToken);
 
             response.AssertElasticResponse();
             if (response.Documents.FirstOrDefault() == null)
@@ -129,16 +125,14 @@ namespace Hfa.WebApi.Controllers
                .From(0)
                .Size(10000)
                .Index<TvgMedia>()
-           , cancelToken.Token);
-
-            cancelToken.Token.ThrowIfCancellationRequested();
+           , HttpContext.RequestAborted);
 
             response.AssertElasticResponse();
 
             using (var ms = new MemoryStream())
             {
                 var provider = new M3uProvider(ms);
-                await provider.PushAsync(new Playlist<TvgMedia>(response.Documents), cancelToken.Token);
+                await provider.PushAsync(new Playlist<TvgMedia>(response.Documents), HttpContext.RequestAborted);
                 return File(ms.GetBuffer(), "application/octet-stream", filename);
             }
         }
@@ -182,10 +176,10 @@ namespace Hfa.WebApi.Controllers
 
                 using (var sourcePlaylist = new Playlist<TvgMedia>(sourceProvider))
                 {
-                    var sourceList = await sourcePlaylist.PullAsync(cancelToken.Token);
+                    var sourceList = await sourcePlaylist.PullAsync(HttpContext.RequestAborted);
                     using (var targetPlaylist = new Playlist<TvgMedia>(targetProvider))
                     {
-                        await targetPlaylist.PushAsync(sourcePlaylist, cancelToken.Token);
+                        await targetPlaylist.PushAsync(sourcePlaylist, HttpContext.RequestAborted);
                         return File(stream.GetBuffer(), "application/octet-stream", file.FileName);
                     }
                 }

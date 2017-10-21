@@ -23,9 +23,24 @@ namespace hfa.WebApi.Common
         /// </summary>
         public string Salt { get; set; }
 
-        public string SymmetricSecurityKey { get; set; }
+        public string HmacSecretKey { get; set; }
         public string CertificateName { get; set; }
+
+        /// <summary>
+        /// Private key
+        /// </summary>
+        public string RsaPrivateKeyXML { get; set; }
+
+        /// <summary>
+        /// Public key
+        /// </summary>
+        public string RsaPublicKeyXML { get; set; }
+
+        public bool UseRsa { get; set; } = true;
+
         public int TokenLifetimeInMinutes { get;  set; }
+
+        public string TokenEndPoint { get; set; }
     }
    
     public class PlaylistProviderOption
