@@ -67,13 +67,16 @@ namespace Hfa.WebApi.Controllers
             {
                 xmlSerializer.Serialize(ms, webGragModel);
                 ms.Position = 0;
-                var sr = new StreamReader(ms);
-                var myStr = sr.ReadToEnd();
-                //Put WebGrabConfig to PasteBin
-                var paste = await _pasteBinService.PushAsync(webGragModel.Filename, myStr, Expiration.OneDay, PastebinAPI.Language.XML);
-                //Call ssh instantWebGrab batch script
+                using (var sr = new StreamReader(ms))
+                {
+                    var myStr = sr.ReadToEnd();
 
-                return new OkObjectResult(paste);
+                    //Put WebGrabConfig to PasteBin
+                    var paste = await _pasteBinService.PushAsync(webGragModel.Filename, myStr, Expiration.OneDay, PastebinAPI.Language.XML);
+                    //Call ssh instantWebGrab batch script
+
+                    return new OkObjectResult(paste);
+                }
             }
         }
 
