@@ -13,6 +13,8 @@ namespace hfa.WebApi.Common
 {
     internal class ElasticConnectionClient : IElasticConnectionClient
     {
+       // internal const string SitePackIndexName = "sitepack";
+
         private ConnectionSettings _settings;
         private ElasticClient _client;
         private static object syncRoot = new Object();
@@ -30,9 +32,8 @@ namespace hfa.WebApi.Common
                 .BasicAuthentication(_config.ElasticUserName, _config.ElasticPassword)
                 .DisableDirectStreaming(true)
                 .DefaultIndex(_config.DefaultIndex)
-                .MapDefaultTypeIndices(x=> x.Add(typeof(SitePackChannel), "sitepack-*"))
                 .PrettyJson()
-                .RequestTimeout(TimeSpan.FromMinutes(2))
+                .RequestTimeout(TimeSpan.FromSeconds(_config.RequestTimeout))
                 .EnableHttpCompression();
 
 #if DEBUG
@@ -43,14 +44,14 @@ namespace hfa.WebApi.Common
                 .InferMappingFor<TvgMedia>(m => m.IdProperty(p => p.Id))
                 .InferMappingFor<tvChannel>(m => m.IdProperty(p => p.id))
                 .InferMappingFor<Tvg>(m => m.IdProperty(p => p.Id))
-                .InferMappingFor<SitePackChannel>(m => m.IdProperty(p => p.Site_id));
+                .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).IdProperty(p => p.id));
 
-            //MappingConfig();
+            if (!Client.IndexExists(_config.DefaultIndex).Exists)
+                MappingConfig();
         }
         private void MappingConfig()
         {
             var keywordProperty = new PropertyName("keyword");
-
             var response = Client.CreateIndex(_config.DefaultIndex, c => c
             .Settings(s => s
             .Setting("analysis.char_filter.drop_specChars.type", "pattern_replace")

@@ -30,6 +30,7 @@ using AspNet.Core.Webhooks.Receivers;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Net.Http;
 using System.Net.Sockets;
+using hfa.WebApi.Services;
 
 namespace hfa.WebApi
 {
@@ -58,10 +59,12 @@ namespace hfa.WebApi
         {
             services.
                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
+               .AddSingleton<IPasteBinService, PasteBinService>()
                .AddSingleton<IAuthentificationService, AuthentificationService>()
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                .Configure<ApplicationConfigData>(Configuration)
-               .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)));
+               .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))
+               .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)));
 
             var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
              .UseMySql(Configuration.GetConnectionString("PlDatabase")))

@@ -40,4 +40,3 @@ echo "Removing Working Directory"
 cd .. && rm -R $workingDir
 
 quit 0;
-

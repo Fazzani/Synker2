@@ -14,8 +14,6 @@ using hfa.SyncLibrary.Global;
 using hfa.WebApi.Common;
 using Microsoft.Extensions.Options;
 using hfa.WebApi.Dal;
-using hfa.WebApi.Models;
-using System.Security.Claims;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -23,20 +21,20 @@ namespace Hfa.WebApi.Controllers
     {
         protected readonly ILogger _logger;
         protected readonly IElasticConnectionClient _elasticConnectionClient;
-        IOptions<ApplicationConfigData> _config;
+        protected readonly ApplicationConfigData _config;
         readonly protected SynkerDbContext _dbContext;
 
         public BaseController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
         {
             _logger = loggerFactory.CreateLogger("BaseController");
             _elasticConnectionClient = elasticConnectionClient;
-            _config = config;
+            _config = config.Value;
             _dbContext = context;
         }
 
         internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query, CancellationToken cancellationToken) where T : class
         {
-            var response = await _elasticConnectionClient.Client.LowLevel.SearchAsync<SearchResponse<T>>(_config.Value.DefaultIndex, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
+            var response = await _elasticConnectionClient.Client.LowLevel.SearchAsync<SearchResponse<T>>(_config.DefaultIndex, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
 
             if (!response.SuccessOrKnownError)
                 return BadRequest(response.DebugInformation);
@@ -45,7 +43,7 @@ namespace Hfa.WebApi.Controllers
             return new OkObjectResult(response.Body.GetResultListModel());
         }
 
-        internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query, string indexName,  CancellationToken cancellationToken) where T : class
+        internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query, string indexName, CancellationToken cancellationToken) where T : class
         {
             var response = await _elasticConnectionClient.Client.LowLevel.SearchAsync<SearchResponse<T>>(indexName, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
 
@@ -69,7 +67,6 @@ namespace Hfa.WebApi.Controllers
                     var suffixMethod = typeof(SuffixExtensions).GetMethod("Suffix", BindingFlags.Public | BindingFlags.Static);
                     var callmethod = Expression.Call(suffixMethod, fieldNameExp, Expression.Constant(Constants.ELK_KEYWORD_SUFFIX));
                     var lambda = Expression.Lambda(callmethod, Expression.Parameter(typeof(T)));
-
 
                     if (item.Value == SortDirectionEnum.Asc)
                     {

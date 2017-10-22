@@ -14,6 +14,11 @@ using hfa.WebApi.Dal;
 using hfa.WebApi.Common.Filters;
 using hfa.WebApi.Models.Xmltv;
 using System.Threading;
+using Nest;
+using hfa.WebApi.Services;
+using System.IO;
+using PastebinAPI;
+using System.Text;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,45 +29,19 @@ namespace Hfa.WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class XmltvController : BaseController
     {
-        private const string IndexName = "sitepack-*";
+        private readonly IPasteBinService _pasteBinService;
 
-        public XmltvController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+        public XmltvController(IPasteBinService pasteBinService, IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
-
+            _pasteBinService = pasteBinService;
         }
 
         [HttpPost]
         [Route("channels/_search")]
         public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
         {
-            return await SearchAsync<SitePackChannel>(request.ToString(), IndexName, cancellationToken);
-        }
-
-        /// <summary>
-        /// Récupérer la liste des chaines présentes dans Site.pack and Site.user
-        /// Depuis ELasticsearch
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        [ValidateModel]
-        [Route("channels")]
-        public async Task<IActionResult> ListChaines([FromBody] QueryListBaseModel query, CancellationToken cancellationToken)
-        {
-            var response = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(rq => rq
-                .Size(query.PageSize)
-                .From(query.Skip)
-                .Sort(x => GetSortDescriptor(x, query.SortDict))
-                .Query(q => q.Match(m => m.Field(ff => ff.Site)
-                                          .Query(query.SearchDict.LastOrDefault().Value)))
-
-            , HttpContext.RequestAborted);
-
-            if (!response.IsValid)
-                return BadRequest(response.DebugInformation);
-
-            //response.AssertElasticResponse();
-            return new OkObjectResult(response.GetResultListModel());
+            return await SearchAsync<SitePackChannel>(request.ToString(), _config.SitePackIndex, cancellationToken);
         }
 
         /// <summary>
@@ -74,43 +53,44 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [ValidateModel]
         [Route("webgrab")]
-        public async Task<IActionResult> Webgrab([FromBody] QueryListBaseModel query, CancellationToken cancellationToken)
+        public async Task<IActionResult> Webgrab([FromBody]List<string> siteIds, CancellationToken cancellationToken)
         {
-            var response = await _elasticConnectionClient.Client.SearchAsync<tvChannel>(rq => rq
-                .Size(query.PageSize)
-                .From(query.Skip)
-                .Sort(x => GetSortDescriptor(x, query.SortDict))
-                .Query(q => q.Match(m => m.Field(ff => ff.displayname)
-                                          .Query(query.SearchDict.LastOrDefault().Value)))
-
-            , HttpContext.RequestAborted);
+            var response = await _elasticConnectionClient.Client.MultiGetAsync(x => x.GetMany<SitePackChannel>(siteIds), cancellationToken);
 
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);
-            //response.AssertElasticResponse();
-            return new OkObjectResult(response.GetResultListModel());
+
+            var webGragModel = Settings.New;
+            webGragModel.Channel = response.Documents.Select(x => x.Source).Cast<SitePackChannel>().ToList();
+            var xmlSerializer = new System.Xml.Serialization.XmlSerializer(typeof(Settings));
+            using (var ms = new MemoryStream())
+            {
+                xmlSerializer.Serialize(ms, webGragModel);
+                ms.Position = 0;
+                var sr = new StreamReader(ms);
+                var myStr = sr.ReadToEnd();
+                //Put WebGrabConfig to PasteBin
+                var paste = await _pasteBinService.PushAsync(webGragModel.Filename, myStr, Expiration.OneDay, PastebinAPI.Language.XML);
+                //Call ssh instantWebGrab batch script
+
+                return new OkObjectResult(paste);
+            }
         }
 
         /// <summary>
-        /// Get Xmltv by user (Principal) and xmltv tag
+        /// Get channel Xmltv From SitePack by Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
+        [HttpGet("channels/{id}")]
+        public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
-            var response = await _elasticConnectionClient.Client.SearchAsync<tvChannel>(rq => rq
-                .From(0)
-                .Size(1)
-                .Index<tvChannel>()
-                .Query(q => q.Ids(ids => ids.Name(nameof(id)).Values(id)))
-            , HttpContext.RequestAborted);
+            var response = await _elasticConnectionClient.Client.GetAsync(new DocumentPath<SitePackChannel>(id), null, cancellationToken);
 
-            response.AssertElasticResponse();
-            if (response.Documents.FirstOrDefault() == null)
-                return NotFound();
+            if (!response.IsValid)
+                return BadRequest(response.DebugInformation);
 
-            return new OkObjectResult(response.GetResultListModel());
+            return new OkObjectResult(response.Source);
         }
     }
 }
