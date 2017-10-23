@@ -35,14 +35,14 @@ namespace hfa.WebApi.Controllers
                 return new OkObjectResult((await _dbContext.Command
                     .OrderByDescending(x => x.Id)
                     .ToListAsync())
-                    .Select(CommandModel.ToModel));
+                    .Select(x => x.CommandText));
 
             return new OkObjectResult((await _dbContext
                     .Command
                     .Where(x => x.UserId == UserId && x.TreatedDate == null)
                     .OrderByDescending(x => x.Id)
                     .ToListAsync())
-                    .Select(CommandModel.ToModel));
+                    .Select(x=>x.CommandText));
         }
 
         [HttpGet("users/{userId}")]
@@ -54,8 +54,18 @@ namespace hfa.WebApi.Controllers
             }
 
             if (all.HasValue)
-                return new OkObjectResult((await _dbContext.Command.OrderByDescending(x => x.Id).Where(x => x.UserId == userId).ToListAsync()).Select(CommandModel.ToModel));
-            return new OkObjectResult((await _dbContext.Command.OrderByDescending(x => x.Id).Where(x => x.UserId == userId && x.TreatedDate == null).ToListAsync()).Select(CommandModel.ToModel));
+                return new OkObjectResult((await _dbContext
+                    .Command
+                    .OrderBy(x => x.Id)
+                    .Where(x => x.UserId == userId)
+                    .ToListAsync()).Select(CommandModel.ToModel));
+
+            return new OkObjectResult((await _dbContext
+                .Command
+                .OrderBy(x => x.Id)
+                .Where(x => x.UserId == userId && x.TreatedDate == null)
+                .ToListAsync())
+                .Select(CommandModel.ToModel));
         }
 
         [HttpGet("{id}")]

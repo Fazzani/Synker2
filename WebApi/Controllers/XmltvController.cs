@@ -19,6 +19,7 @@ using hfa.WebApi.Services;
 using System.IO;
 using PastebinAPI;
 using System.Text;
+using hfa.WebApi.Dal.Entities;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -63,6 +64,7 @@ namespace Hfa.WebApi.Controllers
             var webGragModel = Settings.New;
             webGragModel.Channel = response.Documents.Select(x => x.Source).Cast<SitePackChannel>().ToList();
             var xmlSerializer = new System.Xml.Serialization.XmlSerializer(typeof(Settings));
+
             using (var ms = new MemoryStream())
             {
                 xmlSerializer.Serialize(ms, webGragModel);
@@ -73,8 +75,13 @@ namespace Hfa.WebApi.Controllers
 
                     //Put WebGrabConfig to PasteBin
                     var paste = await _pasteBinService.PushAsync(webGragModel.Filename, myStr, Expiration.OneDay, PastebinAPI.Language.XML);
-                    //Call ssh instantWebGrab batch script
-
+                    //Add new command to Database
+                    await _dbContext.Command.AddAsync(new Command
+                    {
+                        CommandText = $"cd /root/.wg++ && ls && ./instantWebGrab.sh {paste.RawUrl}",
+                        UserId = UserId.Value,
+                        Comments = $"Adding new command from {nameof(Webgrab)} by {UserId}{Environment.NewLine}"
+                    });
                     return new OkObjectResult(paste);
                 }
             }
