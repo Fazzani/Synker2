@@ -12,6 +12,7 @@ namespace hfa.WebApi.Dal.Entities
         public User()
         {
             Roles = new List<Role>();
+            Commands = new List<Command>();
         }
         [MaxLength(64)]
         [Required]
@@ -36,6 +37,7 @@ namespace hfa.WebApi.Dal.Entities
         public virtual ConnectionState ConnectionState { get; set; }
 
         public virtual ICollection<Role> Roles { get; set; }
+        public virtual ICollection<Command> Commands { get; set; }
         // public virtual JsonObject<List<string>> Tags { get; set; }
     }
     public enum GenderTypeEnum : byte

@@ -9,11 +9,6 @@ namespace hfa.WebApi.Dal.Entities
 {
     public class ConnectionState : EntityBase
     {
-        //public int UserId { get; set; }
-
-        //[ForeignKey(nameof(UserId))]
-        //public virtual User User { get; set; }
-
         [Required]
         [MaxLength(512)]
         public string UserName { get; set; }

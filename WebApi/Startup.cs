@@ -31,6 +31,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Net.Http;
 using System.Net.Sockets;
 using hfa.WebApi.Services;
+using System.Reflection;
 
 namespace hfa.WebApi
 {
@@ -67,7 +68,8 @@ namespace hfa.WebApi
                .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)));
 
             var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
-             .UseMySql(Configuration.GetConnectionString("PlDatabase")))
+             .UseMySql(Configuration.GetConnectionString("PlDatabase"), 
+                a => a.MigrationsAssembly(null)))
              .BuildServiceProvider();
 
             var DB = serviceProvider.GetService<SynkerDbContext>();
