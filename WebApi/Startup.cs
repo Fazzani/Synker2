@@ -68,7 +68,7 @@ namespace hfa.WebApi
                .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)));
 
             var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
-             .UseMySql(Configuration.GetConnectionString("PlDatabase"), 
+             .UseMySql(Configuration.GetConnectionString("PlDatabase"),
                 a => a.MigrationsAssembly(null)))
              .BuildServiceProvider();
 
@@ -82,7 +82,10 @@ namespace hfa.WebApi
             services.AddMvc(config =>
             {
                 config.Filters.Add(typeof(GlobalExceptionFilterAttribute));
-            });
+            })
+            .AddJsonOptions(
+                options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
 
             //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?tabs=visual-studio
             services.AddSwaggerGen(c =>

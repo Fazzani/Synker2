@@ -12,6 +12,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using hfa.WebApi.Common;
 using Microsoft.AspNetCore.Authorization;
+using hfa.WebApi.Common.Filters;
+using hfa.WebApi.Models.Xmltv;
 
 namespace hfa.WebApi.Controllers
 {
@@ -27,9 +29,20 @@ namespace hfa.WebApi.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Command> GetCommand()
+        public async Task<IActionResult> GetCommand([FromQuery] bool? all)
         {
-            return _dbContext.Command;
+            if (all.HasValue && all.Value)
+                return new OkObjectResult((await _dbContext.Command
+                    .OrderByDescending(x => x.Id)
+                    .ToListAsync())
+                    .Select(CommandModel.ToModel));
+
+            return new OkObjectResult((await _dbContext
+                    .Command
+                    .Where(x => x.UserId == UserId && x.TreatedDate == null)
+                    .OrderByDescending(x => x.Id)
+                    .ToListAsync())
+                    .Select(CommandModel.ToModel));
         }
 
         [HttpGet("users/{userId}")]
@@ -41,18 +54,14 @@ namespace hfa.WebApi.Controllers
             }
 
             if (all.HasValue)
-                return new OkObjectResult(_dbContext.Command.Where(x => x.UserId == userId));
-            return new OkObjectResult(_dbContext.Command.Where(x => x.UserId == userId && x.TreatedDate == null));
+                return new OkObjectResult((await _dbContext.Command.OrderByDescending(x => x.Id).Where(x => x.UserId == userId).ToListAsync()).Select(CommandModel.ToModel));
+            return new OkObjectResult((await _dbContext.Command.OrderByDescending(x => x.Id).Where(x => x.UserId == userId && x.TreatedDate == null).ToListAsync()).Select(CommandModel.ToModel));
         }
 
         [HttpGet("{id}")]
+        [ValidateModel]
         public async Task<IActionResult> GetCommand([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var command = await _dbContext.Command.SingleOrDefaultAsync(m => m.Id == id);
 
             if (command == null)
@@ -78,13 +87,9 @@ namespace hfa.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
+        [ValidateModel]
         public async Task<IActionResult> PutCommand([FromRoute] int id, [FromBody] Command command)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             if (id != command.Id)
             {
                 return BadRequest();
@@ -112,13 +117,9 @@ namespace hfa.WebApi.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> PostCommand([FromBody] Command command)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             _dbContext.Command.Add(command);
             await _dbContext.SaveChangesAsync();
 
@@ -126,13 +127,9 @@ namespace hfa.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ValidateModel]
         public async Task<IActionResult> DeleteCommand([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var command = await _dbContext.Command.SingleOrDefaultAsync(m => m.Id == id);
             if (command == null)
             {

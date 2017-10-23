@@ -17,7 +17,7 @@ namespace hfa.WebApi.Dal.Entities
         [Required]
         public string CommandText { get; set; }
 
-        public DateTime TreatedDate { get; set; }
+        public DateTime? TreatedDate { get; set; }
 
         public string Comments { get; set; }
     }

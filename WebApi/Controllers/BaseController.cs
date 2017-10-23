@@ -93,6 +93,7 @@ namespace Hfa.WebApi.Controllers
             public T Value { get; }
         }
 
+        protected int? UserId => Convert.ToInt32(User.FindFirst("id")?.Value);
     }
 
     public class Constants
