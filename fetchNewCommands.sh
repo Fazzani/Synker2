@@ -15,11 +15,19 @@ curl --insecure -o bearer.json -X POST -H "Content-type: application/json"  -d '
 bearer=($(cat bearer.json | jq -r '.accessToken'))
 #echo "Put token to the file $bearer bearer.json"
 echo "Get commands"
-curl -v --insecure -o commands.json -X GET -H "Content-type:application/json" -H "Authorization:Bearer $bearer"  $hostApi/command/users/1?all=true
-#cat commands.json
-v1=($(jq -rc '.[]."commandText"' commands.json))
-#echo $v1
-#printf '%s\n' "${v1[@]}"
-cat commands.json | jq -r '.[].commandText'
-#TODO: Mettre la liste des commandes récupérer dans un array dans le bon ordre et les exécuter 
+curl --insecure -o commands.json -X GET -H "Content-type:application/json" -H "Authorization:Bearer $bearer"  $hostApi/command/users/1?all=true
+readarray -t tab < <(jq -r '.[].commandText' commands.json)
+readarray -t tabIds < <(jq '.[].id' commands.json)
+#echo ${tab[@]}
+#echo ${tabCmds[@]}
+cpt=0
+for i in "${tab[@]}"
+do
+  echo "${date} Executing $i"
+  eval $i
+  echo "Put command treated ${tabIds[$cpt]}"
+  curl -v --insecure -X PUT -H "Content-type:application/json" -H "Content-Length:0"  -H "Authorization:Bearer $bearer"  $hostApi/command/treat/${tabIds[$cpt]}
+  let "cpt++"
+done
+
 quit 0;
