@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using PlaylistBaseLibrary.Entities;
+//using PlaylistBaseLibrary.Entities;
 using Hfa.WebApi.Common;
 using Hfa.WebApi.Models;
 using hfa.SyncLibrary.Global;
@@ -20,6 +20,9 @@ using System.IO;
 using PastebinAPI;
 using System.Text;
 using hfa.WebApi.Dal.Entities;
+using Microsoft.AspNetCore.Authorization;
+using PlaylistBaseLibrary.Entities;
+using Newtonsoft.Json.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -85,6 +88,30 @@ namespace Hfa.WebApi.Controllers
                     return new OkObjectResult(paste);
                 }
             }
+        }
+
+        /// <summary>
+        /// Upload Xmltv from json file
+        /// </summary>
+        /// <param name="tv"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateModel]
+        [Route("uploadjson")]
+        public async Task<IActionResult> UploadFromJson([FromBody]tv tv, CancellationToken cancellationToken)
+        {
+            var progGroupedByDay = tv.programme
+                .OrderByDescending(o => o.StartTime)
+                .GroupBy(p => p.StartTime.Date.ToString("d"));
+
+            foreach (var prog in progGroupedByDay)
+            {
+                //Indexer les prog by day, chaque dans un index à part
+                //_elasticConnectionClient.Client.Bulk(x => x.Index(prog.Key).CreateM
+
+            }
+            return Ok(await Task.FromResult("ok"));
         }
 
         /// <summary>

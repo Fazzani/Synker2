@@ -13,7 +13,7 @@ namespace hfa.WebApi.Common
 {
     internal class ElasticConnectionClient : IElasticConnectionClient
     {
-       // internal const string SitePackIndexName = "sitepack";
+        // internal const string SitePackIndexName = "sitepack";
 
         private ConnectionSettings _settings;
         private ElasticClient _client;
@@ -49,6 +49,7 @@ namespace hfa.WebApi.Common
             if (!Client.IndexExists(_config.DefaultIndex).Exists)
                 MappingConfig();
         }
+
         private void MappingConfig()
         {
             var keywordProperty = new PropertyName("keyword");

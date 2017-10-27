@@ -32,6 +32,7 @@ using System.Net.Http;
 using System.Net.Sockets;
 using hfa.WebApi.Services;
 using System.Reflection;
+using hfa.WebApi.Services.xmltv;
 
 namespace hfa.WebApi
 {
@@ -62,6 +63,7 @@ namespace hfa.WebApi
                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                .AddSingleton<IPasteBinService, PasteBinService>()
                .AddSingleton<IAuthentificationService, AuthentificationService>()
+               .AddScoped<IXmltvService, XmltvService>()
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                .Configure<ApplicationConfigData>(Configuration)
                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))

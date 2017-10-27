@@ -15,7 +15,7 @@ curl --insecure -o bearer.json -X POST -H "Content-type: application/json"  -d '
 bearer=($(cat bearer.json | jq -r '.accessToken'))
 #echo "Put token to the file $bearer bearer.json"
 echo "Get commands"
-curl --insecure -o commands.json -X GET -H "Content-type:application/json" -H "Authorization:Bearer $bearer"  $hostApi/command/users/1?all=true
+curl --insecure -o commands.json -X GET -H "Content-type:application/json" -H "Authorization:Bearer $bearer" $hostApi/command/users/1?all=true
 readarray -t tab < <(jq -r '.[].commandText' commands.json)
 readarray -t tabIds < <(jq '.[].id' commands.json)
 #echo ${tab[@]}
@@ -26,7 +26,7 @@ do
   echo "${date} Executing $i"
   eval $i
   echo "Put command treated ${tabIds[$cpt]}"
-  curl -v --insecure -X PUT -H "Content-type:application/json" -H "Content-Length:0"  -H "Authorization:Bearer $bearer"  $hostApi/command/treat/${tabIds[$cpt]}
+  curl -v --insecure -X PUT -H "Content-type:application/json" -H "Content-Length:0" -H "Authorization:Bearer $bearer" $hostApi/command/treat/${tabIds[$cpt]}
   let "cpt++"
 done
 

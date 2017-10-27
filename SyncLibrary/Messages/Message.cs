@@ -29,7 +29,9 @@ namespace Hfa.SyncLibrary.Messages
         END_CREATE_CONFIG,
         START_SYNC_EPG_CONFIG,
         END_SYNC_EPG_CONFIG,
-        EXCEPTION
+        EXCEPTION,
+        START_PUSH_XMLTV,
+        END_PUSH_XMLTV
     }
 
     public enum MessageStatus

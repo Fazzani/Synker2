@@ -23,10 +23,15 @@ using static hfa.SyncLibrary.Global.Common;
 using Microsoft.Extensions.Options;
 using Hfa.SyncLibrary.Infrastructure;
 using System.IO;
+using System.Xml;
+using System.Net;
+using Newtonsoft.Json;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("hfa.synker.batch.test")]
 namespace SyncLibrary
 {
-    class SynchElastic
+    internal class SynchElastic
     {
         static CancellationTokenSource ts = new CancellationTokenSource();
         static IMessagesService _messagesService;
@@ -47,7 +52,7 @@ namespace SyncLibrary
 
                 _messagesService.SendAsync(Message.PingMessage, ts.Token).GetAwaiter().GetResult();
 
-                ArgsParser(args).GetAwaiter().GetResult();
+                ArgsParser(args, _messagesService).GetAwaiter().GetResult();
             }
             catch (OperationCanceledException ex)
             {
@@ -66,13 +71,14 @@ namespace SyncLibrary
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static async Task ArgsParser(string[] args)
+        public static async Task ArgsParser(string[] args, IMessagesService messagesService)
         {
-            await Parser.Default.ParseArguments<PurgeTempFilesVerb, SyncEpgElasticVerb, SyncMediasElasticVerb, SaveNewConfigVerb>(args).MapResult(
+            await Parser.Default.ParseArguments<PurgeTempFilesVerb, SyncEpgElasticVerb, SyncMediasElasticVerb, SaveNewConfigVerb, PushXmltvVerb>(args).MapResult(
                  (PurgeTempFilesVerb opts) => PurgeTempFilesVerb.MainPurgeAsync(opts),
                   (SyncEpgElasticVerb opts) => SyncEpgElasticAsync(opts, _elasticClient, _config, ts.Token),
                   (SyncMediasElasticVerb opts) => SyncMediasElasticAsync(opts, _elasticClient, _config, ts.Token),
                   (SaveNewConfigVerb opts) => SaveConfigAsync(opts, ts.Token),
+                  (PushXmltvVerb opts) => PushXmltvAsync(opts, messagesService, ts.Token),
                  errs => throw new AggregateException(errs.Select(e => new Exception(e.Tag.ToString()))));
         }
 
@@ -83,7 +89,7 @@ namespace SyncLibrary
         /// <param name="elasticClient"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public static async Task SyncMediasElasticAsync(SyncMediasElasticVerb options, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken token)
+        public static async Task SyncMediasElasticAsync(SyncMediasElasticVerb options, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken token = default(CancellationToken))
         {
             var res = await SynchronizableConfigManager.LoadEncryptedConfig(options.FilePath, options.CertificateName);
 
@@ -159,7 +165,7 @@ namespace SyncLibrary
         /// <param name="config"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public static async Task SyncEpgElasticAsync(SyncEpgElasticVerb options, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken token)
+        public static async Task SyncEpgElasticAsync(SyncEpgElasticVerb options, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken token = default(CancellationToken))
         {
             Stream response = null;
             await _messagesService.SendAsync($"Start Sync Xmltv file {options.FilePath} to Elastic", MessageTypeEnum.START_SYNC_EPG_CONFIG, token);
@@ -200,9 +206,9 @@ namespace SyncLibrary
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static async Task SaveConfigAsync(SaveNewConfigVerb options, CancellationToken token)
+        public static async Task SaveConfigAsync(SaveNewConfigVerb options, CancellationToken token = default(CancellationToken))
         {
-            await _messagesService.SendAsync($"Start save new config {options.FilePath}", MessageTypeEnum.END_CREATE_CONFIG, token);
+            await _messagesService.SendAsync($"Start save new config {options.FilePath}", MessageTypeEnum.START_CREATE_CONFIG, token);
             //await SynchronizableConfigManager.SaveAndEncrypt(new ConfigSync
             //{
             //    Sources = new List<ISynchronizableConfig>
@@ -223,6 +229,33 @@ namespace SyncLibrary
             var res = await SynchronizableConfigManager.Load($"{options.FilePath}.loc");
             await SynchronizableConfigManager.SaveAndEncrypt(res, options.FilePath, options.CertificateName);
             await _messagesService.SendAsync($"END save new config {options.FilePath}", MessageTypeEnum.END_CREATE_CONFIG, token);
+        }
+
+        /// <summary>
+        /// Push xmltv file to the api
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public static async Task<bool> PushXmltvAsync(PushXmltvVerb options, IMessagesService messagesService, CancellationToken token = default(CancellationToken))
+        {
+            await messagesService.SendAsync($"Pushing {options.FilePath}", MessageTypeEnum.START_PUSH_XMLTV, token);
+            if (!File.Exists(options.FilePath))
+            {
+                await messagesService.SendAsync($"File not Exist {options.FilePath}", MessageTypeEnum.START_PUSH_XMLTV, token);
+                return false;
+            }
+
+            var fileContent = await File.ReadAllTextAsync(options.FilePath);
+            using (var sr = new StringReader(fileContent))
+            {
+                var xs = new XmlSerializer(typeof(tv));
+                using (var webClient = new HttpClient())
+                {
+                    var httpResponseMessage = await webClient.PostAsync(new Uri(options.ApiUrl), new JsonContent(xs.Deserialize(sr)), token);
+                    await messagesService.SendAsync($"END save new config {options.FilePath} with httpResponseMessage : {httpResponseMessage.ReasonPhrase} ", MessageTypeEnum.END_PUSH_XMLTV, token);
+                    return httpResponseMessage.IsSuccessStatusCode;
+                }
+            }
         }
 
         /// <summary>
