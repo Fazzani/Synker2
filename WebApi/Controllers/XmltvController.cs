@@ -101,7 +101,8 @@ namespace Hfa.WebApi.Controllers
         [Route("uploadjson")]
         public async Task<IActionResult> UploadFromJson([FromBody]tv tv, CancellationToken cancellationToken)
         {
-            var progGroupedByDay = tv.programme.Distinct()
+            var progGroupedByDay = tv.programme
+                .Distinct()
                 .OrderByDescending(o => o.StartTime)
                 .GroupBy(p => p.StartTime.Date.ToString("yyyy-MM-dd"));
 

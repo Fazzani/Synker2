@@ -207,7 +207,7 @@ namespace PlaylistBaseLibrary.Entities
         [XmlIgnore]
         public string Id
         {
-            get { return $"{channel}-{StartTime}"; }
+            get { return $"{channel}-{StartTime.ToString("yyyy-MM-dd hh-mm-ss")}"; }
         }
 
         /// <remarks/>
