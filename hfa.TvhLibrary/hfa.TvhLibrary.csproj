@@ -5,8 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="hfa.playlistbaselibrary" Version="1.0.0-beta00044" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PlaylistBaseLibrary\hfa.PlaylistBaseLibrary.csproj" />
   </ItemGroup>
 
 </Project>

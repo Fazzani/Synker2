@@ -63,7 +63,7 @@ namespace PlaylistBaseLibrary.Entities
 
     /// <remarks/>
     [XmlTypeAttribute(AnonymousType = true)]
-    public partial class tvChannel: IEqualityComparer<tvChannel>
+    public partial class tvChannel : IEqualityComparer<tvChannel>
     {
 
         public tvChannel()
@@ -161,13 +161,71 @@ namespace PlaylistBaseLibrary.Entities
             return $"{channelField} : {DefaultTitle} => {start} : {stop} ";
         }
 
-        public bool Equals(tvProgramme x, tvProgramme y) => x.Id == y.Id;
+        public bool Equals(tvProgramme x, tvProgramme y)
+        {
+            if (object.ReferenceEquals(x, y))
+            {
+                return true;
+            }
 
-        public int GetHashCode(tvProgramme obj) => obj.Id.GetHashCode();
+            // If one object null the return false
+            if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
+            {
+                return false;
+            }
+
+            return x.Id == y.Id;
+        }
+
+        public int GetHashCode(tvProgramme obj)
+        {
+            if (object.ReferenceEquals(obj, null))
+            {
+                return 0;
+            }
+
+            int referencehHash =
+                obj.Id == null ? 0 : obj.Id.GetHashCode();
+
+            return referencehHash;
+        }
+
+        public static bool operator ==(tvProgramme x, tvProgramme y)
+        {
+            // If reference same object including null then return true
+            if (object.ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            // If one object null the return false
+            if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
+            {
+                return false;
+            }
+
+            // Compare object property values
+            return x.Id == y.Id;
+        }
+
+        public static bool operator !=(tvProgramme x, tvProgramme y) => !(x == y);
+
+        public override bool Equals(object obj)
+        {
+            // If comparing to null return false
+            if (object.ReferenceEquals(obj, null))
+            {
+                return false;
+            }
+            if (obj is tvProgramme prog)
+                return Equals(this, prog);
+            return false;
+        }
 
         public string DefaultTitle { get { return titleField.FirstOrDefault().Value; } }
 
         private const string formatDateTime = "yyyyMMddHHmmss zzz";
+
         private List<tvProgrammeTitle> titleField;
 
         private List<tvProgrammeDesc> descField;
@@ -207,7 +265,7 @@ namespace PlaylistBaseLibrary.Entities
         [XmlIgnore]
         public string Id
         {
-            get { return $"{channel}-{StartTime.ToString("yyyy-MM-dd hh-mm-ss")}"; }
+            get { return $"{channel}-{StartTime.ToString(formatDateTime)}"; }
         }
 
         /// <remarks/>

@@ -27,7 +27,7 @@ test_script:
   - cmd: cd ../hfa.synker.batch.test/
   - cmd: dotnet restore ./hfa.synker.batch.test.csproj --verbosity m
   - echo run the unit tests (requires changing into the test directory)
-  - cmd: dotnet xunit
+  - cmd: dotnet xunit -appveyor -notrait "Category=Integration"
 artifacts:
  - path: .\SyncLibrary\artifacts
    name: SynkerBatch

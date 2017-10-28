@@ -23,6 +23,7 @@ using hfa.WebApi.Dal.Entities;
 using Microsoft.AspNetCore.Authorization;
 using PlaylistBaseLibrary.Entities;
 using Newtonsoft.Json.Linq;
+using Elasticsearch.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -102,9 +103,11 @@ namespace Hfa.WebApi.Controllers
         public async Task<IActionResult> UploadFromJson([FromBody]tv tv, CancellationToken cancellationToken)
         {
             var progGroupedByDay = tv.programme
-                .Distinct()
+                .Distinct(new tvProgramme())
                 .OrderByDescending(o => o.StartTime)
                 .GroupBy(p => p.StartTime.Date.ToString("yyyy-MM-dd"));
+
+            var errors = new List<object>();
 
             foreach (var prog in progGroupedByDay)
             {
@@ -119,9 +122,24 @@ namespace Hfa.WebApi.Controllers
                 responseBulk.AssertElasticResponse();
 
                 if (!responseBulk.IsValid)
-                    return BadRequest(responseBulk.ServerError);
+                {
+                    if (responseBulk.ServerError != null)
+                    {
+                        errors.Add(responseBulk.ServerError.Error);
+                        _logger.LogWarning(responseBulk.ServerError.Error.ToString());
+                    }
+                    if (responseBulk.Errors)
+                    {
+                        errors.Add(responseBulk.ItemsWithErrors.Select(x => x.Error));
+                        _logger.LogWarning(responseBulk.ItemsWithErrors.Select(x => x.Error.Reason).Aggregate((x, x1) => $"{x}{Environment.NewLine}{x1}"));
+                    }
+                }
             }
-            return Ok(await Task.FromResult("ok"));
+
+            if (errors.Any())
+                return BadRequest(errors);
+
+            return Ok();
         }
 
         /// <summary>

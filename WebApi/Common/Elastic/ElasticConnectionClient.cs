@@ -44,11 +44,17 @@ namespace hfa.WebApi.Common
                 .InferMappingFor<TvgMedia>(m => m.IdProperty(p => p.Id))
                 .InferMappingFor<tvChannel>(m => m.IdProperty(p => p.id))
                 .InferMappingFor<Tvg>(m => m.IdProperty(p => p.Id))
-                .InferMappingFor<tvProgramme>(m => m.IdProperty(p => p.Id))
+                .InferMappingFor<tvProgramme>(m => m.IdProperty(p => p.Id).IndexName("xmltv-*"))
                 .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).IdProperty(p => p.id));
 
             if (!Client.IndexExists(_config.DefaultIndex).Exists)
                 MappingConfig();
+
+            Client.Map<tv>(x => x.Index("xmltv-*").AutoMap());
+            //Client.Map<tvProgrammeAudio>(x => x.AutoMap());
+            //Client.Map<tvProgrammeSubtitles>(x => x.AutoMap());
+            //Client.Map<tvProgrammeSubtitles>(x => x.AutoMap());
+            //Client.Map<tvProgrammeSubtitles>(x => x.AutoMap());
         }
 
         private void MappingConfig()
