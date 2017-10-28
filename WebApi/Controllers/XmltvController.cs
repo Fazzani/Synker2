@@ -103,13 +103,22 @@ namespace Hfa.WebApi.Controllers
         {
             var progGroupedByDay = tv.programme
                 .OrderByDescending(o => o.StartTime)
-                .GroupBy(p => p.StartTime.Date.ToString("d"));
+                .GroupBy(p => p.StartTime.Date.ToString("yyyy-MM-dd"));
 
             foreach (var prog in progGroupedByDay)
             {
+                string indexName = $"xmltv-{prog.Key}";
                 //Indexer les prog by day, chaque dans un index à part
-                //_elasticConnectionClient.Client.Bulk(x => x.Index(prog.Key).CreateM
+                var responseBulk = await _elasticConnectionClient.Client
+                    .BulkAsync(x => x.Index(indexName)
+                        .CreateMany(prog.ToList(), 
+                        (bd, q) => bd.Index(indexName).Id($"{q.channel}-{q.StartTime}"))
+                    , cancellationToken);
 
+                responseBulk.AssertElasticResponse();
+
+                if (!responseBulk.IsValid)
+                    return BadRequest(responseBulk.ServerError);
             }
             return Ok(await Task.FromResult("ok"));
         }

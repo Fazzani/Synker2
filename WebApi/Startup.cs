@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using hfa.WebApi.Common;
 using System.Net.WebSockets;
@@ -18,20 +17,12 @@ using Microsoft.EntityFrameworkCore;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using hfa.WebApi.Common.Auth;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Rewrite;
 using hfa.WebApi.Common.Filters;
 using System.Net;
-using Microsoft.AspNetCore.Diagnostics;
 using Newtonsoft.Json;
 using AspNet.Core.Webhooks.Receivers;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Net.Http;
-using System.Net.Sockets;
 using hfa.WebApi.Services;
-using System.Reflection;
 using hfa.WebApi.Services.xmltv;
 
 namespace hfa.WebApi

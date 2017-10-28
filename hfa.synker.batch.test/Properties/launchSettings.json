@@ -1,8 +1,7 @@
 {
   "profiles": {
-    "SyncLibrary": {
+    "hfa.synker.batch.test": {
       "commandName": "Project",
-      "commandLineArgs": "epg \"Z:\\xmltv\\channelsEpgFile.xml\"",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

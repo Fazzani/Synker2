@@ -16,18 +16,19 @@ namespace Hfa.SyncLibrary
 {
     public static class Init
     {
+        private const string DEV = "Development";
         internal static IConfiguration Configuration;
         internal static ServiceProvider ServiceProvider;
 
 
-        static bool IsDev(string env) => env.Equals("Development");
+        static bool IsDev(string env) => env.Equals(DEV);
 
         static Init()
         {
-            string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? DEV;
 
-            if (String.IsNullOrWhiteSpace(environment))
-                throw new ArgumentNullException("Environment not found in ASPNETCORE_ENVIRONMENT");
+            //if (String.IsNullOrWhiteSpace(environment))
+            //    throw new ArgumentNullException("Environment not found in ASPNETCORE_ENVIRONMENT");
 
             Console.WriteLine("Environment: {0}", environment);
             // Set up configuration sources.
