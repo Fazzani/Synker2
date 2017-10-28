@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="hfa.playlistbaselibrary" Version="1.0.0-beta00041" />
+    <PackageReference Include="hfa.playlistbaselibrary" Version="1.0.0-beta00044" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 
