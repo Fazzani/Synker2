@@ -44,6 +44,7 @@ namespace hfa.WebApi.Common
                 .InferMappingFor<TvgMedia>(m => m.IdProperty(p => p.Id))
                 .InferMappingFor<tvChannel>(m => m.IdProperty(p => p.id))
                 .InferMappingFor<Tvg>(m => m.IdProperty(p => p.Id))
+                .InferMappingFor<tvProgramme>(m => m.IdProperty(p => p.Id))
                 .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).IdProperty(p => p.id));
 
             if (!Client.IndexExists(_config.DefaultIndex).Exists)

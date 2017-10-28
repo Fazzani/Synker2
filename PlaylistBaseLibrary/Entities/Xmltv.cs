@@ -63,7 +63,7 @@ namespace PlaylistBaseLibrary.Entities
 
     /// <remarks/>
     [XmlTypeAttribute(AnonymousType = true)]
-    public partial class tvChannel
+    public partial class tvChannel: IEqualityComparer<tvChannel>
     {
 
         public tvChannel()
@@ -123,6 +123,10 @@ namespace PlaylistBaseLibrary.Entities
         {
             return $"{string.Join(", ", displayname)}";
         }
+
+        public bool Equals(tvChannel x, tvChannel y) => x.id == y.id;
+
+        public int GetHashCode(tvChannel obj) => obj.id.GetHashCode();
     }
 
     /// <remarks/>
@@ -149,13 +153,18 @@ namespace PlaylistBaseLibrary.Entities
 
     /// <remarks/>
     [XmlTypeAttribute(AnonymousType = true)]
-    public partial class tvProgramme
+    public partial class tvProgramme : IEqualityComparer<tvProgramme>
     {
 
         public override string ToString()
         {
             return $"{channelField} : {DefaultTitle} => {start} : {stop} ";
         }
+
+        public bool Equals(tvProgramme x, tvProgramme y) => x.Id == y.Id;
+
+        public int GetHashCode(tvProgramme obj) => obj.Id.GetHashCode();
+
         public string DefaultTitle { get { return titleField.FirstOrDefault().Value; } }
 
         private const string formatDateTime = "yyyyMMddHHmmss zzz";

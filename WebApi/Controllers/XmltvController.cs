@@ -101,7 +101,7 @@ namespace Hfa.WebApi.Controllers
         [Route("uploadjson")]
         public async Task<IActionResult> UploadFromJson([FromBody]tv tv, CancellationToken cancellationToken)
         {
-            var progGroupedByDay = tv.programme
+            var progGroupedByDay = tv.programme.Distinct()
                 .OrderByDescending(o => o.StartTime)
                 .GroupBy(p => p.StartTime.Date.ToString("yyyy-MM-dd"));
 
@@ -111,8 +111,8 @@ namespace Hfa.WebApi.Controllers
                 //Indexer les prog by day, chaque dans un index à part
                 var responseBulk = await _elasticConnectionClient.Client
                     .BulkAsync(x => x.Index(indexName)
-                        .CreateMany(prog.ToList(), 
-                        (bd, q) => bd.Index(indexName).Id($"{q.channel}-{q.StartTime}"))
+                        .CreateMany(prog.ToList(),
+                        (bd, q) => bd.Index(indexName).Id(q.Id))
                     , cancellationToken);
 
                 responseBulk.AssertElasticResponse();
