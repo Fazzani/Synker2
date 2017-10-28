@@ -33,12 +33,21 @@ namespace hfa.WebApi.Controllers
                 case HealthCheakEnum.WebApi:
                     return Ok();
                 case HealthCheakEnum.Database:
-                    if (await _dbContext.Database.EnsureCreatedAsync(Request.HttpContext.RequestAborted))
-                        return Ok();
-                    return StatusCode((int)HttpStatusCode.InternalServerError);
+                    try
+                    {
+                        var connectionString = Startup.Configuration.GetSection("ConnectionStrings:PlDatabase")?.Value;
+                        using (var cnx = new MySql.Data.MySqlClient.MySqlConnection(connectionString))
+                        {
+                            return Ok();
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        return StatusCode((int)HttpStatusCode.InternalServerError);
+                    }
                 case HealthCheakEnum.Elastic:
                     var elasticResponse = await _elasticConnectionClient.Client.ClusterHealthAsync(cancellationToken: HttpContext.RequestAborted);
-                    return elasticResponse.IsValid ? Ok(): StatusCode((int)HttpStatusCode.InternalServerError);
+                    return elasticResponse.IsValid ? Ok() : StatusCode((int)HttpStatusCode.InternalServerError);
                 default:
                     return Ok();
             }

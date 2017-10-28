@@ -13,10 +13,10 @@ namespace hfa.WebApi.Dal
         public DbSet<User> Users { get; set; }
 
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Command> Command { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -53,7 +53,5 @@ namespace hfa.WebApi.Dal
                     entity.CreatedDate = DateTime.UtcNow;
             }
         }
-
-        public DbSet<hfa.WebApi.Dal.Entities.Command> Command { get; set; }
     }
 }

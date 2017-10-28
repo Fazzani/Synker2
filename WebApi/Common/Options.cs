@@ -13,6 +13,7 @@ namespace hfa.WebApi.Common
         public string ElasticPassword { get; set; }
 
         public int RequestTimeout { get; set; }
+
     }
 
     public class SecurityOptions
