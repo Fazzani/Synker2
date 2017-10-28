@@ -90,7 +90,18 @@ namespace hfa.WebApi
                     Description = "Synchronize playlists API",
                     TermsOfService = "None",
                     Contact = new Contact { Name = "Synker", Email = "contact@synker.ovh", Url = "https://www.github.com/fazzani/synker2" },
-                    License = new License { Name = "Use under MIT", Url = "" }
+                    License = new License { Name = "Use under MIT", Url = "" },
+
+                });
+                c.DescribeAllEnumsAsStrings();
+                c.IgnoreObsoleteActions();
+                c.IgnoreObsoleteProperties();
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                {
+                    In = "header",
+                    Description = "Please insert JWT with Bearer into field",
+                    Name = "Authorization",
+                    Type = "apiKey"
                 });
             });
 
@@ -147,6 +158,18 @@ namespace hfa.WebApi
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Synker API V1");
+                    c.ShowJsonEditor();
+
+                    /*
+                     *  c.EnabledValidator();
+                        c.BooleanValues(new object[] { 0, 1 });
+                        c.DocExpansion("full");
+                        c.InjectOnCompleteJavaScript("/swagger-ui/on-complete.js");
+                        c.InjectOnFailureJavaScript("/swagger-ui/on-failure.js");
+                        c.SupportedSubmitMethods(new[] { "get", "post", "put", "patch" });
+                        c.ShowRequestHeaders();
+                        c.ShowJsonEditor();
+                     */
                 });
                 #endregion
 
