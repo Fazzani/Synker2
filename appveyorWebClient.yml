@@ -41,7 +41,7 @@ test_script:
   - cmd: dotnet restore ../hfa.synker.batch.test/hfa.synker.batch.test.csproj --verbosity m
   # run the unit tests (requires changing into the test directory)
   - cmd: cd ../hfa.tvhLibrary.test/
-  - cmd: -appveyor -notrait "Category=Integration"
+  - cmd: dotnet xunit -appveyor -notrait "Category=Integration"
   - cmd: cd ../hfa.synker.batch.test/
-  - cmd: -appveyor -notrait "Category=Integration"
+  - cmd: dotnet xunit -appveyor -notrait "Category=Integration"
   - cmd: cd ../WebClient && npm run test:ci
