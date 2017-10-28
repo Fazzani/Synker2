@@ -38,5 +38,13 @@
   <ItemGroup>
     <ProjectReference Include="..\SyncLibrary\hfa.Synker.batch.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="certs\rsa-private-key.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="certs\rsa-public-key.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>

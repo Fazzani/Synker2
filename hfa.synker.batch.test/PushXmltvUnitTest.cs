@@ -4,6 +4,7 @@ using Hfa.SyncLibrary.Verbs;
 using Moq;
 using SyncLibrary;
 using System;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -21,14 +22,18 @@ namespace hfa.synker.batch.test
         }
 
         [Fact]
+        [Trait("Category", "Integration")]
         public void PushXmlvTest()
         {
-            var res = SynchElastic.PushXmltvAsync(new PushXmltvVerb
+            using (var client = StartUp.Client)
             {
-                ApiUrl = ApiUrl,
-                FilePath = @"data\guide.xmltv"
-            }, _messageService).GetAwaiter().GetResult();
-            Assert.True(res);
+                var res = SynchElastic.PushXmltvAsync(new PushXmltvVerb
+                {
+                    ApiUrl = ApiUrl,
+                    FilePath = @"data\guide.xmltv"
+                }, _messageService, client).GetAwaiter().GetResult();
+                Assert.True(res);
+            }
         }
     }
 }

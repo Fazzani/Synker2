@@ -78,7 +78,7 @@ namespace SyncLibrary
                   (SyncEpgElasticVerb opts) => SyncEpgElasticAsync(opts, _elasticClient, _config, ts.Token),
                   (SyncMediasElasticVerb opts) => SyncMediasElasticAsync(opts, _elasticClient, _config, ts.Token),
                   (SaveNewConfigVerb opts) => SaveConfigAsync(opts, ts.Token),
-                  (PushXmltvVerb opts) => PushXmltvAsync(opts, messagesService, ts.Token),
+                  (PushXmltvVerb opts) => PushXmltvAsync(opts, messagesService, new HttpClient(), ts.Token),
                  errs => throw new AggregateException(errs.Select(e => new Exception(e.Tag.ToString()))));
         }
 
@@ -236,7 +236,7 @@ namespace SyncLibrary
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static async Task<bool> PushXmltvAsync(PushXmltvVerb options, IMessagesService messagesService, CancellationToken token = default(CancellationToken))
+        public static async Task<bool> PushXmltvAsync(PushXmltvVerb options, IMessagesService messagesService, HttpClient httpClient, CancellationToken token = default(CancellationToken))
         {
             await messagesService.SendAsync($"Pushing {options.FilePath}", MessageTypeEnum.START_PUSH_XMLTV, token);
             if (!File.Exists(options.FilePath))
@@ -249,9 +249,9 @@ namespace SyncLibrary
             using (var sr = new StringReader(fileContent))
             {
                 var xs = new XmlSerializer(typeof(tv));
-                using (var webClient = new HttpClient())
+                using (httpClient)
                 {
-                    var httpResponseMessage = await webClient.PostAsync(new Uri(options.ApiUrl), new JsonContent(xs.Deserialize(sr)), token);
+                    var httpResponseMessage = await httpClient.PostAsync(new Uri(options.ApiUrl), new JsonContent(xs.Deserialize(sr)), token);
                     await messagesService.SendAsync($"END save new config {options.FilePath} with httpResponseMessage : {httpResponseMessage.ReasonPhrase} ", MessageTypeEnum.END_PUSH_XMLTV, token);
                     return httpResponseMessage.IsSuccessStatusCode;
                 }
