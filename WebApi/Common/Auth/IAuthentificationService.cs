@@ -1,6 +1,8 @@
 ﻿using hfa.WebApi.Dal.Entities;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace hfa.WebApi.Common.Auth
@@ -46,5 +48,7 @@ namespace hfa.WebApi.Common.Auth
         /// Token validation parameters
         /// </summary>
         TokenValidationParameters Parameters { get; }
+
+        List<Claim> GetClaims(User user);
     }
 }

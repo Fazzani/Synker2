@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace hfa.WebApi.Common
+namespace hfa.WebApi.Common.Middlewares
 {
     public class MessageWebSocketMiddleware
     {

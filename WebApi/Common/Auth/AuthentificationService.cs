@@ -122,7 +122,7 @@ namespace hfa.WebApi.Common.Auth
             return null;
         }
 
-        public JwtReponse GenerateToken(Dal.Entities.User user)
+        public JwtReponse GenerateToken(User user)
         {
             var claims = GetClaims(user);
 
@@ -135,6 +135,7 @@ namespace hfa.WebApi.Common.Auth
                 signingCredentials: _signingCredentials
             );
             user.ConnectionState.AccessToken = new JwtSecurityTokenHandler().WriteToken(jwt);
+            user.ConnectionState.LastConnection = DateTime.UtcNow;
             var jwtResponse = new JwtReponse(user.ConnectionState.AccessToken);
             user.ConnectionState.RefreshToken = jwtResponse.RefreshToken;
             return jwtResponse;
@@ -161,14 +162,14 @@ namespace hfa.WebApi.Common.Auth
             return false;
         }
 
-        private List<Claim> GetClaims(User user)
+        public List<Claim> GetClaims(User user)
         {
             var now = DateTime.UtcNow;
             var claims = new List<Claim> {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.ConnectionState.UserName),
                 new Claim(JwtRegisteredClaimNames.Sub, user.ConnectionState.UserName),
-                new Claim(JwtRegisteredClaimNames.AuthTime, DateTime.Now.ToString(), ClaimValueTypes.DateTime),
+                new Claim(JwtRegisteredClaimNames.AuthTime, now.ToString(), ClaimValueTypes.DateTime),
                 new Claim(JwtRegisteredClaimNames.Aud, _securityOptions.Audience),
                 new Claim(JwtRegisteredClaimNames.Birthdate, user.BirthDay.ToString(), ClaimValueTypes.DateTime),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),

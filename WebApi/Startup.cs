@@ -24,6 +24,9 @@ using Newtonsoft.Json;
 using AspNet.Core.Webhooks.Receivers;
 using hfa.WebApi.Services;
 using hfa.WebApi.Services.xmltv;
+using hfa.WebApi.Common.Middlewares;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace hfa.WebApi
 {
@@ -77,7 +80,7 @@ namespace hfa.WebApi
                 config.Filters.Add(typeof(GlobalExceptionFilterAttribute));
             })
             .AddJsonOptions(
-                options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             );
 
             //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?tabs=visual-studio
@@ -102,6 +105,11 @@ namespace hfa.WebApi
                     Description = "Please insert JWT with Bearer into field",
                     Name = "Authorization",
                     Type = "apiKey"
+                });
+                c.AddSecurityDefinition("Basic", new BasicAuthScheme
+                {
+                    Description = "Please insert username/password into fields",
+                    Type = "basic"
                 });
             });
 
@@ -140,6 +148,8 @@ namespace hfa.WebApi
             {
                 app.UseCors("CorsPolicy");
 
+              //  app.UseBasicAuthentication();
+
                 #region WebSockets
 
                 app.UseWebSockets(new WebSocketOptions
@@ -172,7 +182,7 @@ namespace hfa.WebApi
                      */
                 });
                 #endregion
-
+               
                 app.UseWebHooks(typeof(AppveyorReceiver));
                 app.UseWebHooks(typeof(GithubReceiver));
 
@@ -202,7 +212,6 @@ namespace hfa.WebApi
         private void ConfigSecurity(IServiceCollection services)
         {
             var sp = services.BuildServiceProvider();
-
             // Resolve the services from the service provider
             var authService = sp.GetService<IAuthentificationService>();
 
@@ -216,11 +225,11 @@ namespace hfa.WebApi
                 //jwtBearerOptions.BackchannelHttpHandler
                 jwtBearerOptions.RequireHttpsMetadata = true;
                 jwtBearerOptions.TokenValidationParameters = authService.Parameters;
-            });
+            }).AddBasicAuthentication<BasicAuth>();
 
             services.AddAuthorization(authorizationOptions =>
             {
-                authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
+                authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme, "Basic").RequireAuthenticatedUser().Build();
             });
         }
 

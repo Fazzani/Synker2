@@ -28,5 +28,10 @@ namespace hfa.synker.batch.MoqServices
         {
             await Task.Run(() => Console.WriteLine(message));
         }
+
+        public Task SendAsync(Message message, string username, string password, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

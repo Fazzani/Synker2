@@ -79,7 +79,7 @@ namespace SyncLibrary
                   (SyncMediasElasticVerb opts) => SyncMediasElasticAsync(opts, _elasticClient, _config, ts.Token),
                   (SaveNewConfigVerb opts) => SaveConfigAsync(opts, ts.Token),
                   (PushXmltvVerb opts) => PushXmltvAsync(opts, messagesService, new HttpClient(), ts.Token),
-                  (SendMessageVerb opts) => SendMessageAsync(opts, ts.Token),
+                  (SendMessageVerb opts) => SendMessageAsync(opts, _config.Value, ts.Token),
                  errs => throw new AggregateException(errs.Select(e => new Exception(e.Tag.ToString()))));
         }
 
@@ -208,7 +208,7 @@ namespace SyncLibrary
         /// <param name="options"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public static async Task SendMessageAsync(SendMessageVerb options, CancellationToken token = default(CancellationToken))
+        public static async Task SendMessageAsync(SendMessageVerb options, ApplicationConfigData config, CancellationToken token = default(CancellationToken))
         {
             await _messagesService.SendAsync(new Message { Author = options?.Author, Content = options.Message, MessageType = (MessageTypeEnum)Enum.Parse(typeof(MessageTypeEnum), options.MessageType.ToString()) }, token);
         }
