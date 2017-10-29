@@ -63,7 +63,7 @@ namespace hfa.WebApi.Controllers
             return new OkObjectResult((await _dbContext
                 .Command
                 .OrderBy(x => x.Id)
-                .Where(x => x.UserId == userId && x.TreatedDate == null)
+                .Where(x => x.UserId == userId && x.Status == CommandStatusEnum.None)
                 .ToListAsync())
                 .Select(CommandModel.ToModel));
         }
@@ -82,20 +82,6 @@ namespace hfa.WebApi.Controllers
             return Ok(command);
         }
 
-        [HttpPut("treat/{id}")]
-        public async Task<IActionResult> PutCommandTreated([FromRoute] int id)
-        {
-            var command = await _dbContext.Command.FindAsync(id);
-            if (command == null)
-            {
-                return NotFound();
-            }
-
-            command.TreatedDate = DateTime.UtcNow;
-            var response = await _dbContext.SaveChangesAsync(HttpContext.RequestAborted);
-            return Ok(response);
-        }
-
         [HttpPut("{id}/status/{status}")]
         public async Task<IActionResult> PutCommandByStatus([FromRoute] int id, [FromRoute] CommandStatusEnum status)
         {
@@ -104,6 +90,7 @@ namespace hfa.WebApi.Controllers
             {
                 return NotFound();
             }
+
             command.Status = status;
             var response = await _dbContext.SaveChangesAsync(HttpContext.RequestAborted);
             return Ok(response);

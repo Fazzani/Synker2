@@ -59,6 +59,8 @@ namespace hfa.WebApi.Controllers
             if (jwtReponse == null)
                 return new UnauthorizedResult();
 
+            user.ConnectionState.LastConnection = DateTime.UtcNow;
+
             await _dbContext.SaveChangesAsync();
             return Ok(jwtReponse);
         }

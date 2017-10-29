@@ -46,6 +46,11 @@ namespace hfa.WebApi.Dal.Entities
         /// Command Interpreter (shell by default)
         /// </summary>
         public CommandInterpreter Interpreter { get; set; } = CommandInterpreter.Shell;
+
+        /// <summary>
+        /// Replay command count 
+        /// </summary>
+        public int ReplayCount { get; set; } = 0;
     } 
 
     /// <summary>
@@ -57,9 +62,13 @@ namespace hfa.WebApi.Dal.Entities
         Treating = 1,
         Treated = 2,
         /// <summary>
+        /// Error to replay
+        /// </summary>
+        Fault=3,
+        /// <summary>
         /// Abandonnée
         /// </summary>
-        Outdated = 3
+        Outdated = 4
     }
 
     /// <summary>
