@@ -210,7 +210,15 @@ namespace SyncLibrary
         /// <returns></returns>
         public static async Task SendMessageAsync(SendMessageVerb options, ApplicationConfigData config, CancellationToken token = default(CancellationToken))
         {
-            await _messagesService.SendAsync(new Message { Author = options?.Author, Content = options.Message, MessageType = (MessageTypeEnum)Enum.Parse(typeof(MessageTypeEnum), options.MessageType.ToString()) }, token);
+            await _messagesService.SendAsync(new Message
+            {
+                Author = options?.Author,
+                Content = options.Message,
+                MessageType = (MessageTypeEnum)Enum.Parse(typeof(MessageTypeEnum), options.MessageType.ToString())
+            }, 
+            config.ApiUserName, 
+            config.ApiPassword,
+            token);
         }
 
         /// <summary>
