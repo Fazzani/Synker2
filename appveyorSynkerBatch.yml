@@ -20,7 +20,7 @@ before_build:
   # Display minimal restore text
   - cmd: cd ./SyncLibrary
 build_script:
-  - cmd: dotnet publish -c %CONFIGURATION% -r linux-arm --verbosity m -o artifacts 
+  - cmd: dotnet publish -c %CONFIGURATION% -r linux-x64 --verbosity m -o artifacts 
   - ls
 test_script:
   - echo restore packages for our unit tests
