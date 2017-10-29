@@ -5,28 +5,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace hfa.WebApi.Models
+namespace hfa.WebApi.Models.Auth
 {
-    public class AuthModel
-    {
-        public string UserName { get; set; }
-
-        public string Password { get; set; }
-
-        public string RefreshToken { get; set; }
-
-        public GrantType GrantType { get; set; } = GrantType.Password;
-    }
-    public enum GrantType : byte
-    {
-        Password = 0,
-        RefreshToken
-    }
-    public class TokenModel
-    {
-        [Required]
-        public string Token { get; set; }
-    }
     public class RegisterModel
     {
         public RegisterModel()
@@ -66,18 +46,5 @@ namespace hfa.WebApi.Models
                 return userEntity;
             }
         }
-    }
-
-    /// <summary>
-    /// Reset Password Model
-    /// </summary>
-    public class ResetModel
-    {
-        [Required]
-        public string Password { get; set; }
-        [Required]
-        public string NewPassword { get; set; }
-        [Required]
-        public string UserName { get; set; }
     }
 }

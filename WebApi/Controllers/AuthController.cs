@@ -14,6 +14,7 @@ using hfa.WebApi.Dal;
 using hfa.WebApi.Models;
 using hfa.WebApi.Common.Filters;
 using Microsoft.EntityFrameworkCore;
+using hfa.WebApi.Models.Auth;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

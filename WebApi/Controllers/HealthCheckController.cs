@@ -11,8 +11,7 @@ using Microsoft.Extensions.Options;
 using hfa.WebApi.Common.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using System.Net;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using hfa.WebApi.Models.HealthCheck;
 
 namespace hfa.WebApi.Controllers
 {
@@ -26,13 +25,13 @@ namespace hfa.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetBy(HealthCheakEnum id)
+        public async Task<IActionResult> GetBy(HealthCheckEnum id)
         {
             switch (id)
             {
-                case HealthCheakEnum.WebApi:
+                case HealthCheckEnum.WebApi:
                     return Ok();
-                case HealthCheakEnum.Database:
+                case HealthCheckEnum.Database:
                     try
                     {
                         var connectionString = Startup.Configuration.GetSection("ConnectionStrings:PlDatabase")?.Value;
@@ -45,7 +44,7 @@ namespace hfa.WebApi.Controllers
                     {
                         return StatusCode((int)HttpStatusCode.InternalServerError);
                     }
-                case HealthCheakEnum.Elastic:
+                case HealthCheckEnum.Elastic:
                     var elasticResponse = await _elasticConnectionClient.Client.ClusterHealthAsync(cancellationToken: HttpContext.RequestAborted);
                     return elasticResponse.IsValid ? Ok() : StatusCode((int)HttpStatusCode.InternalServerError);
                 default:
@@ -57,12 +56,5 @@ namespace hfa.WebApi.Controllers
         public string GetError() =>
             throw new BusinessException("Test exception");
 
-    }
-
-    public enum HealthCheakEnum : byte
-    {
-        WebApi = 0,
-        Database = 1,
-        Elastic = 2
     }
 }
