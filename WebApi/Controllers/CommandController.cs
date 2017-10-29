@@ -96,6 +96,19 @@ namespace hfa.WebApi.Controllers
             return Ok(response);
         }
 
+        [HttpPut("{id}/status/{status}")]
+        public async Task<IActionResult> PutCommandByStatus([FromRoute] int id, [FromRoute] CommandStatusEnum status)
+        {
+            var command = await _dbContext.Command.FindAsync(id);
+            if (command == null)
+            {
+                return NotFound();
+            }
+            command.Status = status;
+            var response = await _dbContext.SaveChangesAsync(HttpContext.RequestAborted);
+            return Ok(response);
+        }
+
         [HttpPut("{id}")]
         [ValidateModel]
         public async Task<IActionResult> PutCommand([FromRoute] int id, [FromBody] Command command)

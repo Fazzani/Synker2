@@ -6,6 +6,12 @@
 function quit {
     exit $1;
 }
+#
+# Put command status 
+# @params bearer commandId status
+function putCmdStatus {
+	curl -v --insecure -X PUT -H "Content-type:application/json" -H "Content-Length:0" -H "Authorization:Bearer $1" $hostApi/command/$2/status/$3
+}
 
 hostApi='http://0.0.0.0:56800/api/v1'
 echo  $hostApi
@@ -23,10 +29,14 @@ readarray -t tabIds < <(jq '.[].id' commands.json)
 cpt=0
 for i in "${tab[@]}"
 do
+  echo 'Mark Command ${tabIds[$cpt]} as treating'
+  putCmdStatus $bearer ${tabIds[$cpt]} 1;
+  #curl -v --insecure -X PUT -H "Content-type:application/json" -H "Content-Length:0" -H "Authorization:Bearer $bearer" $hostApi/command/${tabIds[$cpt]}/status/1
   echo "${date} Executing $i"
   eval $i
-  echo "Put command treated ${tabIds[$cpt]}"
-  curl -v --insecure -X PUT -H "Content-type:application/json" -H "Content-Length:0" -H "Authorization:Bearer $bearer" $hostApi/command/treat/${tabIds[$cpt]}
+  echo 'Mark Command ${tabIds[$cpt]} as treated'
+  putCmdStatus $bearer ${tabIds[$cpt]} 2;
+  #curl -v --insecure -X PUT -H "Content-type:application/json" -H "Content-Length:0" -H "Authorization:Bearer $bearer" $hostApi/command/${tabIds[$cpt]}/status/2
   let "cpt++"
 done
 
