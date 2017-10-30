@@ -25,13 +25,14 @@ namespace hfa.synker.batch.test
         [Trait("Category", "Integration")]
         public void PushXmlvTest()
         {
+            var appData = new Hfa.SyncLibrary.Infrastructure.ApplicationConfigData { };
             using (var client = StartUp.Client)
             {
                 var res = SynchElastic.PushXmltvAsync(new PushXmltvVerb
                 {
                     ApiUrl = ApiUrl,
                     FilePath = @"data\epg.xmltv"
-                }, _messageService, client).GetAwaiter().GetResult();
+                }, _messageService, client, appData).GetAwaiter().GetResult();
 
                 //TODO : Fixer ce test d'intégration
                 Assert.False(res);
