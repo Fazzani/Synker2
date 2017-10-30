@@ -80,6 +80,18 @@ namespace Hfa.SyncLibrary.Messages
              SendAsync(new Message { Content = message, MessageType = messageTypeype, Status = MessageStatus.NotReaded, TimeStamp = DateTime.Now }, cancellationToken);
 
         /// <summary>
+        /// Send Message to api with auth
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="messageTypeype"></param>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public Task SendAsync(string message, MessageTypeEnum messageTypeype, string username, string password, CancellationToken cancellationToken) =>
+             SendAsync(new Message { Content = message, MessageType = messageTypeype, Status = MessageStatus.NotReaded, TimeStamp = DateTime.Now }, username, password, cancellationToken);
+
+        /// <summary>
         /// Post
         /// </summary>
         /// <param name="obj"></param>
