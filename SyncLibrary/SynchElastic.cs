@@ -36,7 +36,7 @@ namespace SyncLibrary
         static CancellationTokenSource ts = new CancellationTokenSource();
         static IMessagesService _messagesService;
         static IElasticConnectionClient _elasticClient;
-        static IOptions<ApplicationConfigData> _config;
+        static ApplicationConfigData _config;
 
         public static void Main(string[] args)
         {
@@ -44,25 +44,24 @@ namespace SyncLibrary
 
             try
             {
-                _config = Init.ServiceProvider.GetService<IOptions<ApplicationConfigData>>();
+                _config = Init.ServiceProvider.GetService<IOptions<ApplicationConfigData>>().Value;
                 _elasticClient = Init.ServiceProvider.GetService<IElasticConnectionClient>();
                 _messagesService = Init.ServiceProvider.GetService<IMessagesService>();
 
                 Logger(nameof(SynchElastic)).LogInformation("Init batch Synker...");
 
-                _messagesService.SendAsync(Message.PingMessage, _config.Value.ApiUserName, _config.Value.ApiPassword, ts.Token).GetAwaiter().GetResult();
+                _messagesService.SendAsync(Message.PingMessage, _config.ApiUserName, _config.ApiPassword, ts.Token).GetAwaiter().GetResult();
 
                 ArgsParser(args, _messagesService).GetAwaiter().GetResult();
             }
             catch (OperationCanceledException ex)
             {
-                Logger(nameof(SynchElastic)).LogCritical(ex, "Canceled operation");
+                Logger(nameof(SynchElastic)).LogCritical(ex, "Operation was Canceled");
             }
             catch (Exception e)
             {
-                _messagesService.SendAsync(e.Message, MessageTypeEnum.EXCEPTION, _config.Value.ApiUserName, _config.Value.ApiPassword, ts.Token).GetAwaiter().GetResult();
                 Logger(nameof(SynchElastic)).LogCritical(e, e.Message);
-                throw;
+                _messagesService.SendAsync(e.Message, MessageTypeEnum.EXCEPTION, _config.ApiUserName, _config.ApiPassword, ts.Token).GetAwaiter().GetResult();
             }
         }
 
@@ -77,9 +76,9 @@ namespace SyncLibrary
                  (PurgeTempFilesVerb opts) => PurgeTempFilesVerb.MainPurgeAsync(opts),
                   (SyncEpgElasticVerb opts) => SyncEpgElasticAsync(opts, _elasticClient, _config, ts.Token),
                   (SyncMediasElasticVerb opts) => SyncMediasElasticAsync(opts, _elasticClient, _config, ts.Token),
-                  (SaveNewConfigVerb opts) => SaveConfigAsync(opts, ts.Token),
-                  (PushXmltvVerb opts) => PushXmltvAsync(opts, messagesService, new HttpClient(), ts.Token),
-                  (SendMessageVerb opts) => SendMessageAsync(opts, _config.Value, ts.Token),
+                  (SaveNewConfigVerb opts) => SaveConfigAsync(opts,_config, ts.Token),
+                  (PushXmltvVerb opts) => PushXmltvAsync(opts, messagesService, new HttpClient(),_config, ts.Token),
+                  (SendMessageVerb opts) => SendMessageAsync(opts, _config, ts.Token),
                  errs => throw new AggregateException(errs.Select(e => new Exception(e.Tag.ToString()))));
         }
 
@@ -90,12 +89,13 @@ namespace SyncLibrary
         /// <param name="elasticClient"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public static async Task SyncMediasElasticAsync(SyncMediasElasticVerb options, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken token = default(CancellationToken))
+        public static async Task SyncMediasElasticAsync(SyncMediasElasticVerb options, IElasticConnectionClient elasticClient, 
+            ApplicationConfigData config, CancellationToken token = default(CancellationToken))
         {
             var res = await SynchronizableConfigManager.LoadEncryptedConfig(options.FilePath, options.CertificateName);
 
             await _messagesService.SendAsync($"Start Sync Elastic By {options.FilePath} config", MessageTypeEnum.START_SYNC_MEDIAS,
-                 _config.Value.ApiUserName, _config.Value.ApiPassword, token);
+                 _config.ApiUserName, _config.ApiPassword, token);
 
             if (res != null & res.Sources.Any())
             {
@@ -148,8 +148,8 @@ namespace SyncLibrary
                             if (newMedias.Any())
                             {
                                 //Push to Elastic
-                                var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(config.Value.DefaultIndex).CreateMany(newMedias,
-                                    (bd, q) => bd.Index(config.Value.DefaultIndex)), token);
+                                var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(config.DefaultIndex).CreateMany(newMedias,
+                                    (bd, q) => bd.Index(config.DefaultIndex)), token);
                                 responseBulk.AssertElasticResponse();
                             }
                         }
@@ -157,7 +157,7 @@ namespace SyncLibrary
                 }
             }
             await _messagesService.SendAsync($"End Sync Elastic By {options.FilePath} config", MessageTypeEnum.END_SYNC_MEDIAS,
-                 _config.Value.ApiUserName, _config.Value.ApiPassword, token);
+                 _config.ApiUserName, _config.ApiPassword, token);
         }
 
         /// <summary>
@@ -168,11 +168,11 @@ namespace SyncLibrary
         /// <param name="config"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public static async Task SyncEpgElasticAsync(SyncEpgElasticVerb options, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken token = default(CancellationToken))
+        public static async Task SyncEpgElasticAsync(SyncEpgElasticVerb options, IElasticConnectionClient elasticClient, ApplicationConfigData config, CancellationToken token = default(CancellationToken))
         {
             Stream response = null;
-            await _messagesService.SendAsync($"Start Sync Xmltv file {options.FilePath} to Elastic", MessageTypeEnum.START_SYNC_EPG_CONFIG, 
-                _config.Value.ApiUserName, _config.Value.ApiPassword, token);
+            await _messagesService.SendAsync($"Start Sync Xmltv file {options.FilePath} to Elastic", MessageTypeEnum.START_SYNC_EPG_CONFIG,
+                config.ApiUserName, config.ApiPassword, token);
             try
             {
                 if (!File.Exists(options.FilePath))
@@ -190,8 +190,8 @@ namespace SyncLibrary
                 var tvModel = (tv)ser.Deserialize(response);
 
                 //Sync Elastic
-                var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(config.Value.DefaultIndex)
-                .CreateMany(tvModel.channel, (bd, q) => bd.Index(config.Value.DefaultIndex)), token);
+                var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(config.DefaultIndex)
+                .CreateMany(tvModel.channel, (bd, q) => bd.Index(config.DefaultIndex)), token);
                 responseBulk.AssertElasticResponse();
             }
             catch (Exception ex)
@@ -204,7 +204,7 @@ namespace SyncLibrary
                 response?.Dispose();
             }
             await _messagesService.SendAsync($"END Sync Xmltv file {options.FilePath} to Elastic", MessageTypeEnum.END_SYNC_EPG_CONFIG,
-                _config.Value.ApiUserName, _config.Value.ApiPassword, token);
+                config.ApiUserName, config.ApiPassword, token);
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace SyncLibrary
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static async Task SaveConfigAsync(SaveNewConfigVerb options, CancellationToken token = default(CancellationToken))
+        public static async Task SaveConfigAsync(SaveNewConfigVerb options, ApplicationConfigData config, CancellationToken token = default(CancellationToken))
         {
             await _messagesService.SendAsync($"Start save new config {options.FilePath}", MessageTypeEnum.START_CREATE_CONFIG, token);
             //await SynchronizableConfigManager.SaveAndEncrypt(new ConfigSync
@@ -261,9 +261,9 @@ namespace SyncLibrary
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static async Task<bool> PushXmltvAsync(PushXmltvVerb options, IMessagesService messagesService, HttpClient httpClient, CancellationToken token = default(CancellationToken))
+        public static async Task<bool> PushXmltvAsync(PushXmltvVerb options, IMessagesService messagesService, HttpClient httpClient, ApplicationConfigData config, CancellationToken token = default(CancellationToken))
         {
-            await messagesService.SendAsync($"Pushing {options.FilePath}", MessageTypeEnum.START_PUSH_XMLTV, _config.Value.ApiUserName, _config.Value.ApiPassword, token);
+            await messagesService.SendAsync($"Pushing {options.FilePath}", MessageTypeEnum.START_PUSH_XMLTV, config.ApiUserName, config.ApiPassword, token);
             if (!File.Exists(options.FilePath))
             {
                 await messagesService.SendAsync($"File not Exist {options.FilePath}", MessageTypeEnum.START_PUSH_XMLTV, token);
@@ -278,7 +278,7 @@ namespace SyncLibrary
                 {
                     var httpResponseMessage = await httpClient.PostAsync(new Uri(options.ApiUrl), new JsonContent(xs.Deserialize(sr)), token);
                     await messagesService.SendAsync($"END save new config {options.FilePath} with httpResponseMessage : {httpResponseMessage.ReasonPhrase} ", 
-                        MessageTypeEnum.END_PUSH_XMLTV, _config.Value.ApiUserName, _config.Value.ApiPassword, token);
+                        MessageTypeEnum.END_PUSH_XMLTV, config.ApiUserName, config.ApiPassword, token);
                     return httpResponseMessage.IsSuccessStatusCode;
                 }
             }

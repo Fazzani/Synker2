@@ -58,7 +58,7 @@ namespace Hfa.SyncLibrary.Messages
         {
             try
             {
-                var response = await PostAsync(message, _config.Value.ApiUrlMessage, cancellationToken);
+                var response = await PostAsync(message, _config.Value.ApiUrlMessage, username, password, cancellationToken);
                 if (!response.IsSuccessStatusCode)
                 {
                     Logger.LogError(response.ReasonPhrase);
