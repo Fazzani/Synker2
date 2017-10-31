@@ -5,35 +5,35 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
-import { EpgService } from '../../services/epg/epg.service';
+import { XmltvService } from '../../services/xmltv/xmltv.service';
 import { CommonService, Constants } from '../../services/common/common.service';
 import { Observable } from "rxjs/Observable";
 import { ElasticQuery } from "../../types/elasticQuery.type";
-import { tvChannel } from "../../types/xmltv.type";
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/merge';
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
+import { sitePackChannel } from '../../types/sitepackchannel.type';
 
 @Component({
-    selector: 'epg-media',
-    templateUrl: './epg.component.html',
-    providers: [EpgService, CommonService]
+    selector: 'xmltv',
+    templateUrl: './xmltv.component.html',
+    providers: [XmltvService, CommonService]
 })
 /** media component*/
-export class EpgComponent implements OnInit, OnDestroy {
+export class XmltvComponent implements OnInit, OnDestroy {
     subscriptionTableEvent: Subscription;
 
-    displayedColumns = ['icon', 'displayname', 'id', 'actions'];
+    displayedColumns = ['site_id', 'site', 'xmltv_id', 'channel_name'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
-    dataSource: EpgDataSource | null;
-    currentItem: tvChannel | null;
+    dataSource: XmltvDataSource | null;
+    currentItem: sitePackChannel | null;
 
     /** media ctor */
-    constructor(private epgService: EpgService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar) { }
+    constructor(private xmltvService: XmltvService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar) { }
 
     /** Called by Angular after media component initialized */
     ngOnInit(): void {
@@ -46,7 +46,7 @@ export class EpgComponent implements OnInit, OnDestroy {
         this.filter.nativeElement.value = storedQuery != null && storedQuery.query != null && storedQuery.query != {} ? JSON.stringify(storedQuery.query) : "";
         storedQuery = null;
 
-        this.dataSource = new EpgDataSource(this.epgService, this.paginator);
+        this.dataSource = new XmltvDataSource(this.xmltvService, this.paginator);
 
         this.subscriptionTableEvent = this.paginator.page.asObservable()
             .merge(Observable.fromEvent<EventTargetLike>(this.filter.nativeElement, 'keyup'))
@@ -65,20 +65,20 @@ export class EpgComponent implements OnInit, OnDestroy {
             });
     }
 
-    openDialog(epg: tvChannel): void {
-        let dialogRef = this.dialog.open(EpgModifyDialog, {
+    openDialog(spChannel: sitePackChannel): void {
+        let dialogRef = this.dialog.open(XmltvModifyDialog, {
             width: '550px',
             height: '500px',
-            data: epg
+            data: spChannel
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.snackBar.open(epg.displayname + " was modified", "", { duration: 400 });
+            this.snackBar.open(spChannel.channel_name + " was modified", "", { duration: 400 });
         });
     }
 
-    update(epg: tvChannel): void {
-        console.log(epg);
+    update(spChannel: sitePackChannel): void {
+        console.log(spChannel);
     }
 
     ngOnDestroy() {
@@ -87,13 +87,13 @@ export class EpgComponent implements OnInit, OnDestroy {
 }
 
 @Component({
-    selector: 'epg-modify-dialog',
-    templateUrl: './epg.dialog.html'
+    selector: 'xmltv-modify-dialog',
+    templateUrl: './xmltv.dialog.html'
 })
-export class EpgModifyDialog {
+export class XmltvModifyDialog {
 
     constructor(
-        public dialogRef: MatDialogRef<EpgModifyDialog>,
+        public dialogRef: MatDialogRef<XmltvModifyDialog>,
         @Inject(MAT_DIALOG_DATA) public data: any) { }
 
     onNoClick(): void {
@@ -105,9 +105,9 @@ export class EpgModifyDialog {
 /**
  * Media datasource for mat-table component
  */
-export class EpgDataSource extends DataSource<tvChannel> {
+export class XmltvDataSource extends DataSource<sitePackChannel> {
 
-    medias = new BehaviorSubject<tvChannel[]>([]);
+    medias = new BehaviorSubject<sitePackChannel[]>([]);
 
     _filterChange = new BehaviorSubject<Object | string>({});
     get filter(): Object | string { return this._filterChange.value; }
@@ -117,7 +117,7 @@ export class EpgDataSource extends DataSource<tvChannel> {
     get paginator(): MatPaginator { return this._paginator.value; }
     set paginator(paginator: MatPaginator) { this._paginator.next(paginator); }
 
-    constructor(private epgService: EpgService, private mdPaginator: MatPaginator) {
+    constructor(private xmltvService: XmltvService, private mdPaginator: MatPaginator) {
         super();
 
         this.paginator = mdPaginator;
@@ -128,13 +128,13 @@ export class EpgDataSource extends DataSource<tvChannel> {
             .subscribe((x) => this.getData());
     }
 
-    connect(): Observable<tvChannel[]> { return this.medias.asObservable() };
+    connect(): Observable<sitePackChannel[]> { return this.medias.asObservable() };
 
     /**
      * Get medias list from webapi
      * @returns Obersvable<tvChannel[]>
      */
-    getData(): Observable<tvChannel[]> {
+    getData(): Observable<sitePackChannel[]> {
         let pageSize = this.paginator.pageSize === undefined ? 25 : this.paginator.pageSize;
         let query = <ElasticQuery>{
             from: pageSize * this.paginator.pageIndex,
@@ -143,14 +143,14 @@ export class EpgDataSource extends DataSource<tvChannel> {
         if (typeof this.filter === "string") {
             if (this.filter !== undefined && this.filter != "")
                 query.query = {
-                    match: { "displayname": this.filter }
+                    match: { "channel_name": this.filter }
                 };
         }
         else {
             query.query = this.filter;
         }
         localStorage.setItem(Constants.LS_MediaQueryKey, JSON.stringify(query));
-        let res = this.epgService.list(query).map((v, i) => {
+        let res = this.xmltvService.listSitePack(query).map((v, i) => {
             console.log("recup epg ", v);
             this._paginator.value.length = v.total;
             return v.result;

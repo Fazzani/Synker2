@@ -92,26 +92,6 @@ export interface Tvg {
     tvgIdentify: string;
 }
 
-/**
- * Tvg channel (EPG model)
- * @export
- * @interface tvChannel
- */
-export interface tvChannel {
-    displayname: Array<string>;
-    icon?: tvChannelIcon;
-    id: string;
-}
-
-/**
- * Tvg channel Icon
- * 
- * @export
- * @interface tvChannelIcon
- */
-export interface tvChannelIcon {
-    src: string;
-}
 
 /**
  * PageResultBase

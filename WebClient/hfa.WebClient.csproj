@@ -37,12 +37,14 @@
     <None Remove="ClientApp\app\services\notification\notification.service.ts" />
     <None Remove="ClientApp\app\types\auth.type.ts" />
     <None Remove="ClientApp\app\types\elasticQuery.type.ts" />
+    <None Remove="ClientApp\app\types\xmltv.type.ts" />
     <None Remove="ClientApp\app\variables.ts" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="ClientApp\app\pipes\" />
     <Folder Include="ClientApp\app\directives\" />
+    <Folder Include="ClientApp\app\services\xmltv\" />
     <Folder Include="wwwroot\assets\images\" />
     <Folder Include="wwwroot\dist\" />
   </ItemGroup>
@@ -60,6 +62,7 @@
     <TypeScriptCompile Include="ClientApp\app\services\epg\epg.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\auth.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\elasticQuery.type.ts" />
+    <TypeScriptCompile Include="ClientApp\app\types\xmltv.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\variables.ts" />
   </ItemGroup>
 

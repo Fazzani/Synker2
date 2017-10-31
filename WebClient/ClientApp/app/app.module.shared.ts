@@ -11,6 +11,7 @@ import { AppComponent } from './components/app/app.component';
 import { HomeComponent } from './components/home/home.component';
 import { MediaComponent, TvgMediaModifyDialog } from './components/media/media.component';
 import { EpgComponent, EpgModifyDialog } from './components/epg/epg.component';
+import { XmltvComponent, XmltvModifyDialog } from './components/xmltv/xmltv.component';
 import { DialogComponent, LoginDialog, RegisterDialog } from './components/shared/dialogs/dialog.component';
 import { LoginRouteGuard } from './services/auth/loginRouteGuard.service';
 
@@ -18,6 +19,7 @@ import { AuthService } from './services/auth/auth.service';
 import { NotificationService } from './services/notification/notification.service';
 import { TvgMediaService } from './services/tvgmedia/tvgmedia.service';
 import { EpgService } from './services/epg/epg.service';
+import { XmltvService } from './services/xmltv/xmltv.service';
 import { MessageService } from './services/message/message.service';
 import { CommonService } from './services/common/common.service';
 import { BaseService } from './services/base/base.service';
@@ -33,6 +35,7 @@ const appRoutes: Routes = [
     { path: 'home', component: HomeComponent },
     { path: 'tvgmedia', component: MediaComponent, canActivate: [LoginRouteGuard] },
     { path: 'epg', component: EpgComponent, canActivate: [LoginRouteGuard] },
+    { path: 'xmltv', component: XmltvComponent, canActivate: [LoginRouteGuard] },
     { path: 'signin', component: DialogComponent },
     { path: 'register', component: DialogComponent },
     { path: '**', redirectTo: 'home' }
@@ -44,6 +47,7 @@ const appRoutes: Routes = [
         HomeComponent,
         MediaComponent,
         EpgComponent,
+        XmltvComponent,
         TvgMediaModifyDialog,
         EpgModifyDialog,
         DialogComponent,
@@ -68,7 +72,7 @@ const appRoutes: Routes = [
         CommonService,
         MessageService,
         NotificationService,
-        
+        XmltvService,
         AuthService,
         LoginRouteGuard,
         EpgService,

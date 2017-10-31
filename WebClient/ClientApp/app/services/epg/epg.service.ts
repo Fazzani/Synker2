@@ -1,7 +1,8 @@
 ﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BaseService } from '../base/base.service';
-import { tvChannel, ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
+import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
+import { tvChannel } from "../../types/xmltv.type";
 
 // All the RxJS stuff we need
 import { Observable } from 'rxjs/Observable';
