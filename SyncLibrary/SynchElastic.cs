@@ -52,7 +52,7 @@ namespace SyncLibrary
 
                 _messagesService.SendAsync(Message.PingMessage, _config.ApiUserName, _config.ApiPassword, ts.Token).GetAwaiter().GetResult();
 
-                ArgsParser(args, _messagesService).GetAwaiter().GetResult();
+                ArgsParserAsync(args, _messagesService).GetAwaiter().GetResult();
             }
             catch (OperationCanceledException ex)
             {
@@ -69,15 +69,18 @@ namespace SyncLibrary
         /// Args Parser
         /// </summary>
         /// <param name="args"></param>
+        /// <param name="messagesService"></param>
         /// <returns></returns>
-        public static async Task ArgsParser(string[] args, IMessagesService messagesService)
+        public static async Task ArgsParserAsync(string[] args, IMessagesService messagesService)
         {
-            await Parser.Default.ParseArguments<PurgeTempFilesVerb, SyncEpgElasticVerb, SyncMediasElasticVerb, SaveNewConfigVerb, PushXmltvVerb, SendMessageVerb>(args).MapResult(
+            await Parser.Default
+                .ParseArguments<PurgeTempFilesVerb, SyncEpgElasticVerb, SyncMediasElasticVerb, SaveNewConfigVerb, PushXmltvVerb, SendMessageVerb>(args)
+                .MapResult(
                  (PurgeTempFilesVerb opts) => PurgeTempFilesVerb.MainPurgeAsync(opts),
                   (SyncEpgElasticVerb opts) => SyncEpgElasticAsync(opts, _elasticClient, _config, ts.Token),
                   (SyncMediasElasticVerb opts) => SyncMediasElasticAsync(opts, _elasticClient, _config, ts.Token),
-                  (SaveNewConfigVerb opts) => SaveConfigAsync(opts,_config, ts.Token),
-                  (PushXmltvVerb opts) => PushXmltvAsync(opts, messagesService, new HttpClient(),_config, ts.Token),
+                  (SaveNewConfigVerb opts) => SaveConfigAsync(opts, _config, ts.Token),
+                  (PushXmltvVerb opts) => PushXmltvAsync(opts, messagesService, new HttpClient(), _config, ts.Token),
                   (SendMessageVerb opts) => SendMessageAsync(opts, _config, ts.Token),
                  errs => throw new AggregateException(errs.Select(e => new Exception(e.Tag.ToString()))));
         }
@@ -86,10 +89,10 @@ namespace SyncLibrary
         /// Sync medias to elastic
         /// </summary>
         /// <param name="options"></param>
-        /// <param name="elasticClient"></param>
-        /// <param name="token"></param>
+        /// <param name="elasticClient">IElasticConnectionClient</param>
+        /// <param name="token">CancellationToken</param>
         /// <returns></returns>
-        public static async Task SyncMediasElasticAsync(SyncMediasElasticVerb options, IElasticConnectionClient elasticClient, 
+        public static async Task SyncMediasElasticAsync(SyncMediasElasticVerb options, IElasticConnectionClient elasticClient,
             ApplicationConfigData config, CancellationToken token = default(CancellationToken))
         {
             var res = await SynchronizableConfigManager.LoadEncryptedConfig(options.FilePath, options.CertificateName);
@@ -220,8 +223,8 @@ namespace SyncLibrary
                 Author = options?.Author,
                 Content = options.Message,
                 MessageType = (MessageTypeEnum)Enum.Parse(typeof(MessageTypeEnum), options.MessageType.ToString())
-            }, 
-            config.ApiUserName, 
+            },
+            config.ApiUserName,
             config.ApiPassword,
             token);
         }
@@ -277,7 +280,7 @@ namespace SyncLibrary
                 using (httpClient)
                 {
                     var httpResponseMessage = await httpClient.PostAsync(new Uri(options.ApiUrl), new JsonContent(xs.Deserialize(sr)), token);
-                    await messagesService.SendAsync($"END save new config {options.FilePath} with httpResponseMessage : {httpResponseMessage.ReasonPhrase} ", 
+                    await messagesService.SendAsync($"END save new config {options.FilePath} with httpResponseMessage : {httpResponseMessage.ReasonPhrase} ",
                         MessageTypeEnum.END_PUSH_XMLTV, config.ApiUserName, config.ApiPassword, token);
                     return httpResponseMessage.IsSuccessStatusCode;
                 }
