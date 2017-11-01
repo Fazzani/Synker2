@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace hfa.WebApi.Dal.Entities
+namespace hfa.Synker.Service.Entities.Auth
 {
     public class ConnectionState : EntityBase
     {

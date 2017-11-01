@@ -17,16 +17,14 @@ using System.Xml.Serialization;
 using Hfa.SyncLibrary;
 using Hfa.SyncLibrary.Verbs;
 using CommandLine;
-using Hfa.SyncLibrary.Messages;
 using Microsoft.Extensions.Logging;
 using static hfa.SyncLibrary.Global.Common;
 using Microsoft.Extensions.Options;
 using Hfa.SyncLibrary.Infrastructure;
 using System.IO;
-using System.Xml;
-using System.Net;
-using Newtonsoft.Json;
 using System.Runtime.CompilerServices;
+using hfa.Synker.Services.Entities.Messages;
+using hfa.Synker.Services.Messages;
 
 [assembly: InternalsVisibleTo("hfa.synker.batch.test")]
 namespace SyncLibrary

@@ -13,7 +13,7 @@ using System.Reflection;
 using hfa.SyncLibrary.Global;
 using hfa.WebApi.Common;
 using Microsoft.Extensions.Options;
-using hfa.WebApi.Dal;
+using hfa.Synker.Services.Dal;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -24,7 +24,8 @@ namespace Hfa.WebApi.Controllers
         protected readonly ApplicationConfigData _config;
         readonly protected SynkerDbContext _dbContext;
 
-        public BaseController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+        public BaseController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 
+            SynkerDbContext context)
         {
             _logger = loggerFactory.CreateLogger("BaseController");
             _elasticConnectionClient = elasticConnectionClient;
@@ -34,7 +35,8 @@ namespace Hfa.WebApi.Controllers
 
         internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query, CancellationToken cancellationToken) where T : class
         {
-            var response = await _elasticConnectionClient.Client.LowLevel.SearchAsync<SearchResponse<T>>(_config.DefaultIndex, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
+            var response = await _elasticConnectionClient.Client.LowLevel
+                .SearchAsync<SearchResponse<T>>(_config.DefaultIndex, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
 
             if (!response.SuccessOrKnownError)
                 return BadRequest(response.DebugInformation);
@@ -45,7 +47,8 @@ namespace Hfa.WebApi.Controllers
 
         internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query, string indexName, CancellationToken cancellationToken) where T : class
         {
-            var response = await _elasticConnectionClient.Client.LowLevel.SearchAsync<SearchResponse<T>>(indexName, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
+            var response = await _elasticConnectionClient.Client.LowLevel
+                .SearchAsync<SearchResponse<T>>(indexName, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
 
             if (!response.SuccessOrKnownError)
                 return BadRequest(response.DebugInformation);

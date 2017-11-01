@@ -1,7 +1,6 @@
 ﻿using hfa.SyncLibrary.Common;
-using Hfa.PlaylistBaseLibrary.Entities;
+using hfa.Synker.Services.Messages;
 using Hfa.SyncLibrary.Infrastructure;
-using Hfa.SyncLibrary.Messages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -65,7 +64,7 @@ namespace Hfa.SyncLibrary
                 .AddLogging()
                 .AddOptions()
                 .Configure<ApplicationConfigData>(Configuration)
-                .AddSingleton<IMessagesService, MessagesService>()
+                .AddSingleton<IMessagesService, IMessagesService>()
                 .AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                 .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
                 .BuildServiceProvider();

@@ -1,6 +1,4 @@
-﻿using hfa.WebApi.Dal;
-using hfa.WebApi.Dal.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -17,6 +15,7 @@ using System.Xml;
 
 namespace hfa.WebApi.Common.Auth
 {
+    using hfa.Synker.Service.Entities.Auth;
     using NETCore.Encrypt.Extensions.Internal;
     public class AuthentificationService : IAuthentificationService
     {

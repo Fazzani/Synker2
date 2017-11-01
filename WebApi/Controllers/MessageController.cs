@@ -7,16 +7,15 @@ using PlaylistBaseLibrary.Entities;
 using Hfa.WebApi.Common;
 using Hfa.WebApi.Models;
 using hfa.SyncLibrary.Global;
-using Hfa.SyncLibrary.Messages;
 using Nest;
 using hfa.WebApi.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using hfa.WebApi.Dal;
-using hfa.WebApi.Dal.Entities;
 using Microsoft.AspNetCore.Authorization;
 using hfa.WebApi.Common.Filters;
 using System.Threading;
+using hfa.Synker.Services.Entities.Messages;
+using hfa.Synker.Services.Dal;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

@@ -1,26 +1,22 @@
-﻿using hfa.SyncLibrary.Global;
-using Hfa.SyncLibrary.Infrastructure;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Net.WebSockets;
 using Microsoft.Extensions.Logging;
+using hfa.Synker.Services.Entities.Messages;
 
-namespace Hfa.SyncLibrary.Messages
+namespace hfa.Synker.Services.Messages
 {
     class MessagesService : IMessagesService
     {
-        IOptions<ApplicationConfigData> _config;
+        private string _apiUrl;
         ILogger Logger;
 
-        public MessagesService(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory)
+        public MessagesService(string apiUrl, ILoggerFactory loggerFactory)
         {
-            this._config = config;
+            _apiUrl = apiUrl;
             Logger = loggerFactory.CreateLogger(typeof(IMessagesService));
         }
 
@@ -34,7 +30,7 @@ namespace Hfa.SyncLibrary.Messages
         {
             try
             {
-                var response = await PostAsync(message, _config.Value.ApiUrlMessage, cancellationToken);
+                var response = await PostAsync(message, _apiUrl, cancellationToken);
                 if (!response.IsSuccessStatusCode)
                 {
                     Logger.LogError(response.ReasonPhrase);
@@ -58,7 +54,7 @@ namespace Hfa.SyncLibrary.Messages
         {
             try
             {
-                var response = await PostAsync(message, _config.Value.ApiUrlMessage, username, password, cancellationToken);
+                var response = await PostAsync(message, _apiUrl, username, password, cancellationToken);
                 if (!response.IsSuccessStatusCode)
                 {
                     Logger.LogError(response.ReasonPhrase);

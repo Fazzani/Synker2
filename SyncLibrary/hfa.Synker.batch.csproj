@@ -49,6 +49,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\hfa.Synker.Service\hfa.Synker.Service.csproj" />
     <ProjectReference Include="..\hfa.TvhLibrary\hfa.TvhLibrary.csproj" />
   </ItemGroup>
 

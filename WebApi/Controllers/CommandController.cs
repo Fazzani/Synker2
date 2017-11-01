@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using hfa.WebApi.Dal;
-using hfa.WebApi.Dal.Entities;
 using Hfa.WebApi.Controllers;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
@@ -14,6 +12,8 @@ using hfa.WebApi.Common;
 using Microsoft.AspNetCore.Authorization;
 using hfa.WebApi.Common.Filters;
 using hfa.WebApi.Models.Xmltv;
+using hfa.Synker.Service.Entities.Auth;
+using hfa.Synker.Services.Dal;
 
 namespace hfa.WebApi.Controllers
 {
@@ -22,7 +22,8 @@ namespace hfa.WebApi.Controllers
     [Authorize]
     public class CommandController : BaseController
     {
-        public CommandController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+        public CommandController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
+            SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
 

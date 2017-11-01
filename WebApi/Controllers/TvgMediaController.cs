@@ -8,25 +8,15 @@ using Hfa.WebApi.Common;
 using System.Threading;
 using Hfa.WebApi.Models;
 using hfa.SyncLibrary.Global;
-using Nest;
-using Hfa.WebApi.Common.ActionsFilters;
-using Elasticsearch.Net;
-using Microsoft.AspNetCore.Cors;
 using hfa.WebApi.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.IO;
-using System.Text;
-using PlaylistBaseLibrary.Providers;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net;
-using hfa.WebApi.Dal;
-using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using hfa.PlaylistBaseLibrary.Providers;
 using hfa.WebApi.Common.Filters;
+using hfa.Synker.Services.Dal;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -36,7 +26,8 @@ namespace Hfa.WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class TvgMediaController : BaseController
     {
-        public TvgMediaController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+        public TvgMediaController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 
+            SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
 
@@ -59,9 +50,8 @@ namespace Hfa.WebApi.Controllers
                 .Size(query.PageSize)
                 .From(query.Skip)
                 .Sort(x => GetSortDescriptor(x, query.SortDict))
-
                 .Query(q => q.Match(m => m.Field(ff => ff.Name)
-                                          .Query(query.SearchDict.LastOrDefault().Value)))
+                             .Query(query.SearchDict.LastOrDefault().Value)))
 
             , cancellationToken);
 

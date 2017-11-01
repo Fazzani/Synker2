@@ -1,11 +1,12 @@
-﻿using System;
+﻿using hfa.Synker.Service.Entities.Playlists;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace hfa.WebApi.Dal.Entities
+namespace hfa.Synker.Service.Entities.Auth
 {
     public class User : EntityBase
     {
@@ -38,6 +39,8 @@ namespace hfa.WebApi.Dal.Entities
 
         public virtual ICollection<Role> Roles { get; set; }
         public virtual ICollection<Command> Commands { get; set; }
+        public virtual ICollection<Playlist> Playlists { get; set; }
+        
         // public virtual JsonObject<List<string>> Tags { get; set; }
     }
     public enum GenderTypeEnum : byte

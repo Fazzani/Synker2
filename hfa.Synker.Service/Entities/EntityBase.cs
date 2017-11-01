@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace hfa.WebApi.Dal.Entities
+namespace hfa.Synker.Service.Entities
 {
     public class EntityBase
     {

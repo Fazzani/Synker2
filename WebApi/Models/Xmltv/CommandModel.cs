@@ -1,4 +1,4 @@
-﻿using hfa.WebApi.Dal.Entities;
+﻿using hfa.Synker.Service.Entities.Auth;
 using System;
 using System.Collections.Generic;
 using System.Linq;

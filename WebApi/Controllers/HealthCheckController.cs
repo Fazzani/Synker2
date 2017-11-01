@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Hfa.WebApi.Controllers;
 using hfa.WebApi.Common;
-using hfa.WebApi.Dal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using hfa.WebApi.Common.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using System.Net;
 using hfa.WebApi.Models.HealthCheck;
+using hfa.Synker.Services.Dal;
 
 namespace hfa.WebApi.Controllers
 {
@@ -19,7 +19,8 @@ namespace hfa.WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class HealthCheckController : BaseController
     {
-        public HealthCheckController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+        public HealthCheckController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 
+            SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
         }

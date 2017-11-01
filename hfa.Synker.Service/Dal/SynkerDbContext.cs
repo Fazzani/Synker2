@@ -1,12 +1,14 @@
-﻿using hfa.WebApi.Dal.Entities;
-using Hfa.SyncLibrary.Messages;
+﻿using hfa.Synker.Service.Entities;
+using hfa.Synker.Service.Entities.Auth;
+using hfa.Synker.Service.Entities.Playlists;
+using hfa.Synker.Services.Entities.Messages;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace hfa.WebApi.Dal
+namespace hfa.Synker.Services.Dal
 {
     public class SynkerDbContext : DbContext
     {
@@ -26,6 +28,8 @@ namespace hfa.WebApi.Dal
 
             modelBuilder.Entity<User>()
             .HasIndex(b => new { b.FirstName, b.LastName });
+
+            modelBuilder.Entity<Playlist>().Property(x => x.Content).HasColumnType("JSON");
 
             base.OnModelCreating(modelBuilder);
         }

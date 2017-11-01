@@ -1,5 +1,4 @@
 using hfa.synker.batch.MoqServices;
-using Hfa.SyncLibrary.Messages;
 using Hfa.SyncLibrary.Verbs;
 using Moq;
 using SyncLibrary;

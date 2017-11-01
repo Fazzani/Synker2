@@ -10,9 +10,9 @@ using hfa.SyncLibrary.Global;
 using hfa.WebApi.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using hfa.WebApi.Dal;
 using hfa.WebApi.Common.Filters;
 using System.Threading;
+using hfa.Synker.Services.Dal;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,7 +23,8 @@ namespace Hfa.WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class EpgController : BaseController
     {
-        public EpgController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+        public EpgController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 
+            SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
 

@@ -1,10 +1,11 @@
-﻿using Hfa.SyncLibrary.Messages;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using hfa.Synker.Services.Entities.Messages;
+using hfa.Synker.Services.Messages;
 
 namespace hfa.synker.batch.MoqServices
 {

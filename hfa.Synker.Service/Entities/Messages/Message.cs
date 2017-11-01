@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Hfa.SyncLibrary.Messages
+namespace hfa.Synker.Services.Entities.Messages
 {
     //[ElasticsearchType(IdProperty = nameof(Id))]
     public class Message

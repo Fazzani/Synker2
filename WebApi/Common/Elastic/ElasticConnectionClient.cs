@@ -6,8 +6,8 @@ using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Hfa.SyncLibrary.Infrastructure;
-using Hfa.SyncLibrary.Messages;
 using hfa.WebApi.Models.Xmltv;
+using hfa.Synker.Services.Entities.Messages;
 
 namespace hfa.WebApi.Common
 {

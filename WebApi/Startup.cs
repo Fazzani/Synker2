@@ -12,7 +12,6 @@ using hfa.WebApi.Common;
 using System.Net.WebSockets;
 using Microsoft.AspNetCore.Http;
 using System.Threading;
-using hfa.WebApi.Dal;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
@@ -23,10 +22,9 @@ using System.Net;
 using Newtonsoft.Json;
 using AspNet.Core.Webhooks.Receivers;
 using hfa.WebApi.Services;
-using hfa.WebApi.Services.xmltv;
 using hfa.WebApi.Common.Middlewares;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
+using hfa.Synker.Services.Xmltv;
+using hfa.Synker.Services.Dal;
 
 namespace hfa.WebApi
 {
@@ -65,7 +63,7 @@ namespace hfa.WebApi
 
             var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
              .UseMySql(Configuration.GetConnectionString("PlDatabase"),
-                a => a.MigrationsAssembly(null)))
+                a => a.MigrationsAssembly("hfa.WebApi")))
              .BuildServiceProvider();
 
             var DB = serviceProvider.GetService<SynkerDbContext>();

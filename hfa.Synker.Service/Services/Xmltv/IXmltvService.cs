@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace hfa.WebApi.Services.xmltv
+namespace hfa.Synker.Services.Xmltv
 {
     public interface IXmltvService
     {

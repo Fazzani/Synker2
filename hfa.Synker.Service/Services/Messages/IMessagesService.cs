@@ -1,10 +1,11 @@
-﻿using System.Net.Http;
+﻿using hfa.Synker.Services.Entities.Messages;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Hfa.SyncLibrary.Messages
+namespace hfa.Synker.Services.Messages
 {
-    interface IMessagesService
+    public interface IMessagesService
     {
         Task<HttpResponseMessage> PostAsync(object obj, string url, CancellationToken cancellationToken);
         Task SendAsync(Message message, CancellationToken cancellationToken);

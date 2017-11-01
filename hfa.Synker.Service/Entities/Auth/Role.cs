@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace hfa.WebApi.Dal.Entities
+namespace hfa.Synker.Service.Entities.Auth
 {
     public class Role : EntityBase
     {

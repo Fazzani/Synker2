@@ -1,4 +1,4 @@
-﻿using hfa.WebApi.Dal.Entities;
+﻿using hfa.Synker.Service.Entities.Auth;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace hfa.WebApi.Common.Auth
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        JwtReponse GenerateToken(Dal.Entities.User user);
+        JwtReponse GenerateToken(User user);
 
         /// <summary>
         /// Authenticate by refresh token

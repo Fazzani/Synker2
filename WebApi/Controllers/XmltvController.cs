@@ -10,7 +10,6 @@ using hfa.SyncLibrary.Global;
 using hfa.WebApi.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using hfa.WebApi.Dal;
 using hfa.WebApi.Common.Filters;
 using hfa.WebApi.Models.Xmltv;
 using System.Threading;
@@ -19,11 +18,11 @@ using hfa.WebApi.Services;
 using System.IO;
 using PastebinAPI;
 using System.Text;
-using hfa.WebApi.Dal.Entities;
-using Microsoft.AspNetCore.Authorization;
 using PlaylistBaseLibrary.Entities;
 using Newtonsoft.Json.Linq;
 using Elasticsearch.Net;
+using hfa.Synker.Service.Entities.Auth;
+using hfa.Synker.Services.Dal;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -36,7 +35,8 @@ namespace Hfa.WebApi.Controllers
     {
         private readonly IPasteBinService _pasteBinService;
 
-        public XmltvController(IPasteBinService pasteBinService, IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+        public XmltvController(IPasteBinService pasteBinService, IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, 
+            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _pasteBinService = pasteBinService;

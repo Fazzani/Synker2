@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Builder;
-using System.Security.Claims;
 using hfa.WebApi.Common.Auth;
-using hfa.WebApi.Dal;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Bazinga.AspNetCore.Authentication.Basic;
+using hfa.Synker.Services.Dal;
 
 namespace hfa.WebApi.Common.Middlewares
 {
