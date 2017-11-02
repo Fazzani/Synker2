@@ -23,6 +23,7 @@ using Newtonsoft.Json.Linq;
 using Elasticsearch.Net;
 using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Services.Dal;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -31,6 +32,7 @@ namespace Hfa.WebApi.Controllers
     //[ApiVersion("1.0")]
     //[Route("api/v{version:apiVersion}/[controller]")]
     [Route("api/v1/[controller]")]
+    [Authorize]
     public class XmltvController : BaseController
     {
         private readonly IPasteBinService _pasteBinService;

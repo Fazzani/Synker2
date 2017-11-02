@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 using hfa.PlaylistBaseLibrary.Providers;
 using hfa.WebApi.Common.Filters;
 using hfa.Synker.Services.Dal;
+using hfa.Synker.Service.Entities.Playlists;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,6 +25,7 @@ namespace Hfa.WebApi.Controllers
 {
     //[ApiVersion("1.0")]
     [Route("api/v1/[controller]")]
+    [Authorize]
     public class TvgMediaController : BaseController
     {
         public TvgMediaController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 

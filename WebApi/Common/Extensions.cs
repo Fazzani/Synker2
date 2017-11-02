@@ -39,6 +39,9 @@ namespace System.Linq
 
         public static PagedResult<T> GetPaged<T>(this IOrderedQueryable<T> query, int page, int pageSize) where T : class
             => (query as IQueryable<T>).GetPaged(page, pageSize);
+
+        public static PagedResult<T> GetPaged<T>(this IEnumerable<T> query, int page, int pageSize) where T : class
+            => (query as IQueryable<T>).GetPaged(page, pageSize);
     }
 }
 namespace System

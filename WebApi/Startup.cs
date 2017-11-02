@@ -25,6 +25,7 @@ using hfa.WebApi.Services;
 using hfa.WebApi.Common.Middlewares;
 using hfa.Synker.Services.Xmltv;
 using hfa.Synker.Services.Dal;
+using hfa.Synker.Service.Services.Playlists;
 
 namespace hfa.WebApi
 {
@@ -56,6 +57,7 @@ namespace hfa.WebApi
                .AddSingleton<IPasteBinService, PasteBinService>()
                .AddSingleton<IAuthentificationService, AuthentificationService>()
                .AddScoped<IXmltvService, XmltvService>()
+               .AddScoped<IPlaylistService, PlaylistService>()
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                .Configure<ApplicationConfigData>(Configuration)
                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))

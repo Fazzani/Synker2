@@ -16,6 +16,7 @@ namespace hfa.Synker.Services.Dal
 
         public DbSet<Message> Messages { get; set; }
         public DbSet<Command> Command { get; set; }
+        public DbSet<Playlist> Playlist { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
