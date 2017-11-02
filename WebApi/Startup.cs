@@ -117,8 +117,9 @@ namespace hfa.WebApi
                     TermsOfService = "None",
                     Contact = new Contact { Name = "Synker", Email = "contact@synker.ovh", Url = "https://www.github.com/fazzani/synker2" },
                     License = new License { Name = "Use under MIT", Url = "" },
-
+                   
                 });
+                
                 c.DescribeAllEnumsAsStrings();
                 c.IgnoreObsoleteActions();
                 c.IgnoreObsoleteProperties();
@@ -194,17 +195,6 @@ namespace hfa.WebApi
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Synker API V1");
                     c.ShowJsonEditor();
-
-                    /*
-                     *  c.EnabledValidator();
-                        c.BooleanValues(new object[] { 0, 1 });
-                        c.DocExpansion("full");
-                        c.InjectOnCompleteJavaScript("/swagger-ui/on-complete.js");
-                        c.InjectOnFailureJavaScript("/swagger-ui/on-failure.js");
-                        c.SupportedSubmitMethods(new[] { "get", "post", "put", "patch" });
-                        c.ShowRequestHeaders();
-                        c.ShowJsonEditor();
-                     */
                 });
                 #endregion
 

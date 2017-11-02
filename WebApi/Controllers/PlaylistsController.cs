@@ -59,16 +59,6 @@ namespace Hfa.WebApi.Controllers
             return new OkObjectResult(response);
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
-        {
-            var playlist = await _dbContext.FindAsync<Playlist>(id);
-            if (playlist == null)
-                return NotFound(id);
-
-            return Ok(PlaylistModel.ToModel(playlist));
-        }
-
         [HttpGet("{id:guid}")]
         public IActionResult Get(Guid id, CancellationToken cancellationToken)
         {
