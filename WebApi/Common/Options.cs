@@ -47,12 +47,6 @@ namespace hfa.WebApi.Common
         public string TokenEndPoint { get; set; }
     }
    
-    public class PlaylistProviderOption
-    {
-        public string Name { get; set; }
-        public string Type { get; set; }
-    }
-
     public class PastBinOptions
     {
         public string UserName { get; set; }

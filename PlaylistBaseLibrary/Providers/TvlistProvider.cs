@@ -80,7 +80,7 @@ namespace hfa.PlaylistBaseLibrary.Providers
             if (playlist == null)
                 throw new ArgumentNullException(nameof(playlist));
             var sb = new StringBuilder();
-            var list = playlist.Where(x => x.Enabled).AsParallel().Select(x => sb.Append(x.Format(this))).ToList();
+            var list = playlist.ToList().Select(x => sb.Append(x.Format(this))).ToList();
             if (list.Any())
                 using (var sw = new StreamWriter(_sr, Encoding.UTF8, BufferSize, true))
                 {
@@ -94,7 +94,7 @@ namespace hfa.PlaylistBaseLibrary.Providers
                 throw new ArgumentNullException(nameof(playlist));
 
             var sb = new StringBuilder();
-            var list = playlist.Where(x => x.Enabled).Select(x => sb.Append(x.Format(this))).ToList();
+            var list = playlist.ToList().Select(x => sb.Append(x.Format(this))).ToList();
             if (list.Any())
                 using (var sw = new StreamWriter(_sr, Encoding.UTF8, BufferSize, true))
                 {

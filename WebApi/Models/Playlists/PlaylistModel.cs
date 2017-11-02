@@ -39,6 +39,7 @@ namespace hfa.WebApi.Models.Playlists
         public DateTime CreatedDate { get; private set; }
         public DateTime UpdatedDate { get; private set; }
         public int Id { get; private set; }
+        public Guid UniqueId { get; private set; }
 
         public static PlaylistModel ToModel(Playlist pl) => new PlaylistModel
         {
@@ -49,7 +50,8 @@ namespace hfa.WebApi.Models.Playlists
             CreatedDate = pl.CreatedDate,
             Id = pl.Id,
             UpdatedDate = pl.UpdatedDate,
-            UserId = pl.UserId
+            UserId = pl.UserId,
+            UniqueId = pl.UniqueId
         };
     }
 }

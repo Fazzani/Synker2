@@ -46,10 +46,31 @@ namespace hfa.PlaylistBaseLibrary.Providers
                                mi.GetParameters()[1].ParameterType.GetGenericArguments().Count() == 2)
                   .MakeGenericMethod(new Type[] { typeof(TvgMedia), outputType });
 
-                return selectMethod.Invoke(null, new object[]  { IqRes, selectExpression.Compile() });
+                return selectMethod.Invoke(null, new object[] { IqRes, selectExpression.Compile() });
             }
             //TODO: finish the rest of functions (GroupBy, OrderBy, Take, Distinct, Skip, etc...)
             return IqRes;
+        }
+
+        /// <summary>
+        /// Get FileProvider instance from name (string)
+        /// ex: m3u, tvlist
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <param name="providersOptions"></param>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public static FileProvider Create(string provider, List<PlaylistProviderOption> providersOptions, Stream stream)
+        {
+            var sourceOption = providersOptions.FirstOrDefault(x => x.Name.Equals(provider, StringComparison.InvariantCultureIgnoreCase));
+            if (sourceOption == null)
+                throw new InvalidFileProviderException($"Source Provider not found : {provider}");
+
+            var targetProviderType = Type.GetType(sourceOption.Type, false, true);
+            if (targetProviderType == null)
+                throw new InvalidFileProviderException($"Target Provider not found : {sourceOption.Type}");
+
+            return (FileProvider)Activator.CreateInstance(targetProviderType, stream);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -63,6 +84,25 @@ namespace hfa.PlaylistBaseLibrary.Providers
                 }
                 _disposed = true;
             }
+        }
+    }
+
+    public class PlaylistProviderOption
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
+    }
+
+    public class InvalidFileProviderException : Exception
+    {
+        public InvalidFileProviderException(string message) : base(message)
+        {
+
+        }
+
+        public InvalidFileProviderException(string message, Exception innerException) : base(message, innerException)
+        {
+
         }
     }
 }

@@ -21,6 +21,7 @@ using hfa.Synker.Service.Services.Playlists;
 using Newtonsoft.Json;
 using hfa.WebApi.Models.Playlists;
 using System.Net.Http;
+using Microsoft.Net.Http.Headers;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -71,11 +72,30 @@ namespace Hfa.WebApi.Controllers
         [HttpGet("{id:guid}")]
         public IActionResult Get(Guid id, CancellationToken cancellationToken)
         {
-            var playlist =  _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == id);
+            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == id);
             if (playlist == null)
                 return NotFound(id);
 
             return Ok(PlaylistModel.ToModel(playlist));
+        }
+
+        [AllowAnonymous]
+        [HttpGet("files/{id:guid:required}")]
+        public async Task<IActionResult> GetFile(Guid id, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
+          [FromQuery] string provider = "m3u", CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == id);
+            if (playlist == null)
+                return NotFound(id);
+
+            using (var ms = new MemoryStream())
+            using (var sourceProvider = FileProvider.Create(provider, providersOptions.Value, ms))
+            using (var pl = new Playlist<TvgMedia>(sourceProvider))
+            {
+                await pl.PushAsync(playlist.PlaylistObject, cancellationToken);
+                ms.Seek(0, SeekOrigin.Begin);
+                return File(ms.GetBuffer(), "text/plain");
+            }
         }
 
         [HttpPut("{id}")]
@@ -242,39 +262,29 @@ namespace Hfa.WebApi.Controllers
         public async Task<IActionResult> Export(string fromType, string toType, IFormFile file, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
             CancellationToken cancellationToken)
         {
-            var sourceOption = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(fromType, StringComparison.InvariantCultureIgnoreCase));
-            if (sourceOption == null)
-                return BadRequest($"Source Provider not found : {fromType}");
-
-            var sourceProviderType = Type.GetType(sourceOption.Type, false, true);
-            if (sourceProviderType == null)
-                return BadRequest($"Source Provider not found : {fromType}");
-
-            var targtOption = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(toType, StringComparison.InvariantCultureIgnoreCase));
-            if (targtOption == null)
-                return BadRequest($"Source Provider not found : {toType}");
-
-            var targetProviderType = Type.GetType(targtOption.Type, false, true);
-            if (targetProviderType == null)
-                return BadRequest($"Target Provider not found : {toType}");
-
-            var sourceProvider = (FileProvider)Activator.CreateInstance(sourceProviderType, file.OpenReadStream());
-
-            using (var stream = new MemoryStream())
+            try
             {
-                var targetProvider = (FileProvider)Activator.CreateInstance(targetProviderType, stream);
+                var sourceProvider = FileProvider.Create(fromType, providersOptions.Value, file.OpenReadStream());
 
-                using (var sourcePlaylist = new Playlist<TvgMedia>(sourceProvider))
+                using (var stream = new MemoryStream())
                 {
-                    var sourceList = await sourcePlaylist.PullAsync(HttpContext.RequestAborted);
-                    using (var targetPlaylist = new Playlist<TvgMedia>(targetProvider))
+                    var targetProvider = FileProvider.Create(toType, providersOptions.Value, stream);
+
+                    using (var sourcePlaylist = new Playlist<TvgMedia>(sourceProvider))
                     {
-                        await targetPlaylist.PushAsync(sourcePlaylist, HttpContext.RequestAborted);
-                        return File(stream.GetBuffer(), "application/octet-stream", file.FileName);
+                        var sourceList = await sourcePlaylist.PullAsync(HttpContext.RequestAborted);
+                        using (var targetPlaylist = new Playlist<TvgMedia>(targetProvider))
+                        {
+                            await targetPlaylist.PushAsync(sourcePlaylist, HttpContext.RequestAborted);
+                            return File(stream.GetBuffer(), "text/plain", file.FileName);
+                        }
                     }
                 }
             }
+            catch (InvalidFileProviderException ifileEx)
+            {
+                return BadRequest(ifileEx.Message);
+            }
         }
-
     }
 }

@@ -27,6 +27,7 @@ using hfa.Synker.Services.Xmltv;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Playlists;
 using Microsoft.AspNetCore.ResponseCompression;
+using hfa.PlaylistBaseLibrary.Providers;
 
 namespace hfa.WebApi
 {
