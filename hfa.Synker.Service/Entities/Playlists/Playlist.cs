@@ -5,11 +5,15 @@ using PlaylistManager.Entities;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace hfa.Synker.Service.Entities.Playlists
 {
     public class Playlist : EntityBase
     {
+        [Required]
+        public Guid UniqueId { get; set; } = Guid.NewGuid();
+
         [ForeignKey(nameof(UserId))]
         public virtual User User { get; set; }
 
@@ -53,11 +57,15 @@ namespace hfa.Synker.Service.Entities.Playlists
         {
             get
             {
-                if (_playlist == null)
+                if (_playlist == null && TvgMedias != null)
                     _playlist = new Playlist<TvgMedia>(TvgMedias);
                 return _playlist;
             }
         }
+
+        public override int GetHashCode() => (UserId ^ Id).GetHashCode();
+
+        public override string ToString() => $"{Id} {Freindlyname} UserId : {UserId} Status : {Status} Count : {TvgMedias?.Count()}";
     }
 
     public enum PlaylistStatus : byte

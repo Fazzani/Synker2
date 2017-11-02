@@ -26,6 +26,7 @@ using hfa.WebApi.Common.Middlewares;
 using hfa.Synker.Services.Xmltv;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Playlists;
+using Microsoft.AspNetCore.ResponseCompression;
 
 namespace hfa.WebApi
 {
@@ -70,6 +71,27 @@ namespace hfa.WebApi
 
             var DB = serviceProvider.GetService<SynkerDbContext>();
             DB.Database.EnsureCreated();
+
+            #region Compression
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
+            services.AddResponseCompression(options =>
+            {
+                options.MimeTypes = new[]
+                {
+                    // Default
+                    "text/plain",
+                    "text/css",
+                    "application/javascript",
+                    "text/html",
+                    "application/xml",
+                    "text/xml",
+                    "application/json",
+                    "text/json",
+                    // Custom
+                    "image/svg+xml"
+                };
+            });
+            #endregion
 
             ConfigSecurity(services);
             //Logger
@@ -139,6 +161,8 @@ namespace hfa.WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            app.UseResponseCompression();
+
             loggerFactory.AddFile(Configuration.GetSection("Logging"));
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -148,7 +172,7 @@ namespace hfa.WebApi
             {
                 app.UseCors("CorsPolicy");
 
-              //  app.UseBasicAuthentication();
+                //  app.UseBasicAuthentication();
 
                 #region WebSockets
 
@@ -182,7 +206,7 @@ namespace hfa.WebApi
                      */
                 });
                 #endregion
-               
+
                 app.UseWebHooks(typeof(AppveyorReceiver));
                 app.UseWebHooks(typeof(GithubReceiver));
 

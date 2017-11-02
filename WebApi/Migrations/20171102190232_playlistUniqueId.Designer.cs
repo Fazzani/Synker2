@@ -14,9 +14,10 @@ using System;
 namespace hfa.WebApi.Migrations
 {
     [DbContext(typeof(SynkerDbContext))]
-    partial class SynkerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171102190232_playlistUniqueId")]
+    partial class playlistUniqueId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -179,9 +180,6 @@ namespace hfa.WebApi.Migrations
                     b.Property<int>("UserId");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UniqueId")
-                        .IsUnique();
 
                     b.HasIndex("UserId");
 

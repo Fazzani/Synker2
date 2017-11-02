@@ -25,18 +25,26 @@ namespace hfa.Synker.Services.Dal
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
-            .HasIndex(b => b.Email).IsUnique();
+            .HasIndex(b => b.Email)
+            .IsUnique();
 
             modelBuilder.Entity<User>()
             .HasIndex(b => new { b.FirstName, b.LastName });
 
-            modelBuilder.Entity<Playlist>().Property(x => x.Content).HasColumnType("JSON");
+            modelBuilder.Entity<Playlist>()
+            .HasIndex(b => b.UniqueId)
+            .IsUnique();
+
+            modelBuilder.Entity<Playlist>()
+            .Property(x => x.Content)
+            .HasColumnType("JSON");
 
             base.OnModelCreating(modelBuilder);
         }
 
         public SynkerDbContext(DbContextOptions opt) : base(opt)
         {
+            Database.SetCommandTimeout(15000);
         }
 
         public override int SaveChanges()
