@@ -143,5 +143,7 @@ namespace hfa.Synker.Service.Services.Elastic
                 return _client;
             }
         }
+
+        public ElasticConfig ElasticConfig => _config;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Nest;
+﻿using hfa.Synker.Service.Elastic;
+using Nest;
 
 namespace hfa.Synker.Service.Services.Elastic
 {
@@ -8,5 +9,7 @@ namespace hfa.Synker.Service.Services.Elastic
 
         void DeleteDefaultIndex();
         void MappingConfig();
+
+        ElasticConfig ElasticConfig { get; }
     }
 }
