@@ -17,6 +17,7 @@ using System.Threading;
 using hfa.Synker.Services.Entities.Messages;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Elastic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -27,7 +28,7 @@ namespace Hfa.WebApi.Controllers
     public class MessageController : BaseController
     {
         const string MessageIndex = "messages";
-        public MessageController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+        public MessageController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
 

@@ -15,6 +15,7 @@ using hfa.WebApi.Common;
 using Microsoft.Extensions.Options;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Elastic;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -22,22 +23,22 @@ namespace Hfa.WebApi.Controllers
     {
         protected readonly ILogger _logger;
         protected readonly IElasticConnectionClient _elasticConnectionClient;
-        protected readonly ApplicationConfigData _config;
+        protected readonly ElasticConfig _elasticConfig;
         readonly protected SynkerDbContext _dbContext;
 
-        public BaseController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 
+        public BaseController(IOptions<ElasticConfig> elasticConfig, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 
             SynkerDbContext context)
         {
             _logger = loggerFactory.CreateLogger("BaseController");
             _elasticConnectionClient = elasticConnectionClient;
-            _config = config.Value;
+            _elasticConfig = elasticConfig.Value;
             _dbContext = context;
         }
 
         internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query, CancellationToken cancellationToken) where T : class
         {
             var response = await _elasticConnectionClient.Client.LowLevel
-                .SearchAsync<SearchResponse<T>>(_config.DefaultIndex, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
+                .SearchAsync<SearchResponse<T>>(_elasticConfig.DefaultIndex, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
 
             if (!response.SuccessOrKnownError)
                 return BadRequest(response.DebugInformation);

@@ -20,6 +20,7 @@ using hfa.Synker.Services.Dal;
 using Microsoft.AspNetCore.Authorization;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Services.Xmltv;
+using hfa.Synker.Service.Elastic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -33,7 +34,7 @@ namespace Hfa.WebApi.Controllers
     {
         private readonly IPasteBinService _pasteBinService;
 
-        public XmltvController(IPasteBinService pasteBinService, IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, 
+        public XmltvController(IPasteBinService pasteBinService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, 
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
@@ -44,7 +45,7 @@ namespace Hfa.WebApi.Controllers
         [Route("channels/_search")]
         public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
         {
-            return await SearchAsync<SitePackChannel>(request.ToString(), _config.SitePackIndex, cancellationToken);
+            return await SearchAsync<SitePackChannel>(request.ToString(), _elasticConfig.SitePackIndex, cancellationToken);
         }
 
         /// <summary>

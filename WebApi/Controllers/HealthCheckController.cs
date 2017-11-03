@@ -13,6 +13,7 @@ using System.Net;
 using hfa.WebApi.Models.HealthCheck;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Elastic;
 
 namespace hfa.WebApi.Controllers
 {
@@ -20,7 +21,7 @@ namespace hfa.WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class HealthCheckController : BaseController
     {
-        public HealthCheckController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 
+        public HealthCheckController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 
             SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {

@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using hfa.WebApi.Common.Filters;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Elastic;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -24,7 +25,7 @@ namespace Hfa.WebApi.Controllers
     [Authorize]
     public class TvgMediaController : BaseController
     {
-        public TvgMediaController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 
+        public TvgMediaController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 
             SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {

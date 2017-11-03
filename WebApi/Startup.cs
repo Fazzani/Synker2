@@ -29,6 +29,7 @@ using hfa.Synker.Service.Services.Playlists;
 using Microsoft.AspNetCore.ResponseCompression;
 using hfa.PlaylistBaseLibrary.Providers;
 using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Elastic;
 
 namespace hfa.WebApi
 {
@@ -62,7 +63,7 @@ namespace hfa.WebApi
                .AddScoped<IXmltvService, XmltvService>()
                .AddScoped<IPlaylistService, PlaylistService>()
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
-               .Configure<ApplicationConfigData>(Configuration)
+               .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))
                .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)));
 

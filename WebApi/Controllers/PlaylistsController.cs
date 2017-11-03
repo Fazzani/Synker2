@@ -22,6 +22,7 @@ using Newtonsoft.Json;
 using hfa.WebApi.Models.Playlists;
 using System.Net.Http;
 using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Elastic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -34,7 +35,7 @@ namespace Hfa.WebApi.Controllers
     {
         private IPlaylistService _playlistService;
 
-        public PlaylistsController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
+        public PlaylistsController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
             SynkerDbContext context, IPlaylistService playlistService)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {

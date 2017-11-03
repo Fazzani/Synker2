@@ -15,6 +15,7 @@ using hfa.WebApi.Models.Xmltv;
 using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Elastic;
 
 namespace hfa.WebApi.Controllers
 {
@@ -23,7 +24,7 @@ namespace hfa.WebApi.Controllers
     [Authorize]
     public class CommandController : BaseController
     {
-        public CommandController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
+        public CommandController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
             SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
