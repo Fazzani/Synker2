@@ -98,7 +98,7 @@ namespace Hfa.WebApi.Controllers
 
             playlistEntity.Status = playlist.Status;
             playlistEntity.Freindlyname = playlist.Freindlyname;
-            playlistEntity.Cron = playlist.Cron;
+            playlistEntity.SynkConfig.Cron = playlist.Cron;
 
             await _dbContext.SaveChangesAsync();
             return Ok();

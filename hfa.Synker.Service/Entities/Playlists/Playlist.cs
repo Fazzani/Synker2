@@ -11,6 +11,11 @@ namespace hfa.Synker.Service.Entities.Playlists
 {
     public class Playlist : EntityBase
     {
+        public Playlist()
+        {
+            SynkConfig = new SynkConfig();
+        }
+
         [Required]
         public Guid UniqueId { get; set; } = Guid.NewGuid();
 
@@ -23,9 +28,7 @@ namespace hfa.Synker.Service.Entities.Playlists
         [Required]
         public string Freindlyname { get; set; }
 
-        [MaxLength(10)]
-        [RegularExpression(@"(28|\*) (2|\*) (7|\*) (1|\*) (1|\*)")]
-        public string Cron { get; set; }
+        public SynkConfig SynkConfig { get; set; }
 
         public PlaylistStatus Status { get; set; }
 

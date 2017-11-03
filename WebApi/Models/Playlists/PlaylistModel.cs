@@ -43,7 +43,7 @@ namespace hfa.WebApi.Models.Playlists
 
         public static PlaylistModel ToModel(Playlist pl) => new PlaylistModel
         {
-            Cron = pl.Cron,
+            Cron = pl.SynkConfig?.Cron,
             Freindlyname = pl.Freindlyname,
             Status= pl.Status,
             TvgMedias = pl.TvgMedias,

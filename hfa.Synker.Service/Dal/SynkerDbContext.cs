@@ -39,6 +39,8 @@ namespace hfa.Synker.Services.Dal
             .Property(x => x.Content)
             .HasColumnType("JSON");
 
+            modelBuilder.Entity<Playlist>().OwnsOne(x => x.SynkConfig);
+
             base.OnModelCreating(modelBuilder);
         }
 
