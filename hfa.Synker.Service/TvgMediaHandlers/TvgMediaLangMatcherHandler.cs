@@ -6,9 +6,9 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using PlaylistBaseLibrary.ChannelHandlers;
 
-namespace SyncLibrary.TvgMediaHandlers
+namespace hfa.Synker.Service.Services.TvgMediaHandlers
 {
-    class TvgMediaLangMatcherHandler : TvgMediaHandler
+    public class TvgMediaLangMatcherHandler : TvgMediaHandler
     {
         public TvgMediaLangMatcherHandler(IContextTvgMediaHandler contextTvgMediaHandler) : base(contextTvgMediaHandler)
         {

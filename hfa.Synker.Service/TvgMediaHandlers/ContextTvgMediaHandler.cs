@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Hfa.PlaylistBaseLibrary.Entities;
 using Nest;
-using hfa.SyncLibrary.Common;
+using hfa.Synker.Service.Services.Elastic;
 
-namespace SyncLibrary.TvgMediaHandlers
+namespace hfa.Synker.Service.Services.TvgMediaHandlers
 {
-    class ContextTvgMediaHandler : IContextTvgMediaHandler
+    public class ContextTvgMediaHandler : IContextTvgMediaHandler
     {
         public ContextTvgMediaHandler(IElasticConnectionClient elasticConnectionClient)
         {

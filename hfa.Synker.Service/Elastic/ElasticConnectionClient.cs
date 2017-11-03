@@ -1,52 +1,64 @@
 ﻿using Nest;
 using PlaylistBaseLibrary.Entities;
 using PlaylistManager.Entities;
-using hfa.SyncLibrary.Global;
 using System;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Hfa.SyncLibrary.Infrastructure;
+using hfa.Synker.Services.Entities.Messages;
+using hfa.Synker.Service.Elastic;
+using hfa.Synker.Service.Services.Xmltv;
 
-namespace hfa.SyncLibrary.Common
+namespace hfa.Synker.Service.Services.Elastic
 {
-    internal class ElasticConnectionClient : IElasticConnectionClient
+    public class ElasticConnectionClient : IElasticConnectionClient
     {
+        // internal const string SitePackIndexName = "sitepack";
+
         private ConnectionSettings _settings;
         private ElasticClient _client;
         private static object syncRoot = new Object();
-        IOptions<ApplicationConfigData> _config;
         ILoggerFactory _loggerFactory;
         static string[] stopWords = { "hd", "sd", "fhd", "ar", "fr", "fr:", "ar:", "1080p", "720p", "(fr)", "(ar)", "+1", "+2", "+4", "+6", "+8", "arb", "vip" };
+        private ElasticConfig _config;
 
-        public ElasticConnectionClient(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory)
+        public ElasticConnectionClient(ElasticConfig config, ILoggerFactory loggerFactory)
         {
             _config = config;
             _loggerFactory = loggerFactory;
 
-            _settings = new ConnectionSettings(new Uri(config.Value.ElasticUrl));
+            _settings = new ConnectionSettings(new Uri(_config.ElasticUrl));
             _settings
-                .BasicAuthentication(config.Value.ElasticUserName, config.Value.ElasticPassword)
+                .BasicAuthentication(_config.ElasticUserName, _config.ElasticPassword)
                 .DisableDirectStreaming(true)
-                .DefaultIndex(config.Value.DefaultIndex)
+                .DefaultIndex(_config.DefaultIndex)
                 .PrettyJson()
-                .RequestTimeout(TimeSpan.FromMinutes(2))
+                .RequestTimeout(TimeSpan.FromSeconds(_config.RequestTimeout))
                 .EnableHttpCompression();
 
 #if DEBUG
             _settings.EnableDebugMode();
 #endif
-
             _settings
+                .InferMappingFor<Message>(m => m.IndexName(_config.MessageIndex).IdProperty(p => p.Id))
                 .InferMappingFor<TvgMedia>(m => m.IdProperty(p => p.Id))
                 .InferMappingFor<tvChannel>(m => m.IdProperty(p => p.id))
-                .InferMappingFor<Tvg>(m => m.IdProperty(p => p.Id));
+                .InferMappingFor<Tvg>(m => m.IdProperty(p => p.Id))
+                .InferMappingFor<tvProgramme>(m => m.IdProperty(p => p.Id).IndexName("xmltv-*"))
+                .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).IdProperty(p => p.id));
+
+            if (!Client.IndexExists(_config.DefaultIndex).Exists)
+                MappingConfig();
+
+            Client.Map<tv>(x => x.Index("xmltv-*").AutoMap());
+            //Client.Map<tvProgrammeAudio>(x => x.AutoMap());
+            //Client.Map<tvProgrammeSubtitles>(x => x.AutoMap());
+            //Client.Map<tvProgrammeSubtitles>(x => x.AutoMap());
+            //Client.Map<tvProgrammeSubtitles>(x => x.AutoMap());
         }
 
-        public void MappingConfig(IOptions<ApplicationConfigData> config)
+        public void MappingConfig()
         {
             var keywordProperty = new PropertyName("keyword");
-
-            var response = Client.CreateIndex(config.Value.DefaultIndex, c => c
+            var response = Client.CreateIndex(_config.DefaultIndex, c => c
             .Settings(s => s
             .Setting("analysis.char_filter.drop_specChars.type", "pattern_replace")
             .Setting("analysis.char_filter.drop_specChars.pattern", "\\bbeinsports?\\b")
@@ -107,14 +119,14 @@ namespace hfa.SyncLibrary.Common
                          )
                      )));
 
-            response.AssertElasticResponse();
+            //response.AssertElasticResponse();
         }
 
         public void DeleteDefaultIndex()
         {
-            var indexExistsResponse = Client.IndexExists(_config.Value.DefaultIndex);
+            var indexExistsResponse = Client.IndexExists(_config.DefaultIndex);
             if (indexExistsResponse.Exists)
-                Client.DeleteIndex(_config.Value.DefaultIndex, null);
+                Client.DeleteIndex(_config.DefaultIndex, null);
         }
 
         public ElasticClient Client

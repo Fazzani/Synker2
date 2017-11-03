@@ -1,14 +1,12 @@
-﻿using Hfa.SyncLibrary.Infrastructure;
-using Microsoft.Extensions.Options;
-using Nest;
+﻿using Nest;
 
-namespace hfa.WebApi.Common
+namespace hfa.Synker.Service.Services.Elastic
 {
     public interface IElasticConnectionClient
     {
         ElasticClient Client { get; }
 
         void DeleteDefaultIndex();
-
+        void MappingConfig();
     }
 }

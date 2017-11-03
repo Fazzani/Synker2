@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-//using PlaylistBaseLibrary.Entities;
-using Hfa.WebApi.Common;
-using Hfa.WebApi.Models;
 using hfa.SyncLibrary.Global;
 using hfa.WebApi.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using hfa.WebApi.Common.Filters;
-using hfa.WebApi.Models.Xmltv;
 using System.Threading;
 using Nest;
 using hfa.WebApi.Services;
@@ -19,11 +15,11 @@ using System.IO;
 using PastebinAPI;
 using System.Text;
 using PlaylistBaseLibrary.Entities;
-using Newtonsoft.Json.Linq;
-using Elasticsearch.Net;
 using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Services.Dal;
 using Microsoft.AspNetCore.Authorization;
+using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Services.Xmltv;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

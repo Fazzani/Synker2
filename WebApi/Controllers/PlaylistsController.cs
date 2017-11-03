@@ -21,7 +21,7 @@ using hfa.Synker.Service.Services.Playlists;
 using Newtonsoft.Json;
 using hfa.WebApi.Models.Playlists;
 using System.Net.Http;
-using Microsoft.Net.Http.Headers;
+using hfa.Synker.Service.Services.Elastic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

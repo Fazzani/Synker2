@@ -12,11 +12,10 @@ using hfa.WebApi.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.IO;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
-using hfa.PlaylistBaseLibrary.Providers;
 using hfa.WebApi.Common.Filters;
 using hfa.Synker.Services.Dal;
+using hfa.Synker.Service.Services.Elastic;
 
 namespace Hfa.WebApi.Controllers
 {

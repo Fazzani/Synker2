@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Net;
 using hfa.WebApi.Models.HealthCheck;
 using hfa.Synker.Services.Dal;
+using hfa.Synker.Service.Services.Elastic;
 
 namespace hfa.WebApi.Controllers
 {

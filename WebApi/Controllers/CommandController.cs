@@ -14,6 +14,7 @@ using hfa.WebApi.Common.Filters;
 using hfa.WebApi.Models.Xmltv;
 using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Services.Dal;
+using hfa.Synker.Service.Services.Elastic;
 
 namespace hfa.WebApi.Controllers
 {

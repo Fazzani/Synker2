@@ -1,5 +1,4 @@
-﻿using hfa.SyncLibrary.Common;
-using Hfa.PlaylistBaseLibrary.Entities;
+﻿using Hfa.PlaylistBaseLibrary.Entities;
 using PlaylistBaseLibrary.ChannelHandlers;
 using PlaylistManager.Entities;
 using System;
@@ -8,9 +7,9 @@ using System.Text;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace SyncLibrary.TvgMediaHandlers
+namespace hfa.Synker.Service.Services.TvgMediaHandlers
 {
-    class TvgMediaGroupMatcherHandler : TvgMediaHandler
+    public class TvgMediaGroupMatcherHandler : TvgMediaHandler
     {
         public TvgMediaGroupMatcherHandler(IContextTvgMediaHandler contextTvgMediaHandler) : base(contextTvgMediaHandler)
         {

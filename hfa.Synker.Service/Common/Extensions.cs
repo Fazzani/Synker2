@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nest;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -8,8 +9,19 @@ using System.Threading.Tasks;
 
 namespace System
 {
+    //public static class Nest
+    //{
+    //    //public static void AssertElasticResponse(this IResponse response)
+    //    //{
+    //    //    //Debug.Assert(response.IsValid);
+    //    //    //if (!response.IsValid)
+    //    //    //    Common.Logger("Elastic").LogError(response.DebugInformation);
+    //    //}
+    //}
     public static class Extensions
     {
+
+
         /// <summary>
         /// Converts a given DateTime into a Unix timestamp
         /// </summary>

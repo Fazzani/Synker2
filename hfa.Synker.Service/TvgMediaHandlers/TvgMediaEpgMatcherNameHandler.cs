@@ -1,4 +1,4 @@
-﻿using hfa.SyncLibrary.Common;
+﻿using hfa.Synker.Service.Services.Elastic;
 using PlaylistBaseLibrary.ChannelHandlers;
 using PlaylistBaseLibrary.Entities;
 using PlaylistManager.Entities;
@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SyncLibrary.TvgMediaHandlers
+namespace hfa.Synker.Service.Services.TvgMediaHandlers
 {
-    class TvgMediaEpgMatcherNameHandler : TvgMediaHandler
+    public class TvgMediaEpgMatcherNameHandler : TvgMediaHandler
     {
         IElasticConnectionClient _elasticClient;
         public TvgMediaEpgMatcherNameHandler(IContextTvgMediaHandler contextTvgMediaHandler, IElasticConnectionClient elasticClient) : base(contextTvgMediaHandler)

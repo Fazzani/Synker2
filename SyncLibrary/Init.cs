@@ -1,11 +1,11 @@
-﻿using hfa.SyncLibrary.Common;
+﻿using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Services.TvgMediaHandlers;
 using hfa.Synker.Services.Messages;
 using Hfa.SyncLibrary.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PlaylistBaseLibrary.ChannelHandlers;
-using SyncLibrary.TvgMediaHandlers;
 using System;
 using System.Collections.Generic;
 using System.IO;

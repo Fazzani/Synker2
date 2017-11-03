@@ -1,12 +1,10 @@
-﻿using hfa.SyncLibrary.Common;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Nest;
 using PlaylistBaseLibrary.ChannelHandlers;
 using PlaylistBaseLibrary.Entities;
 using PlaylistManager.Entities;
 using SyncLibrary.Configuration;
 using hfa.SyncLibrary.Global;
-using SyncLibrary.TvgMediaHandlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +23,8 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using hfa.Synker.Services.Entities.Messages;
 using hfa.Synker.Services.Messages;
+using hfa.Synker.Service.Services.TvgMediaHandlers;
+using hfa.Synker.Service.Services.Elastic;
 
 [assembly: InternalsVisibleTo("hfa.synker.batch.test")]
 namespace SyncLibrary

@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SyncLibrary.TvgMediaHandlers
+namespace hfa.Synker.Service.Services.TvgMediaHandlers
 {
-    internal class TvgMediaCleanNameHandler : TvgMediaHandler
+    public class TvgMediaCleanNameHandler : TvgMediaHandler
     {
         public TvgMediaCleanNameHandler(IContextTvgMediaHandler contextTvgMediaHandler) : base(contextTvgMediaHandler)
         {

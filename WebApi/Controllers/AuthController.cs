@@ -13,6 +13,7 @@ using hfa.WebApi.Common.Filters;
 using Microsoft.EntityFrameworkCore;
 using hfa.WebApi.Models.Auth;
 using hfa.Synker.Services.Dal;
+using hfa.Synker.Service.Services.Elastic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,8 +24,8 @@ namespace hfa.WebApi.Controllers
     {
         private IAuthentificationService _authentificationService;
 
-        public AuthController(IAuthentificationService authentificationService, IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
-            SynkerDbContext context)
+        public AuthController(IAuthentificationService authentificationService, IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory,
+            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _authentificationService = authentificationService;

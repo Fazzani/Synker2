@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Globalization;
 
-namespace hfa.WebApi.Models.Xmltv
+namespace hfa.Synker.Service.Services.Xmltv
 {
     [XmlRoot(ElementName = "postprocess")]
     public class Postprocess
