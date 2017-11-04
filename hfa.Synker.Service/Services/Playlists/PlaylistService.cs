@@ -57,38 +57,22 @@ namespace hfa.Synker.Service.Services.Playlists
             if (!pl.IsSynchronizable)
                 throw new ApplicationException($"Playlist isn't synchronizable");
 
-            var newMedias = new BlockingCollection<TvgMedia>();
+            //var newMedias = new BlockingCollection<TvgMedia>();
             using (var playlist = new Playlist<TvgMedia>(provider))
             {
                 var sourceList = await playlist.PullAsync(cancellationToken);
                 //Faire passer les handlers
                 var handler = FabricHandleMedias(_elasticConnectionClient, pl.SynkConfig);
 
-                var tasks = sourceList.AsParallel().Select(async media =>
+                var newMedias = sourceList.AsParallel().Select(media =>
                   {
                       handler.HandleTvgMedia(media);
-                      if (media.IsValid)
-                      {
-                          _logger.LogInformation($"Treating media  => {media.Name} : {media.Url}");
-
-                          if (pl.PlaylistObject != null || await pl.PlaylistObject.AnyAsync(x => x == media))
-                          {
-                              newMedias.Add(media);
-                          }
-                          else
-                          {
-                              pl.TvgMedias.Add(media);
-                          }
-                      }
+                      return media;
                   }
-                  ).ToArray();
-
-                await Task.WhenAll(tasks);
+                  ).WithCancellation(cancellationToken);
 
                 if (newMedias.Any())
-                    pl.Content = JsonConvert.SerializeObject(newMedias.ToArray());
-                else
-                    pl.Content = JsonConvert.SerializeObject(pl.TvgMedias);
+                    pl.Content = JsonConvert.SerializeObject(newMedias.Where(x => x.IsValid).ToArray());
             }
             return pl;
         }
