@@ -30,6 +30,8 @@ using Microsoft.AspNetCore.ResponseCompression;
 using hfa.PlaylistBaseLibrary.Providers;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
+using hfa.Synker.Service.Services.TvgMediaHandlers;
+using PlaylistBaseLibrary.ChannelHandlers;
 
 namespace hfa.WebApi
 {
@@ -60,6 +62,7 @@ namespace hfa.WebApi
                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                .AddSingleton<IPasteBinService, PasteBinService>()
                .AddSingleton<IAuthentificationService, AuthentificationService>()
+               .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
                .AddScoped<IXmltvService, XmltvService>()
                .AddScoped<IPlaylistService, PlaylistService>()
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))

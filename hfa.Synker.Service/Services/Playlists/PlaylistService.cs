@@ -51,7 +51,6 @@ namespace hfa.Synker.Service.Services.Playlists
 
             var newMedias = new List<TvgMedia>();
 
-
             //Faire passer les handlers
             var handler = FabricHandleMedias(_elasticConnectionClient);
 

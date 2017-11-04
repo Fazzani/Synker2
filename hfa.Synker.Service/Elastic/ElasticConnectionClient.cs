@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using hfa.Synker.Services.Entities.Messages;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Services.Xmltv;
+using Microsoft.Extensions.Options;
 
 namespace hfa.Synker.Service.Services.Elastic
 {
@@ -20,9 +21,9 @@ namespace hfa.Synker.Service.Services.Elastic
         static string[] stopWords = { "hd", "sd", "fhd", "ar", "fr", "fr:", "ar:", "1080p", "720p", "(fr)", "(ar)", "+1", "+2", "+4", "+6", "+8", "arb", "vip" };
         private ElasticConfig _config;
 
-        public ElasticConnectionClient(ElasticConfig config, ILoggerFactory loggerFactory)
+        public ElasticConnectionClient(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory)
         {
-            _config = config;
+            _config = config.Value;
             _loggerFactory = loggerFactory;
 
             _settings = new ConnectionSettings(new Uri(_config.ElasticUrl));
