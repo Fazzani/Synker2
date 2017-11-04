@@ -24,8 +24,6 @@ using System.Net.Http;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace Hfa.WebApi.Controllers
 {
     //[ApiVersion("1.0")]
@@ -100,6 +98,10 @@ namespace Hfa.WebApi.Controllers
             playlistEntity.Status = playlist.Status;
             playlistEntity.Freindlyname = playlist.Freindlyname;
             playlistEntity.SynkConfig.Cron = playlist.Cron;
+            playlistEntity.SynkConfig.Url = playlist.Url;
+            playlistEntity.SynkConfig.SynkEpg = playlist.SynkEpg;
+            playlistEntity.SynkConfig.SynkGroup = playlist.SynkGroup;
+            playlistEntity.SynkConfig.SynkLogos = playlist.SynkLogos;
 
             await _dbContext.SaveChangesAsync();
             return Ok();
@@ -116,31 +118,6 @@ namespace Hfa.WebApi.Controllers
 
             await _dbContext.SaveChangesAsync();
             return NoContent();
-        }
-
-        /// <summary>
-        /// Download medias list from elastic
-        /// </summary>
-        /// <param name="filename">Output filename</param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("download/{filename}")]
-        public async Task<FileContentResult> Download(string filename, CancellationToken cancellationToken)
-        {
-            var response = await _elasticConnectionClient.Client.SearchAsync<TvgMedia>(rq => rq
-               .From(0)
-               .Size(10000)
-               .Index<TvgMedia>()
-           , HttpContext.RequestAborted);
-
-            response.AssertElasticResponse();
-
-            using (var ms = new MemoryStream())
-            {
-                var provider = new M3uProvider(ms);
-                await provider.PushAsync(new Playlist<TvgMedia>(response.Documents), HttpContext.RequestAborted);
-                return File(ms.GetBuffer(), "application/octet-stream", filename);
-            }
         }
 
         /// <summary>
@@ -186,7 +163,7 @@ namespace Hfa.WebApi.Controllers
                 }
             }
 
-            await SavePlaylist(playlistName, providerType, playlistStream, cancellationToken);
+            await SavePlaylist(playlistName, providerType, playlistStream, playlistUrl, cancellationToken);
 
             return NoContent();
         }
@@ -218,14 +195,22 @@ namespace Hfa.WebApi.Controllers
             using (var httpClient = new HttpClient())
             {
                 var playlistStream = await httpClient.GetStreamAsync(playlistPostModel.PlaylistUrl);
+                var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
+                await _playlistService.SynkPlaylist(() => new Playlist
+                {
+                    UserId = UserId.Value,
+                    Freindlyname = playlistPostModel.PlaylistName,
+                    Status = PlaylistStatus.Enabled,
+                    SynkConfig = new SynkConfig { Url = playlistPostModel.PlaylistUrl }
+                }, providerInstance, cancellationToken: cancellationToken);
 
-                await SavePlaylist(playlistPostModel.PlaylistName, providerType, playlistStream, cancellationToken);
+                var res = await _dbContext.SaveChangesAsync(cancellationToken);
             }
 
             return NoContent();
         }
 
-        private async Task SavePlaylist(string playlistName, Type providerType, Stream playlistStream, CancellationToken cancellationToken)
+        private async Task SavePlaylist(string playlistName, Type providerType, Stream playlistStream, string playlistUrl, CancellationToken cancellationToken)
         {
             var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
 
@@ -233,7 +218,16 @@ namespace Hfa.WebApi.Controllers
             {
                 var sourceList = await playlist.PullAsync(cancellationToken);
                 var content = JsonConvert.SerializeObject(sourceList.ToArray());
-                var playlistEntity = new Playlist { UserId = UserId.Value, Freindlyname = playlistName, Content = content, Status = PlaylistStatus.Enabled };
+
+                var synkcfg = new SynkConfig { Url = playlistUrl };
+                var playlistEntity = new Playlist
+                {
+                    UserId = UserId.Value,
+                    Freindlyname = playlistName,
+                    Content = content,
+                    Status = PlaylistStatus.Enabled,
+                    SynkConfig = synkcfg
+                };
                 await _dbContext.Playlist.AddAsync(playlistEntity, cancellationToken);
 
                 var res = await _dbContext.SaveChangesAsync(cancellationToken);

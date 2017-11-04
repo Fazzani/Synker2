@@ -22,36 +22,33 @@ namespace hfa.WebApi.Models.Playlists
 
         public PlaylistStatus Status { get; set; }
 
-        public TvgMedia[] TvgMedias { get; set; }
+        public List<TvgMedia> TvgMedias { get; set; }
 
-        //Playlist<TvgMedia> _playlist;
-
-        //public Playlist<TvgMedia> PlaylistObject
-        //{
-        //    get
-        //    {
-        //        if (_playlist == null)
-        //            _playlist = new Playlist<TvgMedia>(TvgMedias);
-        //        return _playlist;
-        //    }
-        //}
+        public string Url { get; set; }
 
         public DateTime CreatedDate { get; private set; }
         public DateTime UpdatedDate { get; private set; }
         public int Id { get; private set; }
         public Guid UniqueId { get; private set; }
+        public bool SynkEpg { get; internal set; }
+        public SynkGroupEnum SynkGroup { get; internal set; }
+        public bool SynkLogos { get; internal set; }
 
         public static PlaylistModel ToModel(Playlist pl) => new PlaylistModel
         {
             Cron = pl.SynkConfig?.Cron,
             Freindlyname = pl.Freindlyname,
-            Status= pl.Status,
+            Status = pl.Status,
             TvgMedias = pl.TvgMedias,
             CreatedDate = pl.CreatedDate,
             Id = pl.Id,
             UpdatedDate = pl.UpdatedDate,
             UserId = pl.UserId,
-            UniqueId = pl.UniqueId
+            UniqueId = pl.UniqueId,
+            SynkEpg = pl.SynkConfig.SynkEpg,
+            SynkGroup = pl.SynkConfig.SynkGroup,
+            SynkLogos = pl.SynkConfig.SynkLogos,
+            Url = pl.SynkConfig.Url
         };
     }
 }

@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PlaylistManager.Entities;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -37,19 +38,19 @@ namespace hfa.Synker.Service.Entities.Playlists
 
         TvgMedia[] _tvgMedias;
         [NotMapped]
-        public TvgMedia[] TvgMedias
+        public List<TvgMedia> TvgMedias
         {
             get
             {
                 if (_tvgMedias != null)
-                    return _tvgMedias;
+                    return _tvgMedias.ToList();
 
                 if (string.IsNullOrEmpty(Content))
                     return null;
 
                 _tvgMedias = JsonConvert.DeserializeObject<TvgMedia[]>(Content);
 
-                return _tvgMedias;
+                return _tvgMedias.ToList();
             }
         }
 
@@ -65,6 +66,9 @@ namespace hfa.Synker.Service.Entities.Playlists
                 return _playlist;
             }
         }
+
+        [NotMapped]
+        public bool IsSynchronizable => SynkConfig != null && !string.IsNullOrEmpty(SynkConfig.Url);
 
         public override int GetHashCode() => (UserId ^ Id).GetHashCode();
 

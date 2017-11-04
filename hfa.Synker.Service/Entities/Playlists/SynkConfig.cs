@@ -19,6 +19,8 @@ namespace hfa.Synker.Service.Entities.Playlists
         public SynkGroupEnum SynkGroup { get; set; } = SynkGroupEnum.None;
 
         public bool CleanName { get; set; }
+
+        public string Url { get; set; }
     }
 
     public enum SynkGroupEnum : byte
