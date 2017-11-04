@@ -10,7 +10,7 @@ namespace hfa.Synker.Service.Services.Playlists
     public interface IPlaylistService
     {
         Task<IEnumerable<Playlist>> ListByUserAsync(int userId);
-        Task SynkPlaylist(Func<Playlist> getPlaylist, FileProvider provider, bool force = false,
+        Task<Playlist> SynkPlaylist(Func<Playlist> getPlaylist, FileProvider provider, bool force = false,
             CancellationToken cancellationToken = default(CancellationToken));
     }
 }

@@ -46,7 +46,7 @@ namespace hfa.Synker.Service.Services.Playlists
         /// <param name="force"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task SynkPlaylist(Func<Playlist> getPlaylist, FileProvider provider, bool force = false,
+        public async Task<Playlist> SynkPlaylist(Func<Playlist> getPlaylist, FileProvider provider, bool force = false,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             //var pl = await _dbcontext.Playlist.FindAsync(id);
@@ -56,6 +56,7 @@ namespace hfa.Synker.Service.Services.Playlists
             if (!pl.IsSynchronizable)
                 throw new ApplicationException($"Playlist isn't synchronizable");
 
+            var newMedias = new List<TvgMedia>();
             using (var playlist = new Playlist<TvgMedia>(provider))
             {
                 var sourceList = await playlist.PullAsync(cancellationToken);
@@ -69,14 +70,22 @@ namespace hfa.Synker.Service.Services.Playlists
                     {
                         _logger.LogInformation($"Treating media  => {media.Name} : {media.Url}");
 
-                        if (await pl.PlaylistObject.AllAsync(x => x != media))
+                        if (pl.PlaylistObject!=null && await pl.PlaylistObject.AllAsync(x => x != media))
                         {
                             pl.TvgMedias.Add(media);
                         }
+                        else
+                        {
+                            newMedias.Add(media);
+                        }
                     }
                 }
-                pl.Content = JsonConvert.SerializeObject(sourceList.ToArray());
+                if (newMedias.Any())
+                    pl.Content = JsonConvert.SerializeObject(newMedias.ToArray());
+                else
+                    pl.Content = JsonConvert.SerializeObject(pl.TvgMedias);
             }
+            return pl;
         }
 
         /// <summary>

@@ -23,6 +23,8 @@ using hfa.WebApi.Models.Playlists;
 using System.Net.Http;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
+using System.Diagnostics;
+using System.Text;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -69,11 +71,13 @@ namespace Hfa.WebApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("files/{id:guid:required}")]
-        public async Task<IActionResult> GetFile(Guid id, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
+        [HttpGet("files/{id:required}")]
+        public async Task<IActionResult> GetFile(string id, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
           [FromQuery] string provider = "m3u", CancellationToken cancellationToken = default(CancellationToken))
         {
-            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == id);
+            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
+
+            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
             if (playlist == null)
                 return NotFound(id);
 
@@ -131,6 +135,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("create/{provider}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Import(string playlistName, string playlistUrl, string provider, IFormFile file, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
             CancellationToken cancellationToken)
         {
@@ -163,9 +168,9 @@ namespace Hfa.WebApi.Controllers
                 }
             }
 
-            await SavePlaylist(playlistName, providerType, playlistStream, playlistUrl, cancellationToken);
+            var pl = await SavePlaylist(playlistName, providerType, playlistStream, playlistUrl, cancellationToken);
 
-            return NoContent();
+            return Ok(UTF8Encoding.UTF8.EncodeBase64(pl.UniqueId.ToString()));
         }
 
         /// <summary>
@@ -182,7 +187,7 @@ namespace Hfa.WebApi.Controllers
             CancellationToken cancellationToken)
         {
             //Vérifier si la playlist existe-elle avant 
-
+            var stopwatch = Stopwatch.StartNew();
             var optionsProvider = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(playlistPostModel.Provider, StringComparison.InvariantCultureIgnoreCase));
             if (optionsProvider == null)
                 return BadRequest($"Not supported Provider : {playlistPostModel.Provider}");
@@ -196,7 +201,7 @@ namespace Hfa.WebApi.Controllers
             {
                 var playlistStream = await httpClient.GetStreamAsync(playlistPostModel.PlaylistUrl);
                 var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
-                await _playlistService.SynkPlaylist(() => new Playlist
+                var pl = await _playlistService.SynkPlaylist(() => new Playlist
                 {
                     UserId = UserId.Value,
                     Freindlyname = playlistPostModel.PlaylistName,
@@ -204,13 +209,16 @@ namespace Hfa.WebApi.Controllers
                     SynkConfig = new SynkConfig { Url = playlistPostModel.PlaylistUrl }
                 }, providerInstance, cancellationToken: cancellationToken);
 
+                await _dbContext.Playlist.AddAsync(pl);
                 var res = await _dbContext.SaveChangesAsync(cancellationToken);
-            }
 
-            return NoContent();
+                stopwatch.Stop();
+                _logger.LogInformation($"Elapsed time : {stopwatch.Elapsed.ToString("c")}");
+                return Ok(UTF8Encoding.UTF8.EncodeBase64(pl.UniqueId.ToString()));
+            }
         }
 
-        private async Task SavePlaylist(string playlistName, Type providerType, Stream playlistStream, string playlistUrl, CancellationToken cancellationToken)
+        private async Task<Playlist> SavePlaylist(string playlistName, Type providerType, Stream playlistStream, string playlistUrl, CancellationToken cancellationToken)
         {
             var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
 
@@ -231,6 +239,7 @@ namespace Hfa.WebApi.Controllers
                 await _dbContext.Playlist.AddAsync(playlistEntity, cancellationToken);
 
                 var res = await _dbContext.SaveChangesAsync(cancellationToken);
+                return playlistEntity;
             }
         }
 

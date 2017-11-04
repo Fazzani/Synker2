@@ -16,7 +16,7 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
         }
 
         /// <summary>
-        /// Update Group and Tags selon la config sauvegradée dans l'elastic 
+        /// Update Group and Tags selon la config sauvegardée dans l'elastic 
         /// </summary>
         /// <param name="tvgMedia"></param>
         public override void HandleTvgMedia(TvgMedia tvgMedia)

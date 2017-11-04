@@ -171,8 +171,11 @@ namespace hfa.WebApi
             app.UseResponseCompression();
 
             loggerFactory.AddFile(Configuration.GetSection("Logging"));
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            if (env.IsDevelopment())
+            {
+                loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+                loggerFactory.AddDebug();
+            }
             var log = loggerFactory.CreateLogger<Startup>();
 
             try
