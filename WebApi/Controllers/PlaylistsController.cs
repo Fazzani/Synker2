@@ -71,7 +71,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("files/{id:required}")]
+        [HttpGet("files/{id:required}", Name = nameof(GetFile))]
         public async Task<IActionResult> GetFile(string id, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
           [FromQuery] string provider = "m3u", CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -125,55 +125,6 @@ namespace Hfa.WebApi.Controllers
         }
 
         /// <summary>
-        /// Add new Upload playlist
-        /// </summary>
-        /// <param name="fromType"></param>
-        /// <param name="playlistUrl">if playlist not null the file param will ignored</param>
-        /// <param name="toType"></param>
-        /// <param name="file"></param>
-        /// <param name="providersOptions"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("create/{provider}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Import(string playlistName, string playlistUrl, string provider, IFormFile file, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
-            CancellationToken cancellationToken)
-        {
-            if (string.IsNullOrEmpty(playlistName))
-            {
-                throw new ArgumentNullException(nameof(provider));
-            }
-
-            if (string.IsNullOrEmpty(playlistName))
-            {
-                playlistName = file.FileName.Replace(Path.GetExtension(file.FileName), string.Empty); //TODO : catch all ArgumentException et les passer en BadRequest
-            }
-            //Vérifier si la playlist existe-elle avant 
-
-            var optionsProvider = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(provider, StringComparison.InvariantCultureIgnoreCase));
-            if (optionsProvider == null)
-                return BadRequest($"Not supported Provider : {provider}");
-
-            var providerType = Type.GetType(optionsProvider.Type, false, true);
-            if (providerType == null)
-                return BadRequest($"Provider type not found : {provider}");
-
-            var playlistStream = file.OpenReadStream();
-            if (string.IsNullOrEmpty(playlistUrl))
-            {
-                //Download playlist from url
-                using (var httpClient = new HttpClient())
-                {
-                    playlistStream = await httpClient.GetStreamAsync(playlistUrl);
-                }
-            }
-
-            var pl = await SavePlaylist(playlistName, providerType, playlistStream, playlistUrl, cancellationToken);
-
-            return Ok(UTF8Encoding.UTF8.EncodeBase64(pl.UniqueId.ToString()));
-        }
-
-        /// <summary>
         /// Add new Upload playlist from url
         /// </summary>
         /// <param name="playlistPostModel"></param>
@@ -214,7 +165,7 @@ namespace Hfa.WebApi.Controllers
 
                 stopwatch.Stop();
                 _logger.LogInformation($"Elapsed time : {stopwatch.Elapsed.ToString("c")}");
-                return Ok(UTF8Encoding.UTF8.EncodeBase64(pl.UniqueId.ToString()));
+                return CreatedAtRoute(nameof(GetFile), new { id = UTF8Encoding.UTF8.EncodeBase64(pl.UniqueId.ToString()) }, null);
             }
         }
 

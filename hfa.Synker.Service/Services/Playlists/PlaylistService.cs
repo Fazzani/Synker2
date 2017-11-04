@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using PlaylistBaseLibrary.ChannelHandlers;
 using PlaylistManager.Entities;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -56,30 +57,34 @@ namespace hfa.Synker.Service.Services.Playlists
             if (!pl.IsSynchronizable)
                 throw new ApplicationException($"Playlist isn't synchronizable");
 
-            var newMedias = new List<TvgMedia>();
+            var newMedias = new BlockingCollection<TvgMedia>();
             using (var playlist = new Playlist<TvgMedia>(provider))
             {
                 var sourceList = await playlist.PullAsync(cancellationToken);
                 //Faire passer les handlers
                 var handler = FabricHandleMedias(_elasticConnectionClient, pl.SynkConfig);
 
-                foreach (var media in sourceList)
-                {
-                    handler.HandleTvgMedia(media);
-                    if (media.IsValid)
-                    {
-                        _logger.LogInformation($"Treating media  => {media.Name} : {media.Url}");
+                var tasks = sourceList.AsParallel().Select(async media =>
+                  {
+                      handler.HandleTvgMedia(media);
+                      if (media.IsValid)
+                      {
+                          _logger.LogInformation($"Treating media  => {media.Name} : {media.Url}");
 
-                        if (pl.PlaylistObject!=null && await pl.PlaylistObject.AllAsync(x => x != media))
-                        {
-                            pl.TvgMedias.Add(media);
-                        }
-                        else
-                        {
-                            newMedias.Add(media);
-                        }
-                    }
-                }
+                          if (pl.PlaylistObject != null || await pl.PlaylistObject.AnyAsync(x => x == media))
+                          {
+                              newMedias.Add(media);
+                          }
+                          else
+                          {
+                              pl.TvgMedias.Add(media);
+                          }
+                      }
+                  }
+                  ).ToArray();
+
+                await Task.WhenAll(tasks);
+
                 if (newMedias.Any())
                     pl.Content = JsonConvert.SerializeObject(newMedias.ToArray());
                 else
