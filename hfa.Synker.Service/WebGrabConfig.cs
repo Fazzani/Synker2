@@ -29,10 +29,11 @@ namespace hfa.Synker.Service.Services.Xmltv
     [XmlRoot(ElementName = "channel")]
     public class SitePackChannel
     {
+        private string _country;
+
         [XmlIgnore]
         public string id { get; set; }
         [XmlAttribute(AttributeName = "update")]
-        [JsonIgnore]
         public string Update { get; set; }
         [XmlAttribute(AttributeName = "site")]
         public string Site { get; set; }
@@ -42,6 +43,22 @@ namespace hfa.Synker.Service.Services.Xmltv
         public string Xmltv_id { get; set; }
         [XmlText]
         public string Channel_name { get; set; }
+        [XmlIgnore]
+        public string Source { get; set; }
+        [XmlIgnore]
+        public string Country
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_country) && !string.IsNullOrEmpty(Source))
+                {
+                    var tab = Source.Split('/');
+                    _country = tab[tab.Length - 2];
+                }
+                return _country;
+            }
+        }
+        public override string ToString() => $"{Channel_name} {id} {Country}";
     }
 
     [XmlRoot(ElementName = "settings")]

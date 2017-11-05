@@ -1,4 +1,5 @@
-﻿using hfa.Synker.Service.Services.Elastic;
+﻿using hfa.Synker.Service.Elastic;
+using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Services.TvgMediaHandlers;
 using hfa.Synker.Services.Messages;
 using Hfa.SyncLibrary.Infrastructure;
@@ -64,6 +65,7 @@ namespace Hfa.SyncLibrary
                 .AddLogging()
                 .AddOptions()
                 .Configure<ApplicationConfigData>(Configuration)
+                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                 .AddSingleton<IMessagesService, IMessagesService>()
                 .AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                 .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()

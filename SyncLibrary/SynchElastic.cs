@@ -25,6 +25,7 @@ using hfa.Synker.Services.Entities.Messages;
 using hfa.Synker.Services.Messages;
 using hfa.Synker.Service.Services.TvgMediaHandlers;
 using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Elastic;
 
 [assembly: InternalsVisibleTo("hfa.synker.batch.test")]
 namespace SyncLibrary
@@ -35,6 +36,7 @@ namespace SyncLibrary
         static IMessagesService _messagesService;
         static IElasticConnectionClient _elasticClient;
         static ApplicationConfigData _config;
+        private static IOptions<ElasticConfig> _elastiConfig;
 
         public static void Main(string[] args)
         {
@@ -43,6 +45,7 @@ namespace SyncLibrary
             try
             {
                 _config = Init.ServiceProvider.GetService<IOptions<ApplicationConfigData>>().Value;
+                _elastiConfig = Init.ServiceProvider.GetService<IOptions<ElasticConfig>>();
                 _elasticClient = Init.ServiceProvider.GetService<IElasticConnectionClient>();
                 _messagesService = Init.ServiceProvider.GetService<IMessagesService>();
 
@@ -149,8 +152,8 @@ namespace SyncLibrary
                             if (newMedias.Any())
                             {
                                 //Push to Elastic
-                                var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(config.DefaultIndex).CreateMany(newMedias,
-                                    (bd, q) => bd.Index(config.DefaultIndex)), token);
+                                var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(_elastiConfig.Value.DefaultIndex).CreateMany(newMedias,
+                                    (bd, q) => bd.Index(_elastiConfig.Value.DefaultIndex)), token);
                                 responseBulk.AssertElasticResponse();
                             }
                         }
@@ -191,8 +194,8 @@ namespace SyncLibrary
                 var tvModel = (tv)ser.Deserialize(response);
 
                 //Sync Elastic
-                var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(config.DefaultIndex)
-                .CreateMany(tvModel.channel, (bd, q) => bd.Index(config.DefaultIndex)), token);
+                var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(_elastiConfig.Value.DefaultIndex)
+                .CreateMany(tvModel.channel, (bd, q) => bd.Index(_elastiConfig.Value.DefaultIndex)), token);
                 responseBulk.AssertElasticResponse();
             }
             catch (Exception ex)
@@ -293,7 +296,7 @@ namespace SyncLibrary
             var contextHandler = Init.ServiceProvider.GetService<IContextTvgMediaHandler>();
             var cleanNameHandler = new TvgMediaCleanNameHandler(contextHandler);
             var groupHandler = new TvgMediaGroupMatcherHandler(contextHandler);
-            var epgHandler = new TvgMediaEpgMatcherNameHandler(contextHandler, elasticConnectionClient);
+            var epgHandler = new TvgMediaEpgMatcherNameHandler(contextHandler, elasticConnectionClient, _elastiConfig);
             var langHandler = new TvgMediaLangMatcherHandler(contextHandler);
 
             langHandler.SetSuccessor(groupHandler);

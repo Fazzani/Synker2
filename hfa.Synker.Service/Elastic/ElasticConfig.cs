@@ -12,7 +12,7 @@ namespace hfa.Synker.Service.Elastic
         public string ElasticPassword { get;  set; }
         public string DefaultIndex { get;  set; }
         public double RequestTimeout { get;  set; }
-        public string SitePackIndex { get; internal set; }
-        public string MessageIndex { get; internal set; }
+        public string SitePackIndex { get; set; }
+        public string MediaRefIndex { get; set; }
     }
 }

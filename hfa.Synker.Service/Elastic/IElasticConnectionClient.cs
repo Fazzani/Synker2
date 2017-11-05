@@ -8,7 +8,7 @@ namespace hfa.Synker.Service.Services.Elastic
         ElasticClient Client { get; }
 
         void DeleteDefaultIndex();
-        void MappingConfig();
+        void MappingPlaylistConfig();
 
         ElasticConfig ElasticConfig { get; }
     }

@@ -11,20 +11,35 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
 {
     public class ContextTvgMediaHandler : IContextTvgMediaHandler
     {
+        private MediaConfiguration _mediaConfig;
+        private IElasticConnectionClient _elasticConnectionClient;
+
         public ContextTvgMediaHandler(IElasticConnectionClient elasticConnectionClient)
         {
             LastLang = "Ar";
-
-            var responseMediaConfig = elasticConnectionClient.Client.SearchAsync<MediaConfiguration>(x => x.From(0).Size(1)).GetAwaiter().GetResult();
-            if (responseMediaConfig.Documents.Any())
-                MediaConfiguration = responseMediaConfig.Documents.FirstOrDefault();
+            _elasticConnectionClient = elasticConnectionClient;
         }
 
         public string LastLang { get; set; }
-        public string StartChannelsHeadLineLastMatched { get; set; }
-        public MediaConfiguration MediaConfiguration { get; internal set; }
-    }
 
+        public string StartChannelsHeadLineLastMatched { get; set; }
+
+        public MediaConfiguration MediaConfiguration
+        {
+            get
+            {
+                if (_mediaConfig == null)
+                {
+                    var responseMediaConfig = _elasticConnectionClient.Client.SearchAsync<MediaConfiguration>(x => x.From(0).Size(1)).GetAwaiter().GetResult();
+                    if (responseMediaConfig.Documents.Any())
+                        _mediaConfig = responseMediaConfig.Documents.FirstOrDefault();
+                    else
+                        _mediaConfig = new MediaConfiguration();
+                }
+                return _mediaConfig;
+            }
+        }
+    }
 
     public class StartChannelsHeadLinePattern
     {

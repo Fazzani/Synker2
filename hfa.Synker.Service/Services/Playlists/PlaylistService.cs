@@ -1,10 +1,12 @@
 ﻿using hfa.PlaylistBaseLibrary.Providers;
+using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Entities.Playlists;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Services.TvgMediaHandlers;
 using hfa.Synker.Services.Dal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using PlaylistBaseLibrary.ChannelHandlers;
 using PlaylistManager.Entities;
@@ -25,14 +27,16 @@ namespace hfa.Synker.Service.Services.Playlists
         private IElasticConnectionClient _elasticConnectionClient;
         private IContextTvgMediaHandler _contextHandler;
         private ILogger _logger;
+        private IOptions<ElasticConfig> _elasticConfig;
 
         public PlaylistService(SynkerDbContext synkerDbContext, IElasticConnectionClient elasticConnectionClient,
-            IContextTvgMediaHandler contextHandler, ILoggerFactory loggerFactory)
+            IContextTvgMediaHandler contextHandler, ILoggerFactory loggerFactory, IOptions<ElasticConfig> elasticConfig)
         {
             _dbcontext = synkerDbContext;
             _elasticConnectionClient = elasticConnectionClient;
             _contextHandler = contextHandler;
             _logger = loggerFactory.CreateLogger(nameof(PlaylistService));
+            _elasticConfig = elasticConfig;
         }
 
         public async Task<IEnumerable<Playlist>> ListByUserAsync(int userId)
@@ -68,8 +72,7 @@ namespace hfa.Synker.Service.Services.Playlists
                   {
                       handler.HandleTvgMedia(media);
                       return media;
-                  }
-                  ).WithCancellation(cancellationToken);
+                  }).WithCancellation(cancellationToken);
 
                 if (newMedias.Any())
                     pl.Content = JsonConvert.SerializeObject(newMedias.Where(x => x.IsValid).ToArray());
@@ -86,7 +89,7 @@ namespace hfa.Synker.Service.Services.Playlists
 
             var cleanNameHandler = new TvgMediaCleanNameHandler(_contextHandler);
             var groupHandler = new TvgMediaGroupMatcherHandler(_contextHandler);
-            var epgHandler = new TvgMediaEpgMatcherNameHandler(_contextHandler, elasticConnectionClient);
+            var epgHandler = new TvgMediaEpgMatcherNameHandler(_contextHandler, elasticConnectionClient, _elasticConfig);
             var langHandler = new TvgMediaLangMatcherHandler(_contextHandler);
 
             langHandler.SetSuccessor(groupHandler);
