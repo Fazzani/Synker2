@@ -25,6 +25,7 @@ using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 using System.Diagnostics;
 using System.Text;
+using System.Net.Http.Headers;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -84,9 +85,11 @@ namespace Hfa.WebApi.Controllers
             using (var ms = new MemoryStream())
             using (var sourceProvider = FileProvider.Create(provider, providersOptions.Value, ms))
             using (var pl = new Playlist<TvgMedia>(sourceProvider))
+            using (var sourcePl = new Playlist<TvgMedia>(playlist.TvgMedias))
             {
-                await pl.PushAsync(playlist.PlaylistObject, cancellationToken);
+                //var sourcePl = await sourceProvider.PullAsync(cancellationToken);
                 ms.Seek(0, SeekOrigin.Begin);
+                await pl.PushAsync(sourcePl, cancellationToken);
                 return File(ms.GetBuffer(), "text/plain");
             }
         }
@@ -132,9 +135,9 @@ namespace Hfa.WebApi.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("create")]
+        [Route("synk")]
         [ValidateModel]
-        public async Task<IActionResult> ImportFromUrl(PlaylistPostModel playlistPostModel, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
+        public async Task<IActionResult> Synk(PlaylistPostModel playlistPostModel, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
             CancellationToken cancellationToken)
         {
             //Vérifier si la playlist existe-elle avant 
@@ -152,15 +155,20 @@ namespace Hfa.WebApi.Controllers
             {
                 var playlistStream = await httpClient.GetStreamAsync(playlistPostModel.PlaylistUrl);
                 var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
-                var pl = await _playlistService.SynkPlaylist(() => new Playlist
+
+                var playlist = _dbContext.Playlist.FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.PlaylistUrl) ?? new Playlist
                 {
                     UserId = UserId.Value,
                     Freindlyname = playlistPostModel.PlaylistName,
                     Status = PlaylistStatus.Enabled,
-                    SynkConfig = new SynkConfig { Url = playlistPostModel.PlaylistUrl }
-                }, providerInstance, cancellationToken: cancellationToken);
+                    SynkConfig = new SynkConfig { Url = playlistPostModel.PlaylistUrl, Provider = playlistPostModel.Provider }
+                };
 
-                await _dbContext.Playlist.AddAsync(pl);
+                var pl = await _playlistService.SynkPlaylist(() => playlist, providerInstance, cancellationToken: cancellationToken);
+
+                if (playlist.UniqueId == default(Guid))
+                    await _dbContext.Playlist.AddAsync(pl);
+
                 var res = await _dbContext.SaveChangesAsync(cancellationToken);
 
                 stopwatch.Stop();

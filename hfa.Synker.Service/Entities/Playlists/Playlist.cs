@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using System.Linq;
 
 namespace hfa.Synker.Service.Entities.Playlists
@@ -54,18 +55,23 @@ namespace hfa.Synker.Service.Entities.Playlists
             }
         }
 
-        Playlist<TvgMedia> _playlist;
+        //Playlist<TvgMedia> _playlist;
 
-        [NotMapped]
-        public Playlist<TvgMedia> PlaylistObject
-        {
-            get
-            {
-                if (_playlist == null && TvgMedias != null)
-                    _playlist = new Playlist<TvgMedia>(TvgMedias);
-                return _playlist;
-            }
-        }
+        //[NotMapped]
+        //public Playlist<TvgMedia> PlaylistObject
+        //{
+        //    get
+        //    {
+        //        if (_playlist == null && TvgMedias != null)
+        //        {
+        //            using (var ms = new MemoryStream())
+        //            {
+        //                _playlist = new Playlist<TvgMedia>(ms);
+        //            }
+        //        }
+        //        return _playlist;
+        //    }
+        //}
 
         [NotMapped]
         public bool IsSynchronizable => SynkConfig != null && !string.IsNullOrEmpty(SynkConfig.Url);

@@ -21,12 +21,15 @@ namespace hfa.Synker.Service.Entities.Playlists
         public bool CleanName { get; set; }
 
         public string Url { get; set; }
+
+        public string Provider { get; set; } = "m3u";
     }
 
     public enum SynkGroupEnum : byte
     {
         None = 0,
         ByCountry = 1,
-        ByLanguage = 2
+        ByLanguage = 2,
+        Custom = 3
     }
 }
