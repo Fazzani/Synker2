@@ -16,7 +16,8 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
         private IElasticConnectionClient _elasticClient;
         private ElasticConfig _elasticConfig;
 
-        public TvgMediaEpgMatcherNameHandler(IContextTvgMediaHandler contextTvgMediaHandler, IElasticConnectionClient elasticClient, IOptions<ElasticConfig> elasticConfig) : base(contextTvgMediaHandler)
+        public TvgMediaEpgMatcherNameHandler(IContextTvgMediaHandler contextTvgMediaHandler, IElasticConnectionClient elasticClient, 
+            IOptions<ElasticConfig> elasticConfig) : base(contextTvgMediaHandler)
         {
             _elasticClient = elasticClient;
             _elasticConfig = elasticConfig.Value;
@@ -25,8 +26,8 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
         //TODO: Passer par l'index filebeat // log_webGrabber
         public override void HandleTvgMedia(TvgMedia tvgMedia)
         {
-            var result = _elasticClient.Client.SearchAsync<MediaRef>(x => x.Index(_elasticConfig.MediaRefIndex).From(0).Size(1)
-            .Query(q => q.Match(m => m.Field(f => f.DisplayNames).Query(tvgMedia.Name)))).GetAwaiter().GetResult();
+            var result = _elasticClient.Client.Search<MediaRef>(x => x.Index(_elasticConfig.MediaRefIndex).From(0).Size(1)
+            .Query(q => q.Match(m => m.Field(f => f.DisplayNames).Query(tvgMedia.Name))));
             //var result = ElasticConnectionClient.Client.SearchAsync<tvChannel>(x => x.Query(q => q.Fuzzy(m => m.Field(f => f.displayname).Fuzziness(Nest.Fuzziness.EditDistance(2)).Value(tvgMedia.Name)))).GetAwaiter().GetResult();
             if (result.Documents.Any())
             {

@@ -87,7 +87,6 @@ namespace Hfa.WebApi.Controllers
             using (var pl = new Playlist<TvgMedia>(sourceProvider))
             using (var sourcePl = new Playlist<TvgMedia>(playlist.TvgMedias))
             {
-                //var sourcePl = await sourceProvider.PullAsync(cancellationToken);
                 ms.Seek(0, SeekOrigin.Begin);
                 await pl.PushAsync(sourcePl, cancellationToken);
                 return File(ms.GetBuffer(), "text/plain");
