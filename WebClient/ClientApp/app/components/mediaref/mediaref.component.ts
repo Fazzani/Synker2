@@ -5,37 +5,37 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
-import { XmltvService } from '../../services/xmltv/xmltv.service';
 import { CommonService, Constants } from '../../services/common/common.service';
 import { Observable } from "rxjs/Observable";
 import { ElasticQuery } from "../../types/elasticQuery.type";
 import 'rxjs/add/observable/fromEvent';
 import { distinctUntilChanged, merge, debounceTime } from 'rxjs/operators';
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
-import { sitePackChannel } from '../../types/sitepackchannel.type';
+import { MediaRefService } from '../../services/mediaref/mediaref.service';
+import { mediaRef } from '../../types/mediaref.type';
 
 @Component({
-    selector: 'xmltv',
-    templateUrl: './xmltv.component.html',
-    providers: [XmltvService, CommonService]
+    selector: 'mediaref',
+    templateUrl: './mediaref.component.html',
+    providers: [MediaRefService, CommonService]
 })
-/** media component*/
-export class XmltvComponent implements OnInit, OnDestroy {
+/** mediaref component*/
+export class MediaRefComponent implements OnInit, OnDestroy {
     subscriptionTableEvent: Subscription;
 
-    displayedColumns = ['site_id', 'site', 'xmltv_id', 'channel_name'];
+    displayedColumns = ['logo','displayNames', 'groups', 'cultures', 'mediaType'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
-    dataSource: XmltvDataSource | null;
-    currentItem: sitePackChannel | null;
+    dataSource: MediaRefDataSource | null;
+    currentItem: mediaRef | null;
 
     /** media ctor */
-    constructor(private xmltvService: XmltvService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar) { }
+    constructor(private mediaRefService: MediaRefService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar) { }
 
     /** Called by Angular after media component initialized */
     ngOnInit(): void {
-        let storedQuery = this.commonService.JsonToObject<ElasticQuery>(localStorage.getItem(Constants.LS_MediaQueryKey));
+        let storedQuery = this.commonService.JsonToObject<ElasticQuery>(localStorage.getItem(Constants.LS_MediaRefQueryKey));
         console.log("storedQuery ", storedQuery);
 
         this.paginator.pageIndex = storedQuery != null ? Math.floor(storedQuery.from / storedQuery.size) : 0;
@@ -44,7 +44,7 @@ export class XmltvComponent implements OnInit, OnDestroy {
         this.filter.nativeElement.value = storedQuery != null && storedQuery.query != null && storedQuery.query != {} ? JSON.stringify(storedQuery.query) : "";
         storedQuery = null;
 
-        this.dataSource = new XmltvDataSource(this.xmltvService, this.paginator);
+        this.dataSource = new MediaRefDataSource(this.mediaRefService, this.paginator);
 
         this.subscriptionTableEvent = this.paginator.page.asObservable()
             .merge(Observable.fromEvent<EventTargetLike>(this.filter.nativeElement, 'keyup'))
@@ -63,19 +63,19 @@ export class XmltvComponent implements OnInit, OnDestroy {
             });
     }
 
-    openDialog(spChannel: sitePackChannel): void {
-        let dialogRef = this.dialog.open(XmltvModifyDialog, {
+    openDialog(spChannel: mediaRef): void {
+        let dialogRef = this.dialog.open(MediaRefModifyDialog, {
             width: '550px',
             height: '500px',
             data: spChannel
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.snackBar.open(spChannel.channel_name + " was modified", "", { duration: 400 });
+            this.snackBar.open(spChannel.displayNames[0] + " was modified", "", { duration: 400 });
         });
     }
 
-    update(spChannel: sitePackChannel): void {
+    update(spChannel: mediaRef): void {
         console.log(spChannel);
     }
 
@@ -85,13 +85,13 @@ export class XmltvComponent implements OnInit, OnDestroy {
 }
 
 @Component({
-    selector: 'xmltv-modify-dialog',
-    templateUrl: './xmltv.dialog.html'
+    selector: 'mediaref-modify-dialog',
+    templateUrl: './mediaref.dialog.html'
 })
-export class XmltvModifyDialog {
+export class MediaRefModifyDialog {
 
     constructor(
-        public dialogRef: MatDialogRef<XmltvModifyDialog>,
+        public dialogRef: MatDialogRef<MediaRefModifyDialog>,
         @Inject(MAT_DIALOG_DATA) public data: any) { }
 
     onNoClick(): void {
@@ -103,9 +103,9 @@ export class XmltvModifyDialog {
 /**
  * Media datasource for mat-table component
  */
-export class XmltvDataSource extends DataSource<sitePackChannel> {
+export class MediaRefDataSource extends DataSource<mediaRef> {
 
-    medias = new BehaviorSubject<sitePackChannel[]>([]);
+    medias = new BehaviorSubject<mediaRef[]>([]);
 
     _filterChange = new BehaviorSubject<Object | string>({});
     get filter(): Object | string { return this._filterChange.value; }
@@ -115,7 +115,7 @@ export class XmltvDataSource extends DataSource<sitePackChannel> {
     get paginator(): MatPaginator { return this._paginator.value; }
     set paginator(paginator: MatPaginator) { this._paginator.next(paginator); }
 
-    constructor(private xmltvService: XmltvService, private mdPaginator: MatPaginator) {
+    constructor(private mediaRefService: MediaRefService, private mdPaginator: MatPaginator) {
         super();
 
         this.paginator = mdPaginator;
@@ -126,13 +126,13 @@ export class XmltvDataSource extends DataSource<sitePackChannel> {
             .subscribe((x) => this.getData());
     }
 
-    connect(): Observable<sitePackChannel[]> { return this.medias.asObservable() };
+    connect(): Observable<mediaRef[]> { return this.medias.asObservable() };
 
     /**
      * Get medias list from webapi
      * @returns Obersvable<tvChannel[]>
      */
-    getData(): Observable<sitePackChannel[]> {
+    getData(): Observable<mediaRef[]> {
         let pageSize = this.paginator.pageSize === undefined ? 25 : this.paginator.pageSize;
         let query = <ElasticQuery>{
             from: pageSize * this.paginator.pageIndex,
@@ -148,7 +148,7 @@ export class XmltvDataSource extends DataSource<sitePackChannel> {
             query.query = this.filter;
         }
         localStorage.setItem(Constants.LS_MediaQueryKey, JSON.stringify(query));
-        let res = this.xmltvService.listSitePack(query).map((v, i) => {
+        let res = this.mediaRefService.list(query).map((v, i) => {
             console.log("recup epg ", v);
             this._paginator.value.length = v.total;
             return v.result;

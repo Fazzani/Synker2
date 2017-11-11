@@ -11,9 +11,7 @@ import { Observable } from "rxjs/Observable";
 import { ElasticQuery } from "../../types/elasticQuery.type";
 import { tvChannel } from "../../types/xmltv.type";
 import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/merge';
+import { map, catchError, merge, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
 
 @Component({

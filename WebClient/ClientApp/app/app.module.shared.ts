@@ -29,6 +29,8 @@ import { NavBarModule } from './components/shared/navbar/navbar';
 import { BASE_URL, BASE_API_URL, BASE_WS_URL } from './variables';
 import { TokenInterceptor } from './services/auth/token.interceptor';
 import { DefaultHttpInterceptor } from './infrastructure/DefaultHttpInterceptor'
+import { MediaRefService } from './services/mediaref/mediaref.service';
+import { MediaRefModifyDialog, MediaRefComponent } from './components/mediaref/mediaref.component';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -36,6 +38,7 @@ const appRoutes: Routes = [
     { path: 'tvgmedia', component: MediaComponent, canActivate: [LoginRouteGuard] },
     { path: 'epg', component: EpgComponent, canActivate: [LoginRouteGuard] },
     { path: 'xmltv', component: XmltvComponent, canActivate: [LoginRouteGuard] },
+    { path: 'mediaref', component: MediaRefComponent, canActivate: [LoginRouteGuard] },
     { path: 'signin', component: DialogComponent },
     { path: 'register', component: DialogComponent },
     { path: '**', redirectTo: 'home' }
@@ -46,13 +49,15 @@ const appRoutes: Routes = [
         AppComponent,
         HomeComponent,
         MediaComponent,
+        MediaRefComponent,
         EpgComponent,
         XmltvComponent,
         TvgMediaModifyDialog,
         EpgModifyDialog,
         DialogComponent,
         LoginDialog,
-        RegisterDialog
+        RegisterDialog,
+        MediaRefModifyDialog
     ],
     imports: [
         BrowserModule,
@@ -65,7 +70,7 @@ const appRoutes: Routes = [
         ReactiveFormsModule,
         RouterModule.forRoot(appRoutes, { enableTracing: false })
     ],
-    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog],
+    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, MediaRefModifyDialog],
     providers: [
         CommonService,
         TvgMediaService,
@@ -75,6 +80,7 @@ const appRoutes: Routes = [
         XmltvService,
         AuthService,
         LoginRouteGuard,
+        MediaRefService,
         EpgService,
         {
             provide: HTTP_INTERCEPTORS,

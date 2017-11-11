@@ -6,8 +6,7 @@ import { Message } from "../../types/message.type";
 
 // All the RxJS stuff we need
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
+import { map, catchError } from 'rxjs/operators';
 import { RequestOptions } from "@angular/http/http";
 import { HttpHeaders } from "@angular/common/http";
 import * as variables from "../../variables";

@@ -7,9 +7,7 @@ import { AuthResponse, User, RegisterUser, Login } from '../../types/auth.type';
 import { JwtHelper, tokenNotExpired } from 'angular2-jwt';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/switchMap';
+import { map, catchError, switchMap } from 'rxjs/operators';
 import * as variables from "../../variables";
 
 @Injectable()

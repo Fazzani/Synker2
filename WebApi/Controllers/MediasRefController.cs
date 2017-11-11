@@ -34,7 +34,7 @@ namespace Hfa.WebApi.Controllers
         [Route("_search")]
         public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
         {
-            return await SearchAsync<MediaRef>(request.ToString(), nameof(MediaRef), cancellationToken);
+            return await SearchAsync<MediaRef>(request.ToString(), nameof(MediaRef).ToLowerInvariant(), cancellationToken);
         }
 
         [HttpPost]

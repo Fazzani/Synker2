@@ -6,8 +6,7 @@ import { tvChannel } from "../../types/xmltv.type";
 import { sitePackChannel } from '../../types/sitepackchannel.type';
 // All the RxJS stuff we need
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
+import { map, catchError } from 'rxjs/operators';
 import * as variables from '../../variables';
 
 @Injectable()
