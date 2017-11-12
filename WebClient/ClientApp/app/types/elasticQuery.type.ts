@@ -116,3 +116,11 @@ export interface PagedResultBase {
 export interface PagedResult<T> extends PagedResultBase {
     Results: Array<T>;
 }
+
+export interface ElasticAggregations {
+    key: string,
+    keyAsString: null,
+    docCount: number,
+    docCountErrorUpperBound: any,
+    aggregations: any
+}

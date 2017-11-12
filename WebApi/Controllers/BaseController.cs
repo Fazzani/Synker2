@@ -17,6 +17,7 @@ using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 
+
 namespace Hfa.WebApi.Controllers
 {
     public class BaseController : Controller

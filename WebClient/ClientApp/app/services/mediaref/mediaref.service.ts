@@ -1,7 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BaseService } from '../base/base.service';
-import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
+import { ElasticQuery, ElasticResponse, ElasticAggregations } from "../../types/elasticQuery.type";
 
 // All the RxJS stuff we need
 import { Observable } from 'rxjs/Observable';
@@ -37,6 +37,16 @@ export class MediaRefService extends BaseService {
         return this.http.post(variables.BASE_API_URL + 'mediasref/save', medias).map(res => {
             return res;
         }).catch(this.handleError);
+    }
+    /**
+     * Get Group or filter by group name
+     * @param {string} filter group name not required 
+     * @returns
+     */
+    groups(filter: string): Observable<ElasticAggregations> {
+        return this.http.post(variables.BASE_API_URL + 'mediasref/groups', filter).map(res => {
+            return res;
+            }).catch(this.handleError);
     }
 
 }

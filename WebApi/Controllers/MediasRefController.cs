@@ -13,7 +13,9 @@ using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Services.Xmltv;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Entities.MediasRef;
-
+using static Hfa.WebApi.Controllers.Constants;
+using hfa.WebApi.Models;
+using Hfa.WebApi.Common;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Hfa.WebApi.Controllers
@@ -39,24 +41,41 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [Route("groups")]
-        public async Task<IActionResult> GroupsAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> GroupsAsync([FromBody]ElasticQueryAggrRequest query, CancellationToken cancellationToken)
         {
-            var response = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
+            ISearchResponse<MediaRef> response = null;
+            if (query != null)
+            {
+                response = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
                  .Index(_elasticConfig.MediaRefIndex)
-                 .Size(0)
-                 .Aggregations(a => a
-                     .Terms("groups_aggr", te => te
-                        .Size(ElasticMaxResult)
-                         .Field(f => f.Groups.Suffix("keyword"))
-                         .Order(TermsOrder.TermAscending)
-                     )
-                 )
+                 .Size(query.Size)
+                 .Query(x => x.Match(m => m.Field(f => f.Groups.Suffix(ELK_KEYWORD_SUFFIX)).Query(query.Filter)))
               , cancellationToken);
 
-            if (!response.IsValid)
-                return BadRequest(response.DebugInformation);
+                if (!response.IsValid)
+                    return BadRequest(response.DebugInformation);
 
-            return new OkObjectResult(response.Aggs);
+                return new OkObjectResult(response.GetResultListModel());
+            }
+            else
+            {
+                response = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
+                     .Index(_elasticConfig.MediaRefIndex)
+                     .Size(0)
+                     .Aggregations(a => a
+                         .Terms("groups_aggr", te => te
+                            .Size(ElasticMaxResult)
+                             .Field(f => f.Groups.Suffix(ELK_KEYWORD_SUFFIX))
+                             .Order(TermsOrder.TermAscending)
+                         )
+                     )
+                  , cancellationToken);
+
+                if (!response.IsValid)
+                    return BadRequest(response.DebugInformation);
+
+                return new OkObjectResult(response.Aggs);
+            }
         }
 
         [HttpPost]
@@ -69,7 +88,7 @@ namespace Hfa.WebApi.Controllers
                .From(0)
                .Aggregations(a => a
                    .Terms("unique", te => te
-                       .Field(f => f.Channel_name.Suffix("keyword"))
+                       .Field(f => f.Channel_name.Suffix(ELK_KEYWORD_SUFFIX))
                        .Order(TermsOrder.TermAscending)
                    )
                )
