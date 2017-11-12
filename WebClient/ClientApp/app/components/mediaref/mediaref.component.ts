@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { CommonService, Constants } from '../../services/common/common.service';
 import { Observable } from "rxjs/Observable";
-import { ElasticQuery } from "../../types/elasticQuery.type";
+import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
 import 'rxjs/add/observable/fromEvent';
 import { distinctUntilChanged, merge, debounceTime } from 'rxjs/operators';
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
@@ -23,7 +23,7 @@ import { mediaRef } from '../../types/mediaref.type';
 export class MediaRefComponent implements OnInit, OnDestroy {
     subscriptionTableEvent: Subscription;
 
-    displayedColumns = ['logo','displayNames', 'groups', 'cultures', 'mediaType'];
+    displayedColumns = ['logo', 'displayNames', 'groups', 'cultures', 'mediaType'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
@@ -76,7 +76,20 @@ export class MediaRefComponent implements OnInit, OnDestroy {
     }
 
     update(spChannel: mediaRef): void {
-        console.log(spChannel);
+
+    }
+
+    synk(): void {
+        this.mediaRefService.synk().subscribe(res => {
+            this.snackBar.open("Medias referentiel was synchronized");
+        });
+    }
+
+    save(): void {
+        console.log("saving mediasref..");
+        this.dataSource.save().subscribe(res => {
+            this.snackBar.open("Medias was saved successfully");
+        });
     }
 
     ngOnDestroy() {
@@ -97,7 +110,6 @@ export class MediaRefModifyDialog {
     onNoClick(): void {
         this.dialogRef.close();
     }
-
 }
 
 /**
@@ -129,8 +141,8 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
     connect(): Observable<mediaRef[]> { return this.medias.asObservable() };
 
     /**
-     * Get medias list from webapi
-     * @returns Obersvable<tvChannel[]>
+     * Get mediasref list from webapi
+     * @returns Obersvable<mediaRef[]>
      */
     getData(): Observable<mediaRef[]> {
         let pageSize = this.paginator.pageSize === undefined ? 25 : this.paginator.pageSize;
@@ -141,12 +153,13 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
         if (typeof this.filter === "string") {
             if (this.filter !== undefined && this.filter != "")
                 query.query = {
-                    match: { "channel_name": this.filter }
+                    match: { "displayNames": this.filter }
                 };
         }
         else {
             query.query = this.filter;
         }
+
         localStorage.setItem(Constants.LS_MediaQueryKey, JSON.stringify(query));
         let res = this.mediaRefService.list(query).map((v, i) => {
             console.log("recup epg ", v);
@@ -155,6 +168,10 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
         });
         res.subscribe(x => { this.medias.next(x); });
         return res;
+    }
+
+    save(): any {
+        return this.mediaRefService.save(this.medias.value);
     }
 
     disconnect() { }

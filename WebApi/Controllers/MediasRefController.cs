@@ -38,6 +38,28 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpPost]
+        [Route("groups")]
+        public async Task<IActionResult> GroupsAsync(CancellationToken cancellationToken)
+        {
+            var response = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
+                 .Index(_elasticConfig.MediaRefIndex)
+                 .Size(0)
+                 .Aggregations(a => a
+                     .Terms("groups_aggr", te => te
+                        .Size(ElasticMaxResult)
+                         .Field(f => f.Groups.Suffix("keyword"))
+                         .Order(TermsOrder.TermAscending)
+                     )
+                 )
+              , cancellationToken);
+
+            if (!response.IsValid)
+                return BadRequest(response.DebugInformation);
+
+            return new OkObjectResult(response.Aggs);
+        }
+
+        [HttpPost]
         [Route("synk")]
         public async Task<IActionResult> SynkAsync(CancellationToken cancellationToken)
         {
@@ -62,7 +84,7 @@ namespace Hfa.WebApi.Controllers
                 descriptor.Index<MediaRef>(op => op.Document(mediaRef));
             }
 
-            var result = _elasticConnectionClient.Client.Bulk(descriptor);
+            var result = _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
             return Ok();
         }
 
@@ -75,6 +97,25 @@ namespace Hfa.WebApi.Controllers
                 return BadRequest(response.DebugInformation);
 
             return new OkObjectResult(response.Source);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Save(List<MediaRef> mediasRef, CancellationToken cancellationToken)
+        {
+            var descriptor = new BulkDescriptor();
+            //foreach (var item in mediasRef)
+            //{
+            //    descriptor.Update<MediaRef>(a => a.Doc(item));
+            //}
+            descriptor.UpdateMany(mediasRef, (a, o) => a.DocAsUpsert());
+            descriptor.Refresh(Elasticsearch.Net.Refresh.True);
+
+            var response = await _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
+
+            if (!response.IsValid)
+                return BadRequest(response.DebugInformation);
+
+            return new OkObjectResult(response.Items);
         }
     }
 }

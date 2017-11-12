@@ -1,14 +1,19 @@
 ﻿<div class="site-container">
     <mat-toolbar color="custom">
         <mat-form-field floatPlaceholder="never">
-            <input matInput #filter placeholder="Filter medias ref...">
+            <input matInput #filter [matAutocomplete]="auto" placeholder="Filter medias ref...">
+            <!--<mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let option of options" [value]="option">
+                    {{ option }}
+                </mat-option>
+            </mat-autocomplete>-->
         </mat-form-field>
         <span class="spacer"></span>
         <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Delete">delete</mat-icon>
+            <mat-icon class="mat-24" aria-label="Save" (click)="save()">save</mat-icon>
         </a>
         <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Synchronize">system_update_alt</mat-icon>
+            <mat-icon class="mat-24" aria-label="Synchronize" (click)="synk()">system_update_alt</mat-icon>
         </a>
     </mat-toolbar>
     <mat-table #table [dataSource]="dataSource" matSort>
