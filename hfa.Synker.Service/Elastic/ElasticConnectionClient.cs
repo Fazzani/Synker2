@@ -8,6 +8,7 @@ using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Services.Xmltv;
 using Microsoft.Extensions.Options;
 using hfa.Synker.Service.Entities.MediasRef;
+using hfa.Synker.Service.Services.Picons;
 
 namespace hfa.Synker.Service.Services.Elastic
 {
@@ -46,6 +47,7 @@ namespace hfa.Synker.Service.Services.Elastic
                 .InferMappingFor<Tvg>(m => m.IdProperty(p => p.Id))
                 .InferMappingFor<tvProgramme>(m => m.IdProperty(p => p.Id).IndexName("xmltv-*"))
                 .InferMappingFor<MediaRef>(m => m.IndexName(_config.MediaRefIndex))
+                .InferMappingFor<Picon>(m => m.IndexName(_config.MediaRefIndex).IdProperty(p => p.Id))
                 .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).IdProperty(p => p.id));
 
             if (!Client.IndexExists(_config.DefaultIndex).Exists)
@@ -94,7 +96,6 @@ namespace hfa.Synker.Service.Services.Elastic
                                  .CharFilters("channel_name_filter", "drop_specChars")
                                  .Tokenizer("standard")
                                  .Filters("lowercase", "standard", "channel_name_token_filter")
-
                              )
                              .Standard("standard", sd => sd.StopWords(stopWords))
                          )
@@ -111,7 +112,7 @@ namespace hfa.Synker.Service.Services.Elastic
                                 .SearchAnalyzer("channel_name_analyzer"))
                              .Object<Tvg>(t => t.Name(n => n.Tvg).Properties(pt => pt.Keyword(k => k.Name(km => km.TvgIdentify))
                                         .Text(tx => tx.Name(txn => txn.Name).Fields(f => f.Keyword(k => k.Name(keywordProperty))))))
-                     ))
+                     )).Map<Picon>(x=>x.AutoMap())
                  ));
         }
 
