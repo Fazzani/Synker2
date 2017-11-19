@@ -21,12 +21,12 @@ namespace hfa.Synker.batch
         {
             await Task.Run(() =>
              {
-                 var listUrl = File.ReadAllLines(options.LocalFilePath).Where(x => !x.StartsWith("#"));
+                 var existedUrls = File.ReadAllLines(options.LocalFilePath).Where(x => !x.StartsWith("#"));
                  var lines = new ConcurrentBag<string>();
 
                  Enumerable.Range(options.From, options.Count)
                      .AsParallel()
-                     .ForAll(i => PingAsync(listUrl, lines, i, options.StreamPattern, logger, token).GetAwaiter().GetResult());
+                     .ForAll(i => PingAsync(existedUrls, lines, i, options.StreamPattern, logger, token).GetAwaiter().GetResult());
 
                  token.ThrowIfCancellationRequested();
 

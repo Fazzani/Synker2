@@ -40,8 +40,8 @@ namespace Hfa.SyncLibrary.Verbs
         {
             get
             {
-                yield return new Example("normal scenario", new ScanPlaylistFileVerb { LocalFilePath = "playlist.m3u", StreamPattern = "http://localhost:56800/api/v1/xmltv/{0}.ts", From = 0, To = 10000, Verbose = true });
-                yield return new Example("minimal scenario", new ScanPlaylistFileVerb { LocalFilePath = "playlist.m3u", StreamPattern = "http://localhost:56800/api/v1/xmltv/{0}.ts", To = 10000 });
+                yield return new Example("normal scenario", new ScanPlaylistFileVerb { LocalFilePath = "playlist.m3u", StreamPattern = "http://localhost:56800/api/v1/xmltv/{0}.ts", From = 0, Count = 10000, Verbose = true });
+                yield return new Example("minimal scenario", new ScanPlaylistFileVerb { LocalFilePath = "playlist.m3u", StreamPattern = "http://localhost:56800/api/v1/xmltv/{0}.ts", Count = 10000 });
             }
         }
 
