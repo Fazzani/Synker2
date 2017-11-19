@@ -110,7 +110,12 @@ namespace hfa.Synker.Service.Services.Elastic
                                 .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
                                 .Analyzer("standard")
                                 .SearchAnalyzer("channel_name_analyzer"))
-                             .Object<Tvg>(t => t.Name(n => n.Tvg).Properties(pt => pt.Keyword(k => k.Name(km => km.TvgIdentify))
+                             .Object<Tvg>(t => t.Name(n => n.Tvg).Properties(pt => 
+                                        pt.Keyword(k => k.Name(km => km.TvgIdentify))
+                                        .Keyword(k => k.Name(km => km.Logo))
+                                        .Keyword(k => k.Name(km => km.Shift))
+                                        .Keyword(k => k.Name(km => km.Aspect_ratio))
+                                        .Keyword(k => k.Name(km => km.Audio_track))
                                         .Text(tx => tx.Name(txn => txn.Name).Fields(f => f.Keyword(k => k.Name(keywordProperty))))))
                      )).Map<Picon>(x=>x.AutoMap())
                  ));

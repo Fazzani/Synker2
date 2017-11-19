@@ -95,17 +95,25 @@ namespace Hfa.WebApi.Controllers
                )
             , cancellationToken);
 
-            var mediasRef = response.Documents.Select(x => new MediaRef(x.Channel_name, x.Site, x.Country, x.Xmltv_id, x.id));
+            var mediasRef = response.Documents.Select(x => new MediaRef(x.Channel_name, x.Site, x.Country, x.Xmltv_id, x.id)).ToList();
+
+            mediasRef.AsParallel().WithCancellation(cancellationToken).ForAll(m =>
+            {
+                var findLogoResponse = _elasticConnectionClient.Client.SearchAsync<Picon>(s => s.Query(q => q.Match(mq => mq.Query(m.DisplayNames.FirstOrDefault()))), cancellationToken).GetAwaiter().GetResult();
+                if (findLogoResponse.Documents.Any())
+                    m.Tvg.Logo = findLogoResponse.Documents.FirstOrDefault().Url;
+            });
 
             var descriptor = new BulkDescriptor();
 
-            foreach (var mediaRef in mediasRef)
-            {
-                descriptor.Index<MediaRef>(op => op.Document(mediaRef));
-            }
+            descriptor.IndexMany(mediasRef);
 
-            var result = _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
-            return Ok();
+            var result = await _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
+
+            if (!result.IsValid)
+                return BadRequest(result.DebugInformation);
+
+            return new OkObjectResult(result.Items);
         }
 
         [HttpGet("{id}")]

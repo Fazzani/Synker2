@@ -73,7 +73,7 @@ namespace hfa.Synker.Service.Services.Picons
         public async Task<IBulkResponse> SynkAsync(IEnumerable<Picon> picons, CancellationToken cancellationToken)
         {
             var descriptor = new BulkDescriptor();
-            descriptor.CreateMany(picons.Distinct(new Picon()), (a, o) => a.Document(o).Id(o.Id));
+            descriptor.IndexMany(picons);
             descriptor.Refresh(Elasticsearch.Net.Refresh.True);
 
             var response = await _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
