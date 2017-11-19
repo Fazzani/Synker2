@@ -26,6 +26,7 @@ using hfa.Synker.Services.Messages;
 using hfa.Synker.Service.Services.TvgMediaHandlers;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
+using hfa.Synker.batch;
 
 [assembly: InternalsVisibleTo("hfa.synker.batch.test")]
 namespace SyncLibrary
@@ -75,7 +76,7 @@ namespace SyncLibrary
         public static async Task ArgsParserAsync(string[] args, IMessagesService messagesService)
         {
             await Parser.Default
-                .ParseArguments<PurgeTempFilesVerb, SyncEpgElasticVerb, SyncMediasElasticVerb, SaveNewConfigVerb, PushXmltvVerb, SendMessageVerb>(args)
+                .ParseArguments<PurgeTempFilesVerb, SyncEpgElasticVerb, SyncMediasElasticVerb, SaveNewConfigVerb, PushXmltvVerb, SendMessageVerb, ScanPlaylistFileVerb>(args)
                 .MapResult(
                  (PurgeTempFilesVerb opts) => PurgeTempFilesVerb.MainPurgeAsync(opts),
                   (SyncEpgElasticVerb opts) => SyncEpgElasticAsync(opts, _elasticClient, _config, ts.Token),
@@ -83,7 +84,13 @@ namespace SyncLibrary
                   (SaveNewConfigVerb opts) => SaveConfigAsync(opts, _config, ts.Token),
                   (PushXmltvVerb opts) => PushXmltvAsync(opts, messagesService, new HttpClient(), _config, ts.Token),
                   (SendMessageVerb opts) => SendMessageAsync(opts, _config, ts.Token),
+                  (ScanPlaylistFileVerb opts) => ScanPlaylist(opts, ts.Token),
                  errs => throw new AggregateException(errs.Select(e => new Exception(e.Tag.ToString()))));
+        }
+
+        public static async Task ScanPlaylist(ScanPlaylistFileVerb options, CancellationToken token = default(CancellationToken))
+        {
+            await new ScanPlaylistService().ScanAsync(options, Logger(nameof(SynchElastic)), token);
         }
 
         /// <summary>

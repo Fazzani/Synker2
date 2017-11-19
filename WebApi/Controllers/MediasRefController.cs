@@ -26,13 +26,11 @@ namespace Hfa.WebApi.Controllers
     public class MediasRefController : BaseController
     {
         private const int ElasticMaxResult = 200000;
-        private IPiconsService _piconsService;
 
-        public MediasRefController(IPiconsService piconsService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
+        public MediasRefController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
-            _piconsService = piconsService;
         }
 
         [HttpPost]
@@ -138,18 +136,6 @@ namespace Hfa.WebApi.Controllers
                 return BadRequest(response.DebugInformation);
 
             return new OkObjectResult(response.Items);
-        }
-
-        [HttpPost("synk/picons")]
-        public async Task<IActionResult> SynkPicons(CancellationToken cancellationToken)
-        {
-            var picons = await _piconsService.GetPiconsFromGithubRepoAsync(new SynkPiconConfig(), cancellationToken);
-            var elasticResponse = await _piconsService.SynkAsync(picons, cancellationToken);
-
-            if (!elasticResponse.IsValid)
-                return BadRequest(elasticResponse.DebugInformation);
-
-            return new OkObjectResult(elasticResponse.Items);
         }
     }
 }
