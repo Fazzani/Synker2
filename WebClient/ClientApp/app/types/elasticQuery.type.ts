@@ -90,8 +90,10 @@ export interface Tvg {
     logo?: string;
     name: string;
     tvgIdentify: string;
+    Shift: string;
+    Audio_track: string;
+    Aspect_ratio: string;
 }
-
 
 /**
  * PageResultBase

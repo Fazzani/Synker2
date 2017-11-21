@@ -15,7 +15,7 @@ namespace hfa.Synker.Service.Services.Elastic
     public class ElasticConnectionClient : IElasticConnectionClient
     {
         // internal const string SitePackIndexName = "sitepack";
-        
+
         private ConnectionSettings _settings;
         private ElasticClient _client;
         private static object syncRoot = new Object();
@@ -110,14 +110,14 @@ namespace hfa.Synker.Service.Services.Elastic
                                 .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
                                 .Analyzer("standard")
                                 .SearchAnalyzer("channel_name_analyzer"))
-                             .Object<Tvg>(t => t.Name(n => n.Tvg).Properties(pt => 
+                             .Object<Tvg>(t => t.Name(n => n.Tvg).Properties(pt =>
                                         pt.Keyword(k => k.Name(km => km.TvgIdentify))
                                         .Keyword(k => k.Name(km => km.Logo))
                                         .Keyword(k => k.Name(km => km.Shift))
                                         .Keyword(k => k.Name(km => km.Aspect_ratio))
                                         .Keyword(k => k.Name(km => km.Audio_track))
                                         .Text(tx => tx.Name(txn => txn.Name).Fields(f => f.Keyword(k => k.Name(keywordProperty))))))
-                     )).Map<Picon>(x=>x.AutoMap())
+                     )).Map<Picon>(x => x.AutoMap())
                  ));
         }
 
@@ -203,7 +203,8 @@ namespace hfa.Synker.Service.Services.Elastic
                 {
                     lock (syncRoot)
                     {
-                        _client = new ElasticClient(_settings);
+                        if (_client == null)
+                            _client = new ElasticClient(_settings);
                     }
                 }
                 return _client;

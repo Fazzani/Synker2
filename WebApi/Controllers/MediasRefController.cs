@@ -97,12 +97,14 @@ namespace Hfa.WebApi.Controllers
 
             var mediasRef = response.Documents.Select(x => new MediaRef(x.Channel_name, x.Site, x.Country, x.Xmltv_id, x.id)).ToList();
 
-            mediasRef.AsParallel().WithCancellation(cancellationToken).ForAll(m =>
-            {
-                var findLogoResponse = _elasticConnectionClient.Client.SearchAsync<Picon>(s => s.Query(q => q.Match(mq => mq.Query(m.DisplayNames.FirstOrDefault()))), cancellationToken).GetAwaiter().GetResult();
-                if (findLogoResponse.Documents.Any())
-                    m.Tvg.Logo = findLogoResponse.Documents.FirstOrDefault().Url;
-            });
+            var tasks = mediasRef.Select(async m =>
+           {
+               var findLogoResponse = await _elasticConnectionClient.Client.SearchAsync<Picon>(s => s.Query(q => q.Match(mq => mq.Field("name").Query(m.DisplayNames.FirstOrDefault()))), cancellationToken);
+               if (findLogoResponse.Documents.Any())
+                   m.Tvg.Logo = findLogoResponse.Documents.FirstOrDefault().RawUrl;
+           });
+
+            await Task.WhenAll(tasks);
 
             var descriptor = new BulkDescriptor();
 

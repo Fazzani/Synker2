@@ -19,11 +19,14 @@ namespace hfa.Synker.Service.Services.Picons
         public string ApiUrl { get; set; } = "https://api.github.com";
     }
 
-    public class Picon: IEqualityComparer<Picon>
+    public class Picon : IEqualityComparer<Picon>
     {
         public string Id => Url.Remove(0, Url.LastIndexOf('/') + 1);
         public string Path { get; set; }
         public string Url { get; set; }
+
+        public string RawUrl => $"{Url.Remove(Url.IndexOf("git/blobs")).Replace("api.github.com/repos", "raw.githubusercontent.com")}master/logosChannels/{Path}";
+
         public string Name => Path.Remove(GetExtentionIndex(Path));
 
         public bool Equals(Picon x, Picon y)
