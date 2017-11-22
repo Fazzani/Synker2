@@ -97,11 +97,27 @@ namespace Hfa.WebApi.Controllers
 
             var mediasRef = response.Documents.Select(x => new MediaRef(x.Channel_name, x.Site, x.Country, x.Xmltv_id, x.id)).ToList();
 
+            //var qc = new QueryContainerDescriptor<Picon>();
+
+            //var query = mediasRef.SelectMany(x => x.DisplayNames.Take(2))
+            //    .Select(val => qc.Fuzzy(fz => fz.Field(f => f.Name).Value(val.Replace("+", "plus")))).Aggregate((a, b) => a || b);
+
+            //var query = mediasRef.Select(x => x.DisplayNames.FirstOrDefault())
+            //    .Select(val => qc.Fuzzy(fz => fz.Field(f => f.Name).Value(val.Replace("+", "plus")))).FirstOrDefault();
+
+            //var searchPiconDisc = new SearchDescriptor<Picon>()
+            //    .Size(1)
+            //    .Query(x => query);
+
             var tasks = mediasRef.Select(async m =>
            {
-               var findLogoResponse = await _elasticConnectionClient.Client.SearchAsync<Picon>(s => s.Query(q => q.Match(mq => mq.Field("name").Query(m.DisplayNames.FirstOrDefault()))), cancellationToken);
+               var findLogoResponse = await _elasticConnectionClient.Client.SearchAsync<Picon>(x =>
+               x.Query(q => q.Match(fz => 
+                         fz.Field(f => f.Name)
+                            .Query(m.DisplayNames.FirstOrDefault()))).Size(1), cancellationToken);
+
                if (findLogoResponse.Documents.Any())
-                   m.Tvg.Logo = findLogoResponse.Documents.FirstOrDefault().RawUrl;
+                   m.Tvg.Logo = findLogoResponse.Documents.First().RawUrl;
            });
 
             await Task.WhenAll(tasks);

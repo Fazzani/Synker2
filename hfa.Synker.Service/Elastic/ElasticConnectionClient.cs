@@ -20,7 +20,7 @@ namespace hfa.Synker.Service.Services.Elastic
         private ElasticClient _client;
         private static object syncRoot = new Object();
         ILoggerFactory _loggerFactory;
-        static string[] stopWords = { "hd", "sd", "fhd", "ar", "fr", "fr:", "ar:", "1080p", "720p", "(fr)", "(ar)", "+1", "+2", "+4", "+6", "+8", "arb", "vip" };
+        static string[] stopWords = { "hd", "sd", "fhd", "ar", "fr", "fr:", "ar:", "1080p", "720p", "(fr)", "(ar)", "+1", "+2", "+4", "+6", "+8", "arb", "vip", "it", "my" };
         private ElasticConfig _config;
 
         public ElasticConnectionClient(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory)
@@ -67,35 +67,17 @@ namespace hfa.Synker.Service.Services.Elastic
             var keywordProperty = new PropertyName("keyword");
             var response = Client.CreateIndex(indexName, c => c
             .Settings(s => s
-            .Setting("analysis.char_filter.drop_specChars.type", "pattern_replace")
-            .Setting("analysis.char_filter.drop_specChars.pattern", "\\bbeinsports?\\b")
-            .Setting("analysis.char_filter.drop_specChars.replacement", "beIN sports")
-            .Setting("analysis.char_filter.drop_specChars.flags", "CASE_INSENSITIVE|COMMENTS")
                      .Analysis(a => a
-                         .CharFilters(cf => cf
-                             .Mapping("channel_name_filter", mca => mca
-                                 .Mappings(new[]
-                                 {
-                                    "low => \\u0020",
-                                    "sd => \\u0020",
-                                    "+2 => \\u0020",
-                                    "+1 => \\u0020",
-                                    "+4 => \\u0020",
-                                    "+6 => \\u0020",
-                                    "+8 => \\u0020",
-                                    "(fr) => fr",
-                                    "1080p fhd => FHD",
-                                    "720p hd => HD",
-                                    "arb, (arb) => ar"
-                                 })
-                             ).PatternReplace("channel_name_filter_regex", pat => pat.Pattern("^(.+):(.+)$").Replacement("$2"))
-                         )
-                         .TokenFilters(t => t.Stop("channel_name_token_filter", ss => ss.StopWords(stopWords)))
+                         .TokenFilters(t => t.NGram("autocomplete_filter", auf => auf.MinGram(1).MaxGram(25)).Stop("channel_name_token_filter", ss => ss.StopWords(stopWords)))
+                         .Tokenizers(tk => tk.Pattern("pattern_mediaref", ptk => ptk.Pattern(@"\W+|plus").Flags("CASE_INSENSITIVE|COMMENTS")))
                          .Analyzers(an => an
-                             .Custom("channel_name_analyzer", ca => ca
-                                 .CharFilters("channel_name_filter", "drop_specChars")
-                                 .Tokenizer("standard")
-                                 .Filters("lowercase", "standard", "channel_name_token_filter")
+                             .Custom("autocomplete_analyzer", ca => ca
+                                 .Tokenizer("pattern_mediaref")
+                                 .Filters("lowercase", "channel_name_token_filter", "autocomplete_filter")
+                             )
+                             .Custom("mediaref_name_analyzer", ca => ca
+                                 .Tokenizer("pattern_mediaref")
+                                 .Filters("lowercase", "standard")
                              )
                              .Standard("standard", sd => sd.StopWords(stopWords))
                          )
@@ -108,8 +90,8 @@ namespace hfa.Synker.Service.Services.Elastic
                               .Text(t => t
                                 .Name(pt => pt.DisplayNames)
                                 .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
-                                .Analyzer("standard")
-                                .SearchAnalyzer("channel_name_analyzer"))
+                                .Analyzer("mediaref_name_analyzer")
+                                .SearchAnalyzer("mediaref_name_analyzer"))
                              .Object<Tvg>(t => t.Name(n => n.Tvg).Properties(pt =>
                                         pt.Keyword(k => k.Name(km => km.TvgIdentify))
                                         .Keyword(k => k.Name(km => km.Logo))
@@ -117,7 +99,15 @@ namespace hfa.Synker.Service.Services.Elastic
                                         .Keyword(k => k.Name(km => km.Aspect_ratio))
                                         .Keyword(k => k.Name(km => km.Audio_track))
                                         .Text(tx => tx.Name(txn => txn.Name).Fields(f => f.Keyword(k => k.Name(keywordProperty))))))
-                     )).Map<Picon>(x => x.AutoMap())
+                     )).Map<Picon>(x => x.Properties(p =>
+                                p.Keyword(t => t.Name(pt => pt.Path))
+                                 .Keyword(t => t.Name(pt => pt.RawUrl))
+                                 .Keyword(t => t.Name(pt => pt.Url))
+                                 .Text(t => t
+                                  .Name(pt => pt.Name)
+                                  .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
+                                  .Analyzer("mediaref_name_analyzer")
+                                  .SearchAnalyzer("autocomplete_analyzer"))))
                  ));
         }
 

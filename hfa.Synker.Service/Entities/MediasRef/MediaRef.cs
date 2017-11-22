@@ -1,6 +1,7 @@
 ﻿using PlaylistManager.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace hfa.Synker.Service.Entities.MediasRef
@@ -18,9 +19,17 @@ namespace hfa.Synker.Service.Entities.MediasRef
 
         public MediaRef()
         {
-            DisplayNames = new List<string>();
+            DisplayNames = new List<string> ();
             Groups = new List<string>();
-            Cultures = new List<string>();
+            Cultures = new List<string> { "en" };
+            Tvg = new Tvg();
+        }
+
+        public MediaRef(string name)
+        {
+            DisplayNames = new List<string> { name };
+            Groups = new List<string>();
+            Cultures = new List<string> { "en" };
             Tvg = new Tvg();
         }
 
@@ -30,6 +39,8 @@ namespace hfa.Synker.Service.Entities.MediasRef
         //TODO: GET culture code from this api https://restcountries.eu/rest/v2/name/{countryName}
         public List<string> Cultures { get; set; }
         public string MediaType { get; set; } = MediaTypes.Video;
+
+        public override int GetHashCode() => DisplayNames.FirstOrDefault().GetHashCode() ^ Cultures.FirstOrDefault().GetHashCode() ^ MediaType.GetHashCode();
     }
 
     public static class MediaTypes
