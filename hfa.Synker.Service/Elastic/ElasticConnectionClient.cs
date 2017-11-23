@@ -67,13 +67,21 @@ namespace hfa.Synker.Service.Services.Elastic
             var keywordProperty = new PropertyName("keyword");
             var response = Client.CreateIndex(indexName, c => c
             .Settings(s => s
+
                      .Analysis(a => a
-                         .TokenFilters(t => t.NGram("autocomplete_filter", auf => auf.MinGram(1).MaxGram(25)).Stop("channel_name_token_filter", ss => ss.StopWords(stopWords)))
-                         .Tokenizers(tk => tk.Pattern("pattern_mediaref", ptk => ptk.Pattern(@"\W+|plus").Flags("CASE_INSENSITIVE|COMMENTS")))
+                     .CharFilters(cf => cf
+                             .PatternReplace("picons_name_filter_regex", pat => pat.Pattern("^\\s+|\\s+$|\\s+(?=\\s)").Replacement(""))
+                         )
+                         .TokenFilters(t => t.EdgeNGram("autocomplete_filter", auf => auf.MinGram(2).MaxGram(15))
+                                            .Stop("channel_name_token_filter", ss => ss.StopWords(stopWords))
+                                            .WordDelimiter("piconWordDelimiter", wd => wd.CatenateAll(true)))
+                         .Tokenizers(tk => tk.Pattern("pattern_mediaref", ptk => ptk.Pattern(@"\W+|plus").Flags("CASE_INSENSITIVE|COMMENTS"))
+                                            .Pattern("pattern_mediaref_autocomplete", ptk => ptk.Pattern(@"\\w\\s$").Flags("CASE_INSENSITIVE|COMMENTS")))
                          .Analyzers(an => an
                              .Custom("autocomplete_analyzer", ca => ca
-                                 .Tokenizer("pattern_mediaref")
-                                 .Filters("lowercase", "channel_name_token_filter", "autocomplete_filter")
+                                 .Tokenizer("pattern_mediaref_autocomplete")
+                                 .CharFilters("picons_name_filter_regex")
+                                 .Filters("lowercase", "piconWordDelimiter", "autocomplete_filter")
                              )
                              .Custom("mediaref_name_analyzer", ca => ca
                                  .Tokenizer("pattern_mediaref")
@@ -142,7 +150,7 @@ namespace hfa.Synker.Service.Services.Elastic
                          .TokenFilters(t => t.Stop("channel_name_token_filter", ss => ss.StopWords(stopWords)))
                          .Analyzers(an => an
                              .Custom("channel_name_analyzer", ca => ca
-                                 .CharFilters("channel_name_filter", "drop_specChars")
+                                 .CharFilters("channel_name_filter", "drop_specChars", "channel_name_filter_regex")
                                  .Tokenizer("standard")
                                  .Filters("lowercase", "standard", "channel_name_token_filter")
 

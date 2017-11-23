@@ -21,7 +21,7 @@ namespace hfa.Synker.Service.Entities.MediasRef
         {
             DisplayNames = new List<string> ();
             Groups = new List<string>();
-            Cultures = new List<string> { "en" };
+            Cultures = new List<string>();
             Tvg = new Tvg();
         }
 
