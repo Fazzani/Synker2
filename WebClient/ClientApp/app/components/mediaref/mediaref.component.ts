@@ -153,7 +153,7 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
         if (typeof this.filter === "string") {
             if (this.filter !== undefined && this.filter != "")
                 query.query = {
-                    match: { "displayNames": this.filter }
+                    match: { "_all" : this.filter }
                 };
         }
         else {

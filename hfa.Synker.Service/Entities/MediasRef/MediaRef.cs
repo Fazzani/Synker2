@@ -6,7 +6,7 @@ using System.Text;
 
 namespace hfa.Synker.Service.Entities.MediasRef
 {
-    public class MediaRef
+    public class MediaRef : IEqualityComparer<MediaRef>
     {
         public MediaRef(string displayName, string group, string culture, string xmltv_id, string site_idAndXmltv_id, string mediaType = MediaTypes.Video)
         {
@@ -15,11 +15,12 @@ namespace hfa.Synker.Service.Entities.MediasRef
             Cultures = new List<string> { culture };
             MediaType = mediaType;
             Tvg = new Tvg { Name = displayName, Id = xmltv_id, TvgIdentify = site_idAndXmltv_id };
+            Id = site_idAndXmltv_id;
         }
 
         public MediaRef()
         {
-            DisplayNames = new List<string> ();
+            DisplayNames = new List<string>();
             Groups = new List<string>();
             Cultures = new List<string>();
             Tvg = new Tvg();
@@ -32,7 +33,7 @@ namespace hfa.Synker.Service.Entities.MediasRef
             Cultures = new List<string> { "en" };
             Tvg = new Tvg();
         }
-
+        public string Id { get; set; }
         public List<string> DisplayNames { get; set; }
         public Tvg Tvg { get; set; }
         public List<string> Groups { get; set; }
@@ -41,6 +42,43 @@ namespace hfa.Synker.Service.Entities.MediasRef
         public string MediaType { get; set; } = MediaTypes.Video;
 
         public override int GetHashCode() => DisplayNames.FirstOrDefault().GetHashCode() ^ Cultures.FirstOrDefault().GetHashCode() ^ MediaType.GetHashCode();
+
+
+        public override bool Equals(object obj)
+        {
+            var m = obj as MediaRef;
+            if (m == null)
+                return false;
+            return GetHashCode() == m.GetHashCode();
+        }
+
+        public bool Equals(MediaRef x, MediaRef y)
+        {
+            if (object.ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            // If one object null the return false
+            if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
+            {
+                return false;
+            }
+
+            return x.GetHashCode() == y.GetHashCode();
+        }
+
+        public int GetHashCode(MediaRef obj)
+        {
+            if (object.ReferenceEquals(obj, null))
+            {
+                return 0;
+            }
+
+            return obj.DisplayNames.FirstOrDefault().GetHashCode() ^ obj.Cultures.FirstOrDefault().GetHashCode() ^ obj.MediaType.GetHashCode();
+        }
+
+        public override string ToString() => $"{Id} : {DisplayNames.FirstOrDefault()} : {Cultures.FirstOrDefault()}";
     }
 
     public static class MediaTypes

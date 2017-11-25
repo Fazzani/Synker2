@@ -141,7 +141,7 @@ export class EpgDataSource extends DataSource<tvChannel> {
         if (typeof this.filter === "string") {
             if (this.filter !== undefined && this.filter != "")
                 query.query = {
-                    match: { "displayname": this.filter }
+                    match: { "_all": this.filter }
                 };
         }
         else {

@@ -33,6 +33,7 @@ using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Services.TvgMediaHandlers;
 using PlaylistBaseLibrary.ChannelHandlers;
 using hfa.Synker.Service.Services.Picons;
+using hfa.Synker.Service.Services.MediaRefs;
 
 namespace hfa.WebApi
 {
@@ -67,6 +68,7 @@ namespace hfa.WebApi
                .AddScoped<IXmltvService, XmltvService>()
                .AddScoped<IPiconsService, PiconsService>()
                .AddScoped<IPlaylistService, PlaylistService>()
+               .AddScoped<IMediaRefService, MediaRefService>()
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))

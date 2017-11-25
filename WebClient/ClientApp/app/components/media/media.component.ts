@@ -179,7 +179,7 @@ export class MediaDataSource extends DataSource<TvgMedia> {
         if (typeof this.filter === "string") {
             if (this.filter !== undefined && this.filter != "")
                 query.query = {
-                    match: { "name": this.filter }
+                    match: { "_all": this.filter }
                 };
         }
         else {

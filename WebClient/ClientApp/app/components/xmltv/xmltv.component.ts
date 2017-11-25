@@ -141,7 +141,7 @@ export class XmltvDataSource extends DataSource<sitePackChannel> {
         if (typeof this.filter === "string") {
             if (this.filter !== undefined && this.filter != "")
                 query.query = {
-                    match: { "channel_name": this.filter }
+                    match: { "_all": this.filter }
                 };
         }
         else {

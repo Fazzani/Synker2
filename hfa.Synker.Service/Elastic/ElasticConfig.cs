@@ -14,5 +14,8 @@ namespace hfa.Synker.Service.Elastic
         public double RequestTimeout { get;  set; }
         public string SitePackIndex { get; set; }
         public string MediaRefIndex { get; set; }
+
+        public int MaxResultWindow { get; internal set; } = 1_000_000;
+        public const string ELK_KEYWORD_SUFFIX = "keyword";
     }
 }
