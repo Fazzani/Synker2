@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Authorization;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Services.Xmltv;
 using hfa.Synker.Service.Elastic;
+using hfa.WebApi.Models.Xmltv;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -45,7 +46,7 @@ namespace Hfa.WebApi.Controllers
         [Route("channels/_search")]
         public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
         {
-            return await SearchAsync<SitePackChannel>(request.ToString(), _elasticConfig.SitePackIndex, cancellationToken);
+            return await SearchAsync<SitePackChannel, SitePackChannelModel>(request.ToString(), _elasticConfig.SitePackIndex, cancellationToken);
         }
 
         /// <summary>

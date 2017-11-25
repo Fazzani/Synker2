@@ -23,7 +23,7 @@ import { mediaRef } from '../../types/mediaref.type';
 export class MediaRefComponent implements OnInit, OnDestroy {
     subscriptionTableEvent: Subscription;
 
-    displayedColumns = ['logo', 'displayNames', 'groups', 'cultures', 'mediaType'];
+    displayedColumns = ['logo', 'displayNames', 'groups', 'cultures', 'mediaType', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
@@ -77,6 +77,13 @@ export class MediaRefComponent implements OnInit, OnDestroy {
 
     update(spChannel: mediaRef): void {
 
+    }
+
+    delete(id: string): void {
+        console.log('id = ', id);
+        this.mediaRefService.delete(id).subscribe(res => {
+            this.snackBar.open("media ref removed");
+        });
     }
 
     synk(): void {
@@ -153,7 +160,7 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
         if (typeof this.filter === "string") {
             if (this.filter !== undefined && this.filter != "")
                 query.query = {
-                    match: { "_all" : this.filter }
+                    match: { "_all": this.filter }
                 };
         }
         else {
@@ -168,6 +175,10 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
         });
         res.subscribe(x => { this.medias.next(x); });
         return res;
+    }
+
+    delete(id: string): Observable<number> {
+        return this.mediaRefService.delete(id);
     }
 
     save(): any {

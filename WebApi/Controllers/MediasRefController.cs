@@ -14,6 +14,8 @@ using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Entities.MediasRef;
 using hfa.WebApi.Models;
 using hfa.Synker.Service.Services.MediaRefs;
+using hfa.SyncLibrary.Global;
+using Hfa.WebApi.Common;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Hfa.WebApi.Controllers
@@ -22,7 +24,6 @@ namespace Hfa.WebApi.Controllers
     [Authorize]
     public class MediasRefController : BaseController
     {
-        private const int ElasticMaxResult = 200000;
         IMediaRefService _mediaRefService;
 
         public MediasRefController(IMediaRefService mediaRefService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
@@ -36,7 +37,7 @@ namespace Hfa.WebApi.Controllers
         [Route("_search")]
         public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
         {
-            return await SearchAsync<MediaRef>(request.ToString(), nameof(MediaRef).ToLowerInvariant(), cancellationToken);
+            return await SearchAsync<MediaRef, MediaRefModel>(request.ToString(), nameof(MediaRef).ToLowerInvariant(), cancellationToken);
         }
 
         [HttpPost]

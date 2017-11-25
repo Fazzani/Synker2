@@ -17,6 +17,7 @@ using hfa.WebApi.Common.Filters;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
+using hfa.WebApi.Models.TvgMedias;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -36,7 +37,7 @@ namespace Hfa.WebApi.Controllers
         [Route("_search")]
         public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
         {
-            return await SearchAsync<TvgMedia>(request.ToString(), cancellationToken);
+            return await SearchAsync<TvgMedia,TvgMediaModel>(request.ToString(), cancellationToken);
         }
 
         // [ElasticResult]
@@ -57,7 +58,7 @@ namespace Hfa.WebApi.Controllers
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);
             //response.AssertElasticResponse();
-            return new OkObjectResult(response.GetResultListModel());
+            return new OkObjectResult(response.GetResultListModel<TvgMedia, TvgMediaModel>());
         }
 
         [HttpGet("{id}")]
@@ -77,7 +78,7 @@ namespace Hfa.WebApi.Controllers
             if (response.Documents.FirstOrDefault() == null)
                 return NotFound();
 
-            return new OkObjectResult(response.GetResultListModel());
+            return new OkObjectResult(response.GetResultListModel<TvgMedia, TvgMediaModel>());
         }
 
         [HttpPost]

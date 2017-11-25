@@ -21,7 +21,18 @@ namespace hfa.Synker.Service.Services.Picons
 
     public class Picon : IEqualityComparer<Picon>
     {
-        public string Id => Url.Remove(0, Url.LastIndexOf('/') + 1);
+        private string _id;
+        public string Id
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_id))
+                    _id = Url.Remove(0, Url.LastIndexOf('/') + 1);
+                return _id;
+            }
+            set { _id = value; }
+        }
+
         public string Path { get; set; }
         public string Url { get; set; }
 

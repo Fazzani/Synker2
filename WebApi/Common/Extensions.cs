@@ -10,12 +10,11 @@ namespace Hfa.WebApi.Common
 {
     public static class Extensions
     {
-        public static IListResultModel<T> GetResultListModel<T>(this Nest.ISearchResponse<T> searchResponse) where T : class
-        => new ListResultModel<T>(searchResponse);
+        public static IListResultModel<T2> GetResultListModel<T, T2>(this Nest.ISearchResponse<T> searchResponse) where T :  class where T2: class, IModel<T, T2>, new()
+        => new ListResultModel<T, T2>(searchResponse);
     }
-
-
 }
+
 namespace System.Linq
 {
     public static class Extentions

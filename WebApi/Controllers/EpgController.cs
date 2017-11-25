@@ -15,6 +15,7 @@ using System.Threading;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
+using hfa.WebApi.Models.Xmltv;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -36,7 +37,7 @@ namespace Hfa.WebApi.Controllers
         [Route("_search")]
         public async Task<IActionResult> Search([FromBody] dynamic request)
         {
-            return await SearchAsync<tvChannel>(request.ToString(), HttpContext.RequestAborted);
+            return await SearchAsync<tvChannel, TvChannelModel>(request.ToString(), HttpContext.RequestAborted);
         }
 
         [HttpPost]
@@ -56,7 +57,7 @@ namespace Hfa.WebApi.Controllers
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);
             //response.AssertElasticResponse();
-            return new OkObjectResult(response.GetResultListModel());
+            return new OkObjectResult(response.GetResultListModel<tvChannel, TvChannelModel>());
         }
 
         [ValidateModel]
@@ -74,7 +75,7 @@ namespace Hfa.WebApi.Controllers
             if (response.Documents.FirstOrDefault() == null)
                 return NotFound();
 
-            return new OkObjectResult(response.GetResultListModel());
+            return new OkObjectResult(response.GetResultListModel<tvChannel, TvChannelModel>());
         }
     }
 }

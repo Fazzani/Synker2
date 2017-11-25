@@ -103,7 +103,6 @@ namespace hfa.Synker.Service.Services.MediaRefs
             return await _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
         }
 
-
         public async Task<List<string>> ListCulturesAsync(CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s

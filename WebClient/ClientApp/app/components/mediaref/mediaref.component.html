@@ -54,11 +54,8 @@
                 <button mat-icon-button color="warn" (click)="openDialog(row)">
                         <mat-icon class="mat-24" aria-label="Edit">edit</mat-icon>
                       </button>
-                <button mat-icon-button color="primary" (click)="update(row)">
-                        <mat-icon class="mat-24" aria-label="">favorite</mat-icon>
-                      </button>
-                <button mat-icon-button color="accent" (click)="update(row)">
-                        <mat-icon class="mat-24" aria-label="">favorite</mat-icon>
+                <button mat-icon-button color="primary" (click)="delete(row.id)">
+                        <mat-icon class="mat-24" aria-label="">delete</mat-icon>
                       </button>
             </mat-cell>
         </ng-container>

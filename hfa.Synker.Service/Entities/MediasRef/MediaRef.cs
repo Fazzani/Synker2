@@ -15,7 +15,6 @@ namespace hfa.Synker.Service.Entities.MediasRef
             Cultures = new List<string> { culture };
             MediaType = mediaType;
             Tvg = new Tvg { Name = displayName, Id = xmltv_id, TvgIdentify = site_idAndXmltv_id };
-            Id = site_idAndXmltv_id;
         }
 
         public MediaRef()
@@ -33,7 +32,7 @@ namespace hfa.Synker.Service.Entities.MediasRef
             Cultures = new List<string> { "en" };
             Tvg = new Tvg();
         }
-        public string Id { get; set; }
+
         public List<string> DisplayNames { get; set; }
         public Tvg Tvg { get; set; }
         public List<string> Groups { get; set; }
@@ -78,7 +77,7 @@ namespace hfa.Synker.Service.Entities.MediasRef
             return obj.DisplayNames.FirstOrDefault().GetHashCode() ^ obj.Cultures.FirstOrDefault().GetHashCode() ^ obj.MediaType.GetHashCode();
         }
 
-        public override string ToString() => $"{Id} : {DisplayNames.FirstOrDefault()} : {Cultures.FirstOrDefault()}";
+        public override string ToString() => $"{DisplayNames.FirstOrDefault()} : {Cultures.FirstOrDefault()}";
     }
 
     public static class MediaTypes

@@ -36,7 +36,8 @@ namespace Hfa.WebApi.Controllers
             _dbContext = context;
         }
 
-        internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query, CancellationToken cancellationToken) where T : class
+        internal virtual protected async Task<IActionResult> SearchAsync<T, T2>([FromBody] string query, CancellationToken cancellationToken)
+            where T : class where T2 : class, IModel<T,T2>, new()
         {
             var response = await _elasticConnectionClient.Client.LowLevel
                 .SearchAsync<SearchResponse<T>>(_elasticConfig.DefaultIndex, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
@@ -45,10 +46,11 @@ namespace Hfa.WebApi.Controllers
                 return BadRequest(response.DebugInformation);
 
             response.Body.AssertElasticResponse();
-            return new OkObjectResult(response.Body.GetResultListModel());
+            return new OkObjectResult(response.Body.GetResultListModel<T, T2>());
         }
 
-        internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query, string indexName, CancellationToken cancellationToken) where T : class
+        internal virtual protected async Task<IActionResult> SearchAsync<T, T2>([FromBody] string query, string indexName, CancellationToken cancellationToken)
+             where T : class where T2 : class, IModel<T, T2>, new()
         {
             var response = await _elasticConnectionClient.Client.LowLevel
                 .SearchAsync<SearchResponse<T>>(indexName, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
@@ -57,7 +59,7 @@ namespace Hfa.WebApi.Controllers
                 return BadRequest(response.DebugInformation);
 
             response.Body.AssertElasticResponse();
-            return new OkObjectResult(response.Body.GetResultListModel());
+            return new OkObjectResult(response.Body.GetResultListModel<T, T2>());
         }
 
         protected static IPromise<IList<ISort>> GetSortDescriptor<T>(SortDescriptor<T> me, Dictionary<string, SortDirectionEnum> dictionary) where T : class

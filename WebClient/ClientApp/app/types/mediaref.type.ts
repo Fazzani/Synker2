@@ -10,4 +10,5 @@ export interface mediaRef {
     groups: Array<string>;
     cultures: Array<string>;
     mediaType: string;
+    id: string;
 }

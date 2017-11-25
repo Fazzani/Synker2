@@ -39,6 +39,12 @@ export class MediaRefService extends BaseService {
         }).catch(this.handleError);
     }
 
+    delete(id: string): Observable<number> {
+        return this.http.delete(variables.BASE_API_URL + 'mediasref/' + id).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
     /**
      * Get Group or filter by group name
      * @param {string} filter group name not required 
