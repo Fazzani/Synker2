@@ -1,4 +1,5 @@
-﻿import { Tvg } from "./elasticQuery.type";
+﻿import { Tvg } from "./media.type";
+
 
 /**
  * mediaRef model

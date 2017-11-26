@@ -94,3 +94,9 @@ mat-toolbar-row {
         transform: translateY(150px);
     }
 }
+.collection {
+    text-align:initial !important;
+    .collection-item {
+        background-color: transparent !important;
+    }
+}

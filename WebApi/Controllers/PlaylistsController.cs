@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using PlaylistManager.Entities;
 using System.Threading;
 using Hfa.WebApi.Models;
-using hfa.SyncLibrary.Global;
-using hfa.WebApi.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.IO;
@@ -25,7 +23,6 @@ using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 using System.Diagnostics;
 using System.Text;
-using System.Net.Http.Headers;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -47,16 +44,15 @@ namespace Hfa.WebApi.Controllers
         /// List Messages
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("search")]
         [ValidateModel]
-        [Route("search")]
         public IActionResult List([FromBody] QueryListBaseModel query, CancellationToken cancellationToken)
         {
             var response = _dbContext.Playlist
                 .Where(x => x.UserId == UserId)
                 .OrderByDescending(x => x.Id)
-                .Select(PlaylistModel.ToModel)
-                .GetPaged(query.PageNumber, query.Skip);
+                .Select(pl => PlaylistModel.ToLightModel(pl, Url))
+                .GetPaged(query.PageNumber, query.PageSize);
 
             return new OkObjectResult(response);
         }
@@ -67,8 +63,7 @@ namespace Hfa.WebApi.Controllers
             var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == id);
             if (playlist == null)
                 return NotFound(id);
-
-            return Ok(PlaylistModel.ToModel(playlist));
+            return Ok(PlaylistModel.ToLightModel(playlist, Url));
         }
 
         [AllowAnonymous]
@@ -190,7 +185,7 @@ namespace Hfa.WebApi.Controllers
                 {
                     UserId = UserId.Value,
                     Freindlyname = playlistName,
-                    Content = content,
+                    Content = UTF8Encoding.UTF8.GetBytes(content),
                     Status = PlaylistStatus.Enabled,
                     SynkConfig = synkcfg
                 };

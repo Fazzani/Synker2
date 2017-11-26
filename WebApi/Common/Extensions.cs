@@ -19,7 +19,7 @@ namespace System.Linq
 {
     public static class Extentions
     {
-        public static PagedResult<T> GetPaged<T>(this IQueryable<T> query, int page, int pageSize) where T : class
+        public static PagedResult<T> GetPaged<T>(this IEnumerable<T> query, int page, int pageSize) where T : class
         {
             var result = new PagedResult<T>
             {
@@ -37,10 +37,10 @@ namespace System.Linq
         }
 
         public static PagedResult<T> GetPaged<T>(this IOrderedQueryable<T> query, int page, int pageSize) where T : class
-            => (query as IQueryable<T>).GetPaged(page, pageSize);
+            => (query as IEnumerable<T>).GetPaged(page, pageSize);
 
-        public static PagedResult<T> GetPaged<T>(this IEnumerable<T> query, int page, int pageSize) where T : class
-            => (query as IQueryable<T>).GetPaged(page, pageSize);
+        public static PagedResult<T> GetPaged<T>(this IQueryable<T> query, int page, int pageSize) where T : class
+            => (query as IEnumerable<T>).GetPaged(page, pageSize);
     }
 }
 namespace System

@@ -60,6 +60,8 @@
     <TypeScriptCompile Include="ClientApp\app\services\notification\notification.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\tvgmedia\tvgmedia.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\epg\epg.service.spec.ts" />
+    <TypeScriptCompile Include="ClientApp\app\types\common.type.ts" />
+    <TypeScriptCompile Include="ClientApp\app\types\media.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\auth.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\elasticQuery.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\xmltv.type.ts" />

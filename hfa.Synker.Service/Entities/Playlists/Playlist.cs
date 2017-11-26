@@ -35,7 +35,7 @@ namespace hfa.Synker.Service.Entities.Playlists
         public PlaylistStatus Status { get; set; }
 
         [Required]
-        public string Content { get; set; }
+        public byte[] Content { get; set; }
 
         TvgMedia[] _tvgMedias;
         [NotMapped]
@@ -46,10 +46,10 @@ namespace hfa.Synker.Service.Entities.Playlists
                 if (_tvgMedias != null)
                     return _tvgMedias.ToList();
 
-                if (string.IsNullOrEmpty(Content))
+                if (!Content.Any())
                     return null;
 
-                _tvgMedias = JsonConvert.DeserializeObject<TvgMedia[]>(Content);
+                _tvgMedias = JsonConvert.DeserializeObject<TvgMedia[]>(System.Text.Encoding.UTF8.GetString(Content));
 
                 return _tvgMedias.ToList();
             }

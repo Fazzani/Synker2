@@ -80,10 +80,12 @@ export class MediaRefComponent implements OnInit, OnDestroy {
     }
 
     delete(id: string): void {
-        console.log('id = ', id);
-        this.mediaRefService.delete(id).subscribe(res => {
-            this.snackBar.open("media ref removed");
-        });
+        this.dataSource.delete(id);
+        /**
+         * .subscribe(res => {
+                this.snackBar.open("media ref removed");
+            });
+         */
     }
 
     synk(): void {
@@ -125,7 +127,6 @@ export class MediaRefModifyDialog {
 export class MediaRefDataSource extends DataSource<mediaRef> {
 
     medias = new BehaviorSubject<mediaRef[]>([]);
-
     _filterChange = new BehaviorSubject<Object | string>({});
     get filter(): Object | string { return this._filterChange.value; }
     set filter(filter: Object | string) { this._filterChange.next(filter); }
@@ -145,7 +146,9 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
             .subscribe((x) => this.getData());
     }
 
-    connect(): Observable<mediaRef[]> { return this.medias.asObservable() };
+    connect(): Observable<mediaRef[]> {
+        return this.medias.asObservable();
+    };
 
     /**
      * Get mediasref list from webapi
@@ -177,12 +180,16 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
         return res;
     }
 
-    delete(id: string): Observable<number> {
-        return this.mediaRefService.delete(id);
+    delete(id: string): void {
+        this.mediaRefService.delete(id).subscribe((res: number) => {
+            var idx = this.medias.value.findIndex(m => m.id == id);
+            this.medias.value.splice(idx, 1);
+            this.medias.next(this.medias.value);
+        });
     }
 
     save(): any {
-        return this.mediaRefService.save(this.medias.value);
+        return this.mediaRefService.save(this.medias.value)
     }
 
     disconnect() { }

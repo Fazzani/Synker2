@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BaseService } from '../base/base.service';
-import { ElasticQuery, ElasticResponse, PagedResult } from "../../types/elasticQuery.type";
+import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
 import { Message } from "../../types/message.type";
 
 // All the RxJS stuff we need
@@ -10,6 +10,7 @@ import { map, catchError } from 'rxjs/operators';
 import { RequestOptions } from "@angular/http/http";
 import { HttpHeaders } from "@angular/common/http";
 import * as variables from "../../variables";
+import { PagedResult } from '../../types/common.type';
 
 @Injectable()
 export class MessageService extends BaseService {

@@ -2,11 +2,20 @@
     <input matInput [(ngModel)]="data.id" placeholder="id...">
 </mat-form-field>
 <mat-form-field>
-    <input matInput [(ngModel)]="data.displayname" placeholder="Name...">
+    <input matInput [(ngModel)]="data.displayNames" placeholder="Name...">
 </mat-form-field>
 <mat-form-field>
-    <input matInput [(ngModel)]="data.icon.src" placeholder="icon...">
-    <img [src]="data.icon.src" class="logo-medium" />
+    <input matInput [(ngModel)]="data.cultures" placeholder="Cultures...">
+</mat-form-field>
+<mat-form-field>
+    <input matInput [(ngModel)]="data.groups" placeholder="Groups...">
+</mat-form-field>
+<mat-form-field>
+    <input matInput [(ngModel)]="data.mediaType" placeholder="MediaType...">
+</mat-form-field>
+<mat-form-field>
+    <input matInput [(ngModel)]="data.tvg.logo" placeholder="icon...">
+    <img [src]="data.tvg.logo" class="logo-medium" />
 </mat-form-field>
 <mat-action-row>
     <button mat-raised-button (click)="dialogRef.close()">Close</button>

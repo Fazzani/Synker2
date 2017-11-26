@@ -13,8 +13,8 @@ import { first, take } from 'rxjs/operators';
 import { EqualValidator } from '../../../directives/equal-validator.directive';
 import { MessageService } from '../../../services/message/message.service';
 import { Subscription } from 'rxjs/Subscription';
-import { PagedResult } from '../../../types/elasticQuery.type';
 import { Message } from '../../../types/message.type';
+import { PagedResult } from '../../../types/common.type';
 
 @Component({
     selector: 'app-navbar',

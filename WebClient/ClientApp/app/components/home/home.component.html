@@ -4,15 +4,25 @@
             <mat-card class="example-card">
                 <mat-card-header>
                     <div mat-card-avatar class="example-header-image"></div>
-                    <mat-card-title>Shiba Inu</mat-card-title>
-                    <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+                    <mat-card-title>Playlists</mat-card-title>
+                    <mat-card-subtitle>Playlists</mat-card-subtitle>
                 </mat-card-header>
-                <!-- <img mat-card-image src="../../../../wwwroot/assets/img/Logomakr_4958qa.png" alt="Photo of a Shiba Inu"> -->
+                <!-- <img mat-card-image src="../../../../wwwroot/assets/img/Lo gomakr_4958qa.png" alt="Photo of a Shiba Inu"> -->
                 <mat-card-content>
-                    <p>
-                        The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan. A small, agile dog that copes
-                        very well with mountainous terrain, the Shiba Inu was originally bred for hunting.
-                    </p>
+                    <ul class="collection">
+                        <li *ngFor="let playlist of playlists?.results" class="collection-item avatar">
+                            <i class="material-icons circle green">insert_chart</i>
+                            <span class="title">{{ playlist.freindlyname }}</span>
+                            <p>
+                                {{playlist.createdDate}}<br />
+                                {{playlist.updatedDate}}<br />
+                                {{playlist.cron}}
+                            </p>
+                            <a [href]="playlist.publicUrl" class="secondary-content" aria-label="detail">
+                                <i class="material-icons">send</i>
+                            </a>
+                        </li>
+                    </ul>
                 </mat-card-content>
                 <mat-card-actions>
                     <button mat-button>LIKE</button>
@@ -43,8 +53,8 @@
     </mat-tab-group>
 
     <span class="done">
-    <button mat-fab>
-        <mat-icon>check circle</mat-icon>
-    </button>
-</span>
+        <button mat-fab>
+            <mat-icon>check circle</mat-icon>
+        </button>
+    </span>
 </div>

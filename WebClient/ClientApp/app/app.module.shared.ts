@@ -31,10 +31,11 @@ import { TokenInterceptor } from './services/auth/token.interceptor';
 import { DefaultHttpInterceptor } from './infrastructure/DefaultHttpInterceptor'
 import { MediaRefService } from './services/mediaref/mediaref.service';
 import { MediaRefModifyDialog, MediaRefComponent } from './components/mediaref/mediaref.component';
+import { PlaylistService } from './services/playlists/playlist.service';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: HomeComponent },
+    { path: 'home', component: HomeComponent, canActivate: [LoginRouteGuard] },
     { path: 'tvgmedia', component: MediaComponent, canActivate: [LoginRouteGuard] },
     { path: 'epg', component: EpgComponent, canActivate: [LoginRouteGuard] },
     { path: 'xmltv', component: XmltvComponent, canActivate: [LoginRouteGuard] },
@@ -81,6 +82,7 @@ const appRoutes: Routes = [
         AuthService,
         LoginRouteGuard,
         MediaRefService,
+        PlaylistService,
         EpgService,
         {
             provide: HTTP_INTERCEPTORS,

@@ -8,11 +8,12 @@ import { Subscription } from 'rxjs/Subscription';
 import { TvgMediaService } from '../../services/tvgmedia/tvgmedia.service';
 import { CommonService, Constants } from '../../services/common/common.service';
 import { Observable } from "rxjs/Observable";
-import { TvgMedia, ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
+import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
 import 'rxjs/add/observable/fromEvent';
 import { map, catchError, merge, debounceTime, distinctUntilChanged, switchMap, startWith } from 'rxjs/operators';
 
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
+import { TvgMedia } from '../../types/media.type';
 
 @Component({
     selector: 'app-media',

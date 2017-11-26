@@ -58,66 +58,6 @@ export interface ElasticResponse<T> {
     result: Array<T>;
 }
 
-/**
- * Tvg media (channel)
- * 
- * @export
- * @interface TvgMedia
- */
-export interface TvgMedia {
-    id: string;
-    name: string;
-    group?: string;
-    position: number;
-    enabled: boolean;
-    mediaType: number;
-    url: string;
-    lang: string;
-    urls: Array<string>;
-    tvg?: Tvg;
-    isValid: boolean;
-    startLineHeader?: string;
-}
-
-/**
- * Tvg channel field
- * 
- * @export
- * @interface Tvg
- */
-export interface Tvg {
-    id: string;
-    logo?: string;
-    name: string;
-    tvgIdentify: string;
-    Shift: string;
-    Audio_track: string;
-    Aspect_ratio: string;
-}
-
-/**
- * PageResultBase
- */
-export interface PagedResultBase {
-    CurrentPage: number;
-    PageCount: number;
-    PageSize: number;
-    RowCount: number;
-    FirstRowOnPage: number;
-    LastRowOnPage: number;
-}
-
-/**
- * PageResult
- * 
- * @export
- * @interface PagedResult
- * @extends {PagedResultBase}
- * @template T 
- */
-export interface PagedResult<T> extends PagedResultBase {
-    Results: Array<T>;
-}
 
 export interface ElasticAggregations {
     key: string,

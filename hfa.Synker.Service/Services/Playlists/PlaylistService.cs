@@ -75,7 +75,7 @@ namespace hfa.Synker.Service.Services.Playlists
                   }).WithCancellation(cancellationToken);
 
                 if (newMedias.Any())
-                    pl.Content = JsonConvert.SerializeObject(newMedias.Where(x => x.IsValid).ToArray());
+                    pl.Content = UTF8Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(newMedias.Where(x => x.IsValid).ToArray()));
             }
             return pl;
         }
