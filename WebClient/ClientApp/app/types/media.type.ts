@@ -1,10 +1,12 @@
-﻿/**
+﻿import { ISelectable } from "./common.type";
+
+/**
  * Tvg media (channel)
  * 
  * @export
  * @interface TvgMedia
  */
-export interface TvgMedia {
+export interface TvgMedia extends ISelectable {
     id: string;
     name: string;
     group?: string;
@@ -25,7 +27,7 @@ export interface TvgMedia {
  * @export
  * @interface Tvg
  */
-export interface Tvg {
+export interface Tvg extends ISelectable {
     id: string;
     logo?: string;
     name: string;
@@ -34,3 +36,4 @@ export interface Tvg {
     Audio_track: string;
     Aspect_ratio: string;
 }
+

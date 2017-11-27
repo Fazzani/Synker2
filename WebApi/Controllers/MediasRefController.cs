@@ -75,6 +75,13 @@ namespace Hfa.WebApi.Controllers
             return new OkObjectResult(response.Source);
         }
 
+        [HttpGet("cultures/{filter}")]
+        public async Task<IActionResult> Cultures(string filter, CancellationToken cancellationToken)
+        {
+            var cultures  =  await _mediaRefService.ListCulturesAsync(filter, cancellationToken);
+            return Ok(cultures);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Save(List<MediaRef> mediasRef, CancellationToken cancellationToken)
         {

@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject, AfterViewInit } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
-import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatTableDataSource } from '@angular/material';
+import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatTableDataSource, MatSelect } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -14,6 +14,9 @@ import { PlaylistModel } from "../../types/playlist.type";
 import { PlaylistService } from "../../services/playlists/playlist.service";
 import { ActivatedRoute } from '@angular/router';
 import { TvgMedia } from "../../types/media.type";
+import { TvgMediaModifyDialog } from '../media/media.component';
+import { MediaRefService } from '../../services/mediaref/mediaref.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'playlist',
@@ -85,15 +88,27 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.dataSource.sort = this.sort;
     }
 
-    openDialog(playlist: PlaylistModel): void {
-        let dialogRef = this.dialog.open(PlaylistModifyDialog, {
+    openUpdateListDialog(): void {
+        let dialogRef = this.dialog.open(TvgMediaListModifyDialog, {
             width: '550px',
             height: '500px',
-            data: playlist
+            data: this.dataSource.data.filter((v, i) => v.selected)
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.snackBar.open(playlist.freindlyname + " was modified", "", { duration: 400 });
+            this.snackBar.open("List media modified", "", { duration: 400 });
+        });
+    }
+
+    openDialog(media: TvgMedia): void {
+        let dialogRef = this.dialog.open(TvgMediaModifyDialog, {
+            width: '550px',
+            height: '500px',
+            data: media
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            this.snackBar.open(media.name + " was modified", "", { duration: 400 });
         });
     }
 
@@ -127,8 +142,19 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     save(): void {
         console.log("saving playlist..");
         this.playlistService.update(this.playlistBS.getValue()).subscribe(res => {
-            this.snackBar.open("playlist was saved successfully");
+            this.snackBar.open("Playlist was saved successfully");
         });
+    }
+
+    toggleSelected(media: TvgMedia, event: any): void {
+        //console.log('toggleSelected ', media);
+        //console.log(event);
+        if (!event.ctrlKey) {
+            this.dataSource.data.filter((v, i) => v.id != media.id).forEach((m, i) => {
+                m.selected = false;
+            });
+        }
+        media.selected = !media.selected;
     }
 
     ngOnDestroy() {
@@ -149,5 +175,39 @@ export class PlaylistModifyDialog {
 
     onNoClick(): void {
         this.dialogRef.close();
+    }
+}
+
+@Component({
+    selector: 'tvgmedia-list-modify-dialog',
+    templateUrl: './tvgmedia.list.dialog.html'
+})
+export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
+    cultures: string[];
+    selected: string;
+
+    constructor(private mediaRefService: MediaRefService,
+        public dialogRef: MatDialogRef<TvgMediaListModifyDialog>,
+        @Inject(MAT_DIALOG_DATA) public data: TvgMedia[]) { }
+
+    ngOnInit(): void {
+        this.selected = this.data[0].group;
+        this.mediaRefService.cultures().subscribe(c => {
+            this.cultures = c;
+        });
+    }
+
+    onChange(event): void {
+        this.data.forEach(m => m.group = this.selected);
+    }
+
+    save(): void {
+        this.dialogRef.close();
+    }
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+
+    ngOnDestroy(): void {
     }
 }

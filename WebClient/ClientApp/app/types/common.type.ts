@@ -37,3 +37,7 @@ export interface PagedResultBase {
 export interface PagedResult<T> extends PagedResultBase {
     results: Array<T>;
 }
+
+export interface ISelectable {
+    selected: boolean;
+}

@@ -47,13 +47,16 @@ img {
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
     -ms-interpolation-mode: nearest-neighbor;
+
     &.logo-medium {
         max-height: 80px;
     }
+
     &.logo-grid {
         width: 33% !important;
         height: 38px;
     }
+
     &.logo-small {
         max-height: 30px;
     }
@@ -131,4 +134,13 @@ body {
 .mat-expansion-panel,
 .mat-select-panel-done-animating {
     background: $primary-color-bg !important;
+}
+
+.active[role="row"] {
+    background-color: $primary-color-font;
+    color: $primary-color-bg-dark !important;
+
+    .mat-cell {
+        color: inherit !important;
+    }
 }

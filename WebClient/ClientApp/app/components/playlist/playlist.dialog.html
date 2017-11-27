@@ -1,22 +1,43 @@
 <mat-form-field>
-    <input matInput [(ngModel)]="data.id" placeholder="id...">
+    <input matInput [(ngModel)]="data.freindlyname" placeholder="Name...">
 </mat-form-field>
 <mat-form-field>
-    <input matInput [(ngModel)]="data.displayNames" placeholder="Name...">
+    <input matInput [(ngModel)]="data.url" placeholder="Url Source...">
 </mat-form-field>
 <mat-form-field>
     <input matInput [(ngModel)]="data.cultures" placeholder="Cultures...">
 </mat-form-field>
 <mat-form-field>
-    <input matInput [(ngModel)]="data.groups" placeholder="Groups...">
+    <input matInput [(ngModel)]="data.group" placeholder="Groups...">
 </mat-form-field>
 <mat-form-field>
-    <input matInput [(ngModel)]="data.mediaType" placeholder="MediaType...">
+    <input matInput [(ngModel)]="data.createdDate" placeholder="Created date" readonly>
+    <input matInput [(ngModel)]="data.updatedDate" placeholder="Updated date" readonly>
 </mat-form-field>
 <mat-form-field>
     <input matInput [(ngModel)]="data.tvg.logo" placeholder="icon...">
     <img [src]="data.tvg.logo" class="logo-medium" />
 </mat-form-field>
+<mat-checkbox formControlName="data.synkEpg">Synchronize EPG</mat-checkbox>
+<mat-checkbox formControlName="data.synkLogos">Synchronize picons</mat-checkbox>
+<mat-checkbox formControlName="data.synkGroup">Synchronize groups</mat-checkbox>
 <mat-action-row>
     <button mat-raised-button (click)="dialogRef.close()">Close</button>
 </mat-action-row>
+<!--
+public userId: number;
+    public freindlyname: string;
+    public cron: string;
+    public status: PlaylistStatus;
+    public tvgMedias: TvgMedia[];
+    public url: string;
+    public createdDate: Date;
+    public updatedDate: Date;
+    public id: number;
+    public uniqueId: string;
+    public synkEpg: boolean;
+    public synkGroup: SynkGroupEnum;
+    public synkLogos: boolean;
+    public publicUrl: string;
+    public publicId: string;    
+-->

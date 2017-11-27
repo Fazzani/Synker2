@@ -33,7 +33,7 @@ import { MediaRefService } from './services/mediaref/mediaref.service';
 import { MediaRefModifyDialog, MediaRefComponent } from './components/mediaref/mediaref.component';
 import { PlaylistService } from './services/playlists/playlist.service';
 import { ClipboardModule } from 'ngx-clipboard';
-import { PlaylistComponent, PlaylistModifyDialog } from "./components/playlist/playlist.component";
+import { PlaylistComponent, PlaylistModifyDialog, TvgMediaListModifyDialog } from "./components/playlist/playlist.component";
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -63,7 +63,8 @@ const appRoutes: Routes = [
         RegisterDialog,
         MediaRefModifyDialog,
         PlaylistComponent,
-        PlaylistModifyDialog
+        PlaylistModifyDialog,
+        TvgMediaListModifyDialog
     ],
     imports: [
         BrowserModule,
@@ -77,7 +78,7 @@ const appRoutes: Routes = [
         ClipboardModule,
         RouterModule.forRoot(appRoutes, { enableTracing: false })
     ],
-    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, MediaRefModifyDialog],
+    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, MediaRefModifyDialog, TvgMediaListModifyDialog],
     providers: [
         CommonService,
         TvgMediaService,

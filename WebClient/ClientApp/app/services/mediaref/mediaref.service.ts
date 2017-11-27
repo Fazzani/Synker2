@@ -53,7 +53,19 @@ export class MediaRefService extends BaseService {
     groups(filter: string): Observable<ElasticAggregations> {
         return this.http.post(variables.BASE_API_URL + 'mediasref/groups', filter).map(res => {
             return res;
-            }).catch(this.handleError);
+        }).catch(this.handleError);
+    }
+
+    /**
+    * Get cultures or filter by culture name
+    * @param {string} filter culture filter not required
+    * @returns
+    */
+    cultures(filter?: string): Observable<string[]> {
+        let f = filter ? filter : "_all";
+        return this.http.get(variables.BASE_API_URL + 'mediasref/cultures/' + f).map(res => {
+            return res;
+        }).catch(this.handleError);
     }
 
 }

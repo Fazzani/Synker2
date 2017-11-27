@@ -115,15 +115,15 @@ namespace hfa.Synker.Service.Services.MediaRefs
             return await _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
         }
 
-        public async Task<List<string>> ListCulturesAsync(CancellationToken cancellationToken)
+        public async Task<List<string>> ListCulturesAsync(string filter, CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
               .Index(_elasticConnectionClient.ElasticConfig.MediaRefIndex)
-              .Size(10000)
+              .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
               .From(0)
               .Aggregations(a => a
                   .Terms("unique", te => te
-                      .Field(f => f.Cultures)
+                      .Field(f => f.Cultures.Suffix("keyword"))
                       .Order(TermsOrder.TermAscending)
                   )
               )

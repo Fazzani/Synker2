@@ -1,0 +1,12 @@
+﻿<mat-form-field>
+    <mat-select placeholder="Cultures" [(ngModel)]="selected" (ngModelChange)="onChange($event)" name="data.group">
+        <mat-option *ngFor="let cult of cultures" [value]="cult">
+            {{cult}}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+
+<mat-action-row>
+    <button mat-raised-button (click)="dialogRef.close()">Close</button>
+    <button mat-raised-button (click)="dialogRef.save()">Save</button>
+</mat-action-row>

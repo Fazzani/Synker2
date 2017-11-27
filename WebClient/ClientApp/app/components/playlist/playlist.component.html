@@ -18,6 +18,9 @@
         <a mat-icon-button>
             <mat-icon class="mat-24" aria-label="Match" (click)="match()">compare_arrows</mat-icon>
         </a>
+        <a mat-icon-button>
+            <mat-icon class="mat-24" aria-label="Match" (click)="openUpdateListDialog()">done</mat-icon>
+        </a>
     </mat-toolbar>
     <mat-table #table [dataSource]="dataSource" matSort>
         <!-- icon Column -->
@@ -27,13 +30,13 @@
                 <img [src]="row.tvg?.logo" class="logo-grid" />
             </mat-cell>
         </ng-container>
-        <!-- site_id Column -->
+        <!-- Name Column -->
         <ng-container matColumnDef="name">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row?.name}} </mat-cell>
         </ng-container>
 
-        <!-- site Column -->
+        <!-- Group Column -->
         <ng-container matColumnDef="group">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Group </mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row?.group}} </mat-cell>
@@ -45,7 +48,7 @@
             <mat-cell *matCellDef="let row"> {{row?.tvg.name}} </mat-cell>
         </ng-container>
 
-        <!-- tvg.name -->
+        <!-- tvg.identify -->
         <ng-container matColumnDef="tvg.tvgIdentify">
             <mat-header-cell *matHeaderCellDef mat-sort-header> tvg id </mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row?.tvg.tvgIdentify}} </mat-cell>
@@ -63,7 +66,7 @@
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected"></mat-row>
     </mat-table>
     <mat-paginator #paginator [pageSizeOptions]="[50, 100, 250, 1000]" [pageSize]="50">
     </mat-paginator>

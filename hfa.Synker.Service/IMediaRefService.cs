@@ -8,7 +8,7 @@ namespace hfa.Synker.Service.Services.MediaRefs
 {
     public interface IMediaRefService
     {
-        Task<List<string>> ListCulturesAsync(CancellationToken cancellationToken);
+        Task<List<string>> ListCulturesAsync(string filter, CancellationToken cancellationToken);
         Task<IBulkResponse> RemoveDuplicatedMediaRefAsync(CancellationToken cancellationToken);
         Task<IBulkResponse> SynkAsync(CancellationToken cancellationToken);
 
