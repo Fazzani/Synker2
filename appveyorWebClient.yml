@@ -14,14 +14,13 @@ clone_depth: 10
 environment:
   nodejs_version: '8'
   ASPNETCORE_ENVIRONMENT: 'Production'
-matrix:
-  fast_finish: true
+
 install:
   - choco install googlechrome
   - ps: Install-Product node $Env:nodejs_version
   - npm i -g npm@latest
   - npm i -g webpack@latest
-  - cmd: rm -R node_modules && npm rebuild node-sass
+  - npm rebuild node-sass
 before_build:
   # Display .NET Core version
   - cmd: dotnet --version
