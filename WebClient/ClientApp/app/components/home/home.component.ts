@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject, Renderer } from '@angular/core';
 import { PlaylistService } from '../../services/playlists/playlist.service';
 import { CommonService } from '../../services/common/common.service';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { PlaylistModel } from '../../types/playlist.type';
 import { QueryListBaseModel, PagedResult } from '../../types/common.type';
+import { ClipboardService } from 'ngx-clipboard';
 
 @Component({
     selector: 'home',
@@ -12,9 +13,10 @@ import { QueryListBaseModel, PagedResult } from '../../types/common.type';
 export class HomeComponent implements OnInit, OnDestroy {
     playlists: PagedResult<PlaylistModel>;
     query: QueryListBaseModel;
-    constructor(private playlistService: PlaylistService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar) { }
+    constructor(private renderer: Renderer, private playlistService: PlaylistService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar, private clipboardService: ClipboardService) { }
 
     ngOnInit(): void {
+
         this.query = new QueryListBaseModel();
         this.query.pageNumber = 0;
         this.query.pageSize = 20;
@@ -23,6 +25,11 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
     }
 
+    copyPublicLink(link: string): void {
+        if (this.clipboardService.isSupported)
+            this.clipboardService.copyFromContent(link, this.renderer);
+    }
     ngOnDestroy() {
+        this.clipboardService.destroy();
     }
 }

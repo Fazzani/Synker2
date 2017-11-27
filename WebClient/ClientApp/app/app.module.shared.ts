@@ -32,6 +32,7 @@ import { DefaultHttpInterceptor } from './infrastructure/DefaultHttpInterceptor'
 import { MediaRefService } from './services/mediaref/mediaref.service';
 import { MediaRefModifyDialog, MediaRefComponent } from './components/mediaref/mediaref.component';
 import { PlaylistService } from './services/playlists/playlist.service';
+import { ClipboardModule } from 'ngx-clipboard';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -69,6 +70,7 @@ const appRoutes: Routes = [
         AppModuleMaterialModule,
         NavBarModule,
         ReactiveFormsModule,
+        ClipboardModule,
         RouterModule.forRoot(appRoutes, { enableTracing: false })
     ],
     entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, MediaRefModifyDialog],

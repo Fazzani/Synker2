@@ -44,11 +44,19 @@ namespace hfa.WebApi.Models.Playlists
         public SynkGroupEnum SynkGroup { get; internal set; }
         public bool SynkLogos { get; internal set; }
 
+        public string PublicId
+        {
+            get
+            {
+                return Encoding.UTF8.EncodeBase64(UniqueId.ToString());
+            }
+        }
+
         public string PublicUrl
         {
             get
             {
-                return _urlHelper?.Action("GetFile", "Playlists", new { Id = Encoding.UTF8.EncodeBase64(UniqueId.ToString()) });
+                return  _urlHelper?.Action("GetFile", "Playlists", new { Id =  PublicId }, _urlHelper.ActionContext.HttpContext.Request.Scheme);
             }
         }
 

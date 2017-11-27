@@ -51,4 +51,5 @@ export class PlaylistModel {
     public synkGroup: SynkGroupEnum;
     public synkLogos: boolean;
     public publicUrl: string;
+    public publicId: string;
 }
