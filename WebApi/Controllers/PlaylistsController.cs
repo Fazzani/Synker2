@@ -299,7 +299,8 @@ namespace Hfa.WebApi.Controllers
 
             var pl = await SavePlaylist(playlistName, providerType, playlistStream, playlistUrl, cancellationToken);
 
-            return Ok(PlaylistModel.ToLightModel(pl, Url));
+            var result = PlaylistModel.ToLightModel(pl, Url);
+            return Created(result.PublicUrl, result);
         }
 
         /// <summary>
@@ -343,7 +344,9 @@ namespace Hfa.WebApi.Controllers
 
                 stopwatch.Stop();
                 _logger.LogInformation($"Elapsed time : {stopwatch.Elapsed.ToString("c")}");
-                return Ok(PlaylistModel.ToLightModel(pl, Url));
+
+                var model = PlaylistModel.ToLightModel(pl, Url);
+                return Created(model.PublicUrl, model);
             }
         }
 
