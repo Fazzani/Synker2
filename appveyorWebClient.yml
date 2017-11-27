@@ -28,7 +28,7 @@ before_build:
   - cmd: dotnet restore ./WebClient/hfa.WebClient.csproj --verbosity m
 build_script:
   - cmd: cd ./WebClient/ 
-  - cmd: npm i && npm run configure
+  - cmd: npm i --force && npm run configure
   - cmd: dotnet publish -c Release --verbosity m -o artifactsWebClient
 artifacts:
  - path: .\WebClient\artifactsWebClient
