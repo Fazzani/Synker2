@@ -13,5 +13,7 @@ namespace hfa.WebApi.Models.Playlists
         public string Provider { get; set; }
         [Required]
         public string PlaylistUrl { get; set; }
+
+        public bool Save { get; set; } = false;
     }
 }

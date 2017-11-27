@@ -105,7 +105,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delelte(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
         {
             var response = await _mediaRefService.DeleteManyAsync(new string[] { id }, cancellationToken);
             return new OkObjectResult(response);

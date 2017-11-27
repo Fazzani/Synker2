@@ -37,6 +37,12 @@ export class PlaylistService extends BaseService {
         }).catch(this.handleError);
     }
 
+    match(id: string): Observable<PlaylistModel> {
+        return this.http.post(variables.BASE_API_URL + 'playlists/' + id + '/match', null).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
     //export(fromType: string, toType: string, ): Observable<any> {
     //    return this.http.post(variables.BASE_API_URL + 'playlists/export/' + fromType + '/' + toType, null).map(res => {
     //        return res;
@@ -44,7 +50,7 @@ export class PlaylistService extends BaseService {
     //}
 
     update(p: PlaylistModel): Observable<PlaylistModel> {
-        return this.http.put(variables.BASE_API_URL + 'playlists', p).map(res => {
+        return this.http.put(variables.BASE_API_URL + 'playlists/' + p.publicId, p).map(res => {
             return res;
         }).catch(this.handleError);
     }

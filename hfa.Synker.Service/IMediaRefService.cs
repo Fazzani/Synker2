@@ -15,5 +15,6 @@ namespace hfa.Synker.Service.Services.MediaRefs
         Task<long> DeleteManyAsync(string[] ids, CancellationToken cancellationToken);
         Task<IBulkResponse> SaveAsync(List<MediaRef> mediasRef, CancellationToken cancellationToken);
         Task<ISearchResponse<MediaRef>> GroupsAsync(string filter, int? size, CancellationToken cancellationToken);
+        Task<MediaRef> MatchTermByDispaynamesAsync(string term, CancellationToken cancellationToken);
     }
 }

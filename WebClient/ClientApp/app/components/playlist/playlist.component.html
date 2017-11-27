@@ -13,7 +13,10 @@
             <mat-icon class="mat-24" aria-label="Save" (click)="save()">save</mat-icon>
         </a>
         <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Synchronize" (click)="synk()">system_update_alt</mat-icon>
+            <mat-icon class="mat-24" aria-label="Synchronize" (click)="synk()">autorenew</mat-icon>
+        </a>
+        <a mat-icon-button>
+            <mat-icon class="mat-24" aria-label="Match" (click)="match()">compare_arrows</mat-icon>
         </a>
     </mat-toolbar>
     <mat-table #table [dataSource]="dataSource" matSort>
@@ -39,7 +42,13 @@
         <!-- tvg.name -->
         <ng-container matColumnDef="tvg.name">
             <mat-header-cell *matHeaderCellDef mat-sort-header> tvg name </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{tvg?.name}} </mat-cell>
+            <mat-cell *matCellDef="let row"> {{row?.tvg.name}} </mat-cell>
+        </ng-container>
+
+        <!-- tvg.name -->
+        <ng-container matColumnDef="tvg.tvgIdentify">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> tvg id </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row?.tvg.tvgIdentify}} </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="actions">

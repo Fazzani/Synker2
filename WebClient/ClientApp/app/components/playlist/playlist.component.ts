@@ -24,21 +24,20 @@ import { TvgMedia } from "../../types/media.type";
 export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     subscriptionTableEvent: Subscription;
 
-    displayedColumns = ['tvg.logo', 'name', 'group', 'tvg.name', 'actions'];
+    displayedColumns = ['tvg.logo', 'name', 'group', 'tvg.name', 'tvg.tvgIdentify', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
     dataSource: MatTableDataSource<TvgMedia> | null;
-    currentItem: PlaylistModel | null;
     routeSub: any;
     playlistId: string;
-
+    playlistBS: BehaviorSubject<PlaylistModel> | null;
     /** media ctor */
     constructor(private route: ActivatedRoute, private playlistService: PlaylistService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar) { }
 
     /** Called by Angular after media component initialized */
     ngOnInit(): void {
-
+        this.playlistBS = new BehaviorSubject<PlaylistModel>(null);
         this.dataSource = new MatTableDataSource<TvgMedia>([]);
 
         this.routeSub = this.route.params.subscribe(params => {
@@ -46,13 +45,16 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             console.log('Loading playlist ', this.playlistId);
             // In a real app: dispatch action to load the details here.
             this.playlistService.get(this.playlistId, false).subscribe(x => {
-                this.currentItem = x;
-                if (x.tvgMedias != null) {
-                    this.dataSource = new MatTableDataSource<TvgMedia>(x.tvgMedias);
-                    this.dataSource.paginator = this.paginator;
-                    this.dataSource.sort = this.sort;
-                }
+                this.playlistBS.next(x);
             });
+        });
+
+        this.playlistBS.subscribe(x => {
+            if (x != null && x.tvgMedias != null) {
+                this.dataSource = new MatTableDataSource<TvgMedia>(x.tvgMedias);
+                this.dataSource.paginator = this.paginator;
+                this.dataSource.sort = this.sort;
+            }
         });
 
         this.paginator.pageIndex = 0;
@@ -110,19 +112,27 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
     synk(): void {
         this.playlistService.synk().subscribe(res => {
-            this.snackBar.open("Medias referentiel was synchronized");
+            this.playlistBS.next(res);
+            this.snackBar.open("Playlist was synchronized with source");
+        });
+    }
+
+    match(): void {
+        this.playlistService.match(this.playlistBS.getValue().publicId).subscribe(res => {
+            this.playlistBS.next(res);
+            this.snackBar.open("Playlist was synchronized with source");
         });
     }
 
     save(): void {
-        console.log("saving mediasref..");
-        //this.dataSource.save().subscribe(res => {
-        //    this.snackBar.open("Medias was saved successfully");
-        //});
+        console.log("saving playlist..");
+        this.playlistService.update(this.playlistBS.getValue()).subscribe(res => {
+            this.snackBar.open("playlist was saved successfully");
+        });
     }
 
     ngOnDestroy() {
-       // this.subscriptionTableEvent.unsubscribe();
+        // this.subscriptionTableEvent.unsubscribe();
         this.routeSub.unsubscribe();
     }
 }

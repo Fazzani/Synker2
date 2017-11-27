@@ -23,6 +23,7 @@ using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 using System.Diagnostics;
 using System.Text;
+using hfa.Synker.Service.Services.MediaRefs;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -32,12 +33,14 @@ namespace Hfa.WebApi.Controllers
     public class PlaylistsController : BaseController
     {
         private IPlaylistService _playlistService;
+        private IMediaRefService _mediaRefService;
 
-        public PlaylistsController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
+        public PlaylistsController(IMediaRefService mediaRefService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
             SynkerDbContext context, IPlaylistService playlistService)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _playlistService = playlistService;
+            _mediaRefService = mediaRefService;
         }
 
         /// <summary>
@@ -107,7 +110,7 @@ namespace Hfa.WebApi.Controllers
             playlistEntity.SynkConfig.SynkEpg = playlist.SynkEpg;
             playlistEntity.SynkConfig.SynkGroup = playlist.SynkGroup;
             playlistEntity.SynkConfig.SynkLogos = playlist.SynkLogos;
-
+            playlistEntity.Content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(playlist.TvgMedias));
             await _dbContext.SaveChangesAsync();
             return Ok();
         }
@@ -128,7 +131,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         /// <summary>
-        /// Add new Upload playlist from url
+        /// Synk playlist from source url
         /// </summary>
         /// <param name="playlistPostModel"></param>
         /// <param name="providersOptions"></param>
@@ -175,6 +178,39 @@ namespace Hfa.WebApi.Controllers
                 _logger.LogInformation($"Elapsed time : {stopwatch.Elapsed.ToString("c")}");
                 return CreatedAtRoute(nameof(GetFile), new { id = UTF8Encoding.UTF8.EncodeBase64(pl.UniqueId.ToString()) }, null);
             }
+        }
+
+        /// <summary>
+        /// Match playlist with media ref
+        /// </summary>
+        /// <param name="playlistPostModel"></param>
+        /// <param name="providersOptions"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{id}/match")]
+        [ValidateModel]
+        public IActionResult Match(string id, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
+            CancellationToken cancellationToken)
+        {
+            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
+
+            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+            if (playlist == null)
+                return NotFound(playlist);
+
+            playlist.TvgMedias.AsParallel().ForAll(media =>
+            {
+                var matched = _mediaRefService.MatchTermByDispaynamesAsync(media.DisplayName, cancellationToken).GetAwaiter().GetResult();
+
+                if (matched != null)
+                {
+                    media.Group = matched.Cultures.FirstOrDefault();
+                    media.Tvg = matched.Tvg;
+                }
+            });
+
+            return Ok(PlaylistModel.ToModel(playlist, Url));
         }
 
         private async Task<Playlist> SavePlaylist(string playlistName, Type providerType, Stream playlistStream, string playlistUrl, CancellationToken cancellationToken)

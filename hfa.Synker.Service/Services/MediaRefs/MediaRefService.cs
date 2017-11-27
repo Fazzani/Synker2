@@ -30,6 +30,18 @@ namespace hfa.Synker.Service.Services.MediaRefs
             _logger = loggerFactory.CreateLogger(nameof(MediaRefService));
         }
 
+        public async Task<MediaRef> MatchTermByDispaynamesAsync(string term, CancellationToken cancellationToken)
+        {
+            var allMediasRef = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
+               .Index(_elasticConnectionClient.ElasticConfig.MediaRefIndex)
+               .Size(1)
+               .From(0)
+               .Query(a => a.Match(x => x.Name("matchDisplaynames").Field(f => f.DisplayNames).Query(term)))
+               , cancellationToken);
+
+            return allMediasRef.Documents.Distinct(new MediaRef()).FirstOrDefault();
+        }
+
         public async Task<IBulkResponse> RemoveDuplicatedMediaRefAsync(CancellationToken cancellationToken)
         {
             var allMediasRef = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
