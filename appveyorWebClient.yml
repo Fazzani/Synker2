@@ -21,6 +21,7 @@ install:
   - ps: Install-Product node $Env:nodejs_version
   - npm i -g npm@latest
   - npm i -g webpack@latest
+  - cmd: rm -R node_modules && npm rebuild node-sass
 before_build:
   # Display .NET Core version
   - cmd: dotnet --version
@@ -28,7 +29,6 @@ before_build:
   - cmd: dotnet restore ./WebClient/hfa.WebClient.csproj --verbosity m
 build_script:
   - cmd: cd ./WebClient/ 
-  - cmd: npm install 
   - cmd: npm run configure
   - cmd: dotnet publish -c Release --verbosity m -o artifactsWebClient
 artifacts:
