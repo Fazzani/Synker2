@@ -71,28 +71,6 @@ namespace Hfa.WebApi.Controllers
             return light ? Ok(PlaylistModel.ToLightModel(playlist, Url)) : Ok(PlaylistModel.ToModel(playlist, Url));
         }
 
-        [AllowAnonymous]
-        [HttpGet("files/{id:required}", Name = nameof(GetFile))]
-        public async Task<IActionResult> GetFile(string id, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
-          [FromQuery] string provider = "m3u", CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
-
-            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
-            if (playlist == null)
-                return NotFound(id);
-
-            using (var ms = new MemoryStream())
-            using (var sourceProvider = FileProvider.Create(provider, providersOptions.Value, ms))
-            using (var pl = new Playlist<TvgMedia>(sourceProvider))
-            using (var sourcePl = new Playlist<TvgMedia>(playlist.TvgMedias))
-            {
-                ms.Seek(0, SeekOrigin.Begin);
-                await pl.PushAsync(sourcePl, cancellationToken);
-                return File(ms.GetBuffer(), "text/plain");
-            }
-        }
-
         [HttpPut("{id}")]
         [ValidateModel]
         public async Task<IActionResult> Put(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken)
@@ -213,28 +191,25 @@ namespace Hfa.WebApi.Controllers
             return Ok(PlaylistModel.ToModel(playlist, Url));
         }
 
-        private async Task<Playlist> SavePlaylist(string playlistName, Type providerType, Stream playlistStream, string playlistUrl, CancellationToken cancellationToken)
+        [AllowAnonymous]
+        [HttpGet("files/{id:required}", Name = nameof(GetFile))]
+        public async Task<IActionResult> GetFile(string id, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
+          [FromQuery] string provider = "m3u", CancellationToken cancellationToken = default(CancellationToken))
         {
-            var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
+            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
 
-            using (var playlist = new Playlist<TvgMedia>(providerInstance))
+            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+            if (playlist == null)
+                return NotFound(id);
+
+            using (var ms = new MemoryStream())
+            using (var sourceProvider = FileProvider.Create(provider, providersOptions.Value, ms))
+            using (var pl = new Playlist<TvgMedia>(sourceProvider))
+            using (var sourcePl = new Playlist<TvgMedia>(playlist.TvgMedias))
             {
-                var sourceList = await playlist.PullAsync(cancellationToken);
-                var content = JsonConvert.SerializeObject(sourceList.ToArray());
-
-                var synkcfg = new SynkConfig { Url = playlistUrl };
-                var playlistEntity = new Playlist
-                {
-                    UserId = UserId.Value,
-                    Freindlyname = playlistName,
-                    Content = UTF8Encoding.UTF8.GetBytes(content),
-                    Status = PlaylistStatus.Enabled,
-                    SynkConfig = synkcfg
-                };
-                await _dbContext.Playlist.AddAsync(playlistEntity, cancellationToken);
-
-                var res = await _dbContext.SaveChangesAsync(cancellationToken);
-                return playlistEntity;
+                ms.Seek(0, SeekOrigin.Begin);
+                await pl.PushAsync(sourcePl, cancellationToken);
+                return File(ms.GetBuffer(), "text/plain");
             }
         }
 
@@ -275,5 +250,127 @@ namespace Hfa.WebApi.Controllers
                 return BadRequest(ifileEx.Message);
             }
         }
+
+        #region Import
+
+        /// <summary>
+        /// Add new Upload playlist from stream
+        /// </summary>
+        /// <param name="fromType"></param>
+        /// <param name="playlistUrl">if playlist not null the file param will ignored</param>
+        /// <param name="toType"></param>
+        /// <param name="file"></param>
+        /// <param name="providersOptions"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("create/{provider}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Import(string playlistName, string playlistUrl, string provider, IFormFile file, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
+            CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(playlistName))
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+
+            if (string.IsNullOrEmpty(playlistName))
+            {
+                playlistName = file.FileName.Replace(Path.GetExtension(file.FileName), string.Empty); //TODO : catch all ArgumentException et les passer en BadRequest
+            }
+            //Vérifier si la playlist existe-elle avant 
+
+            var optionsProvider = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(provider, StringComparison.InvariantCultureIgnoreCase));
+            if (optionsProvider == null)
+                return BadRequest($"Not supported Provider : {provider}");
+
+            var providerType = Type.GetType(optionsProvider.Type, false, true);
+            if (providerType == null)
+                return BadRequest($"Provider type not found : {provider}");
+
+            var playlistStream = file.OpenReadStream();
+            if (string.IsNullOrEmpty(playlistUrl))
+            {
+                //Download playlist from url
+                using (var httpClient = new HttpClient())
+                {
+                    playlistStream = await httpClient.GetStreamAsync(playlistUrl);
+                }
+            }
+
+            var pl = await SavePlaylist(playlistName, providerType, playlistStream, playlistUrl, cancellationToken);
+
+            return Ok(PlaylistModel.ToLightModel(pl, Url));
+        }
+
+        /// <summary>
+        /// Add new Upload playlist from url
+        /// </summary>
+        /// <param name="playlistPostModel"></param>
+        /// <param name="providersOptions"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("create")]
+        [ValidateModel]
+        public async Task<IActionResult> ImportFromUrl(PlaylistPostModel playlistPostModel, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
+            CancellationToken cancellationToken)
+        {
+            //Vérifier si la playlist existe-elle avant 
+            var stopwatch = Stopwatch.StartNew();
+            var optionsProvider = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(playlistPostModel.Provider, StringComparison.InvariantCultureIgnoreCase));
+            if (optionsProvider == null)
+                return BadRequest($"Not supported Provider : {playlistPostModel.Provider}");
+
+            var providerType = Type.GetType(optionsProvider.Type, false, true);
+            if (providerType == null)
+                return BadRequest($"Provider type not found : {playlistPostModel.Provider}");
+
+            //Download playlist from url
+            using (var httpClient = new HttpClient())
+            {
+                var playlistStream = await httpClient.GetStreamAsync(playlistPostModel.PlaylistUrl);
+                var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
+                var pl = await _playlistService.SynkPlaylist(() => new Playlist
+                {
+                    UserId = UserId.Value,
+                    Freindlyname = playlistPostModel.PlaylistName,
+                    Status = PlaylistStatus.Enabled,
+                    SynkConfig = new SynkConfig { Url = playlistPostModel.PlaylistUrl }
+                }, providerInstance, cancellationToken: cancellationToken);
+
+                await _dbContext.Playlist.AddAsync(pl);
+                var res = await _dbContext.SaveChangesAsync(cancellationToken);
+
+                stopwatch.Stop();
+                _logger.LogInformation($"Elapsed time : {stopwatch.Elapsed.ToString("c")}");
+                return Ok(PlaylistModel.ToLightModel(pl, Url));
+            }
+        }
+
+        private async Task<Playlist> SavePlaylist(string playlistName, Type providerType, Stream playlistStream, string playlistUrl, CancellationToken cancellationToken)
+        {
+            var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
+
+            using (var playlist = new Playlist<TvgMedia>(providerInstance))
+            {
+                var sourceList = await playlist.PullAsync(cancellationToken);
+                var content = JsonConvert.SerializeObject(sourceList.ToArray());
+
+                var synkcfg = new SynkConfig { Url = playlistUrl };
+                var playlistEntity = new Playlist
+                {
+                    UserId = UserId.Value,
+                    Freindlyname = playlistName,
+                    Content = UTF8Encoding.UTF8.GetBytes(content),
+                    Status = PlaylistStatus.Enabled,
+                    SynkConfig = synkcfg
+                };
+                await _dbContext.Playlist.AddAsync(playlistEntity, cancellationToken);
+
+                var res = await _dbContext.SaveChangesAsync(cancellationToken);
+                return playlistEntity;
+            }
+        }
+        #endregion
     }
 }
