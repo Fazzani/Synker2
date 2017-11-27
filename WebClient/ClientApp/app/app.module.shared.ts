@@ -33,6 +33,7 @@ import { MediaRefService } from './services/mediaref/mediaref.service';
 import { MediaRefModifyDialog, MediaRefComponent } from './components/mediaref/mediaref.component';
 import { PlaylistService } from './services/playlists/playlist.service';
 import { ClipboardModule } from 'ngx-clipboard';
+import { PlaylistComponent, PlaylistModifyDialog } from "./components/playlist/playlist.component";
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -41,6 +42,7 @@ const appRoutes: Routes = [
     { path: 'epg', component: EpgComponent, canActivate: [LoginRouteGuard] },
     { path: 'xmltv', component: XmltvComponent, canActivate: [LoginRouteGuard] },
     { path: 'mediaref', component: MediaRefComponent, canActivate: [LoginRouteGuard] },
+    { path: 'playlist/:id', component: PlaylistComponent, canActivate: [LoginRouteGuard] },
     { path: 'signin', component: DialogComponent },
     { path: 'register', component: DialogComponent },
     { path: '**', redirectTo: 'home' }
@@ -59,7 +61,9 @@ const appRoutes: Routes = [
         DialogComponent,
         LoginDialog,
         RegisterDialog,
-        MediaRefModifyDialog
+        MediaRefModifyDialog,
+        PlaylistComponent,
+        PlaylistModifyDialog
     ],
     imports: [
         BrowserModule,

@@ -1,0 +1,61 @@
+﻿<div class="site-container">
+    <mat-toolbar color="custom">
+        <mat-form-field floatPlaceholder="never">
+            <input matInput #filter placeholder="Filter medias...">
+            <!--<mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let option of options" [value]="option">
+                    {{ option }}
+                </mat-option>
+            </mat-autocomplete>-->
+        </mat-form-field>
+        <span class="spacer"></span>
+        <a mat-icon-button>
+            <mat-icon class="mat-24" aria-label="Save" (click)="save()">save</mat-icon>
+        </a>
+        <a mat-icon-button>
+            <mat-icon class="mat-24" aria-label="Synchronize" (click)="synk()">system_update_alt</mat-icon>
+        </a>
+    </mat-toolbar>
+    <mat-table #table [dataSource]="dataSource" matSort>
+        <!-- icon Column -->
+        <ng-container matColumnDef="tvg.logo">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Logo </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <img [src]="row.tvg?.logo" class="logo-grid" />
+            </mat-cell>
+        </ng-container>
+        <!-- site_id Column -->
+        <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row?.name}} </mat-cell>
+        </ng-container>
+
+        <!-- site Column -->
+        <ng-container matColumnDef="group">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Group </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row?.group}} </mat-cell>
+        </ng-container>
+
+        <!-- tvg.name -->
+        <ng-container matColumnDef="tvg.name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> tvg name </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{tvg?.name}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <button mat-icon-button color="warn" (click)="openDialog(row)">
+                        <mat-icon class="mat-24" aria-label="Edit">edit</mat-icon>
+                      </button>
+                <button mat-icon-button color="primary" (click)="delete(row.id)">
+                        <mat-icon class="mat-24" aria-label="">delete</mat-icon>
+                      </button>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator [pageSizeOptions]="[50, 100, 250, 1000]" [pageSize]="50">
+    </mat-paginator>
+</div>

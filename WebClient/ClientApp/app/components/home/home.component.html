@@ -19,7 +19,7 @@
                                 {{playlist.cron}}
                                 <a class="dropdown-item" [attr.href]="null" (click)="copyPublicLink(playlist.publicUrl)" ngxClipboard [cbContent]="playlist.publicUrl" i18n><i class="material-icons">content_copy</i></a> 
                             </p>
-                            <a [href]="playlist.publicUrl" class="secondary-content" aria-label="detail">
+                            <a [routerLink]="['/playlist', playlist.publicId]" class="secondary-content" aria-label="detail">
                                 <i class="material-icons">send</i>
                             </a>
                         </li>

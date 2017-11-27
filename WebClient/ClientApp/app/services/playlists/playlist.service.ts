@@ -6,9 +6,9 @@ import { BaseService } from '../base/base.service';
 import { Observable } from 'rxjs/Observable';
 import { map, catchError } from 'rxjs/operators';
 import { RequestOptions } from "@angular/http/http";
-import { HttpHeaders } from "@angular/common/http";
+import { HttpHeaders, HttpParams } from "@angular/common/http";
 import * as variables from "../../variables";
-import { Playlist, PlaylistModel } from '../../types/playlist.type';
+import { PlaylistModel } from '../../types/playlist.type';
 import { QueryListBaseModel, PagedResult } from '../../types/common.type';
 
 @Injectable()
@@ -16,8 +16,12 @@ export class PlaylistService extends BaseService {
 
     constructor(protected http: HttpClient) { super(http); }
 
-    get(id: string): Observable<PlaylistModel> {
-        return this.http.get(variables.BASE_API_URL + 'playlists/' + id).map(this.parseData)
+    get(id: string, light: boolean): Observable<PlaylistModel> {
+
+        let params = new HttpParams();
+        params = params.set("light", light ? "true" : "false");
+
+        return this.http.get(variables.BASE_API_URL + 'playlists/' + id, { params: params })
             .catch(this.handleError);
     }
 
@@ -39,13 +43,13 @@ export class PlaylistService extends BaseService {
     //    }).catch(this.handleError);
     //}
 
-    update(p: Playlist): Observable<Playlist> {
+    update(p: PlaylistModel): Observable<PlaylistModel> {
         return this.http.put(variables.BASE_API_URL + 'playlists', p).map(res => {
             return res;
         }).catch(this.handleError);
     }
 
-    delete(id: string): Observable<Playlist> {
+    delete(id: string): Observable<PlaylistModel> {
         return this.http.delete(variables.BASE_API_URL + 'playlists/' + id).map(res => {
             return res;
         }).catch(this.handleError);

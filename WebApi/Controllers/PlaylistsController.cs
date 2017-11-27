@@ -46,24 +46,26 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost("search")]
         [ValidateModel]
-        public IActionResult List([FromBody] QueryListBaseModel query, CancellationToken cancellationToken)
+        public IActionResult List([FromBody] QueryListBaseModel query, CancellationToken cancellationToken, [FromQuery] bool light = true)
         {
             var response = _dbContext.Playlist
                 .Where(x => x.UserId == UserId)
                 .OrderByDescending(x => x.Id)
-                .Select(pl => PlaylistModel.ToLightModel(pl, Url))
+                .Select(pl => light ? PlaylistModel.ToLightModel(pl, Url) : PlaylistModel.ToModel(pl, Url))
                 .GetPaged(query.PageNumber, query.PageSize);
 
             return new OkObjectResult(response);
         }
 
-        [HttpGet("{id:guid}")]
-        public IActionResult Get(Guid id, CancellationToken cancellationToken)
+        [HttpGet("{id}")]
+        public IActionResult Get(string id, CancellationToken cancellationToken, [FromQuery] bool light = true)
         {
-            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == id);
+            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
+            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
             if (playlist == null)
                 return NotFound(id);
-            return Ok(PlaylistModel.ToLightModel(playlist, Url));
+
+            return light ? Ok(PlaylistModel.ToLightModel(playlist, Url)) : Ok(PlaylistModel.ToModel(playlist, Url));
         }
 
         [AllowAnonymous]
@@ -90,9 +92,11 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPut("{id}")]
         [ValidateModel]
-        public async Task<IActionResult> Put(int id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken)
+        public async Task<IActionResult> Put(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken)
         {
-            var playlistEntity = await _dbContext.FindAsync<Playlist>(id);
+            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
+
+            var playlistEntity = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
             if (playlistEntity == null)
                 return NotFound(playlistEntity);
 
@@ -109,9 +113,11 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
         {
-            var playlist = await _dbContext.FindAsync<Playlist>(id);
+            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
+
+            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
             if (playlist == null)
                 return NotFound(playlist);
 
