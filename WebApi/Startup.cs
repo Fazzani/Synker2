@@ -34,6 +34,8 @@ using hfa.Synker.Service.Services.TvgMediaHandlers;
 using PlaylistBaseLibrary.ChannelHandlers;
 using hfa.Synker.Service.Services.Picons;
 using hfa.Synker.Service.Services.MediaRefs;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 
 namespace hfa.WebApi
 {
@@ -74,6 +76,8 @@ namespace hfa.WebApi
                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))
                .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)));
 
+            services.AddMemoryCache();
+
             var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
              .UseMySql(Configuration.GetConnectionString("PlDatabase"),
                 a => a.MigrationsAssembly("hfa.WebApi")))
@@ -107,9 +111,34 @@ namespace hfa.WebApi
             //Logger
             var loggerFactory = new LoggerFactory();
 
+            //cache
+            services.AddResponseCaching(options =>
+            {
+                options.UseCaseSensitivePaths = true;
+                options.MaximumBodySize = 1024;
+            });
+           
+            //MVC
             services.AddMvc(config =>
             {
                 config.Filters.Add(typeof(GlobalExceptionFilterAttribute));
+                config.CacheProfiles.Add("Default",
+                   new CacheProfile()
+                   {
+                       Duration = 60,
+                       Location = ResponseCacheLocation.Any
+                   });
+                config.CacheProfiles.Add("Long",
+                   new CacheProfile()
+                   {
+                       Duration = 60
+                   });
+                config.CacheProfiles.Add("Never",
+                    new CacheProfile()
+                    {
+                        Location = ResponseCacheLocation.None,
+                        NoStore = true
+                    });
             })
             .AddJsonOptions(
                 options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -212,10 +241,14 @@ namespace hfa.WebApi
 
                 app.UseWebHooks(typeof(AppveyorReceiver));
                 app.UseWebHooks(typeof(GithubReceiver));
+                //Cache
+                app.UseResponseCaching();
 
                 app.UseStaticFiles();
 
                 app.UseMvc();
+
+             
             }
             catch (Exception ex)
             {

@@ -61,6 +61,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "id", "light" })]
         public IActionResult Get(string id, CancellationToken cancellationToken, [FromQuery] bool light = true)
         {
             var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
@@ -191,6 +192,7 @@ namespace Hfa.WebApi.Controllers
             return Ok(PlaylistModel.ToModel(playlist, Url));
         }
 
+        [ResponseCache(CacheProfileName = "Long")]
         [AllowAnonymous]
         [HttpGet("files/{id:required}", Name = nameof(GetFile))]
         public async Task<IActionResult> GetFile(string id, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,

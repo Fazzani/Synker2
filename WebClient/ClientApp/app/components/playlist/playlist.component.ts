@@ -64,7 +64,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.paginator.pageSizeOptions = [50, 100, 250, 1000];
         this.paginator.pageSize = this.paginator.pageSizeOptions[0];
         this.dataSource.paginator = this.paginator;
-        ////this.filter.nativeElement.value = storedQuery != null && storedQuery.query != null && storedQuery.query != {} ? JSON.stringify(storedQuery.query) : "";
+        //this.filter.nativeElement.value = storedQuery != null && storedQuery.query != null && storedQuery.query != {} ? JSON.stringify(storedQuery.query) : "";
         this.subscriptionTableEvent = this.paginator.page.asObservable()
             .merge(Observable.fromEvent<EventTargetLike>(this.filter.nativeElement, 'keyup'))
             .debounceTime(1000)

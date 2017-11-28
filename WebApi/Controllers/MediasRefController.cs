@@ -17,6 +17,7 @@ using hfa.Synker.Service.Services.MediaRefs;
 using hfa.SyncLibrary.Global;
 using Hfa.WebApi.Common;
 using hfa.WebApi.Common.Filters;
+using Microsoft.Extensions.Caching.Memory;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Hfa.WebApi.Controllers
@@ -26,12 +27,14 @@ namespace Hfa.WebApi.Controllers
     public class MediasRefController : BaseController
     {
         IMediaRefService _mediaRefService;
+        IMemoryCache _memoryCache;
 
-        public MediasRefController(IMediaRefService mediaRefService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
+        public MediasRefController(IMemoryCache memoryCache, IMediaRefService mediaRefService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _mediaRefService = mediaRefService;
+            _memoryCache = memoryCache;
         }
 
         [HttpPost]
@@ -39,19 +42,6 @@ namespace Hfa.WebApi.Controllers
         public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
         {
             return await SearchAsync<MediaRef, MediaRefModel>(request.ToString(), nameof(MediaRef).ToLowerInvariant(), cancellationToken);
-        }
-
-        [HttpPost]
-        [Route("groups")]
-        [ValidateModel]
-        public async Task<IActionResult> GroupsAsync([FromBody]ElasticQueryAggrRequest query, CancellationToken cancellationToken)
-        {
-            ISearchResponse<MediaRef> response = await _mediaRefService.GroupsAsync(query?.Filter, query?.Size, cancellationToken);
-
-            if (!response.IsValid)
-                return BadRequest(response.DebugInformation);
-
-            return new OkObjectResult(response.Aggs);
         }
 
         [HttpPost]
@@ -75,13 +65,6 @@ namespace Hfa.WebApi.Controllers
                 return BadRequest(response.DebugInformation);
 
             return new OkObjectResult(response.Source);
-        }
-
-        [HttpGet("cultures/{filter}")]
-        public async Task<IActionResult> Cultures(string filter, CancellationToken cancellationToken)
-        {
-            var cultures = await _mediaRefService.ListCulturesAsync(filter, cancellationToken);
-            return Ok(cultures);
         }
 
         [HttpPost]
@@ -120,5 +103,34 @@ namespace Hfa.WebApi.Controllers
             var response = await _mediaRefService.DeleteManyAsync(new string[] { id }, cancellationToken);
             return new OkObjectResult(response);
         }
+
+        [HttpPost]
+        [Route("groups")]
+        [ValidateModel]
+        [ResponseCache(CacheProfileName = "Long")]
+        public async Task<IActionResult> GroupsAsync([FromBody]ElasticQueryAggrRequest query, CancellationToken cancellationToken)
+        {
+            ISearchResponse<MediaRef> response = await _mediaRefService.GroupsAsync(query?.Filter, query?.Size, cancellationToken);
+
+            if (!response.IsValid)
+                return BadRequest(response.DebugInformation);
+
+            return new OkObjectResult(response.Aggs);
+        }
+
+        [ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "filter" })]
+        [HttpGet]
+        [Route("cultures")]
+        public async Task<IActionResult> Cultures([FromQuery]string filter, CancellationToken cancellationToken)
+        {
+            var cultures = await _memoryCache.GetOrCreateAsync(CacheKeys.CulturesKey, async entry =>
+           {
+               entry.SlidingExpiration = TimeSpan.FromHours(12);
+               var response = await _mediaRefService.ListCulturesAsync(filter, cancellationToken);
+               return response;
+           });
+            return Ok(cultures);
+        }
+
     }
 }
