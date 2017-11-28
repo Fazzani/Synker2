@@ -24,6 +24,7 @@ using hfa.Synker.Service.Elastic;
 using System.Diagnostics;
 using System.Text;
 using hfa.Synker.Service.Services.MediaRefs;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -34,13 +35,15 @@ namespace Hfa.WebApi.Controllers
     {
         private IPlaylistService _playlistService;
         private IMediaRefService _mediaRefService;
+        IMemoryCache _memoryCache;
 
-        public PlaylistsController(IMediaRefService mediaRefService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
+        public PlaylistsController(IMemoryCache memoryCache, IMediaRefService mediaRefService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
             SynkerDbContext context, IPlaylistService playlistService)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _playlistService = playlistService;
             _mediaRefService = mediaRefService;
+            _memoryCache = memoryCache;
         }
 
         /// <summary>
@@ -49,15 +52,23 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost("search")]
         [ValidateModel]
-        public IActionResult List([FromBody] QueryListBaseModel query, CancellationToken cancellationToken, [FromQuery] bool light = true)
+        public async Task<IActionResult> List([FromBody] QueryListBaseModel query, CancellationToken cancellationToken, [FromQuery] bool light = true)
         {
-            var response = _dbContext.Playlist
-                .Where(x => x.UserId == UserId)
-                .OrderByDescending(x => x.Id)
-                .Select(pl => light ? PlaylistModel.ToLightModel(pl, Url) : PlaylistModel.ToModel(pl, Url))
-                .GetPaged(query.PageNumber, query.PageSize);
+            var playlists = await _memoryCache.GetOrCreateAsync($"{CacheKeys.PlaylistByUser}_{UserId}_{query.GetHashCode()}", async entry =>
+            {
+                entry.SlidingExpiration = TimeSpan.FromHours(12);
+                return await Task.Run(() =>
+                {
+                    var response = _dbContext.Playlist
+                   .Where(x => x.UserId == UserId)
+                   .OrderByDescending(x => x.Id)
+                   .Select(pl => light ? PlaylistModel.ToLightModel(pl, Url) : PlaylistModel.ToModel(pl, Url))
+                   .GetPaged(query.PageNumber, query.PageSize);
+                    return response;
+                });
+            });
 
-            return new OkObjectResult(response);
+            return new OkObjectResult(playlists);
         }
 
         [HttpGet("{id}")]

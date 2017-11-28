@@ -21,7 +21,6 @@ namespace Hfa.WebApi.Controllers
     [Authorize]
     public class PiconsController : BaseController
     {
-        private const int ElasticMaxResult = 200000;
         private IPiconsService _piconsService;
 
         public PiconsController(IPiconsService piconsService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
@@ -39,6 +38,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "id" })]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.GetAsync(new DocumentPath<Picon>(id), null, cancellationToken);
