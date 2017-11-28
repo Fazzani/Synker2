@@ -10,16 +10,16 @@
         </mat-form-field>
         <span class="spacer"></span>
         <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Save" (click)="save()">save</mat-icon>
+            <mat-icon class="mat-24" aria-label="Save" matTooltip="Save" (click)="save()">save</mat-icon>
         </a>
         <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Synchronize" (click)="synk()">autorenew</mat-icon>
+            <mat-icon class="mat-24" aria-label="Synchronize" matTooltip="Synchronize" (click)="synk()">autorenew</mat-icon>
         </a>
         <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Match" (click)="match()">compare_arrows</mat-icon>
+            <mat-icon class="mat-24" aria-label="Match" matTooltip="Match" (click)="match()">compare_arrows</mat-icon>
         </a>
         <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Match" (click)="openUpdateListDialog()">done</mat-icon>
+            <mat-icon class="mat-24" aria-label="Bulk Update" matTooltip="Bulk Update" (click)="openUpdateListDialog()">done</mat-icon>
         </a>
     </mat-toolbar>
     <mat-table #table [dataSource]="dataSource" matSort>
@@ -44,13 +44,13 @@
 
         <!-- tvg.name -->
         <ng-container matColumnDef="tvg.name">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> tvg name </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Tvg name </mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row?.tvg.name}} </mat-cell>
         </ng-container>
 
         <!-- tvg.identify -->
         <ng-container matColumnDef="tvg.tvgIdentify">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> tvg id </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Tvg id </mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row?.tvg.tvgIdentify}} </mat-cell>
         </ng-container>
 

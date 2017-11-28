@@ -101,6 +101,15 @@ export class MediaRefComponent implements OnInit, OnDestroy {
         });
     }
 
+    toggleSelected(media: mediaRef, event: any): void {
+        if (!event.ctrlKey) {
+            this.dataSource.data.filter((v, i) => v.id != media.id).forEach((m, i) => {
+                m.selected = false;
+            });
+        }
+        media.selected = !media.selected;
+    }
+
     ngOnDestroy() {
         this.subscriptionTableEvent.unsubscribe();
     }
@@ -126,6 +135,7 @@ export class MediaRefModifyDialog {
  */
 export class MediaRefDataSource extends DataSource<mediaRef> {
 
+    data: mediaRef[];
     medias = new BehaviorSubject<mediaRef[]>([]);
     _filterChange = new BehaviorSubject<Object | string>({});
     get filter(): Object | string { return this._filterChange.value; }
@@ -176,7 +186,11 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
             this._paginator.value.length = v.total;
             return v.result;
         });
-        res.subscribe(x => { this.medias.next(x); });
+        res.subscribe(x => {
+            this.medias.next(x);
+            this.data = [];
+            this.data.concat(x);
+        });
         return res;
     }
 
