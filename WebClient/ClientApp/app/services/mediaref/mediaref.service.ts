@@ -34,7 +34,8 @@ export class MediaRefService extends BaseService {
     }
 
     save(medias: Array<mediaRef>): Observable<ElasticResponse<mediaRef>> {
-        return this.http.post(variables.BASE_API_URL + 'mediasref/save', medias).map(res => {
+        debugger;
+        return this.http.post(variables.BASE_API_URL + 'mediasref', medias).map(res => {
             return res;
         }).catch(this.handleError);
     }

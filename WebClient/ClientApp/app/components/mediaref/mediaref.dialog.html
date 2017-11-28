@@ -2,13 +2,13 @@
     <input matInput [(ngModel)]="data.id" placeholder="id...">
 </mat-form-field>
 <mat-form-field>
-    <input matInput [(ngModel)]="data.displayNames" placeholder="Name...">
+    <input matInput [(ngModel)]="data.displayNames" (ngModelChange)="parseListText($event)" [ngModelOptions]="{updateOn: 'blur'}" placeholder="Name...">
 </mat-form-field>
 <mat-form-field>
-    <input matInput [(ngModel)]="data.cultures" placeholder="Cultures...">
+    <input matInput [(ngModel)]="data.cultures" (ngModelChange)="parseListText($event)" [ngModelOptions]="{updateOn: 'blur'}" placeholder="Cultures...">
 </mat-form-field>
 <mat-form-field>
-    <input matInput [(ngModel)]="data.groups" placeholder="Groups...">
+    <input matInput [(ngModel)]="data.groups" (ngModelChange)="parseListText($event)" [ngModelOptions]="{updateOn: 'blur'}" placeholder="Groups...">
 </mat-form-field>
 <mat-form-field>
     <input matInput [(ngModel)]="data.mediaType" placeholder="MediaType...">

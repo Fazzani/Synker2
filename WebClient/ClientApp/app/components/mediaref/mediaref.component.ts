@@ -14,6 +14,9 @@ import { EventTargetLike } from "rxjs/observable/FromEventObservable";
 import { MediaRefService } from '../../services/mediaref/mediaref.service';
 import { mediaRef } from '../../types/mediaref.type';
 
+//{"match":{"groups":"bein.net"}}
+//{"match":{"cultures":"International"}}
+
 @Component({
     selector: 'mediaref',
     templateUrl: './mediaref.component.html',
@@ -56,8 +59,8 @@ export class MediaRefComponent implements OnInit, OnDestroy {
                 if ((x as PageEvent).length === undefined)
                     this.paginator.pageIndex = 0;
 
-                let objectQuery = this.commonService.JsonToObject(this.filter.nativeElement.value);
-                console.log('objectQuery => ', objectQuery);
+                let objectQuery = this.commonService.JsonToObject<any>(this.filter.nativeElement.value);
+                console.log('objectQuery => ', objectQuery, this.filter.nativeElement.value);
                 this.dataSource.filter = objectQuery != null ? objectQuery : this.filter.nativeElement.value;
                 this.dataSource.paginator = this.paginator;
             });
@@ -128,6 +131,10 @@ export class MediaRefModifyDialog {
     onNoClick(): void {
         this.dialogRef.close();
     }
+
+    parseListText(model: any) {
+        model = model.split("\n");
+    }
 }
 
 /**
@@ -170,6 +177,7 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
             from: pageSize * this.paginator.pageIndex,
             size: pageSize
         };
+
         if (typeof this.filter === "string") {
             if (this.filter !== undefined && this.filter != "")
                 query.query = {

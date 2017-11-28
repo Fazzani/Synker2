@@ -16,6 +16,7 @@ using hfa.WebApi.Models;
 using hfa.Synker.Service.Services.MediaRefs;
 using hfa.SyncLibrary.Global;
 using Hfa.WebApi.Common;
+using hfa.WebApi.Common.Filters;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Hfa.WebApi.Controllers
@@ -42,6 +43,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [Route("groups")]
+        [ValidateModel]
         public async Task<IActionResult> GroupsAsync([FromBody]ElasticQueryAggrRequest query, CancellationToken cancellationToken)
         {
             ISearchResponse<MediaRef> response = await _mediaRefService.GroupsAsync(query?.Filter, query?.Size, cancellationToken);
@@ -78,12 +80,13 @@ namespace Hfa.WebApi.Controllers
         [HttpGet("cultures/{filter}")]
         public async Task<IActionResult> Cultures(string filter, CancellationToken cancellationToken)
         {
-            var cultures  =  await _mediaRefService.ListCulturesAsync(filter, cancellationToken);
+            var cultures = await _mediaRefService.ListCulturesAsync(filter, cancellationToken);
             return Ok(cultures);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Save(List<MediaRef> mediasRef, CancellationToken cancellationToken)
+        [ValidateModel]
+        public async Task<IActionResult> Save([FromBody]List<MediaRef> mediasRef, CancellationToken cancellationToken)
         {
             var response = await _mediaRefService.SaveAsync(mediasRef, cancellationToken);
 
