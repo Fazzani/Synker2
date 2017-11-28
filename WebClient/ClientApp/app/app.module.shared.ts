@@ -34,6 +34,7 @@ import { MediaRefModifyDialog, MediaRefComponent } from './components/mediaref/m
 import { PlaylistService } from './services/playlists/playlist.service';
 import { ClipboardModule } from 'ngx-clipboard';
 import { PlaylistComponent, PlaylistModifyDialog, TvgMediaListModifyDialog } from "./components/playlist/playlist.component";
+import { PiconService } from './services/picons/picons.service';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -90,6 +91,7 @@ const appRoutes: Routes = [
         LoginRouteGuard,
         MediaRefService,
         PlaylistService,
+        PiconService,
         EpgService,
         {
             provide: HTTP_INTERCEPTORS,

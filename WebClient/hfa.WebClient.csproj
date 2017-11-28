@@ -37,6 +37,7 @@
     <None Remove="ClientApp\app\services\notification\notification.service.ts" />
     <None Remove="ClientApp\app\types\auth.type.ts" />
     <None Remove="ClientApp\app\types\elasticQuery.type.ts" />
+    <None Remove="ClientApp\app\types\picon.type.ts" />
     <None Remove="ClientApp\app\types\xmltv.type.ts" />
     <None Remove="ClientApp\app\variables.ts" />
   </ItemGroup>
@@ -64,6 +65,7 @@
     <TypeScriptCompile Include="ClientApp\app\types\media.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\auth.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\elasticQuery.type.ts" />
+    <TypeScriptCompile Include="ClientApp\app\types\picon.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\xmltv.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\variables.ts" />
   </ItemGroup>

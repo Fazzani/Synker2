@@ -14,7 +14,13 @@
     <input matInput [(ngModel)]="data.mediaType" placeholder="MediaType...">
 </mat-form-field>
 <mat-form-field>
-    <input matInput [(ngModel)]="data.tvg.logo" placeholder="icon...">
+    <input matInput #filterPicon [matAutocomplete]="auto" [(ngModel)]="data.tvg.logo" placeholder="icon..." name="filterPicon">
+    <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let picon of piconsFilter | async" [value]="picon.rawUrl">
+            <img [src]="picon.rawUrl" class="logo-medium" />
+            {{ picon.name }}
+        </mat-option>
+    </mat-autocomplete>
     <img [src]="data.tvg.logo" class="logo-medium" />
 </mat-form-field>
 <mat-action-row>

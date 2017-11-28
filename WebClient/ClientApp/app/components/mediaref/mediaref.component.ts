@@ -13,6 +13,8 @@ import { distinctUntilChanged, merge, debounceTime } from 'rxjs/operators';
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
 import { MediaRefService } from '../../services/mediaref/mediaref.service';
 import { mediaRef } from '../../types/mediaref.type';
+import { PiconService } from '../../services/picons/picons.service';
+import { picon } from '../../types/picon.type';
 
 //{"match":{"groups":"bein.net"}}
 //{"match":{"cultures":"International"}}
@@ -34,7 +36,7 @@ export class MediaRefComponent implements OnInit, OnDestroy {
     currentItem: mediaRef | null;
 
     /** media ctor */
-    constructor(private mediaRefService: MediaRefService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar) { }
+    constructor(private mediaRefService: MediaRefService, private piconService: PiconService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar) { }
 
     /** Called by Angular after media component initialized */
     ngOnInit(): void {
@@ -122,11 +124,25 @@ export class MediaRefComponent implements OnInit, OnDestroy {
     selector: 'mediaref-modify-dialog',
     templateUrl: './mediaref.dialog.html'
 })
-export class MediaRefModifyDialog {
+export class MediaRefModifyDialog implements OnInit, OnDestroy {
+
+    @ViewChild('filterPicon') filterPicon: ElementRef;
+    piconsFilter: Observable<picon[]>;
 
     constructor(
+        private piconService: PiconService,
         public dialogRef: MatDialogRef<MediaRefModifyDialog>,
-        @Inject(MAT_DIALOG_DATA) public data: any) { }
+        @Inject(MAT_DIALOG_DATA) public data: any) {
+    }
+
+    ngOnInit(): void {
+        Observable.fromEvent<EventTargetLike>(this.filterPicon.nativeElement, 'keyup')
+            .debounceTime(1000)
+            .distinctUntilChanged()
+            .subscribe((x) => {
+                this.piconsFilter = this.piconService.list("name", this.filterPicon.nativeElement.value).map(x => x.result);
+            });
+    }
 
     onNoClick(): void {
         this.dialogRef.close();
@@ -135,6 +151,14 @@ export class MediaRefModifyDialog {
     parseListText(model: any) {
         model = model.split("\n");
     }
+
+    //autoCompletePicons(filter: string): Array<picon>{
+
+    //}
+
+    ngOnDestroy(): void {
+    }
+
 }
 
 /**

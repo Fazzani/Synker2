@@ -6,13 +6,32 @@
  * @export
  * @interface ElasticQuery
  */
-export interface ElasticQuery {
+export class ElasticQuery {
     from: number;
     size: number;
-    query: Object | null;
+    query: IElasticSubQuery | Object | null;
     sort: any;
+
+    public static Match(field: string, query: string): IElasticQueryMatch {
+        let res = <IElasticSubQuery>{};
+        res.query = <IElasticQueryMatch>{};
+        res.query.match = <IElasticQueryMatch>{};
+        res.query.match[field] = query;
+        return res;
+    }
 }
 
+export interface IElasticSubQuery {
+    query: any | null;
+}
+
+export interface IElasticQueryMatch {
+    query: any | null;
+}
+
+export interface IElasticQueryMatchPhrase {
+    match_phrase: any | null;
+}
 /**
  * Elastic Response
  * 

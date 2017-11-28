@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace hfa.Synker.Service.Services.Picons
 {
+    using System;
     using System.Linq;
 
     public class SynkPiconConfig
@@ -27,7 +28,8 @@ namespace hfa.Synker.Service.Services.Picons
             get
             {
                 if (string.IsNullOrEmpty(_id))
-                    _id = Url.Remove(0, Url.LastIndexOf('/') + 1);
+                    //_id = Url.Remove(0, Url.LastIndexOf('/') + 1);
+                    _id = Path.Contains('.') ? Path.Remove(Path.LastIndexOf('.')) : Path;
                 return _id;
             }
             set { _id = value; }
@@ -58,6 +60,8 @@ namespace hfa.Synker.Service.Services.Picons
             var last = path.LastIndexOf('.');
             return last > 0 ? last : path.Length - 1;
         }
+
+        public DateTime UpdatedDate { get; set; } = DateTime.Now;
     }
 
     public class GithubApiResponse

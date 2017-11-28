@@ -56,7 +56,7 @@ namespace Hfa.WebApi.Controllers
         {
             var playlists = await _memoryCache.GetOrCreateAsync($"{CacheKeys.PlaylistByUser}_{UserId}_{query.GetHashCode()}", async entry =>
             {
-                entry.SlidingExpiration = TimeSpan.FromHours(12);
+                entry.SlidingExpiration = TimeSpan.FromHours(2);
                 return await Task.Run(() =>
                 {
                     var response = _dbContext.Playlist

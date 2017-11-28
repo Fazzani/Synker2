@@ -76,6 +76,7 @@ namespace hfa.Synker.Service.Services.Picons
             descriptor.IndexMany(picons);
             descriptor.Refresh(Elasticsearch.Net.Refresh.True);
 
+            _logger.LogInformation($"Sync picons count : {picons.Count()}");
             var response = await _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
 
             return response;
