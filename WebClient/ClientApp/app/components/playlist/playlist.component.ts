@@ -65,21 +65,21 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.paginator.pageSize = this.paginator.pageSizeOptions[0];
         this.dataSource.paginator = this.paginator;
         ////this.filter.nativeElement.value = storedQuery != null && storedQuery.query != null && storedQuery.query != {} ? JSON.stringify(storedQuery.query) : "";
-        //this.subscriptionTableEvent = this.paginator.page.asObservable()
-        //    .merge(Observable.fromEvent<EventTargetLike>(this.filter.nativeElement, 'keyup'))
-        //    .debounceTime(1000)
-        //    .distinctUntilChanged()
-        //    .subscribe((x) => {
-        //        if (!this.dataSource) { return; }
-        //        console.log("subscriptionTableEvent => ", x);
-        //        if ((x as PageEvent).length === undefined)
-        //            this.paginator.pageIndex = 0;
+        this.subscriptionTableEvent = this.paginator.page.asObservable()
+            .merge(Observable.fromEvent<EventTargetLike>(this.filter.nativeElement, 'keyup'))
+            .debounceTime(1000)
+            .distinctUntilChanged()
+            .subscribe((x) => {
+                if (!this.dataSource) { return; }
+                console.log("subscriptionTableEvent => ", x);
+                if ((x as PageEvent).length === undefined)
+                    this.paginator.pageIndex = 0;
 
-        //        let objectQuery = this.commonService.JsonToObject(this.filter.nativeElement.value);
-        //        console.log('objectQuery => ', objectQuery);
-        //        this.dataSource.filter = objectQuery != null ? objectQuery : this.filter.nativeElement.value;
-        //        this.dataSource.paginator = this.paginator;
-        //    });
+                let objectQuery = this.commonService.JsonToObject(this.filter.nativeElement.value);
+                console.log('objectQuery => ', objectQuery);
+                this.dataSource.filter = objectQuery != null ? objectQuery : this.filter.nativeElement.value;
+                this.dataSource.paginator = this.paginator;
+            });
     }
 
     ngAfterViewInit() {
