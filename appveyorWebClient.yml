@@ -14,7 +14,8 @@ clone_depth: 10
 environment:
   nodejs_version: '8'
   ASPNETCORE_ENVIRONMENT: 'Production'
-
+matrix:
+  fast_finish: true
 install:
   - choco install googlechrome
   - ps: Install-Product node $Env:nodejs_version
