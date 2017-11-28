@@ -45,6 +45,14 @@ module.exports = (env) => {
                         fallback: "style-loader",
                         use: [cssLoader, "sass-loader"]
                     })
+                },
+                {
+                    test: /\.(ttf|eot|svg|woff(2)?)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                    use: [
+                        {
+                            loader: "file-loader"
+                        }
+                    ]
                 }
             ]
         },

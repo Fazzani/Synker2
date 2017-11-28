@@ -6,12 +6,7 @@
     <title>Synker</title>
     <base href="~/" />
     <data data-api-url="@ViewBag.ApiUrl" data-ws-url="@ViewBag.WsUrl"/>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <!--Import materialize.css-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-
     <link href="~/dist/site.css" rel="stylesheet" asp-append-version="true" />
-    <link rel="stylesheet" href="~/dist/vendor.css" asp-append-version="true" />
     <link rel="icon" href="~/favicon.ico" asp-append-version="true" />
 </head>
 <body>
@@ -19,6 +14,6 @@
 
     @RenderSection("scripts", required: false)
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script type="text/javascript" src="~/assets/materialize-v0.100.2/js/bin/materialize.min.js"></script>
 </body>
 </html>

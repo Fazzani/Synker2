@@ -139,6 +139,7 @@ body {
 .active[role="row"] {
     background-color: $primary-color-font;
     color: $primary-color-bg-dark !important;
+    transition: ease-in all 0.3s;
 
     .mat-cell {
         color: inherit !important;
