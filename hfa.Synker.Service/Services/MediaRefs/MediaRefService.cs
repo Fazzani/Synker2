@@ -141,13 +141,8 @@ namespace hfa.Synker.Service.Services.MediaRefs
         public async Task<IBulkResponse> SaveAsync(List<MediaRef> mediasRef, CancellationToken cancellationToken)
         {
             var descriptor = new BulkDescriptor();
-            //foreach (var item in mediasRef)
-            //{
-            //    descriptor.Update<MediaRef>(a => a.Doc(item));
-            //}
-            descriptor.UpdateMany(mediasRef, (a, o) => a.DocAsUpsert());
+            descriptor.IndexMany(mediasRef);
             descriptor.Refresh(Elasticsearch.Net.Refresh.True);
-
             return await _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
         }
 

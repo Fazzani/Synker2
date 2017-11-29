@@ -2,11 +2,6 @@
     <mat-toolbar color="custom">
         <mat-form-field floatPlaceholder="never">
             <input matInput #filter placeholder="Filter medias ref...">
-            <!--<mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let option of options" [value]="option">
-                    {{ option }}
-                </mat-option>
-            </mat-autocomplete>-->
         </mat-form-field>
         <span class="spacer"></span>
         <a mat-icon-button>
@@ -15,34 +10,37 @@
         <a mat-icon-button>
             <mat-icon class="mat-24" aria-label="Synchronize" matTooltip="Synchronize" (click)="synk()">system_update_alt</mat-icon>
         </a>
+        <a mat-icon-button>
+            <mat-icon class="mat-24" aria-label="Update" matTooltip="Update" (click)="reload()">update</mat-icon>
+        </a>
     </mat-toolbar>
     <mat-table #table [dataSource]="dataSource" matSort>
-        <!-- icon Column -->
+        <!-- logo -->
         <ng-container matColumnDef="logo">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Logo </mat-header-cell>
             <mat-cell *matCellDef="let row">
                 <img [src]="row.tvg?.logo" class="logo-grid" />
             </mat-cell>
         </ng-container>
-        <!-- site_id Column -->
+        <!-- displaynames -->
         <ng-container matColumnDef="displayNames">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Names </mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row.displayNames}} </mat-cell>
         </ng-container>
 
-        <!-- site Column -->
+        <!-- Groups -->
         <ng-container matColumnDef="groups">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Groups </mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row.groups}} </mat-cell>
         </ng-container>
 
-        <!-- site xmltv_id -->
+        <!-- cultures -->
         <ng-container matColumnDef="cultures">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Cultures </mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row.cultures}} </mat-cell>
         </ng-container>
 
-        <!-- channel_name Column -->
+        <!-- MediaType Column -->
         <ng-container matColumnDef="mediaType">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Media Type </mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row.mediaType}} </mat-cell>

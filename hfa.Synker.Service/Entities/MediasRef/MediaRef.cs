@@ -8,6 +8,8 @@ namespace hfa.Synker.Service.Entities.MediasRef
 {
     public class MediaRef : IEqualityComparer<MediaRef>
     {
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         public MediaRef(string displayName, string group, string culture, string xmltv_id, string site_idAndXmltv_id, string mediaType = MediaTypes.Video)
         {
             DisplayNames = new List<string> { displayName };
@@ -40,8 +42,7 @@ namespace hfa.Synker.Service.Entities.MediasRef
         public List<string> Cultures { get; set; }
         public string MediaType { get; set; } = MediaTypes.Video;
 
-        public override int GetHashCode() => DisplayNames.FirstOrDefault().GetHashCode() ^ Cultures.FirstOrDefault().GetHashCode() ^ MediaType.GetHashCode();
-
+        public override int GetHashCode() => Id.GetHashCode();
 
         public override bool Equals(object obj)
         {

@@ -46,7 +46,7 @@ namespace hfa.Synker.Service.Services.Elastic
                 .InferMappingFor<tvChannel>(m => m.IdProperty(p => p.id))
                 .InferMappingFor<Tvg>(m => m.IdProperty(p => p.Id))
                 .InferMappingFor<tvProgramme>(m => m.IdProperty(p => p.Id).IndexName("xmltv-*"))
-                .InferMappingFor<MediaRef>(m => m.IndexName(_config.MediaRefIndex))
+                .InferMappingFor<MediaRef>(m => m.IndexName(_config.MediaRefIndex).IdProperty(p => p.Id))
                 .InferMappingFor<Picon>(m => m.IndexName(_config.MediaRefIndex).IdProperty(p => p.Id))
                 .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).IdProperty(p => p.id));
 

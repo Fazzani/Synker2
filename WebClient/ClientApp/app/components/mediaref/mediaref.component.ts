@@ -47,7 +47,6 @@ export class MediaRefComponent implements OnInit, OnDestroy {
         this.paginator.pageSizeOptions = [50, 100, 250, 1000];
         this.paginator.pageSize = storedQuery != null ? storedQuery.size : this.paginator.pageSizeOptions[0];
         this.filter.nativeElement.value = storedQuery != null && storedQuery.query != null && storedQuery.query != {} ? JSON.stringify(storedQuery.query) : "";
-        storedQuery = null;
 
         this.dataSource = new MediaRefDataSource(this.mediaRefService, this.paginator);
 
@@ -65,12 +64,12 @@ export class MediaRefComponent implements OnInit, OnDestroy {
                 console.log('objectQuery => ', objectQuery, this.filter.nativeElement.value);
                 this.dataSource.filter = objectQuery != null ? objectQuery : this.filter.nativeElement.value;
                 this.dataSource.paginator = this.paginator;
+               
             });
     }
 
     openDialog(spChannel: mediaRef): void {
         let dialogRef = this.dialog.open(MediaRefModifyDialog, {
-           // panelClass: 'mat-dialog-container',
             width: '550px',
             data: spChannel
         });
@@ -106,6 +105,10 @@ export class MediaRefComponent implements OnInit, OnDestroy {
         });
     }
 
+    reload(): void {
+        this.ngOnInit();
+    }
+
     toggleSelected(media: mediaRef, event: any): void {
         if (!event.ctrlKey) {
             this.dataSource.data.filter((v, i) => v.id != media.id).forEach((m, i) => {
@@ -128,6 +131,7 @@ export class MediaRefModifyDialog implements OnInit, OnDestroy {
 
     @ViewChild('filterPicon') filterPicon: ElementRef;
     piconsFilter: Observable<picon[]>;
+    currrentPiconUrl: string;
 
     constructor(
         private piconService: PiconService,
@@ -146,6 +150,16 @@ export class MediaRefModifyDialog implements OnInit, OnDestroy {
 
     onNoClick(): void {
         this.dialogRef.close();
+    }
+
+    onfocusPicon(piconUrl: string): void {
+        this.currrentPiconUrl = piconUrl;
+        this.filterPicon.nativeElement.value = "";
+    }
+
+    onblurPicon(piconPath: string): void {
+        if (piconPath == '')
+            this.filterPicon.nativeElement.value = this.currrentPiconUrl;
     }
 
     parseListText(model: any) {
@@ -211,8 +225,8 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
         else {
             query.query = this.filter;
         }
-
-        localStorage.setItem(Constants.LS_MediaQueryKey, JSON.stringify(query));
+        console.log("JSON.stringify(query) ", JSON.stringify(query));
+        localStorage.setItem(Constants.LS_MediaRefQueryKey, JSON.stringify(query));
         let res = this.mediaRefService.list(query).map((v, i) => {
             console.log("recup epg ", v);
             this._paginator.value.length = v.total;
