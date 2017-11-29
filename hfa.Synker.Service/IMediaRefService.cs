@@ -16,5 +16,11 @@ namespace hfa.Synker.Service.Services.MediaRefs
         Task<IBulkResponse> SaveAsync(List<MediaRef> mediasRef, CancellationToken cancellationToken);
         Task<ISearchResponse<MediaRef>> GroupsAsync(string filter, int? size, CancellationToken cancellationToken);
         Task<MediaRef> MatchTermByDispaynamesAsync(string term, CancellationToken cancellationToken);
+        /// <summary>
+        /// Synchronize mediaRef picons 
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<IBulkResponse> SynkPiconsAsync(CancellationToken cancellationToken);
     }
 }

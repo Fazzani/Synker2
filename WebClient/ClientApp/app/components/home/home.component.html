@@ -14,9 +14,11 @@
                             <i class="material-icons circle green">insert_chart</i>
                             <span class="title">{{ playlist.freindlyname }}</span>
                             <p>
-                                {{playlist.createdDate}}<br />
-                                {{playlist.updatedDate}}<br />
-                                {{playlist.cron}}
+                                <mat-chip-list>
+                                    <mat-chip>{{playlist.createdDate}}</mat-chip>
+                                    <mat-chip>{{playlist.updatedDate}}</mat-chip>
+                                    <mat-chip>{{playlist.cron}}</mat-chip>
+                                </mat-chip-list>
                                 <a class="dropdown-item pointer" [attr.href]="null" (click)="copyPublicLink(playlist.publicUrl)" ngxClipboard [cbContent]="playlist.publicUrl" i18n><i class="material-icons">content_copy</i></a> 
                             </p>
                             <a [routerLink]="['/playlist', playlist.publicId]" class="secondary-content" aria-label="detail">

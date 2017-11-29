@@ -11,26 +11,33 @@ import { picon } from '../../types/picon.type';
 
 @Injectable()
 export class PiconService extends BaseService {
+    BaseUrl: string = "picons";
 
     constructor(protected http: HttpClient) {
         super(http);
     }
 
     get(id: string): Observable<ElasticResponse<picon>> {
-        return this.http.get(variables.BASE_API_URL + 'picons/' + id).map(this.parseData)
+        return this.http.get(`${variables.BASE_API_URL}${this.BaseUrl}/${id}`).map(this.parseData)
             .catch(this.handleError);
     }
 
     list(field: string, filter: string): Observable<ElasticResponse<picon>> {
         let q = ElasticQuery.Match(field, filter);
-        console.log("list picons ", q);
-        return this.http.post(variables.BASE_API_URL + 'picons/_search', q).map(res => {
+        
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/_search`, q).map(res => {
             return res;
         }).catch(this.handleError);
     }
 
     delete(id: string): Observable<number> {
-        return this.http.delete(variables.BASE_API_URL + 'picons/' + id).map(res => {
+        return this.http.delete(`${variables.BASE_API_URL}${this.BaseUrl}/${id}`).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
+    synk(): Observable<ElasticResponse<picon>> {
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/synk`, null).map(res => {
             return res;
         }).catch(this.handleError);
     }

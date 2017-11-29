@@ -1,29 +1,64 @@
 <form class="form-popin">
+    <!--Id-->
     <mat-form-field>
-        <input matInput [(ngModel)]="data.id" placeholder="id..." name="data.id">
+        <input matInput [(ngModel)]="data.id" placeholder="id..." name="data.id" readonly class="full-width">
     </mat-form-field>
+    <!--Displaynames-->
+    <mat-form-field class="chip-list" name="data.displayNames">
+        <mat-chip-list #displaynamesInput ng-model="data.displayNames" required>
+            <mat-chip color="accent" *ngFor="let name of data.displayNames" [selectable]="selectable" [removable]="removable" (remove)="remove(name, data.displayNames)">
+                {{name}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+            <input placeholder="New name..."
+                   [matChipInputFor]="displaynamesInput"
+                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                   [matChipInputAddOnBlur]="addOnBlur"
+                   (matChipInputTokenEnd)="add($event, data.displayNames)" />
+        </mat-chip-list>
+    </mat-form-field>
+    <!--Cultures-->
+    <mat-form-field class="chip-list" name="data.cultures"  ng-model="data.cultures">
+        <mat-chip-list #culturesInput>
+            <mat-chip *ngFor="let cult of data.cultures" [selectable]="selectable" [removable]="removable" (remove)="remove(cult, data.cultures)">
+                {{cult}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+            <input placeholder="New culture..."
+                   [matChipInputFor]="culturesInput"
+                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                   [matChipInputAddOnBlur]="addOnBlur"
+                   (matChipInputTokenEnd)="add($event, data.cultures)" />
+        </mat-chip-list>
+    </mat-form-field>
+    <!--groups-->
+    <mat-form-field class="chip-list" name="data.groups" ng-model="data.groups">
+        <mat-chip-list #groupsInput>
+            <mat-chip *ngFor="let group of data.groups" [selectable]="selectable" [removable]="removable" (remove)="remove(group, data.groups)">
+                {{group}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+            <input placeholder="New group..."
+                   [matChipInputFor]="groupsInput"
+                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                   [matChipInputAddOnBlur]="addOnBlur"
+                   (matChipInputTokenEnd)="add($event, data.groups)" />
+        </mat-chip-list>
+    </mat-form-field>
+    <!--mediaType-->
     <mat-form-field>
-        <input matInput [(ngModel)]="data.displayNames" (ngModelChange)="parseListText($event)" [ngModelOptions]="{updateOn: 'blur'}" placeholder="Name..." name="data.displayNames">
+        <input matInput [(ngModel)]="data.mediaType" placeholder="MediaType..." name="data.mediaType" required>
     </mat-form-field>
-    <mat-form-field>
-        <input matInput [(ngModel)]="data.cultures" (ngModelChange)="parseListText($event)" [ngModelOptions]="{updateOn: 'blur'}" placeholder="Cultures..." name="data.cultures">
+    <mat-form-field class="full-width">
+        <input matInput #filterPicon [matAutocomplete]="auto" [(ngModel)]="data.tvg.logo" placeholder="icon..." name="data.tvg.logo" (focus)="onfocusPicon(data.tvg.logo)" (blur)="onblurPicon(data.tvg.logo)">
+        <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let picon of piconsFilter | async" [value]="picon.rawUrl">
+                <img style="vertical-align:middle;" aria-hidden src="{{picon.rawUrl}}" height="50" />
+                <small>{{picon.name }}</small>
+            </mat-option>
+        </mat-autocomplete>
+        <img [src]="data.tvg.logo" class="logo-medium" />
     </mat-form-field>
-    <mat-form-field>
-        <input matInput [(ngModel)]="data.groups" (ngModelChange)="parseListText($event)" [ngModelOptions]="{updateOn: 'blur'}" placeholder="Groups..." name="data.groups">
-    </mat-form-field>
-    <mat-form-field>
-        <input matInput [(ngModel)]="data.mediaType" placeholder="MediaType..." name="data.groups">
-    </mat-form-field>
-        <mat-form-field class="full-width">
-            <input matInput #filterPicon [matAutocomplete]="auto" [(ngModel)]="data.tvg.logo" placeholder="icon..." name="data.tvg.logo" (focus)="onfocusPicon(data.tvg.logo)" (blur)="onblurPicon(data.tvg.logo)">
-            <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let picon of piconsFilter | async" [value]="picon.rawUrl">
-                    <img style="vertical-align:middle;" aria-hidden src="{{picon.rawUrl}}" height="50" />
-                    <small>{{picon.name }}</small>
-                </mat-option>
-            </mat-autocomplete>
-            <img [src]="data.tvg.logo" class="logo-medium" />
-        </mat-form-field>
     <mat-action-row>
         <button mat-raised-button (click)="dialogRef.close()">Close</button>
     </mat-action-row>

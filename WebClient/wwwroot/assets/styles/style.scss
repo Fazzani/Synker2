@@ -150,31 +150,12 @@ body {
     width: 95%;
 }
 
-/*.form-popin {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-popin > * {
-    width: 100%;
-}
-
-.container form {
-    margin-bottom: 20px;
-}
-
-.container form > * {
-    margin: 5px 0;
-}
-
-.container .mat-radio-button {
-    margin: 0 5px;
-}*/
-
-
-
 .mat-dialog-container {
     max-width: 50vw !important;
     display: flex !important;
     flex-direction: column;
+}
+.mat-chip:not(.mat-basic-chip) {
+    background-color: $primary-color-bg-accent !important;
+    color: $primary-color-font-dark
 }

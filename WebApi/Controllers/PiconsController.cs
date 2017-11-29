@@ -49,7 +49,8 @@ namespace Hfa.WebApi.Controllers
             return new OkObjectResult(response.Source);
         }
 
-        [HttpPost("synk")]
+        [HttpPost]
+        [Route("synk")]
         public async Task<IActionResult> Synk(CancellationToken cancellationToken)
         {
             var picons = await _piconsService.GetPiconsFromGithubRepoAsync(new SynkPiconConfig(), cancellationToken);

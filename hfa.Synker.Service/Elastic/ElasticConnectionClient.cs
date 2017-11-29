@@ -14,8 +14,6 @@ namespace hfa.Synker.Service.Services.Elastic
 {
     public class ElasticConnectionClient : IElasticConnectionClient
     {
-        // internal const string SitePackIndexName = "sitepack";
-
         private ConnectionSettings _settings;
         private ElasticClient _client;
         private static object syncRoot = new Object();
@@ -56,10 +54,6 @@ namespace hfa.Synker.Service.Services.Elastic
                 MappingMediaRefConfig(_config.MediaRefIndex);
 
             Client.Map<tv>(x => x.Index("xmltv-*").AutoMap());
-            //Client.Map<tvProgrammeAudio>(x => x.AutoMap());
-            //Client.Map<tvProgrammeSubtitles>(x => x.AutoMap());
-            //Client.Map<tvProgrammeSubtitles>(x => x.AutoMap());
-            //Client.Map<tvProgrammeSubtitles>(x => x.AutoMap());
         }
 
         public void MappingMediaRefConfig(string indexName)
@@ -67,7 +61,7 @@ namespace hfa.Synker.Service.Services.Elastic
             var keywordProperty = new PropertyName("keyword");
             var response = Client.CreateIndex(indexName, c => c
             .Settings(s => s
-
+                     .Setting("max_result_window", 1_000_000)
                      .Analysis(a => a
                      .CharFilters(cf => cf
                              .PatternReplace("picons_name_filter_regex", pat => pat.Pattern("^\\s+|\\s+$|\\s+(?=\\s)").Replacement(""))
@@ -124,6 +118,7 @@ namespace hfa.Synker.Service.Services.Elastic
             var keywordProperty = new PropertyName("keyword");
             var response = Client.CreateIndex(_config.DefaultIndex, c => c
             .Settings(s => s
+            .Setting("max_result_window", 1_000_000)
             .Setting("analysis.char_filter.drop_specChars.type", "pattern_replace")
             .Setting("analysis.char_filter.drop_specChars.pattern", "\\bbeinsports?\\b")
             .Setting("analysis.char_filter.drop_specChars.replacement", "beIN sports")

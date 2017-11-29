@@ -68,7 +68,6 @@ namespace hfa.Synker.Service.Services.MediaRefs
 
         public async Task<IBulkResponse> SynkAsync(CancellationToken cancellationToken)
         {
-
             var response = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(s => s
                .Index(_elasticConnectionClient.ElasticConfig.SitePackIndex)
                .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
@@ -111,6 +110,40 @@ namespace hfa.Synker.Service.Services.MediaRefs
             var descriptor = new BulkDescriptor();
 
             descriptor.IndexMany(mediasRef);
+
+            return await _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
+        }
+
+        /// <summary>
+        /// Synchronize mediaRef picons 
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IBulkResponse> SynkPiconsAsync(CancellationToken cancellationToken)
+        {
+            var response = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
+               .Index(_elasticConnectionClient.ElasticConfig.MediaRefIndex)
+               .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
+               .From(0)
+               .Query(q => q.MatchAll())
+            , cancellationToken);
+
+            var tasks = response.Documents.Select(async m =>
+            {
+                var findLogoResponse = await _elasticConnectionClient.Client.SearchAsync<Picon>(x =>
+                x.Query(q => q.Match(fz =>
+                          fz.Field(f => f.Name)
+                             .Query(m.DisplayNames.FirstOrDefault()))).Size(1), cancellationToken);
+
+                if (findLogoResponse.Documents.Any())
+                    m.Tvg.Logo = findLogoResponse.Documents.First().RawUrl;
+            });
+
+            await Task.WhenAll(tasks);
+
+            var descriptor = new BulkDescriptor();
+
+            descriptor.IndexMany(response.Documents);
 
             return await _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
         }

@@ -4,6 +4,8 @@ import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_D
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
+import { ENTER, COMMA } from '@angular/cdk/keycodes';
+import { MatChipInputEvent } from '@angular/material';
 
 import { CommonService, Constants } from '../../services/common/common.service';
 import { Observable } from "rxjs/Observable";
@@ -64,7 +66,7 @@ export class MediaRefComponent implements OnInit, OnDestroy {
                 console.log('objectQuery => ', objectQuery, this.filter.nativeElement.value);
                 this.dataSource.filter = objectQuery != null ? objectQuery : this.filter.nativeElement.value;
                 this.dataSource.paginator = this.paginator;
-               
+
             });
     }
 
@@ -95,6 +97,19 @@ export class MediaRefComponent implements OnInit, OnDestroy {
     synk(): void {
         this.mediaRefService.synk().subscribe(res => {
             this.snackBar.open("Medias referentiel was synchronized");
+        });
+    }
+
+    synkPiconsGlobal(): void {
+        this.piconService.synk().subscribe(res => {
+            this.snackBar.open("Picons index was synchronized");
+        });
+    }
+
+    synkPiconsForMediaRef(): void {
+        this.mediaRefService.synkPicons().subscribe(res => {
+            this.snackBar.open("Picons was synchronized for all mediaRef");
+            this.reload();
         });
     }
 
@@ -132,7 +147,13 @@ export class MediaRefModifyDialog implements OnInit, OnDestroy {
     @ViewChild('filterPicon') filterPicon: ElementRef;
     piconsFilter: Observable<picon[]>;
     currrentPiconUrl: string;
+    visible: boolean = true;
+    selectable: boolean = true;
+    removable: boolean = true;
+    addOnBlur: boolean = true;
 
+    // Enter, comma
+    separatorKeysCodes = [ENTER, COMMA];
     constructor(
         private piconService: PiconService,
         public dialogRef: MatDialogRef<MediaRefModifyDialog>,
@@ -162,8 +183,25 @@ export class MediaRefModifyDialog implements OnInit, OnDestroy {
             this.filterPicon.nativeElement.value = this.currrentPiconUrl;
     }
 
-    parseListText(model: any) {
-        model = model.split("\n");
+    add(event: MatChipInputEvent, model): void {
+        let input = event.input;
+        let value = event.value;
+        if ((value || '').trim()) {
+            model.push(value.trim());
+        }
+
+        // Reset the input value
+        if (input) {
+            input.value = '';
+        }
+    }
+
+    remove(data: any, model: any): void {
+        let index = model.indexOf(data);
+
+        if (index >= 0) {
+            model.splice(index, 1);
+        }
     }
 
     //autoCompletePicons(filter: string): Array<picon>{
@@ -234,8 +272,7 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
         });
         res.subscribe(x => {
             this.medias.next(x);
-            this.data = [];
-            this.data.concat(x);
+            this.data = x;
         });
         return res;
     }

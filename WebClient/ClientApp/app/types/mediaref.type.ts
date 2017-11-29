@@ -7,10 +7,15 @@ import { ISelectable } from "./common.type";
  * @description mediaRef Model.
  */
 export interface mediaRef extends ISelectable {
-    displayNames: Array<string>;
+    displayNames: string[];
     tvg: Tvg;
-    groups: Array<string>;
-    cultures: Array<string>;
-    mediaType: string;
+    groups: string[];
+    cultures: string[];
+    mediaType: MediaTypes;
     id: string;
+}
+
+export enum MediaTypes {
+    Video,
+    Audio 
 }

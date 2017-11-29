@@ -56,6 +56,18 @@ namespace Hfa.WebApi.Controllers
             return new OkObjectResult(result.Items);
         }
 
+        [HttpPost]
+        [Route("synkpicons")]
+        public async Task<IActionResult> SynkPiconsAsync(CancellationToken cancellationToken)
+        {
+            var result = await _mediaRefService.SynkPiconsAsync(cancellationToken);
+
+            if (!result.IsValid)
+                return BadRequest(result.DebugInformation);
+
+            return new OkObjectResult(result.Items);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {

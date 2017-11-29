@@ -33,6 +33,12 @@ export class MediaRefService extends BaseService {
         }).catch(this.handleError);
     }
 
+    synkPicons(): Observable<ElasticResponse<mediaRef>> {
+        return this.http.post(variables.BASE_API_URL + 'mediasref/synkpicons', null).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
     save(medias: Array<mediaRef>): Observable<ElasticResponse<mediaRef>> {
         return this.http.post(variables.BASE_API_URL + 'mediasref', medias).map(res => {
             return res;
