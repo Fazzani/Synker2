@@ -1,28 +1,30 @@
-<mat-form-field>
-    <input matInput [(ngModel)]="data.id" placeholder="id...">
-</mat-form-field>
-<mat-form-field>
-    <input matInput [(ngModel)]="data.displayNames" (ngModelChange)="parseListText($event)" [ngModelOptions]="{updateOn: 'blur'}" placeholder="Name...">
-</mat-form-field>
-<mat-form-field>
-    <input matInput [(ngModel)]="data.cultures" (ngModelChange)="parseListText($event)" [ngModelOptions]="{updateOn: 'blur'}" placeholder="Cultures...">
-</mat-form-field>
-<mat-form-field>
-    <input matInput [(ngModel)]="data.groups" (ngModelChange)="parseListText($event)" [ngModelOptions]="{updateOn: 'blur'}" placeholder="Groups...">
-</mat-form-field>
-<mat-form-field>
-    <input matInput [(ngModel)]="data.mediaType" placeholder="MediaType...">
-</mat-form-field>
-<mat-form-field>
-    <input matInput #filterPicon [matAutocomplete]="auto" [(ngModel)]="data.tvg.logo" placeholder="icon..." name="filterPicon">
-    <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let picon of piconsFilter | async" [value]="picon.rawUrl">
-            <img [src]="picon.rawUrl" class="logo-medium" />
-            {{ picon.name }}
-        </mat-option>
-    </mat-autocomplete>
-    <img [src]="data.tvg.logo" class="logo-medium" />
-</mat-form-field>
-<mat-action-row>
-    <button mat-raised-button (click)="dialogRef.close()">Close</button>
-</mat-action-row>
+<form class="form-popin">
+    <mat-form-field>
+        <input matInput [(ngModel)]="data.id" placeholder="id..." name="data.id">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput [(ngModel)]="data.displayNames" (ngModelChange)="parseListText($event)" [ngModelOptions]="{updateOn: 'blur'}" placeholder="Name..." name="data.displayNames">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput [(ngModel)]="data.cultures" (ngModelChange)="parseListText($event)" [ngModelOptions]="{updateOn: 'blur'}" placeholder="Cultures..." name="data.cultures">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput [(ngModel)]="data.groups" (ngModelChange)="parseListText($event)" [ngModelOptions]="{updateOn: 'blur'}" placeholder="Groups..." name="data.groups">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput [(ngModel)]="data.mediaType" placeholder="MediaType..." name="data.groups">
+    </mat-form-field>
+        <mat-form-field class="full-width">
+            <input matInput #filterPicon [matAutocomplete]="auto" [(ngModel)]="data.tvg.logo" placeholder="icon..." name="data.tvg.logo">
+            <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let picon of piconsFilter | async" [value]="picon.rawUrl">
+                    <img style="vertical-align:middle;" aria-hidden src="{{picon.rawUrl}}" height="50" />
+                    <small>{{picon.name }}</small>
+                </mat-option>
+            </mat-autocomplete>
+            <img [src]="data.tvg.logo" class="logo-medium" />
+        </mat-form-field>
+    <mat-action-row>
+        <button mat-raised-button (click)="dialogRef.close()">Close</button>
+    </mat-action-row>
+</form>

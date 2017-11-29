@@ -70,8 +70,8 @@ export class MediaRefComponent implements OnInit, OnDestroy {
 
     openDialog(spChannel: mediaRef): void {
         let dialogRef = this.dialog.open(MediaRefModifyDialog, {
+           // panelClass: 'mat-dialog-container',
             width: '550px',
-            height: '500px',
             data: spChannel
         });
 

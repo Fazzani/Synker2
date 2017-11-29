@@ -1,30 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using PlaylistManager.Entities;
-using System.Threading;
+﻿using hfa.PlaylistBaseLibrary.Providers;
+using hfa.Synker.Service.Elastic;
+using hfa.Synker.Service.Entities.Playlists;
+using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Services.MediaRefs;
+using hfa.Synker.Service.Services.Playlists;
+using hfa.Synker.Services.Dal;
+using hfa.WebApi.Common.Filters;
+using hfa.WebApi.Models.Playlists;
 using Hfa.WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.IO;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authorization;
-using hfa.PlaylistBaseLibrary.Providers;
-using hfa.WebApi.Common.Filters;
-using hfa.Synker.Services.Dal;
-using hfa.Synker.Service.Entities.Playlists;
-using hfa.Synker.Service.Services.Playlists;
 using Newtonsoft.Json;
-using hfa.WebApi.Models.Playlists;
-using System.Net.Http;
-using hfa.Synker.Service.Services.Elastic;
-using hfa.Synker.Service.Elastic;
+using PlaylistManager.Entities;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
 using System.Text;
-using hfa.Synker.Service.Services.MediaRefs;
-using Microsoft.Extensions.Caching.Memory;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -37,8 +37,8 @@ namespace Hfa.WebApi.Controllers
         private IMediaRefService _mediaRefService;
         IMemoryCache _memoryCache;
 
-        public PlaylistsController(IMemoryCache memoryCache, IMediaRefService mediaRefService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
-            SynkerDbContext context, IPlaylistService playlistService)
+        public PlaylistsController(IMemoryCache memoryCache, IMediaRefService mediaRefService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
+            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IPlaylistService playlistService)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _playlistService = playlistService;
