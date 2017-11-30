@@ -8,7 +8,7 @@
         </mat-form-field>
 
         <mat-autocomplete #autofilterTvgSites="matAutocomplete">
-            <mat-option *ngFor="let site of tvgSites | async" [value]="site">
+            <mat-option *ngFor="let site of tvgSites" [value]="site">
                 {{ site }}
             </mat-option>
         </mat-autocomplete>
