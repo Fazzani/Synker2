@@ -5,11 +5,11 @@
         </mat-form-field>
         <!--Tvg sites-->
         <mat-form-field>
-            <input type="text" matInput placeholder="Tvg sites..." [formControl]="filterTvgSitesControl" [matAutocomplete]="autofilterTvgSites">
+            <input type="text" matInput placeholder="Tvg sites..." aria-label="Tvg sites..." [formControl]="filterTvgSitesControl" [matAutocomplete]="autofilterTvgSites">
         </mat-form-field>
 
         <mat-autocomplete #autofilterTvgSites="matAutocomplete">
-            <mat-option *ngFor="let site of tvgSites" [value]="site">
+            <mat-option *ngFor="let site of tvgSitesObs | async" [value]="site" (onSelectionChange)="tvgSiteSelected(site)">
                 {{ site }}
             </mat-option>
         </mat-autocomplete>

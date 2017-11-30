@@ -40,6 +40,7 @@ export class MediaRefComponent implements OnInit, OnDestroy {
     dataSource: MediaRefDataSource | null;
     currentItem: mediaRef | null;
     filterTvgSitesControl: FormControl = new FormControl();
+    tvgSitesObs: Observable<string[]>;
     tvgSites: string[];
 
     /** media ctor */
@@ -55,7 +56,7 @@ export class MediaRefComponent implements OnInit, OnDestroy {
         this.paginator.pageSize = storedQuery != null ? storedQuery.size : this.paginator.pageSizeOptions[0];
         this.filter.nativeElement.value = storedQuery != null && storedQuery.query != null && storedQuery.query != {} ? JSON.stringify(storedQuery.query) : "";
 
-        this.dataSource = new MediaRefDataSource(this.mediaRefService, this.paginator);
+        this.dataSource = new MediaRefDataSource(this.commonService, this.mediaRefService, this.paginator);
 
         this.subscriptionTableEvent = this.paginator.page.asObservable()
             .merge(Observable.fromEvent<EventTargetLike>(this.filter.nativeElement, 'keyup'))
@@ -77,16 +78,21 @@ export class MediaRefComponent implements OnInit, OnDestroy {
         this.tvgSites = [];
         this.mediaRefService.tvgSites().subscribe(x => this.tvgSites = x);
 
-        this.filterTvgSitesControl.valueChanges
-            .startWith('')
+        this.tvgSitesObs = this.filterTvgSitesControl.valueChanges
+            .startWith(null)
             .debounceTime(1000)
             .distinctUntilChanged()
-            .map(val =>
-                this.tvgSites.filter(option =>
-                    option.toLowerCase().indexOf(val.toLowerCase()) === 0)
-            ).subscribe(x =>
-                this.tvgSites = x
-            );
+            .map(val => val ? this.filterTvgSites(val) : this.tvgSites.slice());
+
+    }
+
+    tvgSiteSelected(site: string): void {
+        this.dataSource._filterTvgSiteChange.next(site);
+    }
+
+    filterTvgSites(val: string): string[] {
+        return this.tvgSites.filter(t =>
+            t.toLowerCase().indexOf(val.toLowerCase()) === 0);
     }
 
     openDialog(spChannel: mediaRef): void {
@@ -236,6 +242,10 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
 
     data: mediaRef[];
     medias = new BehaviorSubject<mediaRef[]>([]);
+    _filterTvgSiteChange = new BehaviorSubject<string>('');
+    get filterTvgSite(): string { return this._filterTvgSiteChange.value; }
+    set filterTvgSite(filterTvgSite: string) { this._filterTvgSiteChange.next(filterTvgSite); }
+
     _filterChange = new BehaviorSubject<Object | string>({});
     get filter(): Object | string { return this._filterChange.value; }
     set filter(filter: Object | string) { this._filterChange.next(filter); }
@@ -244,12 +254,13 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
     get paginator(): MatPaginator { return this._paginator.value; }
     set paginator(paginator: MatPaginator) { this._paginator.next(paginator); }
 
-    constructor(private mediaRefService: MediaRefService, private mdPaginator: MatPaginator) {
+    constructor(private commonService: CommonService, private mediaRefService: MediaRefService, private mdPaginator: MatPaginator) {
         super();
 
         this.paginator = mdPaginator;
         this._filterChange
             .merge(this._paginator)
+            .merge(this._filterTvgSiteChange)
             .debounceTime(300)
             //.distinctUntilChanged()
             .subscribe((x) => this.getData());
@@ -270,26 +281,41 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
             size: pageSize
         };
 
+        var tabQeury: any[] = [];
+
         if (typeof this.filter === "string") {
             if (this.filter !== undefined && this.filter != "")
-                query.query = {
+                tabQeury.push({
                     match: { "_all": this.filter }
-                };
+                });
         }
         else {
-            query.query = this.filter;
+            tabQeury.push(this.filter);
         }
-        console.log("JSON.stringify(query) ", JSON.stringify(query));
+
+        if (this.filterTvgSite != '') {
+            tabQeury.push({
+                term: {
+                    ["groups.keyword"]: { value : this.filterTvgSite }
+                }
+            });
+
+            query.query = this.commonService.BuildElaticQuery(tabQeury);
+        }
+
         localStorage.setItem(Constants.LS_MediaRefQueryKey, JSON.stringify(query));
+
         let res = this.mediaRefService.list(query).map((v, i) => {
             console.log("recup epg ", v);
             this._paginator.value.length = v.total;
             return v.result;
         });
+
         res.subscribe(x => {
             this.medias.next(x);
             this.data = x;
         });
+
         return res;
     }
 
