@@ -3,6 +3,7 @@
         <mat-form-field floatPlaceholder="never">
             <input matInput #filter placeholder="Filter medias ref...">
         </mat-form-field>
+        <!--Tvg sites-->
         <mat-form-field>
             <input type="text" matInput placeholder="Tvg sites..." [formControl]="filterTvgSitesControl" [matAutocomplete]="autofilterTvgSites">
         </mat-form-field>
@@ -13,6 +14,7 @@
             </mat-option>
         </mat-autocomplete>
         <span class="spacer"></span>
+        <!-- Buttons -->
         <a mat-icon-button>
             <mat-icon class="mat-24" aria-label="Save" matTooltip="Save" (click)="save()">save</mat-icon>
         </a>

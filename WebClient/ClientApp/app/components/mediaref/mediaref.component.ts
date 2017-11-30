@@ -79,13 +79,12 @@ export class MediaRefComponent implements OnInit, OnDestroy {
 
         this.filterTvgSitesControl.valueChanges
             .startWith('')
-            .map(val => {
-                console.log(val);
-                let res = this.tvgSites.filter(option =>
-                    option.toLowerCase().indexOf(val.toLowerCase()) === 0);
-                console.log(res);
-                return res;
-            }).subscribe(x =>
+            .debounceTime(1000)
+            .distinctUntilChanged()
+            .map(val =>
+                this.tvgSites.filter(option =>
+                    option.toLowerCase().indexOf(val.toLowerCase()) === 0)
+            ).subscribe(x =>
                 this.tvgSites = x
             );
     }
@@ -99,19 +98,6 @@ export class MediaRefComponent implements OnInit, OnDestroy {
         dialogRef.afterClosed().subscribe(result => {
             this.snackBar.open(spChannel.displayNames[0] + " was modified", "", { duration: 400 });
         });
-    }
-
-    update(spChannel: mediaRef): void {
-
-    }
-
-    delete(id: string): void {
-        this.dataSource.delete(id);
-        /**
-         * .subscribe(res => {
-                this.snackBar.open("media ref removed");
-            });
-         */
     }
 
     synk(): void {
@@ -133,11 +119,25 @@ export class MediaRefComponent implements OnInit, OnDestroy {
         });
     }
 
+    delete(id: string): Observable<string> {
+        const confirm = window.confirm('Do you really want to delete this media ref?');
+
+        return Observable
+            .of(id)
+            .filter(() => confirm);
+    }
+
     save(): void {
         console.log("saving mediasref..");
         this.dataSource.save().subscribe(res => {
             this.snackBar.open("Medias was saved successfully");
         });
+    }
+
+    update(spChannel: mediaRef): void {
+        this.mediaRefService.save(<mediaRef[]>[spChannel]).subscribe(x =>
+            this.snackBar.open("Medias referentiel was synchronized")
+        );
     }
 
     reload(): void {
@@ -223,10 +223,6 @@ export class MediaRefModifyDialog implements OnInit, OnDestroy {
             model.splice(index, 1);
         }
     }
-
-    //autoCompletePicons(filter: string): Array<picon>{
-
-    //}
 
     ngOnDestroy(): void {
     }
