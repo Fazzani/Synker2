@@ -74,4 +74,14 @@ export class MediaRefService extends BaseService {
         }).catch(this.handleError);
     }
 
+    /**
+   * List tvg sites
+   * @returns
+   */
+    tvgSites(): Observable<string[]> {
+        return this.http.get(variables.BASE_API_URL + 'mediasref/tvgsites').map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
 }

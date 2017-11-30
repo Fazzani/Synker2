@@ -22,5 +22,14 @@ namespace hfa.Synker.Service.Services.MediaRefs
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<IBulkResponse> SynkPiconsAsync(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// List des tvg providers dispo
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="size"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<ICollection<string>> ListTvgSitesAsync(CancellationToken cancellationToken);
     }
 }

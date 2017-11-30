@@ -17,6 +17,7 @@ namespace hfa.Synker.Service.Entities.MediasRef
             Cultures = new List<string> { culture };
             MediaType = mediaType;
             Tvg = new Tvg { Name = displayName, Id = xmltv_id, TvgIdentify = site_idAndXmltv_id };
+            _defaultSite = group;
         }
 
         public MediaRef()
@@ -33,6 +34,20 @@ namespace hfa.Synker.Service.Entities.MediasRef
             Groups = new List<string>();
             Cultures = new List<string> { "en" };
             Tvg = new Tvg();
+        }
+
+        private string _defaultSite;
+        public string DefaultSite
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_defaultSite) && Groups.Count > 1)
+                {
+                    _defaultSite = Groups[1];
+                }
+                return _defaultSite;
+            }
+            set { _defaultSite = value; }
         }
 
         public List<string> DisplayNames { get; set; }

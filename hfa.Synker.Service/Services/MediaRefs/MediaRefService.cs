@@ -205,5 +205,26 @@ namespace hfa.Synker.Service.Services.MediaRefs
                   , cancellationToken);
             }
         }
+
+        /// <summary>
+        /// List des tvg providers dispo
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="size"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<ICollection<string>> ListTvgSitesAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation($"Lister les TvgSites");
+
+            var allMediasRef = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
+               .Index(_elasticConnectionClient.ElasticConfig.MediaRefIndex)
+               .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
+               .From(0)
+               .Query(a => a.MatchAll(x => x.Name("all")))
+               , cancellationToken);
+
+            return allMediasRef.Documents.AsParallel().Select(x => x.DefaultSite).Distinct().ToList();
+        }
     }
 }

@@ -14,5 +14,6 @@ namespace PlaylistManager.Entities
         public string Shift { get; set; }
         public string Audio_track { get; set; }
         public string Aspect_ratio { get; set; }
+
     }
 }

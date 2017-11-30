@@ -144,5 +144,18 @@ namespace Hfa.WebApi.Controllers
             return Ok(cultures);
         }
 
+        [ResponseCache(CacheProfileName = "Long")]
+        [HttpGet]
+        [Route("tvgsites")]
+        public async Task<IActionResult> TvgSites(CancellationToken cancellationToken)
+        {
+            var tvgSites = await _memoryCache.GetOrCreateAsync(CacheKeys.SitesKey, async entry =>
+            {
+                entry.SlidingExpiration = TimeSpan.FromHours(12);
+                var response = await _mediaRefService.ListTvgSitesAsync(cancellationToken);
+                return response;
+            });
+            return Ok(tvgSites);
+        }
     }
 }

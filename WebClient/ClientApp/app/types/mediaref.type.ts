@@ -13,6 +13,7 @@ export interface mediaRef extends ISelectable {
     cultures: string[];
     mediaType: MediaTypes;
     id: string;
+    defaultSite: string;
 }
 
 export enum MediaTypes {
