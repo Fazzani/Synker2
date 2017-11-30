@@ -109,7 +109,7 @@ namespace hfa.Synker.Service.Services.Elastic
                                   .Name(pt => pt.Name)
                                   .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
                                   .Analyzer("mediaref_name_analyzer")
-                                  .SearchAnalyzer("autocomplete_analyzer"))))
+                                  .SearchAnalyzer("standard"))))
                  ));
         }
 

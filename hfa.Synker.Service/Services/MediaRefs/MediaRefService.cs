@@ -130,10 +130,11 @@ namespace hfa.Synker.Service.Services.MediaRefs
 
             var tasks = response.Documents.Select(async m =>
             {
+                //Match all displaynames with boost
                 var findLogoResponse = await _elasticConnectionClient.Client.SearchAsync<Picon>(x =>
                 x.Query(q => q.Match(fz =>
                           fz.Field(f => f.Name)
-                             .Query(m.DisplayNames.FirstOrDefault()))).Size(1), cancellationToken);
+                             .Query(m.DisplayNames.FirstOrDefault().RemoveDiacritics().RemoveChars(new char[] { ' ' })))).Size(1), cancellationToken);
 
                 if (findLogoResponse.Documents.Any())
                     m.Tvg.Logo = findLogoResponse.Documents.First().RawUrl;
