@@ -40,7 +40,6 @@ export class MediaRefComponent implements OnInit, OnDestroy {
     dataSource: MediaRefDataSource | null;
     currentItem: mediaRef | null;
     filterTvgSitesControl: FormControl = new FormControl();
-    tvgSitesObs: Observable<string>;
     tvgSites: string[];
 
     /** media ctor */
@@ -76,7 +75,7 @@ export class MediaRefComponent implements OnInit, OnDestroy {
             });
 
         this.tvgSites = [];
-        let sub = this.mediaRefService.tvgSites().subscribe(x => this.tvgSites = x);
+        this.mediaRefService.tvgSites().subscribe(x => this.tvgSites = x);
 
         this.filterTvgSitesControl.valueChanges
             .startWith('')
@@ -86,21 +85,10 @@ export class MediaRefComponent implements OnInit, OnDestroy {
                     option.toLowerCase().indexOf(val.toLowerCase()) === 0);
                 console.log(res);
                 return res;
-            }).subscribe(x => x => {
-                console.log(x);
-                this.tvgSites = x;
-            });
+            }).subscribe(x =>
+                this.tvgSites = x
+            );
     }
-
-    //filterTvgSites(val: string): Observable<string[]> {
-    //    let res = this.mediaRefService.tvgSites().map(op => {
-    //        debugger;
-    //     return   op.filter(option =>
-    //            option.toLowerCase().indexOf(val.toLowerCase()) === 0);
-    //    });
-
-    //    return res;
-    //}
 
     openDialog(spChannel: mediaRef): void {
         let dialogRef = this.dialog.open(MediaRefModifyDialog, {
