@@ -3,6 +3,15 @@
         <mat-form-field floatPlaceholder="never">
             <input matInput #filter placeholder="Filter medias ref...">
         </mat-form-field>
+        <mat-form-field>
+            <input type="text" matInput placeholder="Tvg sites..." [formControl]="filterTvgSitesControl" [matAutocomplete]="autofilterTvgSites">
+        </mat-form-field>
+
+        <mat-autocomplete #autofilterTvgSites="matAutocomplete">
+            <mat-option *ngFor="let site of tvgSites | async" [value]="site">
+                {{ site }}
+            </mat-option>
+        </mat-autocomplete>
         <span class="spacer"></span>
         <a mat-icon-button>
             <mat-icon class="mat-24" aria-label="Save" matTooltip="Save" (click)="save()">save</mat-icon>

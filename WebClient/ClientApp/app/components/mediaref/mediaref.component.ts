@@ -17,6 +17,9 @@ import { MediaRefService } from '../../services/mediaref/mediaref.service';
 import { mediaRef } from '../../types/mediaref.type';
 import { PiconService } from '../../services/picons/picons.service';
 import { picon } from '../../types/picon.type';
+import { FormControl } from "@angular/forms";
+import { startWith } from "rxjs/operator/startWith";
+import { map } from "rxjs/operator/map";
 
 //{"match":{"groups":"bein.net"}}
 //{"match":{"cultures":"International"}}
@@ -36,6 +39,9 @@ export class MediaRefComponent implements OnInit, OnDestroy {
     @ViewChild('filter') filter: ElementRef;
     dataSource: MediaRefDataSource | null;
     currentItem: mediaRef | null;
+    filterTvgSitesControl: FormControl = new FormControl();
+    tvgSitesObs: Observable<string[]>;
+    tvgSites: string[];
 
     /** media ctor */
     constructor(private mediaRefService: MediaRefService, private piconService: PiconService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar) { }
@@ -68,6 +74,20 @@ export class MediaRefComponent implements OnInit, OnDestroy {
                 this.dataSource.paginator = this.paginator;
 
             });
+
+        this.mediaRefService.tvgSites().subscribe(x => this.tvgSites = x);
+        this.tvgSitesObs = this.mediaRefService.tvgSites();
+
+        this.tvgSitesObs = this.filterTvgSitesControl.valueChanges
+            .pipe(
+            startWith(''),
+            map(val => this.filterTvgSites(val))
+            );
+    }
+
+    filterTvgSites(val: string): string[] {
+        return this.tvgSites.filter(option =>
+            option.toLowerCase().indexOf(val.toLowerCase()) === 0);
     }
 
     openDialog(spChannel: mediaRef): void {
