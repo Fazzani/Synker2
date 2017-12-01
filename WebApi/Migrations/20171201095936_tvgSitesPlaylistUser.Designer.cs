@@ -14,9 +14,10 @@ using System;
 namespace hfa.WebApi.Migrations
 {
     [DbContext(typeof(SynkerDbContext))]
-    partial class SynkerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171201095936_tvgSitesPlaylistUser")]
+    partial class tvgSitesPlaylistUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -162,8 +163,6 @@ namespace hfa.WebApi.Migrations
                         .HasColumnType("JSON");
 
                     b.Property<DateTime>("CreatedDate");
-
-                    b.Property<bool>("Favorite");
 
                     b.Property<string>("Freindlyname")
                         .IsRequired()

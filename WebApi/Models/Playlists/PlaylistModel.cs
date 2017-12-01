@@ -43,7 +43,7 @@ namespace hfa.WebApi.Models.Playlists
         public bool SynkEpg { get; internal set; }
         public SynkGroupEnum SynkGroup { get; internal set; }
         public bool SynkLogos { get; internal set; }
-
+        public List<string> TvgSites { get; set; }
         public string PublicId
         {
             get
@@ -74,7 +74,8 @@ namespace hfa.WebApi.Models.Playlists
             SynkEpg = pl.SynkConfig.SynkEpg,
             SynkGroup = pl.SynkConfig.SynkGroup,
             SynkLogos = pl.SynkConfig.SynkLogos,
-            Url = pl.SynkConfig.Url
+            Url = pl.SynkConfig.Url,
+            TvgSites = pl.TvgSites
         };
 
         public static PlaylistModel ToLightModel(Playlist pl, IUrlHelper uriHelper) => new PlaylistModel(uriHelper)
@@ -88,6 +89,7 @@ namespace hfa.WebApi.Models.Playlists
             CreatedDate = pl.CreatedDate,
             UpdatedDate = pl.UpdatedDate,
             Cron = pl.SynkConfig?.Cron,
+            TvgSites = pl.TvgSites
         };
     }
 }

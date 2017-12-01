@@ -16,6 +16,8 @@ namespace hfa.Synker.Service.Entities.Playlists
         public Playlist()
         {
             SynkConfig = new SynkConfig();
+            Favorite = false;
+            _tvgSites = new List<string>();
         }
 
         [Required]
@@ -54,6 +56,23 @@ namespace hfa.Synker.Service.Entities.Playlists
                 return _tvgMedias.ToList();
             }
         }
+
+        private List<String> _tvgSites { get; set; }
+        [NotMapped]
+        public List<string> TvgSites
+        {
+            get { return _tvgSites; }
+            set { _tvgSites = value; }
+        }
+
+        [Required]
+        public string TvgSitesString
+        {
+            get { return String.Join("|", _tvgSites); }
+            set { _tvgSites = value.Split('|').ToList(); }
+        }
+
+        public bool Favorite { get; set; }
 
         //Playlist<TvgMedia> _playlist;
 
