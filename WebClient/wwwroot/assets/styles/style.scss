@@ -156,7 +156,14 @@ body {
     display: flex !important;
     flex-direction: column;
 }
+
 .mat-chip:not(.mat-basic-chip) {
     background-color: $primary-color-bg-accent !important;
     color: $primary-color-font-dark
+}
+
+.mat-dialog-container {
+    .mat-dialog-content {
+        overflow: auto !important;
+    }
 }

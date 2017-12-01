@@ -55,6 +55,12 @@ export class PlaylistService extends BaseService {
         }).catch(this.handleError);
     }
 
+    updateLight(p: PlaylistModel): Observable<PlaylistModel> {
+        return this.http.put(variables.BASE_API_URL + 'playlists/light/' + p.publicId, p).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
     delete(id: string): Observable<PlaylistModel> {
         return this.http.delete(variables.BASE_API_URL + 'playlists/' + id).map(res => {
             return res;

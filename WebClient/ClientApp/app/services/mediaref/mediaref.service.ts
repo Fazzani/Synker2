@@ -70,6 +70,7 @@ export class MediaRefService extends BaseService {
     cultures(filter?: string): Observable<string[]> {
         let f = filter ? filter : "_all";
         return this.http.get(variables.BASE_API_URL + 'mediasref/cultures/' + f).map(res => {
+
             return res;
         }).catch(this.handleError);
     }
@@ -79,10 +80,9 @@ export class MediaRefService extends BaseService {
    * @returns
    */
     tvgSites(): Observable<string[]> {
-        console.log('tvgSites');
-        return this.http.get(variables.BASE_API_URL + 'mediasref/tvgsites').map(res => {
+        return this.http.get<string[]>(variables.BASE_API_URL + 'mediasref/tvgsites').map(res => {
             return res;
-        }).catch(this.handleError);
+        }, err => this.handleError(err));
     }
 
 }

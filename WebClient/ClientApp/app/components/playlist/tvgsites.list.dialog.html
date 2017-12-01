@@ -1,0 +1,20 @@
+﻿<h2 mat-dialog-title>Tvg Sites</h2>
+<div style="position:fixed">
+    <mat-form-field floatPlaceholder="never">
+        <input matInput placeholder="Filter tvg sites..." [(ngModel)]="query">
+    </mat-form-field>
+</div>
+<mat-dialog-content style="margin-top:70px">
+    
+    <table>
+        <tr *ngFor="let tvg of tvgSites | search:'name':query">
+            <td>{{tvg.name}}</td>
+            <td><mat-checkbox [(ngModel)]="tvg.selected"></mat-checkbox></td>
+        </tr>
+    </table>
+</mat-dialog-content>
+
+<mat-action-row>
+    <button mat-raised-button (click)="onNoClick()">Close</button>
+    <button mat-raised-button (click)="save()">Save</button>
+</mat-action-row>

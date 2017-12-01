@@ -43,7 +43,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp\app\pipes\" />
     <Folder Include="ClientApp\app\directives\" />
     <Folder Include="ClientApp\app\services\xmltv\" />
     <Folder Include="wwwroot\assets\images\" />
@@ -52,6 +51,7 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\app\infrastructure\DefaultHttpInterceptor.ts" />
+    <TypeScriptCompile Include="ClientApp\app\pipes\search.pipe.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\auth\auth.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\auth\auth.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\auth\loginRouteGuard.service.ts" />

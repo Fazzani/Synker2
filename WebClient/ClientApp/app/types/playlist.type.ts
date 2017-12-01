@@ -42,6 +42,7 @@ export class PlaylistModel {
     public cron: string;
     public status: PlaylistStatus;
     public tvgMedias: TvgMedia[];
+    public tvgSites: string[];
     public url: string;
     public createdDate: Date;
     public updatedDate: Date;

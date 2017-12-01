@@ -85,7 +85,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPut("{id}")]
         [ValidateModel]
-        public async Task<IActionResult> Put(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken)
+        public async Task<IActionResult> PutAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken)
         {
             var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
 
@@ -102,6 +102,28 @@ namespace Hfa.WebApi.Controllers
             playlistEntity.SynkConfig.SynkGroup = playlist.SynkGroup;
             playlistEntity.SynkConfig.SynkLogos = playlist.SynkLogos;
             playlistEntity.Content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(playlist.TvgMedias));
+            await _dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPut("light/{id}")]
+        [ValidateModel]
+        public async Task<IActionResult> PutLightAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken)
+        {
+            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
+
+            var playlistEntity = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+            if (playlistEntity == null)
+                return NotFound(playlistEntity);
+
+            playlistEntity.Status = playlist.Status;
+            playlistEntity.Freindlyname = playlist.Freindlyname;
+            playlistEntity.TvgSites = playlist.TvgSites;
+            playlistEntity.SynkConfig.Cron = playlist.Cron;
+            playlistEntity.SynkConfig.Url = playlist.Url;
+            playlistEntity.SynkConfig.SynkEpg = playlist.SynkEpg;
+            playlistEntity.SynkConfig.SynkGroup = playlist.SynkGroup;
+            playlistEntity.SynkConfig.SynkLogos = playlist.SynkLogos;
             await _dbContext.SaveChangesAsync();
             return Ok();
         }

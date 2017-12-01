@@ -112,6 +112,17 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
+    openUpdateTvgSite(): void {
+        let dialogRef = this.dialog.open(TvgSitesListModifyDialog, {
+            width: '550px',
+            data: this.playlistBS.getValue()
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            this.snackBar.open("Tvg Sites was modified", "", { duration: 400 });
+        });
+    }
+
     update(playlist: PlaylistModel): void {
 
     }
@@ -163,6 +174,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 }
 
+//---------------------------------------------------------------------------------    Playlist ModifyDialog
 @Component({
     selector: 'playlist-modify-dialog',
     templateUrl: './playlist.dialog.html'
@@ -177,7 +189,7 @@ export class PlaylistModifyDialog {
         this.dialogRef.close();
     }
 }
-
+//---------------------------------------------------------------------------------    TvgMedia ListModifyDialog
 @Component({
     selector: 'tvgmedia-list-modify-dialog',
     templateUrl: './tvgmedia.list.dialog.html'
@@ -203,6 +215,41 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
 
     save(): void {
         this.dialogRef.close();
+    }
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+
+    ngOnDestroy(): void {
+    }
+}
+//---------------------------------------------------------------------------------    TvgSites ListModifyDialog
+@Component({
+    selector: 'tvgsites-list-modify-dialog',
+    templateUrl: './tvgsites.list.dialog.html'
+})
+export class TvgSitesListModifyDialog implements OnInit, OnDestroy {
+    tvgSites: any[] = [];
+
+    constructor(private playlistService: PlaylistService, private mediaRefService: MediaRefService,
+        public dialogRef: MatDialogRef<TvgSitesListModifyDialog>,
+        @Inject(MAT_DIALOG_DATA) public data: PlaylistModel) {
+    }
+
+    ngOnInit(): void {
+        this.mediaRefService.tvgSites()
+            .flatMap(m => m.map(c => <any>({ name: c, selected: false })))
+            .do(x => x.selected = this.data.tvgSites.findIndex(f => f == x.name) >= 0)
+            .subscribe(m => this.tvgSites.push(m));
+    }
+
+    onChange(event): void {
+    }
+
+    save(): void {
+        console.log('Saving TvgSites');
+        this.data.tvgSites = this.data.tvgSites.concat(this.tvgSites.filter(x => x.selected).map(x => x.name));
+        this.playlistService.updateLight(this.data).subscribe(ok => this.dialogRef.close());
     }
     onNoClick(): void {
         this.dialogRef.close();

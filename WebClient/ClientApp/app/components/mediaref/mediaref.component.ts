@@ -296,7 +296,7 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
         if (this.filterTvgSite != '') {
             tabQeury.push({
                 term: {
-                    ["groups.keyword"]: { value : this.filterTvgSite }
+                    ["groups.keyword"]: { value: this.filterTvgSite }
                 }
             });
 
