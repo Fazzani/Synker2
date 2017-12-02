@@ -118,7 +118,7 @@ namespace Hfa.WebApi.Controllers
 
             playlistEntity.Status = playlist.Status;
             playlistEntity.Freindlyname = playlist.Freindlyname;
-            playlistEntity.TvgSites = playlist.TvgSites;
+            playlistEntity.TvgSites = playlist.TvgSites.Distinct().ToList();
             playlistEntity.SynkConfig.Cron = playlist.Cron;
             playlistEntity.SynkConfig.Url = playlist.Url;
             playlistEntity.SynkConfig.SynkEpg = playlist.SynkEpg;

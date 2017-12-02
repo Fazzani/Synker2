@@ -248,7 +248,7 @@ export class TvgSitesListModifyDialog implements OnInit, OnDestroy {
 
     save(): void {
         console.log('Saving TvgSites');
-        this.data.tvgSites = this.data.tvgSites.concat(this.tvgSites.filter(x => x.selected).map(x => x.name));
+        this.data.tvgSites = this.tvgSites.filter(x => x.selected).map(x => x.name);
         this.playlistService.updateLight(this.data).subscribe(ok => this.dialogRef.close());
     }
     onNoClick(): void {

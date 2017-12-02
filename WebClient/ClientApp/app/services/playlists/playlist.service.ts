@@ -50,15 +50,13 @@ export class PlaylistService extends BaseService {
     //}
 
     update(p: PlaylistModel): Observable<PlaylistModel> {
-        return this.http.put(variables.BASE_API_URL + 'playlists/' + p.publicId, p).map(res => {
-            return res;
-        }).catch(this.handleError);
+        return this.http.put(variables.BASE_API_URL + 'playlists/' + p.publicId, p, { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' }).catch(this.handleError);
     }
 
-    updateLight(p: PlaylistModel): Observable<PlaylistModel> {
-        return this.http.put(variables.BASE_API_URL + 'playlists/light/' + p.publicId, p).map(res => {
-            return res;
-        }).catch(this.handleError);
+    updateLight(p: PlaylistModel): Observable<any> {
+        console.log('updating tvgSites ', p.id);
+        return this.http.put(variables.BASE_API_URL + 'playlists/light/' + p.publicId, p, { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' })
+            .catch(this.handleError);
     }
 
     delete(id: string): Observable<PlaylistModel> {
