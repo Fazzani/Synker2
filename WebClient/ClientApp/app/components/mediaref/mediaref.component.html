@@ -31,7 +31,7 @@
             <mat-icon class="mat-24" aria-label="Synchronize picons global" matTooltip="Synchronize picons global" (click)="synkPiconsGlobal()">add_a_photo</mat-icon>
         </a>
     </mat-toolbar>
-    <mat-table #table [dataSource]="dataSource" matSort>
+    <mat-table #table [dataSource]="dataSource" matSort class="noselect">
         <!-- logo -->
         <ng-container matColumnDef="logo">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Logo </mat-header-cell>
@@ -43,6 +43,12 @@
         <ng-container matColumnDef="displayNames">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Names </mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row.displayNames}} </mat-cell>
+        </ng-container>
+
+        <!-- DefaultSite -->
+        <ng-container matColumnDef="defaultSite">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> DefaultSite </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.defaultSite}} </mat-cell>
         </ng-container>
 
         <!-- Groups -->
@@ -75,9 +81,9 @@
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected"></mat-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected" class="noselect"></mat-row>
     </mat-table>
     <mat-paginator #paginator [length]="dataSource.paginator.length" [pageIndex]="dataSource.paginator.pageIndex" [pageSize]="dataSource.paginator.pageSize"
-        [pageSizeOptions]="dataSource.paginator.pageSizeOptions">
+        [pageSizeOptions]="dataSource.paginator.pageSizeOptions" class="noselect">
     </mat-paginator>
 </div>

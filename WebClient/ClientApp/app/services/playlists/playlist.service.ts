@@ -38,7 +38,13 @@ export class PlaylistService extends BaseService {
     }
 
     match(id: string): Observable<PlaylistModel> {
-        return this.http.post(variables.BASE_API_URL + 'playlists/' + id + '/match', null).map(res => {
+        return this.http.post(variables.BASE_API_URL + 'playlists/match/' + id, null).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
+    matchFiltredTvgSites(id: string): Observable<PlaylistModel> {
+        return this.http.post(variables.BASE_API_URL + 'playlists/matchfiltred/' + id, null).map(res => {
             return res;
         }).catch(this.handleError);
     }
@@ -50,12 +56,13 @@ export class PlaylistService extends BaseService {
     //}
 
     update(p: PlaylistModel): Observable<PlaylistModel> {
-        return this.http.put(variables.BASE_API_URL + 'playlists/' + p.publicId, p, { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' }).catch(this.handleError);
+        return this.http.put(variables.BASE_API_URL + 'playlists/' + p.publicId, p,
+            { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' }).catch(this.handleError);
     }
 
     updateLight(p: PlaylistModel): Observable<any> {
-        console.log('updating tvgSites ', p.id);
-        return this.http.put(variables.BASE_API_URL + 'playlists/light/' + p.publicId, p, { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' })
+        return this.http.put(variables.BASE_API_URL + 'playlists/light/' + p.publicId, p,
+            { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' })
             .catch(this.handleError);
     }
 

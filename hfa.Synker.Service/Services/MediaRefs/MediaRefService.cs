@@ -36,10 +36,36 @@ namespace hfa.Synker.Service.Services.MediaRefs
                .Index(_elasticConnectionClient.ElasticConfig.MediaRefIndex)
                .Size(1)
                .From(0)
-               .Query(a => a.Match(x => x.Name("matchDisplaynames").Field(f => f.DisplayNames).Query(term)))
+               .Query(a => a.Match(x => x.Name("matchDisplaynames")
+                           .Field(f => f.DisplayNames)
+                           .Query(term)))
                , cancellationToken);
 
-            return allMediasRef.Documents.Distinct(new MediaRef()).FirstOrDefault();
+            return allMediasRef
+                    .Documents
+                    .Distinct(new MediaRef())
+                    .FirstOrDefault();
+        }
+
+        public async Task<MediaRef> MatchTermByDispaynamesAndFiltredBySiteNameAsync(string mediaName, string culture, IEnumerable<string> tvgSites, CancellationToken cancellationToken)
+        {
+            var req = new SearchRequest<MediaRef>
+            {
+                From = 0,
+                Size = 1,
+                Query = Query<MediaRef>.Match(x => x.Name("matchDisplaynames")
+                             .Field(f => f.DisplayNames)
+                             .Query(mediaName))
+                        & Query<MediaRef>.Terms(m => m.Field(new Field("defaultSite.keyword")).Terms(tvgSites).Boost(1.2))
+                        & Query<MediaRef>.Terms(m => m.Field(new Field("cultures.keyword")).Terms(culture).Boost(2.0)),
+                MinScore = 0.5
+            };
+
+            var allMediasRef = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(req, cancellationToken);
+
+            return allMediasRef
+                    .Documents
+                    .FirstOrDefault();
         }
 
         public async Task<IBulkResponse> RemoveDuplicatedMediaRefAsync(CancellationToken cancellationToken)

@@ -33,7 +33,7 @@ import { map } from "rxjs/operator/map";
 export class MediaRefComponent implements OnInit, OnDestroy {
     subscriptionTableEvent: Subscription;
 
-    displayedColumns = ['logo', 'displayNames', 'groups', 'cultures', 'mediaType', 'actions'];
+    displayedColumns = ['logo', 'displayNames', 'groups', 'cultures','defaultSite', 'mediaType', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
@@ -284,6 +284,7 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
         var tabQeury: any[] = [];
 
         if (typeof this.filter === "string") {
+
             if (this.filter !== undefined && this.filter != "")
                 tabQeury.push({
                     match: { "_all": this.filter }
@@ -300,8 +301,8 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
                 }
             });
 
-            query.query = this.commonService.BuildElaticQuery(tabQeury);
         }
+        query.query = this.commonService.BuildElaticQuery(tabQeury);
 
         localStorage.setItem(Constants.LS_MediaRefQueryKey, JSON.stringify(query));
 

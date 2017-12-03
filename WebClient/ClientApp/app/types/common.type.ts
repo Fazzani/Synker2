@@ -41,3 +41,37 @@ export interface PagedResult<T> extends PagedResultBase {
 export interface ISelectable {
     selected: boolean;
 }
+
+export enum KEY_CODE {
+    A = 1,
+    B = 2,
+    C = 3,
+    D = 4,
+    E = 5,
+    F = 6,
+    RIGHT_ARROW = 39,
+    LEFT_ARROW = 37
+}
+
+export enum KEY {
+    A = 'a',
+    B = 'b',
+    C = 'c',
+    D = 'd',
+    E = 'e',
+    F = 'f',
+    G = 'd',
+    H = 'h',
+    I = 'i',
+    J = 'j',
+    K = 'k',
+    L = 'l',
+    M = 'm',
+    N = 'n',
+    O = 'o',
+    P = 'p',
+    Q = 'q',
+    R = 'r',
+    S = 's',
+    T = 't'
+}

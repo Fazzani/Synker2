@@ -31,5 +31,14 @@ namespace hfa.Synker.Service.Services.MediaRefs
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<ICollection<string>> ListTvgSitesAsync(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Match displayNames with filtred MediaRef by TvgSites
+        /// </summary>
+        /// <param name="term"></param>
+        /// <param name="tvgSites"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<MediaRef> MatchTermByDispaynamesAndFiltredBySiteNameAsync(string term, string culture, IEnumerable<string> tvgSites, CancellationToken cancellationToken);
     }
 }

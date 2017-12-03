@@ -25,7 +25,6 @@ export class CommonService {
     }
 
     BuildElaticQuery(tabQeury: any[]): Object {
-
         if (tabQeury != undefined && tabQeury.length > 0) {
             if (tabQeury.length == 1)
                 return tabQeury[0];

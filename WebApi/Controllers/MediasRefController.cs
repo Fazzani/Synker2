@@ -133,7 +133,7 @@ namespace Hfa.WebApi.Controllers
         [ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "filter" })]
         [HttpGet]
         [Route("cultures")]
-        public async Task<IActionResult> Cultures([FromQuery]string filter, CancellationToken cancellationToken)
+        public async Task<IActionResult> CulturesAsync([FromQuery]string filter, CancellationToken cancellationToken)
         {
             var cultures = await _memoryCache.GetOrCreateAsync(CacheKeys.CulturesKey, async entry =>
            {
@@ -147,7 +147,7 @@ namespace Hfa.WebApi.Controllers
         [ResponseCache(CacheProfileName = "Long")]
         [HttpGet]
         [Route("tvgsites")]
-        public async Task<IActionResult> TvgSites(CancellationToken cancellationToken)
+        public async Task<IActionResult> TvgSitesAsync(CancellationToken cancellationToken)
         {
             var tvgSites = await _memoryCache.GetOrCreateAsync(CacheKeys.SitesKey, async entry =>
             {

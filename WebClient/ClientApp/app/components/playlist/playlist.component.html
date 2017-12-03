@@ -10,6 +10,9 @@
         </mat-form-field>
         <span class="spacer"></span>
         <a mat-icon-button>
+            <mat-icon class="mat-24" aria-label="Update" matTooltip="Update" (click)="reload()">update</mat-icon>
+        </a>
+        <a mat-icon-button>
             <mat-icon class="mat-24" aria-label="Save" matTooltip="Save" (click)="save()">save</mat-icon>
         </a>
         <a mat-icon-button>
@@ -22,10 +25,13 @@
             <mat-icon class="mat-24" aria-label="Bulk Update" matTooltip="Bulk Update" (click)="openUpdateListDialog()">done</mat-icon>
         </a>
         <a mat-icon-button>
+            <mat-icon class="mat-24" aria-label="Match Filtred tvgSites" matTooltip="Match Filtred tvgSites" (click)="matchFiltredTvgSites()">settings_ethernet</mat-icon>
+        </a>
+        <a mat-icon-button>
             <mat-icon class="mat-24" aria-label="Mes TvgSites" matTooltip="Mes TvgSites" (click)="openUpdateTvgSite()">style</mat-icon>
         </a>
     </mat-toolbar>
-    <mat-table #table [dataSource]="dataSource" matSort>
+    <mat-table #table [dataSource]="dataSource" matSort class="noselect">
         <!-- icon Column -->
         <ng-container matColumnDef="tvg.logo">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Logo </mat-header-cell>
@@ -38,7 +44,11 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row?.name}} </mat-cell>
         </ng-container>
-
+        <!-- Lang Column -->
+        <ng-container matColumnDef="lang">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Lang </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row?.lang}} </mat-cell>
+        </ng-container>
         <!-- Group Column -->
         <ng-container matColumnDef="group">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Group </mat-header-cell>
@@ -48,13 +58,13 @@
         <!-- tvg.name -->
         <ng-container matColumnDef="tvg.name">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Tvg name </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row?.tvg.name}} </mat-cell>
+            <mat-cell *matCellDef="let row"> {{row?.tvg?.name}} </mat-cell>
         </ng-container>
 
         <!-- tvg.identify -->
         <ng-container matColumnDef="tvg.tvgIdentify">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Tvg id </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row?.tvg.tvgIdentify}} </mat-cell>
+            <mat-cell *matCellDef="let row"> {{row?.tvg?.tvgIdentify}} </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="actions">
@@ -69,8 +79,8 @@
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected"></mat-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected" class="noselect"></mat-row>
     </mat-table>
-    <mat-paginator #paginator [pageSizeOptions]="[50, 100, 250, 1000]" [pageSize]="50">
+    <mat-paginator #paginator [pageSizeOptions]="[50, 100, 250, 1000]" [pageSize]="50" class="noselect">
     </mat-paginator>
 </div>

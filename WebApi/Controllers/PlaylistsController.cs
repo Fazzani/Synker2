@@ -72,7 +72,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        [ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "id", "light" })]
+        //[ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "id", "light" })]
         public IActionResult Get(string id, CancellationToken cancellationToken, [FromQuery] bool light = true)
         {
             var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
@@ -101,9 +101,12 @@ namespace Hfa.WebApi.Controllers
             playlistEntity.SynkConfig.SynkEpg = playlist.SynkEpg;
             playlistEntity.SynkConfig.SynkGroup = playlist.SynkGroup;
             playlistEntity.SynkConfig.SynkLogos = playlist.SynkLogos;
-            playlistEntity.Content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(playlist.TvgMedias));
-            await _dbContext.SaveChangesAsync();
-            return Ok();
+            playlistEntity.UpdateContent(playlist.TvgMedias);
+
+            var updatedCount = await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation($"Updated Count : {updatedCount}");
+
+            return Ok(updatedCount);
         }
 
         [HttpPut("light/{id}")]
@@ -197,14 +200,12 @@ namespace Hfa.WebApi.Controllers
         /// Match playlist with media ref
         /// </summary>
         /// <param name="playlistPostModel"></param>
-        /// <param name="providersOptions"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("{id}/match")]
+        [Route("match/{id}")]
         [ValidateModel]
-        public IActionResult Match(string id, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
-            CancellationToken cancellationToken)
+        public IActionResult Match([FromRoute] string id, CancellationToken cancellationToken)
         {
             var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
 
@@ -224,6 +225,37 @@ namespace Hfa.WebApi.Controllers
             });
 
             return Ok(PlaylistModel.ToModel(playlist, Url));
+        }
+
+        /// <summary>
+        /// Match playlist with media ref
+        /// </summary>
+        /// <param name="playlistPostModel"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("matchfiltred/{id}")]
+        [ValidateModel]
+        public async Task<IActionResult> MatchFiltredByTvgSites([FromRoute] string id, CancellationToken cancellationToken)
+        {
+            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
+
+            var playlistEntity = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+            if (playlistEntity == null)
+                return NotFound(playlistEntity);
+
+            playlistEntity.TvgMedias.AsParallel().ForAll(media =>
+            {
+                var matched = _mediaRefService.MatchTermByDispaynamesAndFiltredBySiteNameAsync(media.DisplayName, media.Lang, playlistEntity.TvgSites, cancellationToken).GetAwaiter().GetResult();
+                media.Group = matched?.DefaultSite;
+                media.Tvg = matched?.Tvg;
+            });
+
+            playlistEntity.UpdateContent(playlistEntity.TvgMedias);
+
+            var res = await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation($"{nameof(MatchFiltredByTvgSites)} saved : {res}");
+            return Ok(PlaylistModel.ToModel(playlistEntity, Url));
         }
 
         [ResponseCache(CacheProfileName = "Long")]

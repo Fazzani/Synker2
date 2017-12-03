@@ -17,17 +17,22 @@ import { TvgMedia } from "../../types/media.type";
 import { TvgMediaModifyDialog } from '../media/media.component';
 import { MediaRefService } from '../../services/mediaref/mediaref.service';
 import { FormControl } from '@angular/forms';
+import { KEY_CODE, KEY } from '../../types/common.type';
 
 @Component({
     selector: 'playlist',
     templateUrl: './playlist.component.html',
-    providers: [PlaylistService, CommonService]
+    providers: [PlaylistService, CommonService],
+    host: {
+        '(window:keyup)': 'handleKeyboardEvent($event)'
+    }
 })
 /** mediaref component*/
 export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
+    key: number;
     subscriptionTableEvent: Subscription;
 
-    displayedColumns = ['tvg.logo', 'name', 'group', 'tvg.name', 'tvg.tvgIdentify', 'actions'];
+    displayedColumns = ['tvg.logo', 'name', 'lang', 'group', 'tvg.name', 'tvg.tvgIdentify', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
@@ -53,6 +58,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
 
         this.playlistBS.subscribe(x => {
+            console.log('playlist updated');
             if (x != null && x.tvgMedias != null) {
                 this.dataSource = new MatTableDataSource<TvgMedia>(x.tvgMedias);
                 this.dataSource.paginator = this.paginator;
@@ -80,6 +86,24 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.dataSource.filter = objectQuery != null ? objectQuery : this.filter.nativeElement.value;
                 this.dataSource.paginator = this.paginator;
             });
+    }
+
+    reload(): void {
+        this.ngOnInit();
+    }
+
+    handleKeyboardEvent(event: KeyboardEvent) {
+        console.log(event);
+        //Select ALL
+        if (event.key == KEY.A && event.ctrlKey) {
+            this.dataSource.
+                _pageData(this.dataSource.data)
+                .forEach(m => m.selected = true);
+        } else if (event.key == KEY.I && event.ctrlKey) {
+            this.dataSource.
+                _pageData(this.dataSource.data)
+                .forEach(m => m.selected = !m.selected);
+        }
     }
 
     ngAfterViewInit() {
@@ -146,7 +170,14 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     match(): void {
         this.playlistService.match(this.playlistBS.getValue().publicId).subscribe(res => {
             this.playlistBS.next(res);
-            this.snackBar.open("Playlist was synchronized with source");
+            this.snackBar.open("Playlist was matched with all MediaRef");
+        });
+    }
+
+    matchFiltredTvgSites(): void {
+        this.playlistService.matchFiltredTvgSites(this.playlistBS.getValue().publicId).subscribe(res => {
+            this.playlistBS.next(res);
+            this.snackBar.open("Playlist was matched with filtred TvgSites");
         });
     }
 
@@ -183,10 +214,15 @@ export class PlaylistModifyDialog {
 
     constructor(
         public dialogRef: MatDialogRef<PlaylistModifyDialog>,
-        @Inject(MAT_DIALOG_DATA) public data: any) { }
+        @Inject(MAT_DIALOG_DATA) public data: PlaylistModel[]) { }
 
     onNoClick(): void {
         this.dialogRef.close();
+    }
+
+    save(): void {
+        console.log('BulkUpdate saving');
+        // this.playlistService.updateLight(this.data).subscribe(ok => this.dialogRef.close());
     }
 }
 //---------------------------------------------------------------------------------    TvgMedia ListModifyDialog
@@ -197,20 +233,29 @@ export class PlaylistModifyDialog {
 export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
     cultures: string[];
     selected: string;
+    group: string;
 
     constructor(private mediaRefService: MediaRefService,
         public dialogRef: MatDialogRef<TvgMediaListModifyDialog>,
         @Inject(MAT_DIALOG_DATA) public data: TvgMedia[]) { }
 
     ngOnInit(): void {
-        this.selected = this.data[0].group;
+        if (this.data != undefined && this.data.length > 0)
+            this.selected = this.data[0].lang;
+
         this.mediaRefService.cultures().subscribe(c => {
             this.cultures = c;
         });
     }
 
-    onChange(event): void {
-        this.data.forEach(m => m.group = this.selected);
+    onChangeLang(event): void {
+        console.log("culture was changed : ", this.selected);
+        this.data.forEach(m => m.lang = this.selected);
+    }
+
+    onChangeGroup(event): void {
+        console.log("Group was changed : ", this.group);
+        this.data.forEach(m => m.group = this.group);
     }
 
     save(): void {

@@ -69,7 +69,7 @@ export class MediaRefService extends BaseService {
     */
     cultures(filter?: string): Observable<string[]> {
         let f = filter ? filter : "_all";
-        return this.http.get(variables.BASE_API_URL + 'mediasref/cultures/' + f).map(res => {
+        return this.http.get(variables.BASE_API_URL + 'mediasref/cultures?filter=' + f).map(res => {
 
             return res;
         }).catch(this.handleError);

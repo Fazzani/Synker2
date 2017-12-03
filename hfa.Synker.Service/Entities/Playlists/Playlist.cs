@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace hfa.Synker.Service.Entities.Playlists
 {
@@ -51,7 +52,7 @@ namespace hfa.Synker.Service.Entities.Playlists
                 if (!Content.Any())
                     return null;
 
-                _tvgMedias = JsonConvert.DeserializeObject<TvgMedia[]>(System.Text.Encoding.UTF8.GetString(Content));
+                _tvgMedias = JsonConvert.DeserializeObject<TvgMedia[]>(Encoding.UTF8.GetString(Content));
 
                 return _tvgMedias.ToList();
             }
@@ -91,6 +92,11 @@ namespace hfa.Synker.Service.Entities.Playlists
         //        return _playlist;
         //    }
         //}
+
+        public void UpdateContent(List<TvgMedia> tvgMedias)
+        {
+            Content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(tvgMedias));
+        }
 
         [NotMapped]
         public bool IsSynchronizable => SynkConfig != null && !string.IsNullOrEmpty(SynkConfig.Url);

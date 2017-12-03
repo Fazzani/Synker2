@@ -1,11 +1,16 @@
-﻿<mat-form-field>
-    <mat-select placeholder="Cultures" [(ngModel)]="selected" (ngModelChange)="onChange($event)" name="data.group">
-        <mat-option *ngFor="let cult of cultures" [value]="cult">
-            {{cult}}
-        </mat-option>
-    </mat-select>
-</mat-form-field>
-
+﻿<h2 mat-dialog-title>Update bulk</h2>
+<mat-dialog-content>
+    <mat-form-field>
+        <mat-select placeholder="Lang" [(ngModel)]="selected" (ngModelChange)="onChangeLang($event)" name="data.lang">
+            <mat-option *ngFor="let cult of cultures" [value]="cult">
+                {{cult}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field floatPlaceholder="never">
+        <input matInput placeholder="Groups..." [(ngModel)]="group" (ngModelChange)="onChangeGroup($event)">
+    </mat-form-field>
+</mat-dialog-content>
 <mat-action-row>
     <button mat-raised-button (click)="dialogRef.close()">Close</button>
     <button mat-raised-button (click)="dialogRef.save()">Save</button>
