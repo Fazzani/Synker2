@@ -25,10 +25,10 @@
             <mat-icon class="mat-24" aria-label="Synchronize" matTooltip="Synchronize" (click)="synk()">system_update_alt</mat-icon>
         </a>
         <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Synchronize picons" matTooltip="Synchronize picons" (click)="synkPiconsForMediaRef()">adjust</mat-icon>
+            <mat-icon class="mat-24" aria-label="Synchronize picons" matTooltip="Match picons" (click)="synkPiconsForMediaRef()">adjust</mat-icon>
         </a>
         <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Synchronize picons global" matTooltip="Synchronize picons global" (click)="synkPiconsGlobal()">add_a_photo</mat-icon>
+            <mat-icon class="mat-24" aria-label="Synchronize picons global" matTooltip="Synchronize picons global (from github)" (click)="synkPiconsGlobal()">add_a_photo</mat-icon>
         </a>
     </mat-toolbar>
     <mat-table #table [dataSource]="dataSource" matSort class="noselect">
