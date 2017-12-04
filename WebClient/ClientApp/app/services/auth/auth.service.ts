@@ -46,7 +46,7 @@ export class AuthService extends BaseService {
      * @memberof AuthService    
      */
     constructor(protected http: HttpClient, private router: Router) {
-        super(http);
+        super(http, 'auth');
         this.REGISTER_ENDPONT = variables.BASE_API_URL + 'auth/register';
         this.TOKEN_ENDPOINT = variables.BASE_API_URL + 'auth/token';
         this.REVOCATION_ENDPOINT = variables.BASE_API_URL + 'auth/revoketoken';

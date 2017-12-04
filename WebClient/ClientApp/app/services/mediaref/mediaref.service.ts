@@ -13,15 +13,11 @@ import { mediaRef } from '../../types/mediaref.type';
 export class MediaRefService extends BaseService {
 
     constructor(protected http: HttpClient) {
-        super(http);
-    }
-
-    search(query: SimpleQueryElastic): Observable<ElasticResponse<mediaRef>> {
-        return super.search<mediaRef>(query, 'mediasref');
+        super(http, 'mediasref')
     }
 
     get(id: string): Observable<ElasticResponse<mediaRef>> {
-        return this.http.get(variables.BASE_API_URL + 'mediasref/' + id).map(this.parseData)
+        return this.http.get(variables.BASE_API_URL + `${this.BaseUrl}/${id}`).map(this.parseData)
             .catch(this.handleError);
     }
 
@@ -44,13 +40,7 @@ export class MediaRefService extends BaseService {
     }
 
     save(medias: Array<mediaRef>): Observable<ElasticResponse<mediaRef>> {
-        return this.http.post(variables.BASE_API_URL + 'mediasref', medias).map(res => {
-            return res;
-        }).catch(this.handleError);
-    }
-
-    delete(id: string): Observable<number> {
-        return this.http.delete(variables.BASE_API_URL + 'mediasref/' + id).map(res => {
+        return this.http.post(variables.BASE_API_URL + this.BaseUrl, medias).map(res => {
             return res;
         }).catch(this.handleError);
     }

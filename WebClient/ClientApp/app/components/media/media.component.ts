@@ -14,6 +14,8 @@ import { map, catchError, merge, debounceTime, distinctUntilChanged, switchMap, 
 
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
 import { TvgMedia } from '../../types/media.type';
+import { MediaRefService } from '../../services/mediaref/mediaref.service';
+import { mediaRef } from '../../types/mediaref.type';
 
 @Component({
     selector: 'app-media',
@@ -87,16 +89,47 @@ export class MediaComponent implements OnInit, OnDestroy {
     selector: 'media-modify-dialog',
     templateUrl: './media.dialog.html'
 })
-export class TvgMediaModifyDialog {
+export class TvgMediaModifyDialog implements OnInit, OnDestroy {
+    tvgMedias: Observable<mediaRef[]>;
+    private searchTerms = new Subject<string>();  
+    private filter: string;
 
     constructor(
         public dialogRef: MatDialogRef<TvgMediaModifyDialog>,
-        @Inject(MAT_DIALOG_DATA) public data: any) { }
+        private mediarefService: MediaRefService,
+        @Inject(MAT_DIALOG_DATA) public media: TvgMedia) { }
 
+    ngOnInit(): void {
+
+        this.tvgMedias = this.searchTerms
+            .debounceTime(1000)         
+            .distinctUntilChanged()   
+            .switchMap(term => term  
+                ? this.mediarefService.simpleSearch<mediaRef>(term, "mediaref").map(x => x.result)
+                : Observable.of<mediaRef[]>([]))
+            .catch(error => {
+                console.log(error);
+                return Observable.of<mediaRef[]>([]);
+            });  
+    }
+
+    tvgSelectionChange(event: any, mediaref: mediaRef): void {
+        this.media.tvg = mediaref.tvg;
+    }
+
+    search(term: string): void {
+        this.searchTerms.next(term);
+    }  
+
+    save(): void {
+        this.dialogRef.close();
+    }
     onNoClick(): void {
         this.dialogRef.close();
     }
 
+    ngOnDestroy(): void {
+    }
 }
 
 /**

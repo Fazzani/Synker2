@@ -175,8 +175,11 @@ export class MediaRefModifyDialog implements OnInit, OnDestroy {
         Observable.fromEvent<EventTargetLike>(this.filterPicon.nativeElement, 'keyup')
             .debounceTime(1000)
             .distinctUntilChanged()
-            .subscribe((x) => {
-                this.piconsFilter = this.piconService.list("name", this.filterPicon.nativeElement.value).map(x => x.result);
+            .subscribe((x: EventTargetLike) => {
+                let query = <SimpleQueryElastic>{
+                    From: 0, IndexName: 'mediaref', Query: `name: ${this.filterPicon.nativeElement.value}`, Size: 10
+                }
+                this.piconsFilter = this.piconService.search(query).map(x => x.result).do(x => console.log(x));
             });
     }
 
@@ -233,7 +236,7 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
     get filter(): string { return this._filterChange.value; }
     set filter(filter: string) { this._filterChange.next(filter); }
 
-   _paginator = new BehaviorSubject<MatPaginator>(<MatPaginator>{});
+    _paginator = new BehaviorSubject<MatPaginator>(<MatPaginator>{});
     get paginator(): MatPaginator { return this._paginator.value; }
     set paginator(paginator: MatPaginator) { this._paginator.next(paginator); }
 
@@ -262,7 +265,7 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
 
         localStorage.setItem(Constants.LS_MediaRefQueryKey, JSON.stringify(query));
 
-        let res = this.mediaRefService.search(query).map((v, i) => {
+        let res = this.mediaRefService.search<mediaRef>(query).map((v, i) => {
             console.log("recup epg ", v);
             this._paginator.value.length = v.total;
             return v.result;

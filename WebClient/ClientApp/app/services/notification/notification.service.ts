@@ -11,7 +11,7 @@ export class NotificationService extends BaseService {
     public messages: Observable<Message>;
 
     constructor(protected http: HttpClient) {
-        super(http);
+        super(http, '');
 
         let subject = new RxWebsocketSubject(variables.BASE_WS_URL);
 

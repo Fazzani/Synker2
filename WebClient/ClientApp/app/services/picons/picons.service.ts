@@ -1,7 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BaseService } from '../base/base.service';
-import { ElasticQuery, ElasticResponse, ElasticAggregations } from "../../types/elasticQuery.type";
+import { ElasticQuery, ElasticResponse, ElasticAggregations, SimpleQueryElastic } from "../../types/elasticQuery.type";
 
 // All the RxJS stuff we need
 import { Observable } from 'rxjs/Observable';
@@ -11,10 +11,13 @@ import { picon } from '../../types/picon.type';
 
 @Injectable()
 export class PiconService extends BaseService {
-    BaseUrl: string = "picons";
 
     constructor(protected http: HttpClient) {
-        super(http);
+        super(http, "picons");
+    }
+
+    search(query: SimpleQueryElastic): Observable<ElasticResponse<picon>> {
+        return super.search<picon>(query);
     }
 
     get(id: string): Observable<ElasticResponse<picon>> {

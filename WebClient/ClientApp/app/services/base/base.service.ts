@@ -10,10 +10,22 @@ import * as variables from '../../variables';
 @Injectable()
 export class BaseService {
 
-    constructor(protected http: HttpClient) { }
+    constructor(protected http: HttpClient, protected BaseUrl: string) { }
 
-    search<T>(query: SimpleQueryElastic, ctrl : string): Observable<ElasticResponse<T>> {
-        return this.http.post(variables.BASE_API_URL + `${ctrl}/_searchstring`, query).map(res => {
+    search<T>(query: SimpleQueryElastic): Observable<ElasticResponse<T>> {
+        return this.http.post(variables.BASE_API_URL + `${this.BaseUrl}/_searchstring`, query).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
+    simpleSearch<T>(query: string, indexName: string): Observable<ElasticResponse<T>> {
+        return this.http.post(variables.BASE_API_URL + `${this.BaseUrl}/_searchstring`, <SimpleQueryElastic>{ From: 0, Size: 10, IndexName: indexName, Query: query }).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
+    delete(id: string): Observable<number> {
+        return this.http.delete(variables.BASE_API_URL + `${this.BaseUrl}/id`).map(res => {
             return res;
         }).catch(this.handleError);
     }

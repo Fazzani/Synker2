@@ -14,6 +14,7 @@ using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Services.Picons;
 using hfa.Synker.Service.Entities.MediasRef;
 using hfa.WebApi.Models.Xmltv;
+using hfa.WebApi.Models.Elastic;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -35,6 +36,13 @@ namespace Hfa.WebApi.Controllers
         public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
         {
             return await SearchAsync<Picon, PiconModel>(request.ToString(), nameof(MediaRef).ToLowerInvariant(), cancellationToken);
+        }
+
+        [HttpPost]
+        [Route("_searchstring")]
+        public async Task<IActionResult> SearchStringAsync([FromBody]SimpleQueryElastic request, CancellationToken cancellationToken)
+        {
+            return await SearchQueryStringAsync<Picon, PiconModel>(request, cancellationToken);
         }
 
         [HttpGet("{id}")]

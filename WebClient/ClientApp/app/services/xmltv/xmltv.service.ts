@@ -13,7 +13,7 @@ import * as variables from '../../variables';
 export class XmltvService extends BaseService {
 
     constructor(protected http: HttpClient) {
-        super(http);
+        super(http, 'xmltv');
     }
 
     /**

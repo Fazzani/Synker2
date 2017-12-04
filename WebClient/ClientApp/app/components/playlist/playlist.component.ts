@@ -125,6 +125,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     openDialog(media: TvgMedia): void {
+
         let dialogRef = this.dialog.open(TvgMediaModifyDialog, {
             width: '550px',
             height: '500px',

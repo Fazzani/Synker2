@@ -14,7 +14,7 @@ import { TvgMedia } from '../../types/media.type';
 @Injectable()
 export class TvgMediaService extends BaseService {
 
-    constructor(protected http: HttpClient) { super(http); }
+    constructor(protected http: HttpClient) { super(http, 'tvgmedia'); }
 
     get(id: string): Observable<ElasticResponse<TvgMedia>> {
         return this.http.get(variables.BASE_API_URL + 'tvgmedia/' + id).map(this.parseData)

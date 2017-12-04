@@ -14,7 +14,7 @@ import { QueryListBaseModel, PagedResult } from '../../types/common.type';
 @Injectable()
 export class PlaylistService extends BaseService {
 
-    constructor(protected http: HttpClient) { super(http); }
+    constructor(protected http: HttpClient) { super(http, 'playlists'); }
 
     get(id: string, light: boolean): Observable<PlaylistModel> {
 
@@ -65,10 +65,4 @@ export class PlaylistService extends BaseService {
             { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' })
             .catch(this.handleError);
     }
-
-    delete(id: string): Observable<PlaylistModel> {
-        return this.http.delete(variables.BASE_API_URL + 'playlists/' + id).map(res => {
-            return res;
-        }).catch(this.handleError);
     }
-}

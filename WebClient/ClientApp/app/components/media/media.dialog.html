@@ -1,38 +1,51 @@
-<mat-form-field>
-    <input matInput [(ngModel)]="data.position" placeholder="Position...">
-</mat-form-field>
-<mat-form-field>
-    <input matInput [(ngModel)]="data.name" placeholder="Name...">
-</mat-form-field>
-<mat-form-field>
-    <input matInput [(ngModel)]="data.lang" placeholder="Lang...">
-</mat-form-field>
-<mat-form-field>
-    <input matInput [(ngModel)]="data.group" placeholder="Group...">
-</mat-form-field>
-<mat-form-field>
-    <input matInput [(ngModel)]="data.url" placeholder="Url...">
-</mat-form-field>
-<mat-expansion-panel>
-    <mat-expansion-panel-header>
-        <mat-panel-title>
-            Tvg
-        </mat-panel-title>
-        <mat-panel-description>
-            Media tvg informdions
-        </mat-panel-description>
-    </mat-expansion-panel-header>
+<form class="form-popin">
     <mat-form-field>
-        <input matInput [(ngModel)]="data.tvg.id" placeholder="Tvg Id">
+        <input matInput [(ngModel)]="media.position" placeholder="Position..." name="media.position">
     </mat-form-field>
     <mat-form-field>
-        <input matInput [(ngModel)]="data.tvg.name" placeholder="Tvg Name">
+        <input matInput [(ngModel)]="media.name" placeholder="Name..." name="media.name">
     </mat-form-field>
     <mat-form-field>
-        <input matInput [(ngModel)]="data.tvg.tvgIdentify" placeholder="Tvg identifier">
+        <input matInput [(ngModel)]="media.lang" placeholder="Lang..." name="media.lang">
     </mat-form-field>
-    <img [src]="data.tvg.logo" class="logo-medium" />
-</mat-expansion-panel>
-<mat-action-row>
-    <button mat-raised-button (click)="dialogRef.close()">Close</button>
-</mat-action-row>
+    <mat-form-field>
+        <input matInput [(ngModel)]="media.group" placeholder="Group..." name="media.group">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput [(ngModel)]="media.url" placeholder="Url..." name="media.url" class="full-width">
+    </mat-form-field>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Tvg
+            </mat-panel-title>
+            <mat-panel-description>
+                Media tvg informations
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <!-- AutoComplte tvgMedia -->
+        <mat-form-field class="full-width">
+            <input matInput #filterTvg [matAutocomplete]="auto" aria-label="tvg" [(ngModel)]="filter" placeholder="Tvg..." name="media.tvg" (keyup)="search(filter)">
+            <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let tvgmedia of tvgMedias | async" [value]="tvgmedia.displayNames" (click)="tvgSelectionChange($event, tvgmedia)">
+                    <img style="vertical-align:middle;" aria-hidden src="{{tvgmedia.tvg.logo}}" height="30" />
+                    <span> {{tvgmedia.displayNames}}</span> | <small>{{tvgmedia.defaultSite }}</small>| <small>{{tvgmedia.tvg.tvgIdentify }}</small>
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput [(ngModel)]="media.tvg.id" placeholder="Tvg Id" name="media.tvg.id">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="media.tvg.name" placeholder="Tvg Name" name="media.tvg.name">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="media.tvg.tvgIdentify" placeholder="Tvg identifier" name="media.tvg.tvgIdentify" readonly>
+        </mat-form-field>
+        <img [src]="media.tvg.logo" class="logo-medium" />
+    </mat-expansion-panel>
+    <mat-action-row>
+        <button mat-raised-button (click)="dialogRef.close()">Close</button>
+    </mat-action-row>
+</form>

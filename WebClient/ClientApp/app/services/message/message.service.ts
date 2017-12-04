@@ -17,7 +17,7 @@ export class MessageService extends BaseService {
 
     url: string = variables.BASE_API_URL + 'message/status/';
 
-    constructor(protected http: HttpClient) { super(http); }
+    constructor(protected http: HttpClient) { super(http, 'message'); }
 
     public get(id: string): Observable<PagedResult<Message>> {
         return this.http.get(this.url + id)

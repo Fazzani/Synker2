@@ -13,11 +13,11 @@ import * as variables from '../../variables';
 export class EpgService extends BaseService {
 
     constructor(protected http: HttpClient) {
-        super(http);
+        super(http,'epg');
     }
 
     get(id: string): Observable<ElasticResponse<tvChannel>> {
-        return this.http.get(variables.BASE_API_URL + 'epg/' + id).map(this.parseData)
+        return this.http.get(variables.BASE_API_URL + `${this.BaseUrl}/${id}`).map(this.parseData)
             .catch(this.handleError);
     }
 
