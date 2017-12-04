@@ -3,16 +3,6 @@
         <mat-form-field floatPlaceholder="never">
             <input matInput #filter placeholder="Filter medias ref...">
         </mat-form-field>
-        <!--Tvg sites-->
-        <mat-form-field>
-            <input type="text" matInput placeholder="Tvg sites..." aria-label="Tvg sites..." [formControl]="filterTvgSitesControl" [matAutocomplete]="autofilterTvgSites">
-        </mat-form-field>
-
-        <mat-autocomplete #autofilterTvgSites="matAutocomplete">
-            <mat-option *ngFor="let site of tvgSitesObs | async" [value]="site" (onSelectionChange)="tvgSiteSelected(site)">
-                {{ site }}
-            </mat-option>
-        </mat-autocomplete>
         <span class="spacer"></span>
         <!-- Buttons -->
         <a mat-icon-button>
@@ -73,17 +63,17 @@
             <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
             <mat-cell *matCellDef="let row">
                 <button mat-icon-button color="warn" (click)="openDialog(row)">
-                        <mat-icon class="mat-24" aria-label="Edit">edit</mat-icon>
-                      </button>
+                    <mat-icon class="mat-24" aria-label="Edit">edit</mat-icon>
+                </button>
                 <button mat-icon-button color="primary" (click)="delete(row.id)">
-                        <mat-icon class="mat-24" aria-label="">delete</mat-icon>
-                      </button>
+                    <mat-icon class="mat-24" aria-label="">delete</mat-icon>
+                </button>
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected" class="noselect"></mat-row>
     </mat-table>
     <mat-paginator #paginator [length]="dataSource.paginator.length" [pageIndex]="dataSource.paginator.pageIndex" [pageSize]="dataSource.paginator.pageSize"
-        [pageSizeOptions]="dataSource.paginator.pageSizeOptions" class="noselect">
+                   [pageSizeOptions]="dataSource.paginator.pageSizeOptions" class="noselect">
     </mat-paginator>
 </div>

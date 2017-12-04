@@ -16,7 +16,7 @@ using Microsoft.Extensions.Options;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
-
+using hfa.WebApi.Models.Elastic;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -60,6 +60,21 @@ namespace Hfa.WebApi.Controllers
 
             response.Body.AssertElasticResponse();
             return new OkObjectResult(response.Body.GetResultListModel<T, T2>());
+        }
+
+        internal virtual protected async Task<IActionResult> SearchQueryStringAsync<T, T2>([FromBody] SimpleQueryElastic simpleQueryElastic,CancellationToken cancellationToken)
+             where T : class where T2 : class, IModel<T, T2>, new()
+        {
+            var response = await _elasticConnectionClient.Client.SearchAsync<T>(s => s
+            .Index(simpleQueryElastic.IndexName)
+            .From(simpleQueryElastic.From)
+            .Size(simpleQueryElastic.Size)
+            .Query(q => new SimpleQueryStringQuery { Query = simpleQueryElastic.Query, AllFields = true, AnalyzeWildcard = true }));
+
+            if (!response.IsValid)
+                return BadRequest(response.DebugInformation);
+
+            return new OkObjectResult(response.GetResultListModel<T, T2>());
         }
 
         protected static IPromise<IList<ISort>> GetSortDescriptor<T>(SortDescriptor<T> me, Dictionary<string, SortDirectionEnum> dictionary) where T : class

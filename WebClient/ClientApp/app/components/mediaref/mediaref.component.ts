@@ -9,7 +9,7 @@ import { MatChipInputEvent } from '@angular/material';
 
 import { CommonService, Constants } from '../../services/common/common.service';
 import { Observable } from "rxjs/Observable";
-import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
+import { ElasticQuery, ElasticResponse, SimpleQueryElastic } from "../../types/elasticQuery.type";
 import 'rxjs/add/observable/fromEvent';
 import { distinctUntilChanged, merge, debounceTime } from 'rxjs/operators';
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
@@ -33,30 +33,26 @@ import { map } from "rxjs/operator/map";
 export class MediaRefComponent implements OnInit, OnDestroy {
     subscriptionTableEvent: Subscription;
 
-    displayedColumns = ['logo', 'displayNames', 'groups', 'cultures','defaultSite', 'mediaType', 'actions'];
+    displayedColumns = ['logo', 'displayNames', 'groups', 'cultures', 'defaultSite', 'mediaType', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
     dataSource: MediaRefDataSource | null;
     currentItem: mediaRef | null;
-    filterTvgSitesControl: FormControl = new FormControl();
-    tvgSitesObs: Observable<string[]>;
-    tvgSites: string[];
 
     /** media ctor */
     constructor(private mediaRefService: MediaRefService, private piconService: PiconService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar) { }
 
     /** Called by Angular after media component initialized */
     ngOnInit(): void {
-        let storedQuery = this.commonService.JsonToObject<ElasticQuery>(localStorage.getItem(Constants.LS_MediaRefQueryKey));
+        let storedQuery = this.commonService.JsonToObject<SimpleQueryElastic>(localStorage.getItem(Constants.LS_MediaRefQueryKey));
         console.log("storedQuery ", storedQuery);
 
-        this.paginator.pageIndex = storedQuery != null ? Math.floor(storedQuery.from / storedQuery.size) : 0;
+        this.paginator.pageIndex = storedQuery != null ? Math.floor(storedQuery.From / storedQuery.Size) : 0;
         this.paginator.pageSizeOptions = [50, 100, 250, 1000];
-        this.paginator.pageSize = storedQuery != null ? storedQuery.size : this.paginator.pageSizeOptions[0];
-        this.filter.nativeElement.value = storedQuery != null && storedQuery.query != null && storedQuery.query != {} ? JSON.stringify(storedQuery.query) : "";
-
+        this.paginator.pageSize = storedQuery != null ? storedQuery.Size : this.paginator.pageSizeOptions[0];
         this.dataSource = new MediaRefDataSource(this.commonService, this.mediaRefService, this.paginator);
+        this.dataSource.filter = this.filter.nativeElement.value = storedQuery.Query;
 
         this.subscriptionTableEvent = this.paginator.page.asObservable()
             .merge(Observable.fromEvent<EventTargetLike>(this.filter.nativeElement, 'keyup'))
@@ -72,27 +68,8 @@ export class MediaRefComponent implements OnInit, OnDestroy {
                 console.log('objectQuery => ', objectQuery, this.filter.nativeElement.value);
                 this.dataSource.filter = objectQuery != null ? objectQuery : this.filter.nativeElement.value;
                 this.dataSource.paginator = this.paginator;
-
             });
 
-        this.tvgSites = [];
-        this.mediaRefService.tvgSites().subscribe(x => this.tvgSites = x);
-
-        this.tvgSitesObs = this.filterTvgSitesControl.valueChanges
-            .startWith(null)
-            .debounceTime(1000)
-            .distinctUntilChanged()
-            .map(val => val ? this.filterTvgSites(val) : this.tvgSites.slice());
-
-    }
-
-    tvgSiteSelected(site: string): void {
-        this.dataSource._filterTvgSiteChange.next(site);
-    }
-
-    filterTvgSites(val: string): string[] {
-        return this.tvgSites.filter(t =>
-            t.toLowerCase().indexOf(val.toLowerCase()) === 0);
     }
 
     openDialog(spChannel: mediaRef): void {
@@ -243,14 +220,12 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
     data: mediaRef[];
     medias = new BehaviorSubject<mediaRef[]>([]);
     _filterTvgSiteChange = new BehaviorSubject<string>('');
-    get filterTvgSite(): string { return this._filterTvgSiteChange.value; }
-    set filterTvgSite(filterTvgSite: string) { this._filterTvgSiteChange.next(filterTvgSite); }
 
-    _filterChange = new BehaviorSubject<Object | string>({});
-    get filter(): Object | string { return this._filterChange.value; }
-    set filter(filter: Object | string) { this._filterChange.next(filter); }
+    _filterChange = new BehaviorSubject<string>('');
+    get filter(): string { return this._filterChange.value; }
+    set filter(filter: string) { this._filterChange.next(filter); }
 
-    _paginator = new BehaviorSubject<MatPaginator>(<MatPaginator>{});
+   _paginator = new BehaviorSubject<MatPaginator>(<MatPaginator>{});
     get paginator(): MatPaginator { return this._paginator.value; }
     set paginator(paginator: MatPaginator) { this._paginator.next(paginator); }
 
@@ -260,7 +235,6 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
         this.paginator = mdPaginator;
         this._filterChange
             .merge(this._paginator)
-            .merge(this._filterTvgSiteChange)
             .debounceTime(300)
             //.distinctUntilChanged()
             .subscribe((x) => this.getData());
@@ -276,37 +250,11 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
      */
     getData(): Observable<mediaRef[]> {
         let pageSize = this.paginator.pageSize === undefined ? 25 : this.paginator.pageSize;
-        let query = <ElasticQuery>{
-            from: pageSize * this.paginator.pageIndex,
-            size: pageSize
-        };
-
-        var tabQeury: any[] = [];
-
-        if (typeof this.filter === "string") {
-
-            if (this.filter !== undefined && this.filter != "")
-                tabQeury.push({
-                    match: { "_all": this.filter }
-                });
-        }
-        else {
-            tabQeury.push(this.filter);
-        }
-
-        if (this.filterTvgSite != '') {
-            tabQeury.push({
-                term: {
-                    ["groups.keyword"]: { value: this.filterTvgSite }
-                }
-            });
-
-        }
-        query.query = this.commonService.BuildElaticQuery(tabQeury);
+        let query = <SimpleQueryElastic>{ From: pageSize * (isNaN(this.paginator.pageIndex) ? 0 : this.paginator.pageIndex), IndexName: 'mediaref', Query: this.filter, Size: pageSize }
 
         localStorage.setItem(Constants.LS_MediaRefQueryKey, JSON.stringify(query));
 
-        let res = this.mediaRefService.list(query).map((v, i) => {
+        let res = this.mediaRefService.search(query).map((v, i) => {
             console.log("recup epg ", v);
             this._paginator.value.length = v.total;
             return v.result;

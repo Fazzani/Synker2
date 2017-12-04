@@ -1,5 +1,12 @@
 ﻿import { NgModule } from "@angular/core";
 
+export class SimpleQueryElastic {
+    From: number;
+    Size: number;
+    Query: string;
+    IndexName: string;
+}
+
 /**
  * Elastic Query
  * 

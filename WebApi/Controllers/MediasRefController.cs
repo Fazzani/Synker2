@@ -18,6 +18,7 @@ using hfa.SyncLibrary.Global;
 using Hfa.WebApi.Common;
 using hfa.WebApi.Common.Filters;
 using Microsoft.Extensions.Caching.Memory;
+using hfa.WebApi.Models.Elastic;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Hfa.WebApi.Controllers
@@ -42,6 +43,13 @@ namespace Hfa.WebApi.Controllers
         public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
         {
             return await SearchAsync<MediaRef, MediaRefModel>(request.ToString(), nameof(MediaRef).ToLowerInvariant(), cancellationToken);
+        }
+
+        [HttpPost]
+        [Route("_searchstring")]
+        public async Task<IActionResult> SearchStringAsync([FromBody]SimpleQueryElastic request, CancellationToken cancellationToken)
+        {
+            return await SearchQueryStringAsync<MediaRef, MediaRefModel>(request, cancellationToken);
         }
 
         [HttpPost]

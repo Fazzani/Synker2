@@ -4,12 +4,19 @@ import { HttpClient } from '@angular/common/http';
 // All the RxJS stuff we need
 import { Observable } from 'rxjs/Observable';
 import { map, catchError } from 'rxjs/operators';
+import { ElasticResponse, SimpleQueryElastic } from "../../types/elasticQuery.type";
+import * as variables from '../../variables';
 
 @Injectable()
 export class BaseService {
-    //  static URL_API_BASE: string = 'http://localhost:56800/api/v1/';
 
     constructor(protected http: HttpClient) { }
+
+    search<T>(query: SimpleQueryElastic, ctrl : string): Observable<ElasticResponse<T>> {
+        return this.http.post(variables.BASE_API_URL + `${ctrl}/_searchstring`, query).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
 
     protected handleError(error: Response | any) {
         let errorMessage: string;
