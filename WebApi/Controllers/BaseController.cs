@@ -27,7 +27,7 @@ namespace Hfa.WebApi.Controllers
         protected readonly ElasticConfig _elasticConfig;
         readonly protected SynkerDbContext _dbContext;
 
-        public BaseController(IOptions<ElasticConfig> elasticConfig, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 
+        public BaseController(IOptions<ElasticConfig> elasticConfig, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
             SynkerDbContext context)
         {
             _logger = loggerFactory.CreateLogger("BaseController");
@@ -37,7 +37,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         internal virtual protected async Task<IActionResult> SearchAsync<T, T2>([FromBody] string query, CancellationToken cancellationToken)
-            where T : class where T2 : class, IModel<T,T2>, new()
+            where T : class where T2 : class, IModel<T, T2>, new()
         {
             var response = await _elasticConnectionClient.Client.LowLevel
                 .SearchAsync<SearchResponse<T>>(_elasticConfig.DefaultIndex, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
@@ -62,14 +62,14 @@ namespace Hfa.WebApi.Controllers
             return new OkObjectResult(response.Body.GetResultListModel<T, T2>());
         }
 
-        internal virtual protected async Task<IActionResult> SearchQueryStringAsync<T, T2>([FromBody] SimpleQueryElastic simpleQueryElastic,CancellationToken cancellationToken)
+        internal virtual protected async Task<IActionResult> SearchQueryStringAsync<T, T2>([FromBody] SimpleQueryElastic simpleQueryElastic, CancellationToken cancellationToken)
              where T : class where T2 : class, IModel<T, T2>, new()
         {
             var response = await _elasticConnectionClient.Client.SearchAsync<T>(s => s
             .Index(simpleQueryElastic.IndexName)
             .From(simpleQueryElastic.From)
             .Size(simpleQueryElastic.Size)
-            .Query(q => new SimpleQueryStringQuery { Query = simpleQueryElastic.Query, AllFields = true, AnalyzeWildcard = true }));
+            .Query(q => new SimpleQueryStringQuery { Query = simpleQueryElastic.Query, AllFields = false, AnalyzeWildcard = true }));
 
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);

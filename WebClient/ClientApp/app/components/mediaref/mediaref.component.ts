@@ -21,9 +21,6 @@ import { FormControl } from "@angular/forms";
 import { startWith } from "rxjs/operator/startWith";
 import { map } from "rxjs/operator/map";
 
-//{"match":{"groups":"bein.net"}}
-//{"match":{"cultures":"International"}}
-
 @Component({
     selector: 'mediaref',
     templateUrl: './mediaref.component.html',
@@ -56,7 +53,7 @@ export class MediaRefComponent implements OnInit, OnDestroy {
 
         this.subscriptionTableEvent = this.paginator.page.asObservable()
             .merge(Observable.fromEvent<EventTargetLike>(this.filter.nativeElement, 'keyup'))
-            .debounceTime(1000)
+            .debounceTime(1500)
             .distinctUntilChanged()
             .subscribe((x) => {
                 if (!this.dataSource) { return; }
@@ -64,14 +61,16 @@ export class MediaRefComponent implements OnInit, OnDestroy {
                 if ((x as PageEvent).length === undefined)
                     this.paginator.pageIndex = 0;
 
-                let objectQuery = this.commonService.JsonToObject<any>(this.filter.nativeElement.value);
-                console.log('objectQuery => ', objectQuery, this.filter.nativeElement.value);
-                this.dataSource.filter = objectQuery != null ? objectQuery : this.filter.nativeElement.value;
+                this.dataSource.filter = this.filter.nativeElement.value;
                 this.dataSource.paginator = this.paginator;
             });
 
     }
 
+    /**
+     * Modify mediaRef dialog
+     * @param spChannel
+     */
     openDialog(spChannel: mediaRef): void {
         let dialogRef = this.dialog.open(MediaRefModifyDialog, {
             width: '550px',
@@ -83,18 +82,27 @@ export class MediaRefComponent implements OnInit, OnDestroy {
         });
     }
 
+    /**
+     * Synchronize mediaRef from sitepack index
+     */
     synk(): void {
         this.mediaRefService.synk().subscribe(res => {
             this.snackBar.open("Medias referentiel was synchronized");
         });
     }
 
+    /**
+     * Synchronize all picons from github
+     */
     synkPiconsGlobal(): void {
         this.piconService.synk().subscribe(res => {
             this.snackBar.open("Picons index was synchronized");
         });
     }
 
+    /**
+     * Match mediaRef with picons
+     */
     synkPiconsForMediaRef(): void {
         this.mediaRefService.synkPicons().subscribe(res => {
             this.snackBar.open("Picons was synchronized for all mediaRef");
