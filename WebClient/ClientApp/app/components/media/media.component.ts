@@ -107,13 +107,13 @@ export class TvgMediaModifyDialog implements OnInit, OnDestroy {
 
     ngOnInit(): void {
 
-        let res = this.mediaAndTvgSites[1].reduce((p, c) => `\"${p}\" | \"${c}\"`);
+        let res = this.mediaAndTvgSites[1].map(x => `\"${x}\"`).reduce((p, c) => `${p} OR ${c}`);
 
         this.tvgMedias = this.searchTerms
             .debounceTime(1000)         
             .distinctUntilChanged()   
             .switchMap(term => term  
-                ? this.mediarefService.simpleSearch<mediaRef>(`${term} + defaultSite:(\"${res}\")`, "mediaref").map(x => x.result)
+                ? this.mediarefService.simpleSearch<mediaRef>(`displayNames : "${term}"^5 AND defaultSite:(${res})^2`, "mediaref").map(x => x.result)
                 : Observable.of<mediaRef[]>([]))
             .catch(error => {
                 console.log(error);

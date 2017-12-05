@@ -26,10 +26,10 @@
         <!-- AutoComplte tvgMedia -->
         <mat-form-field class="full-width">
             <input matInput #filterTvg [matAutocomplete]="auto" aria-label="tvg" [(ngModel)]="filter" placeholder="Tvg..." name="mediaAndTvgSites[0].tvg" (keyup)="search(filter)">
-            <mat-autocomplete #auto="matAutocomplete"  (optionSelected)="tvgSelectionChange($event, tvgmedia)" class="primary">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="tvgSelectionChange($event, tvgmedia)" class="primary">
                 <mat-option *ngFor="let tvgmedia of tvgMedias | async" [value]="tvgmedia">
-                    <img style="vertical-align:middle;" aria-hidden src="{{tvgmedia.tvg.logo}}" height="30" />
-                    <span> {{tvgmedia.displayNames}}</span> | <small>{{tvgmedia.defaultSite }}</small>| <small>{{tvgmedia.tvg.tvgIdentify }}</small>
+                    <img aria-hidden src="{{tvgmedia.tvg.logo}}" />
+                    {{tvgmedia.displayNames}} <small>  {{tvgmedia.defaultSite }}</small>
                 </mat-option>
             </mat-autocomplete>
         </mat-form-field>
