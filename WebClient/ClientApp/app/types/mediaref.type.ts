@@ -6,7 +6,12 @@ import { ISelectable } from "./common.type";
  * mediaRef model
  * @description mediaRef Model.
  */
-export interface mediaRef extends ISelectable {
+export class mediaRef implements ISelectable {
+    constructor(name: string, culture: string) {
+        this.displayNames = Array<string>(name);
+        this.cultures = Array<string>(culture);
+    }
+    selected: boolean;
     displayNames: string[];
     tvg: Tvg;
     groups: string[];

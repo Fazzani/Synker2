@@ -1,18 +1,18 @@
 <form class="form-popin">
     <mat-form-field>
-        <input matInput [(ngModel)]="media.position" placeholder="Position..." name="media.position">
+        <input matInput [(ngModel)]="mediaAndTvgSites[0].position" placeholder="Position..." name="media.position">
     </mat-form-field>
     <mat-form-field>
-        <input matInput [(ngModel)]="media.name" placeholder="Name..." name="media.name">
+        <input matInput [(ngModel)]="mediaAndTvgSites[0].name" placeholder="Name..." name="media.name">
     </mat-form-field>
     <mat-form-field>
-        <input matInput [(ngModel)]="media.lang" placeholder="Lang..." name="media.lang">
+        <input matInput [(ngModel)]="mediaAndTvgSites[0].lang" placeholder="Lang..." name="media.lang">
     </mat-form-field>
     <mat-form-field>
-        <input matInput [(ngModel)]="media.group" placeholder="Group..." name="media.group">
+        <input matInput [(ngModel)]="mediaAndTvgSites[0].group" placeholder="Group..." name="media.group">
     </mat-form-field>
     <mat-form-field>
-        <input matInput [(ngModel)]="media.url" placeholder="Url..." name="media.url" class="full-width">
+        <input matInput [(ngModel)]="mediaAndTvgSites[0].url" placeholder="Url..." name="media.url" class="full-width">
     </mat-form-field>
     <mat-expansion-panel>
         <mat-expansion-panel-header>
@@ -25,9 +25,9 @@
         </mat-expansion-panel-header>
         <!-- AutoComplte tvgMedia -->
         <mat-form-field class="full-width">
-            <input matInput #filterTvg [matAutocomplete]="auto" aria-label="tvg" [(ngModel)]="filter" placeholder="Tvg..." name="media.tvg" (keyup)="search(filter)">
-            <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let tvgmedia of tvgMedias | async" [value]="tvgmedia.displayNames" (click)="tvgSelectionChange($event, tvgmedia)">
+            <input matInput #filterTvg [matAutocomplete]="auto" aria-label="tvg" [(ngModel)]="filter" placeholder="Tvg..." name="mediaAndTvgSites[0].tvg" (keyup)="search(filter)">
+            <mat-autocomplete #auto="matAutocomplete"  (optionSelected)="tvgSelectionChange($event, tvgmedia)" class="primary">
+                <mat-option *ngFor="let tvgmedia of tvgMedias | async" [value]="tvgmedia">
                     <img style="vertical-align:middle;" aria-hidden src="{{tvgmedia.tvg.logo}}" height="30" />
                     <span> {{tvgmedia.displayNames}}</span> | <small>{{tvgmedia.defaultSite }}</small>| <small>{{tvgmedia.tvg.tvgIdentify }}</small>
                 </mat-option>
@@ -35,15 +35,15 @@
         </mat-form-field>
 
         <mat-form-field>
-            <input matInput [(ngModel)]="media.tvg.id" placeholder="Tvg Id" name="media.tvg.id">
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.id" placeholder="Tvg Id" name="mediaAndTvgSites[0].media.tvg.id">
         </mat-form-field>
         <mat-form-field>
-            <input matInput [(ngModel)]="media.tvg.name" placeholder="Tvg Name" name="media.tvg.name">
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.name" placeholder="Tvg Name" name="mediaAndTvgSites[0].media.tvg.name">
         </mat-form-field>
         <mat-form-field>
-            <input matInput [(ngModel)]="media.tvg.tvgIdentify" placeholder="Tvg identifier" name="media.tvg.tvgIdentify" readonly>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.tvgIdentify" placeholder="Tvg identifier" name="mediaAndTvgSites[0].media.tvg.tvgIdentify" readonly>
         </mat-form-field>
-        <img [src]="media.tvg.logo" class="logo-medium" />
+        <img [src]="mediaAndTvgSites[0].tvg.logo" class="logo-medium" />
     </mat-expansion-panel>
     <mat-action-row>
         <button mat-raised-button (click)="dialogRef.close()">Close</button>

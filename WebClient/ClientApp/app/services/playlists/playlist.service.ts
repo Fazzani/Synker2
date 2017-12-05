@@ -43,8 +43,8 @@ export class PlaylistService extends BaseService {
         }).catch(this.handleError);
     }
 
-    matchFiltredTvgSites(id: string): Observable<PlaylistModel> {
-        return this.http.post(variables.BASE_API_URL + 'playlists/matchfiltred/' + id, null).map(res => {
+    matchFiltredTvgSites(id: string, onlyNotMatched: boolean): Observable<PlaylistModel> {
+        return this.http.post(variables.BASE_API_URL + 'playlists/matchfiltred/' + id + '?onlyNotMatched=' + onlyNotMatched, null).map(res => {
             return res;
         }).catch(this.handleError);
     }
@@ -65,4 +65,4 @@ export class PlaylistService extends BaseService {
             { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' })
             .catch(this.handleError);
     }
-    }
+}

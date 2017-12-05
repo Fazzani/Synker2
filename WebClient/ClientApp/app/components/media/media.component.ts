@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
-import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
+import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatAutocompleteSelectedEvent } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -13,7 +13,7 @@ import 'rxjs/add/observable/fromEvent';
 import { map, catchError, merge, debounceTime, distinctUntilChanged, switchMap, startWith } from 'rxjs/operators';
 
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
-import { TvgMedia } from '../../types/media.type';
+import { TvgMedia, Tvg } from '../../types/media.type';
 import { MediaRefService } from '../../services/mediaref/mediaref.service';
 import { mediaRef } from '../../types/mediaref.type';
 
@@ -97,15 +97,23 @@ export class TvgMediaModifyDialog implements OnInit, OnDestroy {
     constructor(
         public dialogRef: MatDialogRef<TvgMediaModifyDialog>,
         private mediarefService: MediaRefService,
-        @Inject(MAT_DIALOG_DATA) public media: TvgMedia) { }
+        @Inject(MAT_DIALOG_DATA) public mediaAndTvgSites: [TvgMedia, string[]]) {
+
+        console.log('mediaAndTvgSites => ', mediaAndTvgSites);
+        if (mediaAndTvgSites[0].tvg == null) {
+            mediaAndTvgSites[0].tvg = <Tvg>{};
+        }
+    }
 
     ngOnInit(): void {
+
+        let res = this.mediaAndTvgSites[1].reduce((p, c) => `\"${p}\" | \"${c}\"`);
 
         this.tvgMedias = this.searchTerms
             .debounceTime(1000)         
             .distinctUntilChanged()   
             .switchMap(term => term  
-                ? this.mediarefService.simpleSearch<mediaRef>(term, "mediaref").map(x => x.result)
+                ? this.mediarefService.simpleSearch<mediaRef>(`${term} + defaultSite:(\"${res}\")`, "mediaref").map(x => x.result)
                 : Observable.of<mediaRef[]>([]))
             .catch(error => {
                 console.log(error);
@@ -113,8 +121,9 @@ export class TvgMediaModifyDialog implements OnInit, OnDestroy {
             });  
     }
 
-    tvgSelectionChange(event: any, mediaref: mediaRef): void {
-        this.media.tvg = mediaref.tvg;
+    tvgSelectionChange(event: MatAutocompleteSelectedEvent): void {
+        console.log('tvgSelectionChange', event);
+        this.mediaAndTvgSites[0].tvg = event.option.value.tvg;
     }
 
     search(term: string): void {

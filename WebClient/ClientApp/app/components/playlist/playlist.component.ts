@@ -18,6 +18,7 @@ import { TvgMediaModifyDialog } from '../media/media.component';
 import { MediaRefService } from '../../services/mediaref/mediaref.service';
 import { FormControl } from '@angular/forms';
 import { KEY_CODE, KEY } from '../../types/common.type';
+import { mediaRef } from "../../types/mediaref.type";
 
 @Component({
     selector: 'playlist',
@@ -41,7 +42,8 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     playlistId: string;
     playlistBS: BehaviorSubject<PlaylistModel> | null;
     /** media ctor */
-    constructor(private route: ActivatedRoute, private playlistService: PlaylistService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar) { }
+    constructor(private route: ActivatedRoute, private playlistService: PlaylistService, private mediaRefService: MediaRefService, private commonService: CommonService,
+        public dialog: MatDialog, public snackBar: MatSnackBar) { }
 
     /** Called by Angular after media component initialized */
     ngOnInit(): void {
@@ -129,7 +131,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         let dialogRef = this.dialog.open(TvgMediaModifyDialog, {
             width: '550px',
             height: '500px',
-            data: media
+            data: [media, this.playlistBS.getValue().tvgSites]
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -175,8 +177,18 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
-    matchFiltredTvgSites(): void {
-        this.playlistService.matchFiltredTvgSites(this.playlistBS.getValue().publicId).subscribe(res => {
+    /**
+     * add media playlist to mediaRef
+     * @param media
+     */
+    addToMediaRef(media: TvgMedia): void {
+        this.mediaRefService.save(new mediaRef(media.name, media.lang)).subscribe(res => {
+            this.snackBar.open("media was added to mediaRef successfully");
+        });
+    }
+
+    matchFiltredTvgSites(onlyNotMatched: boolean = false): void {
+        this.playlistService.matchFiltredTvgSites(this.playlistBS.getValue().publicId, onlyNotMatched).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was matched with filtred TvgSites");
         });

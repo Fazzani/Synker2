@@ -19,13 +19,13 @@ export class BaseService {
     }
 
     simpleSearch<T>(query: string, indexName: string): Observable<ElasticResponse<T>> {
-        return this.http.post(variables.BASE_API_URL + `${this.BaseUrl}/_searchstring`, <SimpleQueryElastic>{ From: 0, Size: 10, IndexName: indexName, Query: query }).map(res => {
+        return this.http.post(variables.BASE_API_URL + `${this.BaseUrl}/_searchstring`, <SimpleQueryElastic>{ From: 0, Size: 30, IndexName: indexName, Query: query }).map(res => {
             return res;
         }).catch(this.handleError);
     }
 
     delete(id: string): Observable<number> {
-        return this.http.delete(variables.BASE_API_URL + `${this.BaseUrl}/id`).map(res => {
+        return this.http.delete(variables.BASE_API_URL + `${this.BaseUrl}/${id}`).map(res => {
             return res;
         }).catch(this.handleError);
     }

@@ -110,12 +110,14 @@ export class MediaRefComponent implements OnInit, OnDestroy {
         });
     }
 
-    delete(id: string): Observable<string> {
+    delete(id: string): void {
         const confirm = window.confirm('Do you really want to delete this media ref?');
 
-        return Observable
+        Observable
             .of(id)
-            .filter(() => confirm);
+            .filter(() => confirm)
+            .switchMap(x => this.mediaRefService.delete(x))
+            .subscribe(res => this.snackBar.open("Medias referentiel was deleted"));
     }
 
     save(): void {
@@ -126,7 +128,7 @@ export class MediaRefComponent implements OnInit, OnDestroy {
     }
 
     update(spChannel: mediaRef): void {
-        this.mediaRefService.save(<mediaRef[]>[spChannel]).subscribe(x =>
+        this.mediaRefService.save(spChannel).subscribe(x =>
             this.snackBar.open("Medias referentiel was synchronized")
         );
     }
@@ -149,6 +151,7 @@ export class MediaRefComponent implements OnInit, OnDestroy {
     }
 }
 
+//---------------------------------------------------------------------------------   MediaRef ModifyDialog
 @Component({
     selector: 'mediaref-modify-dialog',
     templateUrl: './mediaref.dialog.html'
@@ -223,6 +226,7 @@ export class MediaRefModifyDialog implements OnInit, OnDestroy {
 
 }
 
+//---------------------------------------------------------------------------------   MediaRef DataSource
 /**
  * Media datasource for mat-table component
  */
@@ -288,7 +292,7 @@ export class MediaRefDataSource extends DataSource<mediaRef> {
     }
 
     save(): any {
-        return this.mediaRefService.save(this.medias.value)
+        return this.mediaRefService.save(...this.medias.value)
     }
 
     disconnect() { }

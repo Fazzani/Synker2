@@ -51,7 +51,7 @@
     </mat-form-field>
     <mat-form-field class="full-width">
         <input matInput #filterPicon [matAutocomplete]="auto" [(ngModel)]="data.tvg.logo" placeholder="icon..." name="data.tvg.logo" (focus)="onfocusPicon(data.tvg.logo)" (blur)="onblurPicon(data.tvg.logo)">
-        <mat-autocomplete #auto="matAutocomplete">
+        <mat-autocomplete #auto="matAutocomplete" class="primary">
             <mat-option *ngFor="let picon of piconsFilter | async" [value]="picon.rawUrl">
                 <img style="vertical-align:middle;" aria-hidden src="{{picon.rawUrl}}" height="50" />
                 <small>{{picon.name }}</small>

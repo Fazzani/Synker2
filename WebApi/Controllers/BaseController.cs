@@ -69,7 +69,7 @@ namespace Hfa.WebApi.Controllers
             .Index(simpleQueryElastic.IndexName)
             .From(simpleQueryElastic.From)
             .Size(simpleQueryElastic.Size)
-            .Query(q => new SimpleQueryStringQuery { Query = simpleQueryElastic.Query, AllFields = false, AnalyzeWildcard = true }));
+            .Query(q => new QueryStringQuery { Query = simpleQueryElastic.Query, AllFields = false, AnalyzeWildcard = true }));
 
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);

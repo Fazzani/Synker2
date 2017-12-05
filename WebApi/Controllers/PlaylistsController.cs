@@ -228,15 +228,16 @@ namespace Hfa.WebApi.Controllers
         }
 
         /// <summary>
-        /// Match playlist with media ref
+        ///  Match playlist with media ref
         /// </summary>
-        /// <param name="playlistPostModel"></param>
+        /// <param name="id"></param>
+        /// <param name="onlyNotMatched"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("matchfiltred/{id}")]
         [ValidateModel]
-        public async Task<IActionResult> MatchFiltredByTvgSites([FromRoute] string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> MatchFiltredByTvgSites([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
         {
             var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
 
@@ -244,12 +245,17 @@ namespace Hfa.WebApi.Controllers
             if (playlistEntity == null)
                 return NotFound(playlistEntity);
 
-            playlistEntity.TvgMedias.AsParallel().ForAll(media =>
-            {
-                var matched = _mediaRefService.MatchTermByDispaynamesAndFiltredBySiteNameAsync(media.DisplayName, media.Lang, playlistEntity.TvgSites, cancellationToken).GetAwaiter().GetResult();
-                media.Group = matched?.DefaultSite;
-                media.Tvg = matched?.Tvg;
-            });
+            var list = playlistEntity.TvgMedias;
+
+            if(onlyNotMatched)
+                list = playlistEntity.TvgMedias.Where(x => x.Tvg == null).ToList();
+           
+            list.AsParallel().ForAll(media =>
+               {
+                   var matched = _mediaRefService.MatchTermByDispaynamesAndFiltredBySiteNameAsync(media.DisplayName, media.Lang, playlistEntity.TvgSites, cancellationToken).GetAwaiter().GetResult();
+                   media.Group = matched?.DefaultSite;
+                   media.Tvg = matched?.Tvg;
+               });
 
             playlistEntity.UpdateContent(playlistEntity.TvgMedias);
 

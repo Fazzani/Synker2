@@ -39,7 +39,7 @@ export class MediaRefService extends BaseService {
         }).catch(this.handleError);
     }
 
-    save(medias: Array<mediaRef>): Observable<ElasticResponse<mediaRef>> {
+    save(...medias: mediaRef[]): Observable<ElasticResponse<mediaRef>> {
         return this.http.post(variables.BASE_API_URL + this.BaseUrl, medias).map(res => {
             return res;
         }).catch(this.handleError);

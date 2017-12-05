@@ -18,7 +18,7 @@ namespace hfa.Synker.Service.Services.Elastic
         private ElasticClient _client;
         private static object syncRoot = new Object();
         ILoggerFactory _loggerFactory;
-        static string[] stopWords = { "hd", "sd", "fhd", "ar", "fr", "fr:", "ar:", "1080p", "720p", "(fr)", "(ar)", "+1", "+2", "+4", "+6", "+8", "arb", "vip", "it", "my" };
+        static string[] stopWords = { "hd", "tn:", "vip:", "vip", "ca:", "usa:", "ch:", "sd", "fhd", "ar", "fr", "fr:", "ar:", "1080p", "720p", "(fr)", "(ar)", "+1", "+2", "+4", "+6", "+8", "arb", "vip", "it", "my" };
         private ElasticConfig _config;
 
         public ElasticConnectionClient(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory)
@@ -78,7 +78,7 @@ namespace hfa.Synker.Service.Services.Elastic
                                  .Filters("lowercase", "piconWordDelimiter", "autocomplete_filter")
                              )
                              .Custom("mediaref_name_analyzer", ca => ca
-                                 .Tokenizer("pattern_mediaref")
+                                 .Tokenizer("standard")
                                  .Filters("lowercase", "standard")
                              )
                              .Standard("standard", sd => sd.StopWords(stopWords))
