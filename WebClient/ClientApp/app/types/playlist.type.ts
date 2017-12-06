@@ -70,3 +70,4 @@ export enum Providers {
     m3u,
     tvlist
 }
+

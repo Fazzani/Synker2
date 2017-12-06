@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
 import { CommonService, Constants } from '../../services/common/common.service';
-import { PlaylistModel, PlaylistStatus, PlaylistPostModel } from "../../types/playlist.type";
+import { PlaylistModel, PlaylistStatus, PlaylistPostModel, Providers } from "../../types/playlist.type";
 import { PlaylistService } from "../../services/playlists/playlist.service";
 
 /**
@@ -13,6 +13,8 @@ import { PlaylistService } from "../../services/playlists/playlist.service";
     templateUrl: './playlist.add.dialog.html'
 })
 export class PlaylistAddDialog implements OnInit, OnDestroy {
+    providers: string[];
+
     playlist: PlaylistPostModel;
     
     constructor(
@@ -22,6 +24,7 @@ export class PlaylistAddDialog implements OnInit, OnDestroy {
         this.playlist = new PlaylistPostModel();
         this.playlist.status = PlaylistStatus.enabled;
         this.playlist.provider = "m3u";
+        this.providers = Object.keys(Providers);
     }
 
     onNoClick(): void {
