@@ -4,11 +4,11 @@ import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_D
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
-import { CommonService, Constants } from '../../services/common/common.service';
 import { Observable } from "rxjs/Observable";
-import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
 import 'rxjs/add/observable/fromEvent';
 import { distinctUntilChanged, merge, debounceTime } from 'rxjs/operators';
+import { CommonService, Constants } from '../../services/common/common.service';
+import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
 import { PlaylistModel, PlaylistPostModel } from "../../types/playlist.type";
 import { PlaylistService } from "../../services/playlists/playlist.service";

@@ -26,4 +26,14 @@ export class TvgMediaService extends BaseService {
             return res;
         }).catch(this.handleError);
     }
+
+    addToToPlaylist(id: string, ...medias: TvgMedia[]) {
+        return this.http.post(variables.BASE_API_URL + `${this.BaseUrl}/${id}/insert`, medias,
+            { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' }).catch(this.handleError);
+    }
+
+    removeFromPlaylist(id: string, ...medias: TvgMedia[]) {
+        return this.http.post(variables.BASE_API_URL + `${this.BaseUrl}/${id}/delete`, medias,
+            { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' }).catch(this.handleError);
+    }
 }

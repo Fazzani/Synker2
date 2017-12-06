@@ -64,6 +64,7 @@ export class PlaylistPostModel {
     public synkGroup: SynkGroupEnum;
     public synkLogos: boolean;
     public provider: string;
+    public publicId: string;
 }
 
 export enum Providers {

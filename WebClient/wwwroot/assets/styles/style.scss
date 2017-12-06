@@ -194,7 +194,7 @@ body {
 }
 
 mat-dialog-container {
-    .addnewplaylist {
+    .addnewplaylist, .mat-dialog-container {
         form {
             display: flex;
             flex-direction: column;
@@ -206,4 +206,10 @@ mat-dialog-container {
     .action-row-bottom {
         align-self: flex-end;
     }
+}
+
+.tab-content{
+    overflow:auto;
+    max-height:500px;
+    min-height:100px;
 }

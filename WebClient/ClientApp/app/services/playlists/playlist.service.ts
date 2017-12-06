@@ -10,6 +10,7 @@ import { HttpHeaders, HttpParams } from "@angular/common/http";
 import * as variables from "../../variables";
 import { PlaylistModel, PlaylistPostModel } from '../../types/playlist.type';
 import { QueryListBaseModel, PagedResult } from '../../types/common.type';
+import { TvgMedia } from '../../types/media.type';
 
 @Injectable()
 export class PlaylistService extends BaseService {
