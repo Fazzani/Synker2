@@ -185,3 +185,25 @@ body {
         vertical-align: middle;
     }
 }
+
+.global-fab-button {
+    color: aliceblue !important;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+mat-dialog-container {
+    .addnewplaylist {
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        height: inherit;
+    }
+
+    .action-row-bottom {
+        align-self: flex-end;
+    }
+}

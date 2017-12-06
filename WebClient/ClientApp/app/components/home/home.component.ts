@@ -5,6 +5,7 @@ import { MatDialog, MatSnackBar } from '@angular/material';
 import { PlaylistModel } from '../../types/playlist.type';
 import { QueryListBaseModel, PagedResult } from '../../types/common.type';
 import { ClipboardService } from 'ngx-clipboard';
+import { PlaylistAddDialog } from '../playlist/playlist.add.component';
 
 @Component({
     selector: 'home',
@@ -31,5 +32,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     ngOnDestroy() {
         this.clipboardService.destroy();
+    }
+
+    openDialogAddNewPlaylist(): void {
+        let dialogRef = this.dialog.open(PlaylistAddDialog, {
+            width: '550px'
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            this.ngOnInit();
+        });
     }
 }

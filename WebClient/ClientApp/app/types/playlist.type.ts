@@ -54,3 +54,19 @@ export class PlaylistModel {
     public publicUrl: string;
     public publicId: string;
 }
+
+export class PlaylistPostModel {
+    public freindlyname: string;
+    public cron: string;
+    public status: PlaylistStatus;
+    public url: string;
+    public synkEpg: boolean;
+    public synkGroup: SynkGroupEnum;
+    public synkLogos: boolean;
+    public provider: string;
+}
+
+export enum Providers {
+    m3u,
+    tvlist
+}

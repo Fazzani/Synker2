@@ -8,7 +8,7 @@ import { map, catchError } from 'rxjs/operators';
 import { RequestOptions } from "@angular/http/http";
 import { HttpHeaders, HttpParams } from "@angular/common/http";
 import * as variables from "../../variables";
-import { PlaylistModel } from '../../types/playlist.type';
+import { PlaylistModel, PlaylistPostModel } from '../../types/playlist.type';
 import { QueryListBaseModel, PagedResult } from '../../types/common.type';
 
 @Injectable()
@@ -54,6 +54,16 @@ export class PlaylistService extends BaseService {
     //        return res;
     //    }).catch(this.handleError);
     //}
+
+    addByUrl(p: PlaylistPostModel): Observable<PlaylistModel> {
+        return this.http.post(variables.BASE_API_URL + 'playlists/create', p,
+            { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' }).catch(this.handleError);
+    }
+
+    addByStream(p: PlaylistPostModel): Observable<PlaylistModel> {
+        return this.http.post(variables.BASE_API_URL + 'playlists/create/m3u', p,
+            { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' }).catch(this.handleError);
+    }
 
     update(p: PlaylistModel): Observable<PlaylistModel> {
         return this.http.put(variables.BASE_API_URL + 'playlists/' + p.publicId, p,

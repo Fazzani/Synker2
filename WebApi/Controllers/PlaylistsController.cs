@@ -172,15 +172,15 @@ namespace Hfa.WebApi.Controllers
             //Download playlist from url
             using (var httpClient = new HttpClient())
             {
-                var playlistStream = await httpClient.GetStreamAsync(playlistPostModel.PlaylistUrl);
+                var playlistStream = await httpClient.GetStreamAsync(playlistPostModel.Url);
                 var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
 
-                var playlist = _dbContext.Playlist.FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.PlaylistUrl) ?? new Playlist
+                var playlist = _dbContext.Playlist.FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.Url) ?? new Playlist
                 {
                     UserId = UserId.Value,
-                    Freindlyname = playlistPostModel.PlaylistName,
+                    Freindlyname = playlistPostModel.Freindlyname,
                     Status = PlaylistStatus.Enabled,
-                    SynkConfig = new SynkConfig { Url = playlistPostModel.PlaylistUrl, Provider = playlistPostModel.Provider }
+                    SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
                 };
 
                 var pl = await _playlistService.SynkPlaylist(() => playlist, providerInstance, cancellationToken: cancellationToken);
@@ -387,7 +387,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("create")]
         [ValidateModel]
-        public async Task<IActionResult> ImportFromUrl(PlaylistPostModel playlistPostModel, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
+        public async Task<IActionResult> ImportFromUrl([FromBody]PlaylistPostModel playlistPostModel, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
             CancellationToken cancellationToken)
         {
             //Vérifier si la playlist existe-elle avant 
@@ -403,14 +403,17 @@ namespace Hfa.WebApi.Controllers
             //Download playlist from url
             using (var httpClient = new HttpClient())
             {
-                var playlistStream = await httpClient.GetStreamAsync(playlistPostModel.PlaylistUrl);
+                httpClient.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36");
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "text/plain");
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+                var playlistStream = await httpClient.GetStreamAsync(playlistPostModel.Url);
                 var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
                 var pl = await _playlistService.SynkPlaylist(() => new Playlist
                 {
                     UserId = UserId.Value,
-                    Freindlyname = playlistPostModel.PlaylistName,
+                    Freindlyname = playlistPostModel.Freindlyname,
                     Status = PlaylistStatus.Enabled,
-                    SynkConfig = new SynkConfig { Url = playlistPostModel.PlaylistUrl }
+                    SynkConfig = new SynkConfig { Url = playlistPostModel.Url }
                 }, providerInstance, cancellationToken: cancellationToken);
 
                 await _dbContext.Playlist.AddAsync(pl);

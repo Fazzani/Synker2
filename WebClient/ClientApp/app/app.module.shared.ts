@@ -36,6 +36,7 @@ import { ClipboardModule } from 'ngx-clipboard';
 import { PlaylistComponent, PlaylistModifyDialog, TvgMediaListModifyDialog, TvgSitesListModifyDialog } from "./components/playlist/playlist.component";
 import { PiconService } from './services/picons/picons.service';
 import { SearchPipe } from "./pipes/search.pipe";
+import { PlaylistAddDialog } from './components/playlist/playlist.add.component';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -68,6 +69,7 @@ const appRoutes: Routes = [
         PlaylistModifyDialog,
         TvgMediaListModifyDialog,
         TvgSitesListModifyDialog,
+        PlaylistAddDialog,
         SearchPipe
     ],
     imports: [
@@ -82,7 +84,7 @@ const appRoutes: Routes = [
         ClipboardModule,
         RouterModule.forRoot(appRoutes, { enableTracing: false })
     ],
-    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, MediaRefModifyDialog, TvgMediaListModifyDialog, TvgSitesListModifyDialog],
+    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, MediaRefModifyDialog, TvgMediaListModifyDialog, TvgSitesListModifyDialog, PlaylistAddDialog],
     providers: [
         CommonService,
         TvgMediaService,
