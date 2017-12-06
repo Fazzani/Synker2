@@ -54,14 +54,12 @@ namespace hfa.Synker.Service.Services.Playlists
         public async Task<Playlist> SynkPlaylist(Func<Playlist> getPlaylist, FileProvider provider, bool force = false,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            //var pl = await _dbcontext.Playlist.FindAsync(id);
             var pl = getPlaylist();
             if (pl == null)
                 throw new ArgumentNullException($"Playlist not found");
             if (!pl.IsSynchronizable)
                 throw new ApplicationException($"Playlist isn't synchronizable");
 
-            //var newMedias = new BlockingCollection<TvgMedia>();
             using (var playlist = new Playlist<TvgMedia>(provider))
             {
                 var sourceList = await playlist.PullAsync(cancellationToken);
@@ -78,6 +76,30 @@ namespace hfa.Synker.Service.Services.Playlists
                     pl.Content = UTF8Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(newMedias.Where(x => x.IsValid).ToArray()));
             }
             return pl;
+        }
+
+        /// <summary>
+        /// Genére un rapport avec les new medias et 
+        /// les médias qui n'existes plus
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="force"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task<(IEnumerable<TvgMedia> tvgMedia, IEnumerable<TvgMedia> removed)> DiffWithSource(Func<Playlist> getPlaylist, FileProvider provider, bool force = false,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var pl = getPlaylist();
+            if (pl == null)
+                throw new ArgumentNullException($"Playlist not found");
+            if (!pl.IsSynchronizable)
+                throw new ApplicationException($"Playlist isn't synchronizable");
+
+            using (var playlist = new Playlist<TvgMedia>(provider))
+            {
+                var sourceList = await playlist.PullAsync(cancellationToken);
+                return (sourceList.Where(s => pl.TvgMedias.All(t => t.Url != s.Url)), pl.TvgMedias.Where(s => sourceList.All(t => t.Url != s.Url)));
+            }
         }
 
         /// <summary>

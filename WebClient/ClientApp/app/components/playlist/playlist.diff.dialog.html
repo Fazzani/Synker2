@@ -1,0 +1,18 @@
+<div>
+    <mat-tab-group class="demo-tab-group">
+        <mat-tab label="New medias">
+            <div class="demo-tab-content">
+                <ul>
+                    <li *ngFor="let m of newMedias">{{m.displayName}}<small>{{m.url}}</small></li>
+                </ul>
+            </div>
+        </mat-tab>
+        <mat-tab label="Removed medias">
+            <div class="demo-tab-content">
+                <ul>
+                    <li *ngFor="let m of removedMedias">{{m.displayName}}<small>{{m.url}}</small></li>
+                </ul>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>

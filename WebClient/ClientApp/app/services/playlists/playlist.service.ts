@@ -31,8 +31,8 @@ export class PlaylistService extends BaseService {
         }).catch(this.handleError);
     }
 
-    synk(): Observable<PlaylistModel> {
-        return this.http.post(variables.BASE_API_URL + 'playlists/synk/', null).map(res => {
+    synk(model: PlaylistPostModel): Observable<PlaylistModel> {
+        return this.http.post(variables.BASE_API_URL + 'playlists/synk', model).map(res => {
             return res;
         }).catch(this.handleError);
     }
@@ -54,6 +54,12 @@ export class PlaylistService extends BaseService {
     //        return res;
     //    }).catch(this.handleError);
     //}
+
+    diff(model: PlaylistPostModel): Observable<PlaylistModel> {
+        return this.http.post(variables.BASE_API_URL + 'playlists/diff', model).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
 
     addByUrl(p: PlaylistPostModel): Observable<PlaylistModel> {
         return this.http.post(variables.BASE_API_URL + 'playlists/create', p,

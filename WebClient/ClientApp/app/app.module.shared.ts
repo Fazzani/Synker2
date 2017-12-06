@@ -37,6 +37,7 @@ import { PlaylistComponent, PlaylistModifyDialog, TvgMediaListModifyDialog, TvgS
 import { PiconService } from './services/picons/picons.service';
 import { SearchPipe } from "./pipes/search.pipe";
 import { PlaylistAddDialog } from './components/playlist/playlist.add.component';
+import { PlaylistDiffDialog } from './components/playlist/playlist.diff.component';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -70,6 +71,7 @@ const appRoutes: Routes = [
         TvgMediaListModifyDialog,
         TvgSitesListModifyDialog,
         PlaylistAddDialog,
+        PlaylistDiffDialog,
         SearchPipe
     ],
     imports: [
@@ -84,7 +86,7 @@ const appRoutes: Routes = [
         ClipboardModule,
         RouterModule.forRoot(appRoutes, { enableTracing: false })
     ],
-    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, MediaRefModifyDialog, TvgMediaListModifyDialog, TvgSitesListModifyDialog, PlaylistAddDialog],
+    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, MediaRefModifyDialog, TvgMediaListModifyDialog, TvgSitesListModifyDialog, PlaylistAddDialog, PlaylistModifyDialog, PlaylistDiffDialog],
     providers: [
         CommonService,
         TvgMediaService,

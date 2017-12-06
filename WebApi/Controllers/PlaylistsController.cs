@@ -179,7 +179,7 @@ namespace Hfa.WebApi.Controllers
                 {
                     UserId = UserId.Value,
                     Freindlyname = playlistPostModel.Freindlyname,
-                    Status = PlaylistStatus.Enabled,
+                    Status = playlistPostModel.Status,
                     SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
                 };
 
@@ -193,6 +193,48 @@ namespace Hfa.WebApi.Controllers
                 stopwatch.Stop();
                 _logger.LogInformation($"Elapsed time : {stopwatch.Elapsed.ToString("c")}");
                 return CreatedAtRoute(nameof(GetFile), new { id = UTF8Encoding.UTF8.EncodeBase64(pl.UniqueId.ToString()) }, null);
+            }
+        }
+
+
+        /// <summary>
+        /// Genére un rapport avec les new medias et 
+        /// les médias qui n'existes plus
+        /// </summary>
+        /// <param name="playlistPostModel"></param>
+        /// <param name="providersOptions"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("diff")]
+        [ValidateModel]
+        public async Task<IActionResult> DiffAsync([FromBody]PlaylistPostModel playlistPostModel, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
+            CancellationToken cancellationToken)
+        {
+            var optionsProvider = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(playlistPostModel.Provider, StringComparison.InvariantCultureIgnoreCase));
+            if (optionsProvider == null)
+                return BadRequest($"Not supported Provider : {playlistPostModel.Provider}");
+
+            var providerType = Type.GetType(optionsProvider.Type, false, true);
+            if (providerType == null)
+                return BadRequest($"Provider type not found : {playlistPostModel.Provider}");
+
+            //Download playlist from url
+            using (var httpClient = new HttpClient())
+            {
+                var playlistStream = await httpClient.GetStreamAsync(playlistPostModel.Url);
+                var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
+
+                var playlist = _dbContext.Playlist.FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.Url) ?? new Playlist
+                {
+                    UserId = UserId.Value,
+                    Freindlyname = playlistPostModel.Freindlyname,
+                    Status = playlistPostModel.Status,
+                    SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
+                };
+
+                var pl = await _playlistService.DiffWithSource(() => playlist, providerInstance, cancellationToken: cancellationToken);
+                return Ok(pl);
             }
         }
 

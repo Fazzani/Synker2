@@ -10,7 +10,7 @@ import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
 import 'rxjs/add/observable/fromEvent';
 import { distinctUntilChanged, merge, debounceTime } from 'rxjs/operators';
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
-import { PlaylistModel } from "../../types/playlist.type";
+import { PlaylistModel, PlaylistPostModel } from "../../types/playlist.type";
 import { PlaylistService } from "../../services/playlists/playlist.service";
 import { ActivatedRoute } from '@angular/router';
 import { TvgMedia } from "../../types/media.type";
@@ -19,6 +19,7 @@ import { MediaRefService } from '../../services/mediaref/mediaref.service';
 import { FormControl } from '@angular/forms';
 import { KEY_CODE, KEY } from '../../types/common.type';
 import { mediaRef } from "../../types/mediaref.type";
+import { PlaylistDiffDialog } from './playlist.diff.component';
 
 @Component({
     selector: 'playlist',
@@ -117,7 +118,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     openUpdateListDialog(): void {
         let dialogRef = this.dialog.open(TvgMediaListModifyDialog, {
             width: '550px',
-            height: '500px',
             data: this.dataSource.data.filter((v, i) => v.selected)
         });
 
@@ -130,12 +130,22 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
         let dialogRef = this.dialog.open(TvgMediaModifyDialog, {
             width: '550px',
-            height: '500px',
             data: [media, this.playlistBS.getValue().tvgSites]
         });
 
         dialogRef.afterClosed().subscribe(result => {
             this.snackBar.open(media.name + " was modified", "", { duration: 400 });
+        });
+    }
+    
+    openDiffPlaylist(): void {
+        let dialogRef = this.dialog.open(PlaylistDiffDialog, {
+            width: '550px',
+            data: this.playlistBS.getValue()
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            this.snackBar.open("Tvg Sites was modified", "", { duration: 400 });
         });
     }
 
@@ -150,7 +160,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
-    update(playlist: PlaylistModel): void {
+    update(playlist: PlaylistPostModel): void {
 
     }
 
@@ -164,7 +174,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     synk(): void {
-        this.playlistService.synk().subscribe(res => {
+        this.playlistService.synk(new PlaylistPostModel()).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was synchronized with source");
         });
