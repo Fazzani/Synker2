@@ -248,7 +248,7 @@ export class PlaylistModifyDialog {
         // this.playlistService.updateLight(this.data).subscribe(ok => this.dialogRef.close());
     }
 }
-//---------------------------------------------------------------------------------    TvgMedia ListModifyDialog
+//---------------------------------------------------------------------------------    TvgMedia bulk ListModifyDialog
 @Component({
     selector: 'tvgmedia-list-modify-dialog',
     templateUrl: './tvgmedia.list.dialog.html'
@@ -257,6 +257,7 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
     cultures: string[];
     selected: string;
     group: string;
+    filterChannelName: string;
 
     constructor(private mediaRefService: MediaRefService,
         public dialogRef: MatDialogRef<TvgMediaListModifyDialog>,
@@ -286,6 +287,13 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
     }
     onNoClick(): void {
         this.dialogRef.close();
+    }
+
+    applyFixChannelName(): void {
+        let res = this.data
+            .filter(x => new RegExp(this.filterChannelName).test(x.name))
+            .map(x => x.name.replace(new RegExp(this.filterChannelName), RegExp.$2));
+        console.log(res);
     }
 
     ngOnDestroy(): void {

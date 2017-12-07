@@ -1,15 +1,46 @@
 ﻿<h2 mat-dialog-title>Update bulk</h2>
 <mat-dialog-content>
-    <mat-form-field>
-        <mat-select placeholder="Lang" [(ngModel)]="selected" (ngModelChange)="onChangeLang($event)" name="data.lang">
-            <mat-option *ngFor="let cult of cultures" [value]="cult">
-                {{cult}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
-    <mat-form-field floatPlaceholder="never">
-        <input matInput placeholder="Groups..." [(ngModel)]="group" (ngModelChange)="onChangeGroup($event)">
-    </mat-form-field>
+
+    <mat-accordion>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Cultures and Groups
+                </mat-panel-title>
+                <mat-panel-description>
+                    Cultures and Groups
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <mat-form-field>
+                <mat-select placeholder="Lang" [(ngModel)]="selected" (ngModelChange)="onChangeLang($event)" name="data.lang">
+                    <mat-option *ngFor="let cult of cultures" [value]="cult">
+                        {{cult}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field floatPlaceholder="never">
+                <input matInput placeholder="Groups..." [(ngModel)]="group" (ngModelChange)="onChangeGroup($event)">
+            </mat-form-field>
+
+        </mat-expansion-panel>
+        <!-- Fix channel names -->
+        <mat-expansion-panel (opened)="panelOpenState = true"
+                             (closed)="panelOpenState = false">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Channels name
+                </mat-panel-title>
+                <mat-panel-description>
+                    Fix channel names
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-form-field floatPlaceholder="never">
+                <input matInput placeholder="Regex..." [(ngModel)]="filterChannelName">
+                <button mat-raised-button color="primary" (click)="applyFixChannelName()">Apply</button>
+            </mat-form-field>
+        </mat-expansion-panel>
+    </mat-accordion>
 </mat-dialog-content>
 <mat-action-row>
     <button mat-raised-button (click)="dialogRef.close()">Close</button>
