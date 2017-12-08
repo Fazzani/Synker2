@@ -14,7 +14,7 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
         }
 
         /// <summary>
-        /// Clean DisplayName selon la config sauvegradée dans l'elastic 
+        /// Clean DisplayName selon la config sauvegardée dans Elastic 
         /// </summary>
         /// <param name="tvgMedia"></param>
         public override void HandleTvgMedia(TvgMedia tvgMedia)

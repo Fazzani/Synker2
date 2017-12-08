@@ -302,11 +302,13 @@ namespace SyncLibrary
         {
             var contextHandler = Init.ServiceProvider.GetService<IContextTvgMediaHandler>();
             var cleanNameHandler = new TvgMediaCleanNameHandler(contextHandler);
+            var shiftHandler = new TvgMediaShiftMatcherHandler(contextHandler);
             var groupHandler = new TvgMediaGroupMatcherHandler(contextHandler);
             var epgHandler = new TvgMediaEpgMatcherNameHandler(contextHandler, elasticConnectionClient, _elastiConfig);
-            var langHandler = new TvgMediaLangMatcherHandler(contextHandler);
+            var langHandler = new TvgMediaShiftMatcherHandler(contextHandler);
 
-            langHandler.SetSuccessor(groupHandler);
+            langHandler.SetSuccessor(shiftHandler);
+            shiftHandler.SetSuccessor(groupHandler);
             groupHandler.SetSuccessor(epgHandler);
             epgHandler.SetSuccessor(cleanNameHandler);
             return langHandler;

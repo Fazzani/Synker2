@@ -110,14 +110,16 @@ namespace hfa.Synker.Service.Services.Playlists
             //TODO : Passer synkconfig dans _contextHandler ( no s'il est singleton )
 
             var cleanNameHandler = new TvgMediaCleanNameHandler(_contextHandler);
+            var cultureHandler = new TvgMediaCultureMatcherHandler(_contextHandler);
+            var shiftHandler = new TvgMediaShiftMatcherHandler(_contextHandler);
             var groupHandler = new TvgMediaGroupMatcherHandler(_contextHandler);
             var epgHandler = new TvgMediaEpgMatcherNameHandler(_contextHandler, elasticConnectionClient, _elasticConfig);
-            var langHandler = new TvgMediaLangMatcherHandler(_contextHandler);
 
-            langHandler.SetSuccessor(groupHandler);
+            cultureHandler.SetSuccessor(shiftHandler);
+            shiftHandler.SetSuccessor(groupHandler);
             groupHandler.SetSuccessor(epgHandler);
             epgHandler.SetSuccessor(cleanNameHandler);
-            return langHandler;
+            return cultureHandler;
         }
     }
 }
