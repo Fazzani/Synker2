@@ -79,6 +79,33 @@ namespace hfa.Synker.Service.Services.Playlists
         }
 
         /// <summary>
+        /// Execute Handlers on Tvgmedias list
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<TvgMedia>> ExecuteHandlersAsync(List<TvgMedia> tvgmedias, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            if (tvgmedias == null)
+                throw new ArgumentNullException(nameof(tvgmedias));
+
+            var cleanNameHandler = new TvgMediaCleanNameHandler(_contextHandler);
+            var cultureHandler = new TvgMediaCultureMatcherHandler(_contextHandler);
+            var shiftHandler = new TvgMediaShiftMatcherHandler(_contextHandler);
+            var groupHandler = new TvgMediaGroupMatcherHandler(_contextHandler);
+
+            cultureHandler.SetSuccessor(shiftHandler);
+            shiftHandler.SetSuccessor(groupHandler);
+            groupHandler.SetSuccessor(cleanNameHandler);
+
+            var newMedias = tvgmedias.AsParallel().Select(media =>
+            {
+                cultureHandler.HandleTvgMedia(media);
+                return media;
+            }).WithCancellation(cancellationToken);
+
+            return newMedias.ToList();
+        }
+
+        /// <summary>
         /// Genére un rapport avec les new medias et 
         /// les médias qui n'existes plus
         /// </summary>

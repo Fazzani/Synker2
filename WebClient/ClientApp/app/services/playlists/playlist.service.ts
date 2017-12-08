@@ -38,6 +38,12 @@ export class PlaylistService extends BaseService {
         }).catch(this.handleError);
     }
 
+    executeHandlers(model: TvgMedia[]): Observable<TvgMedia[]> {
+        return this.http.post(variables.BASE_API_URL + 'playlists/handlers', model).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
     match(id: string): Observable<PlaylistModel> {
         return this.http.post(variables.BASE_API_URL + 'playlists/match/' + id, null).map(res => {
             return res;

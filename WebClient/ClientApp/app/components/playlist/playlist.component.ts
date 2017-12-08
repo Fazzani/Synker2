@@ -137,7 +137,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             this.snackBar.open(media.name + " was modified", "", { duration: 400 });
         });
     }
-    
+
     openDiffPlaylist(): void {
         let dialogRef = this.dialog.open(PlaylistDiffDialog, {
             width: '550px',
@@ -177,6 +177,19 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.playlistService.synk(new PlaylistPostModel()).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was synchronized with source");
+        });
+    }
+
+    executeHandlers(): void {
+        this.playlistService.executeHandlers(this.dataSource.data.filter((v, i) => v.selected)).subscribe(res => {
+            res.forEach(x => {
+                var index = this.playlistBS.value.tvgMedias.findIndex(f => f.id == x.id);
+                if (index > 0) {
+                    this.playlistBS.value.tvgMedias[index] = x;
+                }
+            });
+            this.playlistBS.next(this.playlistBS.value);
+            this.snackBar.open("Executing handlers finished");
         });
     }
 

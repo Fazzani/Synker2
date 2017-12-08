@@ -24,7 +24,6 @@ namespace hfa.WebApi.Models.TvgMedias
             StartLineHeader = hit.Source.StartLineHeader;
             Tags = hit.Source.Tags;
             Url = hit.Source.Url;
-            Urls = hit.Source.Urls;
             return this;
         }
     }

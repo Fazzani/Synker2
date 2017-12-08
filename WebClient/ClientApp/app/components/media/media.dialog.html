@@ -33,7 +33,7 @@
                 </mat-option>
             </mat-autocomplete>
         </mat-form-field>
-
+        <img [src]="mediaAndTvgSites[0].tvg.logo" class="logo-medium" />
         <mat-form-field>
             <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.id" placeholder="Tvg Id" name="mediaAndTvgSites[0].media.tvg.id">
         </mat-form-field>
@@ -43,7 +43,16 @@
         <mat-form-field>
             <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.tvgIdentify" placeholder="Tvg identifier" name="mediaAndTvgSites[0].media.tvg.tvgIdentify" readonly>
         </mat-form-field>
-        <img [src]="mediaAndTvgSites[0].tvg.logo" class="logo-medium" />
+        <mat-form-field>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.shift" placeholder="Tvg Shift" name="mediaAndTvgSites[0].media.tvg.shift" readonly>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.audio_track" placeholder="Tvg Audio track" name="mediaAndTvgSites[0].media.tvg.audio_track" readonly>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.aspect_ratio" placeholder="Tvg Aspect ratio" name="mediaAndTvgSites[0].media.tvg.aspect_ratio" readonly>
+        </mat-form-field>
+        
     </mat-expansion-panel>
     <mat-action-row>
         <button mat-raised-button (click)="dialogRef.close()">Close</button>

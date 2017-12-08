@@ -16,10 +16,9 @@ namespace PlaylistManager.Entities
         public TvgMedia()
         {
             Tvg = new Tvg();
-            Urls = new List<string> { Url };
         }
         
-        public List<string> Urls { get; set; }
+        //public List<string> Urls { get; set; }
 
         public Tvg Tvg { get; set; }
 

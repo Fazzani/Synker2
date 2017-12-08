@@ -147,6 +147,21 @@ namespace Hfa.WebApi.Controllers
         }
 
         /// <summary>
+        /// Passe Handlers
+        /// </summary>
+        /// <param name="playlistPostModel"></param>
+        /// <param name="providersOptions"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("handlers")]
+        public async Task<IActionResult> ExecuteHandlers([FromBody]List<TvgMedia> tvgMedias, CancellationToken cancellationToken)
+        {
+            var result = await _playlistService.ExecuteHandlersAsync(tvgMedias, cancellationToken);
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Synk playlist from source url
         /// </summary>
         /// <param name="playlistPostModel"></param>
@@ -195,7 +210,6 @@ namespace Hfa.WebApi.Controllers
                 return CreatedAtRoute(nameof(GetFile), new { id = UTF8Encoding.UTF8.EncodeBase64(pl.UniqueId.ToString()) }, null);
             }
         }
-
 
         /// <summary>
         /// Genére un rapport avec les new medias et 
