@@ -22,6 +22,8 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
             var match = reg.Match(tvgMedia.Name);
             if (match.Success && match.Groups["shift"] != null  && !string.IsNullOrEmpty(match.Groups["shift"].Value))
             {
+                if (tvgMedia.Tvg == null)
+                    tvgMedia.Tvg = new Tvg();
                 tvgMedia.Tvg.Shift = match.Groups["shift"].Value.Trim();
             }
 

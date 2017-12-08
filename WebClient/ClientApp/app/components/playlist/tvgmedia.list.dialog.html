@@ -37,8 +37,11 @@
             </mat-expansion-panel-header>
             <mat-form-field floatPlaceholder="never">
                 <input matInput placeholder="Regex..." [(ngModel)]="filterChannelName">
-                <button mat-raised-button color="primary" (click)="applyFixChannelName()">Apply</button>
             </mat-form-field>
+            <mat-form-field floatPlaceholder="never">
+                <input matInput #replaceInput placeholder="Replace..." [(ngModel)]="replace">
+            </mat-form-field>
+            <button mat-raised-button color="primary" (click)="applyFixChannelName(replaceInput.value)">Apply</button>
         </mat-expansion-panel>
     </mat-accordion>
 </mat-dialog-content>

@@ -224,6 +224,10 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
+    selectAll() {
+        this.dataSource.data.forEach(x => x.selected = true);
+    }
+
     toggleSelected(media: TvgMedia, event: any): void {
         //console.log('toggleSelected ', media);
         //console.log(event);
@@ -302,11 +306,11 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
         this.dialogRef.close();
     }
 
-    applyFixChannelName(): void {
-        let res = this.data
+    
+    applyFixChannelName(replace: string): void {
+        this.data
             .filter(x => new RegExp(this.filterChannelName).test(x.name))
-            .map(x => x.name.replace(new RegExp(this.filterChannelName), RegExp.$2));
-        console.log(res);
+            .forEach(x => x.name = x.name.replace(new RegExp(this.filterChannelName), replace));
     }
 
     ngOnDestroy(): void {
