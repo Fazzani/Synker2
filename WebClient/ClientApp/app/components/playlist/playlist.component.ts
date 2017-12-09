@@ -20,6 +20,7 @@ import { FormControl } from '@angular/forms';
 import { KEY_CODE, KEY } from '../../types/common.type';
 import { mediaRef } from "../../types/mediaref.type";
 import { PlaylistDiffDialog } from './playlist.diff.component';
+import { snakbar_duration } from '../../variables';
 
 @Component({
     selector: 'playlist',
@@ -34,7 +35,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     key: number;
     subscriptionTableEvent: Subscription;
 
-    displayedColumns = ['tvg.logo', 'displayName', 'lang', 'group', 'tvg.name', 'tvg.tvgIdentify', 'actions'];
+    displayedColumns = ['tvg.logo', 'name', 'displayName', 'lang', 'group', 'tvg.name', 'tvg.tvgIdentify', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
@@ -122,7 +123,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.snackBar.open("List media modified", "", { duration: 400 });
+            this.snackBar.open("List media modified", "", { duration: snakbar_duration });
         });
     }
 
@@ -134,7 +135,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.snackBar.open(media.displayName + " was modified", "", { duration: 400 });
+            this.snackBar.open(media.displayName + " was modified", "", { duration: snakbar_duration });
         });
     }
 
@@ -145,7 +146,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.snackBar.open("Tvg Sites was modified", "", { duration: 400 });
+            this.snackBar.open("Tvg Sites was modified", "", { duration: snakbar_duration });
         });
     }
 
@@ -156,7 +157,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.snackBar.open("Tvg Sites was modified", "", { duration: 400 });
+            this.snackBar.open("Tvg Sites was modified", "", { duration: snakbar_duration });
         });
     }
 
@@ -200,15 +201,15 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
-    /**
-     * add media playlist to mediaRef
-     * @param media
-     */
-    addToMediaRef(media: TvgMedia): void {
-        this.mediaRefService.save(new mediaRef(media.displayName, media.lang)).subscribe(res => {
-            this.snackBar.open("media was added to mediaRef successfully");
-        });
-    }
+    ///**
+    // * add media playlist to mediaRef
+    // * @param media
+    // */
+    //addToMediaRef(media: TvgMedia): void {
+    //    this.mediaRefService.save(new mediaRef(media.displayName, media.lang)).subscribe(res => {
+    //        this.snackBar.open("media was added to mediaRef successfully");
+    //    });
+    //}
 
     matchFiltredTvgSites(onlyNotMatched: boolean = false): void {
         this.playlistService.matchFiltredTvgSites(this.playlistBS.getValue().publicId, onlyNotMatched).subscribe(res => {

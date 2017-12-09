@@ -13,6 +13,7 @@ import { tvChannel } from "../../types/xmltv.type";
 import 'rxjs/add/observable/fromEvent';
 import { map, catchError, merge, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
+import { snakbar_duration } from '../../variables';
 
 @Component({
     selector: 'epg-media',
@@ -71,7 +72,7 @@ export class EpgComponent implements OnInit, OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.snackBar.open(epg.displayname + " was modified", "", { duration: 400 });
+            this.snackBar.open(epg.displayname + " was modified", "", { duration: snakbar_duration });
         });
     }
 

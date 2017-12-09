@@ -29,7 +29,6 @@ using System.Threading.Tasks;
 
 namespace Hfa.WebApi.Controllers
 {
-    //[ApiVersion("1.0")]
     [Route("api/v1/[controller]")]
     [Authorize]
     public class PlaylistsController : BaseController
@@ -37,6 +36,9 @@ namespace Hfa.WebApi.Controllers
         private IPlaylistService _playlistService;
         private IMediaRefService _mediaRefService;
         IMemoryCache _memoryCache;
+        private string userPlaylistKey => $"{UserId}:{CacheKeys.PlaylistByUser}";
+
+        Guid GetInternalId(string id) => new Guid(Encoding.UTF8.DecodeBase64(id));
 
         public PlaylistsController(IMemoryCache memoryCache, IMediaRefService mediaRefService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IPlaylistService playlistService)
@@ -55,8 +57,20 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         public async Task<IActionResult> List([FromBody] QueryListBaseModel query, CancellationToken cancellationToken, [FromQuery] bool light = true)
         {
-            var playlists = await _memoryCache.GetOrCreateAsync($"{CacheKeys.PlaylistByUser}_{UserId}_{query.GetHashCode()}", async entry =>
+            var plCacheKey = $"{userPlaylistKey}_{query.GetHashCode()}";
+            var playlists = await _memoryCache.GetOrCreateAsync(plCacheKey, async entry =>
             {
+                if (_memoryCache.TryGetValue(userPlaylistKey, out List<string> list))
+                {
+                    list.Add(userPlaylistKey);
+                }
+                else
+                {
+                    list = new List<string> { plCacheKey };
+                }
+
+                _memoryCache.Set(userPlaylistKey, list);
+
                 entry.SlidingExpiration = TimeSpan.FromHours(2);
                 return await Task.Run(() =>
                 {
@@ -76,7 +90,7 @@ namespace Hfa.WebApi.Controllers
         //[ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "id", "light" })]
         public IActionResult Get(string id, CancellationToken cancellationToken, [FromQuery] bool light = true)
         {
-            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
+            var idGuid = GetInternalId(id);
             var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
             if (playlist == null)
                 return NotFound(id);
@@ -88,11 +102,12 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         public async Task<IActionResult> PutAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken)
         {
-            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
+            var idGuid = GetInternalId(id);
 
             var playlistEntity = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
             if (playlistEntity == null)
                 return NotFound(playlistEntity);
+
 
             playlistEntity.Status = playlist.Status;
             playlistEntity.Freindlyname = playlist.Freindlyname;
@@ -113,7 +128,7 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         public async Task<IActionResult> PutLightAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken)
         {
-            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
+            var idGuid = GetInternalId(id);
 
             var playlistEntity = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
             if (playlistEntity == null)
@@ -134,7 +149,7 @@ namespace Hfa.WebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
         {
-            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
+            var idGuid = GetInternalId(id);
 
             var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
             if (playlist == null)
@@ -143,6 +158,7 @@ namespace Hfa.WebApi.Controllers
             _dbContext.Playlist.Remove(playlist);
 
             await _dbContext.SaveChangesAsync();
+            ClearCache();
             return NoContent();
         }
 
@@ -155,9 +171,9 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("handlers")]
-        public async Task<IActionResult> ExecuteHandlers([FromBody]List<TvgMedia> tvgMedias, CancellationToken cancellationToken)
+        public IActionResult ExecuteHandlers([FromBody]List<TvgMedia> tvgMedias, CancellationToken cancellationToken)
         {
-            var result = await _playlistService.ExecuteHandlersAsync(tvgMedias, cancellationToken);
+            var result = _playlistService.ExecuteHandlersAsync(tvgMedias, cancellationToken);
             return Ok(result);
         }
 
@@ -263,7 +279,7 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         public IActionResult Match([FromRoute] string id, CancellationToken cancellationToken)
         {
-            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
+            var idGuid = GetInternalId(id);
 
             var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
             if (playlist == null)
@@ -295,7 +311,7 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         public async Task<IActionResult> MatchFiltredByTvgSites([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
+            var idGuid = GetInternalId(id);
 
             var playlistEntity = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
             if (playlistEntity == null)
@@ -303,9 +319,8 @@ namespace Hfa.WebApi.Controllers
 
             var list = playlistEntity.TvgMedias;
 
-            if(onlyNotMatched)
+            if (onlyNotMatched)
                 list = playlistEntity.TvgMedias.Where(x => x.Tvg == null).ToList();
-           
 
             //TODO : Match by culture and Country code
 
@@ -329,7 +344,7 @@ namespace Hfa.WebApi.Controllers
         public async Task<IActionResult> GetFile(string id, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
           [FromQuery] string provider = "m3u", CancellationToken cancellationToken = default(CancellationToken))
         {
-            var idGuid = new Guid(Encoding.UTF8.DecodeBase64(id));
+            var idGuid = GetInternalId(id);
 
             var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
             if (playlist == null)
@@ -373,6 +388,9 @@ namespace Hfa.WebApi.Controllers
                         using (var targetPlaylist = new Playlist<TvgMedia>(targetProvider))
                         {
                             await targetPlaylist.PushAsync(sourcePlaylist, HttpContext.RequestAborted);
+
+                            ClearCache();
+
                             return File(stream.GetBuffer(), "text/plain", file.FileName);
                         }
                     }
@@ -431,9 +449,22 @@ namespace Hfa.WebApi.Controllers
             }
 
             var pl = await SavePlaylist(playlistName, providerType, playlistStream, playlistUrl, cancellationToken);
+            ClearCache();
 
             var result = PlaylistModel.ToLightModel(pl, Url);
             return Created(result.PublicUrl, result);
+        }
+
+        private void ClearCache()
+        {
+            if (_memoryCache.TryGetValue(userPlaylistKey, out List<string> list))
+            {
+                foreach (var item in list)
+                {
+                    _memoryCache.Remove(item);
+                }
+                list.Remove(userPlaylistKey);
+            }
         }
 
         /// <summary>
@@ -478,6 +509,7 @@ namespace Hfa.WebApi.Controllers
                 await _dbContext.Playlist.AddAsync(pl);
                 var res = await _dbContext.SaveChangesAsync(cancellationToken);
 
+                ClearCache();
                 stopwatch.Stop();
                 _logger.LogInformation($"Elapsed time : {stopwatch.Elapsed.ToString("c")}");
 

@@ -16,6 +16,7 @@ import { EventTargetLike } from "rxjs/observable/FromEventObservable";
 import { TvgMedia, Tvg } from '../../types/media.type';
 import { MediaRefService } from '../../services/mediaref/mediaref.service';
 import { mediaRef } from '../../types/mediaref.type';
+import { snakbar_duration } from '../../variables';
 
 @Component({
     selector: 'app-media',
@@ -72,7 +73,7 @@ export class MediaComponent implements OnInit, OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.snackBar.open(media.name + " was modified", "", { duration: 400 });
+            this.snackBar.open(media.name + " was modified", "", { duration: snakbar_duration });
         });
     }
 

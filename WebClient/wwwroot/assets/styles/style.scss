@@ -1,5 +1,5 @@
 ﻿@import '~@angular/material/prebuilt-themes/purple-green.css';
-@import 'variables';
+@import '_variables';
 
 /* .navbar {
       display: -webkit-box;
@@ -212,4 +212,8 @@ mat-dialog-container {
     overflow:auto;
     max-height:500px;
     min-height:100px;
+}
+
+.mat-snack-bar-container {
+    background-color: $primary-color-font;
 }

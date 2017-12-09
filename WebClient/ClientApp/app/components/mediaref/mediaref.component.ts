@@ -20,6 +20,7 @@ import { picon } from '../../types/picon.type';
 import { FormControl } from "@angular/forms";
 import { startWith } from "rxjs/operator/startWith";
 import { map } from "rxjs/operator/map";
+import { snakbar_duration } from '../../variables';
 
 @Component({
     selector: 'mediaref',
@@ -78,7 +79,7 @@ export class MediaRefComponent implements OnInit, OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.snackBar.open(spChannel.displayNames[0] + " was modified", "", { duration: 400 });
+            this.snackBar.open(spChannel.displayNames[0] + " was modified", "", { duration: snakbar_duration });
         });
     }
 

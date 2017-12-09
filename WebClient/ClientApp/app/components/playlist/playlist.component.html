@@ -50,8 +50,13 @@
             </mat-cell>
         </ng-container>
         <!-- Name Column -->
+        <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row?.name}} </mat-cell>
+        </ng-container>
+        <!-- DisplayName Column -->
         <ng-container matColumnDef="displayName">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> displayName </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> DisplayName </mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row?.displayName}} </mat-cell>
         </ng-container>
         <!-- Lang Column -->

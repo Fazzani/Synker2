@@ -13,6 +13,7 @@ import 'rxjs/add/observable/fromEvent';
 import { distinctUntilChanged, merge, debounceTime } from 'rxjs/operators';
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
 import { sitePackChannel } from '../../types/sitepackchannel.type';
+import { snakbar_duration } from '../../variables';
 
 @Component({
     selector: 'xmltv',
@@ -71,7 +72,7 @@ export class XmltvComponent implements OnInit, OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.snackBar.open(spChannel.channel_name + " was modified", "", { duration: 400 });
+            this.snackBar.open(spChannel.channel_name + " was modified", "", { duration: snakbar_duration });
         });
     }
 

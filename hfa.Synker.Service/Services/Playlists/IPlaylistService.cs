@@ -29,6 +29,6 @@ namespace hfa.Synker.Service.Services.Playlists
         /// Execute Handlers on Tvgmedias list
         /// </summary>
         /// <returns></returns>
-        Task<List<TvgMedia>> ExecuteHandlersAsync(List<TvgMedia> tvgmedias, CancellationToken cancellationToken = default(CancellationToken));
+        List<TvgMedia> ExecuteHandlersAsync(List<TvgMedia> tvgmedias, CancellationToken cancellationToken = default(CancellationToken));
     }
 }

@@ -6,6 +6,7 @@ import { PlaylistModel } from '../../types/playlist.type';
 import { QueryListBaseModel, PagedResult } from '../../types/common.type';
 import { ClipboardService } from 'ngx-clipboard';
 import { PlaylistAddDialog } from '../playlist/playlist.add.component';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
     selector: 'home',
@@ -30,8 +31,18 @@ export class HomeComponent implements OnInit, OnDestroy {
         if (this.clipboardService.isSupported)
             this.clipboardService.copyFromContent(link, this.renderer);
     }
-    ngOnDestroy() {
-        this.clipboardService.destroy();
+   
+    delete(playlist: PlaylistModel): void {
+        const confirm = window.confirm(`Do you really want to delete this playlist ${playlist.freindlyname}?`);
+
+        Observable
+            .of(playlist.publicId)
+            .filter(() => confirm)
+            .switchMap(x => this.playlistService.delete(x))
+            .subscribe(res => {
+                this.snackBar.open("Playlist was deleted");
+                this.ngOnInit();
+            });
     }
 
     openDialogAddNewPlaylist(): void {
@@ -42,5 +53,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         dialogRef.afterClosed().subscribe(result => {
             this.ngOnInit();
         });
+    }
+    ngOnDestroy() {
+        this.clipboardService.destroy();
     }
 }
