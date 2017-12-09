@@ -52,7 +52,7 @@ namespace hfa.tvhLibrary.test
             };
 
             handler.HandleTvgMedia(tvgMedia);
-            Assert.True(tvgMedia.Lang == string.Empty);
+            Assert.True(string.IsNullOrEmpty(tvgMedia.Lang));
         }
 
         [Theory(DisplayName = "TvgShiftIsSet")]

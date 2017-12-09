@@ -23,7 +23,7 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
 
                 if (context.MediaConfiguration != null)
                 {
-                    tvgMedia.DisplayName = tvgMedia.DisplayName
+                    tvgMedia.DisplayName = tvgMedia.Name
                     .ToLowerInvariant()
                     .RemoveChars(context.MediaConfiguration.DisplayChannelNameCharsToRemove.ToArray())
                     .RemoveStrings(context.MediaConfiguration.DisplayChannelNameStringsToRemove.ToArray())

@@ -22,40 +22,22 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
             var match = reg.Match(tvgMedia.Name);
             if (match.Success && match.Groups["lang"] != null && !string.IsNullOrEmpty(match.Groups["lang"].Value))
             {
-                tvgMedia.Lang = getLang(match.Groups["lang"].Value);
-                tvgMedia.Tags.Add(tvgMedia.Lang);
+                tvgMedia.Culture.Code = Common.TryGet(x =>
+                {
+                    var cul = new CultureInfo(x);
+                    if (cul != null && !cul.EnglishName.StartsWith("Unknown Language"))
+                        return cul.DisplayName;
+                    return null;
+                }, match.Groups["lang"].Value);
+                tvgMedia.Culture.Country = Common.TryGet(x => new RegionInfo(x)?.DisplayName, match.Groups["lang"].Value);
+                tvgMedia.Lang = tvgMedia.Culture.Country ?? tvgMedia.Culture.Code;
+
+                if (tvgMedia.Lang != null)
+                    tvgMedia.Tags.Add(tvgMedia.Lang);
             }
 
             if (_successor != null)
                 _successor.HandleTvgMedia(tvgMedia);
-        }
-
-
-        string getLang(string name)
-        {
-            var lang = string.Empty;
-            try
-            {
-                var region = new RegionInfo(name);
-                if (region != null)
-                    lang = region.DisplayName;
-            }
-            catch (Exception)
-            {
-            }
-            finally
-            {
-                try
-                {
-                    var cul = new CultureInfo(name);
-                    if (cul != null && !cul.EnglishName.StartsWith("Unknown Language"))
-                        lang = cul.DisplayName;
-                }
-                catch (Exception)
-                {
-                }
-            }
-            return lang;
         }
     }
 }

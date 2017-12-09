@@ -9,6 +9,7 @@
 export interface TvgMedia extends ISelectable {
     id: string;
     name: string;
+    displayName: string;
     group?: string;
     position: number;
     enabled: boolean;
@@ -32,8 +33,17 @@ export interface Tvg extends ISelectable {
     logo?: string;
     name: string;
     tvgIdentify: string;
-    Shift: string;
-    Audio_track: string;
-    Aspect_ratio: string;
+    shift: string;
+    audio_track: string;
+    aspect_ratio: string;
+    tvgSource: TvgSource;
 }
 
+export class Culture {
+    public code: string;
+    public country: string;
+}
+
+export class TvgSource extends Culture {
+    public site: string;
+}

@@ -6,6 +6,9 @@
         <input matInput [(ngModel)]="mediaAndTvgSites[0].name" placeholder="Name..." name="media.name">
     </mat-form-field>
     <mat-form-field>
+        <input matInput [(ngModel)]="mediaAndTvgSites[0].displayName" placeholder="DisplayName..." name="media.displayName">
+    </mat-form-field>
+    <mat-form-field>
         <input matInput [(ngModel)]="mediaAndTvgSites[0].lang" placeholder="Lang..." name="media.lang">
     </mat-form-field>
     <mat-form-field>
@@ -52,7 +55,16 @@
         <mat-form-field>
             <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.aspect_ratio" placeholder="Tvg Aspect ratio" name="mediaAndTvgSites[0].media.tvg.aspect_ratio" readonly>
         </mat-form-field>
-        
+        <mat-form-field>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.tvgSource.site" placeholder="Tvg Source" name="mediaAndTvgSites[0].media.tvg.tvgSource.site" readonly>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.tvgSource.code" placeholder="Tvg code" name="mediaAndTvgSites[0].media.tvg.tvgSource.code" readonly>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.tvgSource.country" placeholder="Tvg country" name="mediaAndTvgSites[0].media.tvg.tvgSource.country" readonly>
+        </mat-form-field>
+
     </mat-expansion-panel>
     <mat-action-row>
         <button mat-raised-button (click)="dialogRef.close()">Close</button>

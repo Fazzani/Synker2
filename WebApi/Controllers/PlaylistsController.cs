@@ -7,6 +7,7 @@ using hfa.Synker.Service.Services.Playlists;
 using hfa.Synker.Services.Dal;
 using hfa.WebApi.Common.Filters;
 using hfa.WebApi.Models.Playlists;
+using Hfa.WebApi.Commmon;
 using Hfa.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -105,7 +106,6 @@ namespace Hfa.WebApi.Controllers
 
             var updatedCount = await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation($"Updated Count : {updatedCount}");
-
             return Ok(updatedCount);
         }
 
@@ -306,6 +306,9 @@ namespace Hfa.WebApi.Controllers
             if(onlyNotMatched)
                 list = playlistEntity.TvgMedias.Where(x => x.Tvg == null).ToList();
            
+
+            //TODO : Match by culture and Country code
+
             list.AsParallel().ForAll(media =>
                {
                    var matched = _mediaRefService.MatchTermByDispaynamesAndFiltredBySiteNameAsync(media.DisplayName, media.Lang, playlistEntity.TvgSites, cancellationToken).GetAwaiter().GetResult();

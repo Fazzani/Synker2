@@ -34,7 +34,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     key: number;
     subscriptionTableEvent: Subscription;
 
-    displayedColumns = ['tvg.logo', 'name', 'lang', 'group', 'tvg.name', 'tvg.tvgIdentify', 'actions'];
+    displayedColumns = ['tvg.logo', 'displayName', 'lang', 'group', 'tvg.name', 'tvg.tvgIdentify', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
@@ -134,7 +134,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.snackBar.open(media.name + " was modified", "", { duration: 400 });
+            this.snackBar.open(media.displayName + " was modified", "", { duration: 400 });
         });
     }
 
@@ -205,7 +205,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
      * @param media
      */
     addToMediaRef(media: TvgMedia): void {
-        this.mediaRefService.save(new mediaRef(media.name, media.lang)).subscribe(res => {
+        this.mediaRefService.save(new mediaRef(media.displayName, media.lang)).subscribe(res => {
             this.snackBar.open("media was added to mediaRef successfully");
         });
     }
@@ -309,8 +309,8 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
     
     applyFixChannelName(replace: string): void {
         this.data
-            .filter(x => new RegExp(this.filterChannelName).test(x.name))
-            .forEach(x => x.name = x.name.replace(new RegExp(this.filterChannelName), replace));
+            .filter(x => new RegExp(this.filterChannelName).test(x.displayName))
+            .forEach(x => x.displayName = x.displayName.replace(new RegExp(this.filterChannelName), replace));
     }
 
     ngOnDestroy(): void {

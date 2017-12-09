@@ -1,4 +1,4 @@
-﻿namespace Hfa.WebApi.Controllers
+﻿namespace Hfa.WebApi.Commmon
 {
     internal class CacheKeys
     {

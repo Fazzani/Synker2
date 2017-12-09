@@ -1,4 +1,5 @@
-﻿using PlaylistBaseLibrary.Entities;
+﻿using hfa.PlaylistBaseLibrary.Entities;
+using PlaylistBaseLibrary.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,16 +17,17 @@ namespace PlaylistManager.Entities
         public TvgMedia()
         {
             Tvg = new Tvg();
+            Culture = new Culture();
         }
-        
+
         //public List<string> Urls { get; set; }
+        public Culture Culture { get; set; }
 
         public Tvg Tvg { get; set; }
 
         public override string Format(IMediaFormatter mediaFormatter) => mediaFormatter.Format(this);
 
         public override string ToString() => base.ToString() + $" {Tvg.Name}";
-
 
         public static TvgMedia CreateForUpdate()
         {

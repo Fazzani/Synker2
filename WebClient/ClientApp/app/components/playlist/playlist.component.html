@@ -50,9 +50,9 @@
             </mat-cell>
         </ng-container>
         <!-- Name Column -->
-        <ng-container matColumnDef="name">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row?.name}} </mat-cell>
+        <ng-container matColumnDef="displayName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> displayName </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row?.displayName}} </mat-cell>
         </ng-container>
         <!-- Lang Column -->
         <ng-container matColumnDef="lang">
@@ -86,9 +86,9 @@
                 <button mat-icon-button color="warn" (click)="delete(row.id)" matTooltip="Remove">
                         <mat-icon class="mat-24" aria-label="">delete</mat-icon>
                       </button>
-                <button mat-icon-button color="primary" (click)="addToMediaRef(row)" matTooltip="Add to mediaRef">
+                <!--<button mat-icon-button color="primary" (click)="addToMediaRef(row)" matTooltip="Add to mediaRef">
                     <mat-icon class="mat-24" aria-label="">add</mat-icon>
-                </button>
+                </button>-->
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

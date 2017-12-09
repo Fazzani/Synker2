@@ -37,6 +37,20 @@ namespace System.Text
 
 namespace System
 {
+
+    public class Common
+    {
+        public static T2 TryGet<T, T2>(Func<T, T2> func, T param)
+        {
+            try
+            {
+                return func(param);
+            }
+            catch (Exception) { }
+
+            return default(T2);
+        }
+    }
     //public static class Nest
     //{
     //    //public static void AssertElasticResponse(this IResponse response)

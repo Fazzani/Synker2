@@ -58,6 +58,9 @@ namespace PlaylistManager.Entities
         /// </summary>
         public string Lang { get; set; }
 
+        /// <summary>
+        /// Original Name
+        /// </summary>
         [Required]
         public string Name { get; set; }
 

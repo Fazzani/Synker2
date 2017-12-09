@@ -19,6 +19,7 @@ using Hfa.WebApi.Common;
 using hfa.WebApi.Common.Filters;
 using Microsoft.Extensions.Caching.Memory;
 using hfa.WebApi.Models.Elastic;
+using Hfa.WebApi.Commmon;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Hfa.WebApi.Controllers

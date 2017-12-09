@@ -90,11 +90,11 @@ namespace hfa.Synker.Service.Services.Playlists
             var cleanNameHandler = new TvgMediaCleanNameHandler(_contextHandler);
             var cultureHandler = new TvgMediaCultureMatcherHandler(_contextHandler);
             var shiftHandler = new TvgMediaShiftMatcherHandler(_contextHandler);
-            var groupHandler = new TvgMediaGroupMatcherHandler(_contextHandler);
+            //var groupHandler = new TvgMediaGroupMatcherHandler(_contextHandler);
 
             cultureHandler.SetSuccessor(shiftHandler);
-            shiftHandler.SetSuccessor(groupHandler);
-            groupHandler.SetSuccessor(cleanNameHandler);
+            shiftHandler.SetSuccessor(cleanNameHandler);
+            //groupHandler.SetSuccessor(cleanNameHandler);
 
             var newMedias = tvgmedias.AsParallel().Select(media =>
             {
