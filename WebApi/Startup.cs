@@ -36,6 +36,7 @@ using hfa.Synker.Service.Services.Picons;
 using hfa.Synker.Service.Services.MediaRefs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using hfa.Synker.Service.Services;
 
 namespace hfa.WebApi
 {
@@ -71,6 +72,7 @@ namespace hfa.WebApi
                .AddScoped<IPiconsService, PiconsService>()
                .AddScoped<IPlaylistService, PlaylistService>()
                .AddScoped<IMediaRefService, MediaRefService>()
+               .AddScoped<ISitePackService, SitePackService>()
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))

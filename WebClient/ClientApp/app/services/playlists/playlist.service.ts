@@ -50,6 +50,12 @@ export class PlaylistService extends BaseService {
         }).catch(this.handleError);
     }
 
+    matchtvg(id: string): Observable<PlaylistModel> {
+        return this.http.post(variables.BASE_API_URL + 'playlists/matchtvg/' + id, null).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
     matchFiltredTvgSites(id: string, onlyNotMatched: boolean): Observable<PlaylistModel> {
         return this.http.post(variables.BASE_API_URL + 'playlists/matchfiltred/' + id + '?onlyNotMatched=' + onlyNotMatched, null).map(res => {
             return res;

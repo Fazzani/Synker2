@@ -11,18 +11,23 @@ namespace hfa.tvhLibrary.test
 {
     public class TvgHandlerUnitTest
     {
+        [Trait("Category", "TvgCulture")]
         [Theory(DisplayName = "TvgCultureIsSet")]
-        [InlineData("TN: TUNISIE NAT 1")]
-        [InlineData("TN: TUNISIE NAT 1 +2")]
-        [InlineData("AR: MBC DRAMA +2")]
-        [InlineData("SE: TV12 FHD")]
-        [InlineData("SE: C More Golf HD")]
-        [InlineData("UK: BT Sports 2 FHD")]
-        [InlineData("US-CA: Nfl Network")]
-        [InlineData("fr:canal+ HD")]
-        [InlineData("Sky Sports Football UK")]
-        [InlineData("Fox Sports 5 HD NL")]
-        public async Task TvgCultureIsSetTest(string channelName)
+        [InlineData("TN: TUNISIE NAT 1", "Tunisia")]
+        [InlineData("TN: TUNISIE NAT 1 +2", "Tunisia")]
+        [InlineData("AR: MBC DRAMA +2", "Egypt")]
+        [InlineData("SE: TV12 FHD", "Sweden")]
+        [InlineData("SE: C More Golf HD", "Sweden")]
+        [InlineData("UK: BT Sports 2 FHD", "United Kingdom")]
+        [InlineData("US-CA: Nfl Network", "Canada")]
+        [InlineData("fr:canal+ HD", "France")]
+        [InlineData("Sky Sports Football UK", "United Kingdom")]
+        [InlineData("Fox Sports 5 HD NL", "Netherlands")]
+        [InlineData("beIN SPORTS ES", "Spain")]
+        [InlineData("beIN SPORTS 1 FR HD", "France")]
+        [InlineData("beIN SPORTS ES FHD", "Spain")]
+        [InlineData("VOD FR: Canal Play Live (Rupture pour tous)", "France")]
+        public async Task TvgCultureIsSetTest(string channelName, string lang = "")
         {
             var handler = new TvgMediaCultureMatcherHandler(null);
             var tvgMedia = new TvgMedia
@@ -32,16 +37,19 @@ namespace hfa.tvhLibrary.test
 
             handler.HandleTvgMedia(tvgMedia);
             Assert.True(tvgMedia.Lang != null);
+            if (!string.IsNullOrEmpty(lang))
+                Assert.Equal(tvgMedia.Lang, lang);
         }
 
+        [Trait("Category", "TvgCulture")]
         [Theory(DisplayName = "TvgCultureTestIsNotset")]
         [InlineData("Bein Sports")]
         [InlineData("Bein Sports hd")]
+        [InlineData("Bein Sports sd")]
         [InlineData("Bein Sports fhd")]
         [InlineData("Bein Sports 1080P")]
         [InlineData("MyHD: Rotana Aflam HD")]
         [InlineData("OSN VIP: FUEL HD ( 1080P )")]
-        [InlineData("VOD FR: Canal Play Live (Rupture pour tous)")]
         public async Task TvgCultureIsNotSetTest(string channelName)
         {
             var handler = new TvgMediaCultureMatcherHandler(null);
@@ -55,6 +63,7 @@ namespace hfa.tvhLibrary.test
             Assert.True(string.IsNullOrEmpty(tvgMedia.Lang));
         }
 
+        [Trait("Category", "TvgShift")]
         [Theory(DisplayName = "TvgShiftIsSet")]
         [InlineData("TN: TUNISIE NAT 1 +2 fhd")]
         [InlineData("AR: MBC DRAMA +2")]

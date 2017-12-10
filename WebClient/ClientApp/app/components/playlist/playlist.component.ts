@@ -13,7 +13,7 @@ import { EventTargetLike } from "rxjs/observable/FromEventObservable";
 import { PlaylistModel, PlaylistPostModel } from "../../types/playlist.type";
 import { PlaylistService } from "../../services/playlists/playlist.service";
 import { ActivatedRoute } from '@angular/router';
-import { TvgMedia } from "../../types/media.type";
+import { TvgMedia, Tvg, TvgSource } from "../../types/media.type";
 import { TvgMediaModifyDialog } from '../media/media.component';
 import { MediaRefService } from '../../services/mediaref/mediaref.service';
 import { FormControl } from '@angular/forms';
@@ -21,6 +21,7 @@ import { KEY_CODE, KEY } from '../../types/common.type';
 import { mediaRef } from "../../types/mediaref.type";
 import { PlaylistDiffDialog } from './playlist.diff.component';
 import { snakbar_duration } from '../../variables';
+import { sitePackChannel } from '../../types/sitepackchannel.type';
 
 @Component({
     selector: 'playlist',
@@ -74,7 +75,9 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.paginator.pageSizeOptions = [50, 100, 250, 1000];
         this.paginator.pageSize = this.paginator.pageSizeOptions[0];
         this.dataSource.paginator = this.paginator;
+
         //this.filter.nativeElement.value = storedQuery != null && storedQuery.query != null && storedQuery.query != {} ? JSON.stringify(storedQuery.query) : "";
+
         this.subscriptionTableEvent = this.paginator.page.asObservable()
             .merge(Observable.fromEvent<EventTargetLike>(this.filter.nativeElement, 'keyup'))
             .debounceTime(1000)
@@ -85,9 +88,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
                 if ((x as PageEvent).length === undefined)
                     this.paginator.pageIndex = 0;
 
-                let objectQuery = this.commonService.JsonToObject(this.filter.nativeElement.value);
-                console.log('objectQuery => ', objectQuery);
-                this.dataSource.filter = objectQuery != null ? objectQuery : this.filter.nativeElement.value;
+                this.dataSource.filter = this.filter.nativeElement.value;
                 this.dataSource.paginator = this.paginator;
             });
     }
@@ -100,12 +101,13 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         console.log(event);
         //Select ALL
         if (event.key == KEY.A && event.ctrlKey) {
-            this.dataSource.
-                _pageData(this.dataSource.data)
+            console.log('select All', this.dataSource.filteredData.length);
+            this.dataSource
+                ._pageData(this.dataSource.filteredData)
                 .forEach(m => m.selected = true);
         } else if (event.key == KEY.I && event.ctrlKey) {
-            this.dataSource.
-                _pageData(this.dataSource.data)
+            this.dataSource
+                ._pageData(this.dataSource.filteredData)
                 .forEach(m => m.selected = !m.selected);
         }
     }
@@ -185,8 +187,10 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.playlistService.executeHandlers(this.dataSource.data.filter((v, i) => v.selected)).subscribe(res => {
             res.forEach(x => {
                 var index = this.playlistBS.value.tvgMedias.findIndex(f => f.id == x.id);
+
                 if (index > 0) {
                     this.playlistBS.value.tvgMedias[index] = x;
+                    console.log('executeHandlers media : ', x);
                 }
             });
             this.playlistBS.next(this.playlistBS.value);
@@ -196,6 +200,13 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
     match(): void {
         this.playlistService.match(this.playlistBS.getValue().publicId).subscribe(res => {
+            this.playlistBS.next(res);
+            this.snackBar.open("Playlist was matched with all MediaRef");
+        });
+    }
+
+    matchTvg(): void {
+        this.playlistService.matchtvg(this.playlistBS.getValue().publicId).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was matched with all MediaRef");
         });
@@ -272,16 +283,26 @@ export class PlaylistModifyDialog {
     templateUrl: './tvgmedia.list.dialog.html'
 })
 export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
+    sitePacks: sitePackChannel[];
     cultures: string[];
     selected: string;
     group: string;
+    keyUpSitePack = new Subject<any>();
     filterChannelName: string;
 
     constructor(private mediaRefService: MediaRefService,
         public dialogRef: MatDialogRef<TvgMediaListModifyDialog>,
-        @Inject(MAT_DIALOG_DATA) public data: TvgMedia[]) { }
+        @Inject(MAT_DIALOG_DATA) public data: TvgMedia[]) {
+
+        const subscription = this.keyUpSitePack
+            .map(event => '*' + event.target.value + '*')
+            .debounceTime(1000)
+            .distinctUntilChanged()
+            .subscribe(search => mediaRefService.sitePacks(search).subscribe(res => this.sitePacks = res));
+    }
 
     ngOnInit(): void {
+
         if (this.data != undefined && this.data.length > 0)
             this.selected = this.data[0].lang;
 
@@ -300,6 +321,20 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
         this.data.forEach(m => m.group = this.group);
     }
 
+    onChangeTvgSourceSite(sitePack: sitePackChannel): void {
+        console.log("tvgSourceSite was changed : ", sitePack);
+        this.data.forEach(m => {
+
+            if (m.tvg == null)
+                m.tvg = <Tvg>{};
+            if (m.tvg.tvgSource == null)
+                m.tvg.tvgSource = <TvgSource>{};
+
+            m.tvg.tvgSource.site = sitePack.site;
+            m.tvg.tvgSource.country = sitePack.country;
+        });
+    }
+
     save(): void {
         this.dialogRef.close();
     }
@@ -307,11 +342,12 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
         this.dialogRef.close();
     }
 
-    
     applyFixChannelName(replace: string): void {
         this.data
             .filter(x => new RegExp(this.filterChannelName).test(x.displayName))
-            .forEach(x => x.displayName = x.displayName.replace(new RegExp(this.filterChannelName), replace));
+            .forEach(x => {
+                x.displayName = x.displayName.replace(new RegExp(this.filterChannelName), replace);
+            });
     }
 
     ngOnDestroy(): void {

@@ -166,5 +166,20 @@ namespace Hfa.WebApi.Controllers
             });
             return Ok(tvgSites);
         }
+
+
+        [ResponseCache(CacheProfileName = "Long")]
+        [HttpGet]
+        [Route("sitepacks")]
+        public async Task<IActionResult> SitePacksAsync([FromQuery]string filter, CancellationToken cancellationToken)
+        {
+            var sitePacks = await _memoryCache.GetOrCreateAsync($"{CacheKeys.SitePacksKey}-{filter}", async entry =>
+            {
+                entry.SlidingExpiration = TimeSpan.FromHours(12);
+                var response = await _mediaRefService.ListSitePackAsync(filter, cancellationToken);
+                return response.Select(x => new { x.Site, x.Country }).Distinct();
+            });
+            return new OkObjectResult(sitePacks);
+        }
     }
 }

@@ -9,4 +9,5 @@ export interface sitePackChannel {
     site_id: string;
     xmltv_id: string;
     channel_name: string;
+    country: string;
 }

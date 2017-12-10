@@ -8,6 +8,7 @@ import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
 import * as variables from '../../variables';
 import { mediaRef } from '../../types/mediaref.type';
+import { sitePackChannel } from '../../types/sitepackchannel.type';
 
 @Injectable()
 export class MediaRefService extends BaseService {
@@ -79,4 +80,14 @@ export class MediaRefService extends BaseService {
         }, err => this.handleError(err));
     }
 
+
+    /**
+ * List tvg sites
+ * @returns
+ */
+    sitePacks(filter: string): Observable<sitePackChannel[]> {
+        return this.http.get<sitePackChannel[]>(variables.BASE_API_URL + 'mediasref/sitepacks?filter=' + filter).map(res => {
+            return res;
+        }, err => this.handleError(err));
+    }
 }

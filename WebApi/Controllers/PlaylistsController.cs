@@ -1,6 +1,7 @@
 ﻿using hfa.PlaylistBaseLibrary.Providers;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Entities.Playlists;
+using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Services.MediaRefs;
 using hfa.Synker.Service.Services.Playlists;
@@ -36,17 +37,20 @@ namespace Hfa.WebApi.Controllers
         private IPlaylistService _playlistService;
         private IMediaRefService _mediaRefService;
         IMemoryCache _memoryCache;
+        private ISitePackService _sitePackService;
+
         private string userPlaylistKey => $"{UserId}:{CacheKeys.PlaylistByUser}";
 
         Guid GetInternalId(string id) => new Guid(Encoding.UTF8.DecodeBase64(id));
 
         public PlaylistsController(IMemoryCache memoryCache, IMediaRefService mediaRefService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
-            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IPlaylistService playlistService)
+            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IPlaylistService playlistService, ISitePackService sitePackService)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _playlistService = playlistService;
             _mediaRefService = mediaRefService;
             _memoryCache = memoryCache;
+            _sitePackService = sitePackService;
         }
 
         /// <summary>
@@ -330,6 +334,39 @@ namespace Hfa.WebApi.Controllers
                    media.Group = matched?.DefaultSite;
                    media.Tvg = matched?.Tvg;
                });
+
+            playlistEntity.UpdateContent(playlistEntity.TvgMedias);
+
+            var res = await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation($"{nameof(MatchFiltredByTvgSites)} saved : {res}");
+            return Ok(PlaylistModel.ToModel(playlistEntity, Url));
+        }
+
+        /// <summary>
+        ///  Match playlist tvg 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("matchtvg/{id}")]
+        [ValidateModel]
+        public async Task<IActionResult> MatchTvg([FromRoute] string id, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var idGuid = GetInternalId(id);
+
+            var playlistEntity = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+            if (playlistEntity == null)
+                return NotFound(playlistEntity);
+
+            var list = playlistEntity.TvgMedias;
+
+            list.Where(x => x.Tvg != null && x.Tvg.TvgSource != null).AsParallel().ForAll(media =>
+                  {
+                      var matched = _sitePackService.MatchMediaNameAndBySiteAsync(media.DisplayName, media.Tvg.TvgSource.Site, cancellationToken).GetAwaiter().GetResult();
+                      media.Tvg.Id = matched?.id;
+                      media.Tvg.Name = matched?.Xmltv_id;
+                  });
 
             playlistEntity.UpdateContent(playlistEntity.TvgMedias);
 

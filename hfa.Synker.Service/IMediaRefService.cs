@@ -1,4 +1,5 @@
 ﻿using hfa.Synker.Service.Entities.MediasRef;
+using hfa.Synker.Service.Services.Xmltv;
 using Nest;
 using System.Collections.Generic;
 using System.Threading;
@@ -31,6 +32,14 @@ namespace hfa.Synker.Service.Services.MediaRefs
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<ICollection<string>> ListTvgSitesAsync(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// List SitePack
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<List<SitePackChannel>> ListSitePackAsync(string filter, CancellationToken cancellationToken);
 
         /// <summary>
         /// Match displayNames with filtred MediaRef by TvgSites

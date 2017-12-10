@@ -27,7 +27,7 @@ namespace hfa.Synker.Service.Services.Xmltv
     }
 
     [XmlRoot(ElementName = "channel")]
-    public class SitePackChannel
+    public class SitePackChannel : IEqualityComparer<SitePackChannel>
     {
         private string _country;
 
@@ -58,6 +58,32 @@ namespace hfa.Synker.Service.Services.Xmltv
                 return _country;
             }
         }
+
+        public bool Equals(SitePackChannel x, SitePackChannel y)
+        {
+            if (object.ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            // If one object null the return false
+            if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
+            {
+                return false;
+            }
+
+            return x.GetHashCode() == y.GetHashCode();
+        }
+
+        public int GetHashCode(SitePackChannel obj)
+        {
+            if (object.ReferenceEquals(obj, null))
+            {
+                return 0;
+            }
+            return obj.id.GetHashCode();
+        }
+
         public override string ToString() => $"{Channel_name} {id} {Country}";
     }
 

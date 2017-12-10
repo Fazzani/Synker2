@@ -252,5 +252,25 @@ namespace hfa.Synker.Service.Services.MediaRefs
 
             return allMediasRef.Documents.AsParallel().Select(x => x.DefaultSite).Distinct().ToList();
         }
+
+        /// <summary>
+        /// List SitePack
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<List<SitePackChannel>> ListSitePackAsync(string filter, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation($"Lister les SitePack");
+
+            var allMediasRef = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(s => s
+               .Index(_elasticConnectionClient.ElasticConfig.SitePackIndex)
+               .Size(10)
+               .From(0)
+               .Query(a => a.Wildcard(x=>x.Field(f=>f.Site).Value(filter)))
+               , cancellationToken);
+
+            return allMediasRef.Documents.Distinct().ToList();
+        }
     }
 }

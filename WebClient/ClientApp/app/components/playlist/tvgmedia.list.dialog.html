@@ -43,6 +43,28 @@
             </mat-form-field>
             <button mat-raised-button color="primary" (click)="applyFixChannelName(replaceInput.value)">Apply</button>
         </mat-expansion-panel>
+
+        <!-- TvgSource -->
+        <mat-expansion-panel (opened)="panelOpenState = true"
+                             (closed)="panelOpenState = false">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Tvg Source
+                </mat-panel-title>
+                <mat-panel-description>
+                    Map to Tvg Source
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-form-field class="example-full-width">
+                <input matInput placeholder="Filter tvg sites..." aria-label="TvgSource Site" [matAutocomplete]="auto" (keyup)="keyUpSitePack.next($event)">
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let sitePack of sitePacks" [value]="sitePack.site" (onSelectionChange)="onChangeTvgSourceSite(sitePack)">
+                        <span>{{ sitePack.site }}</span>
+                        <small style="color:aqua">{{ sitePack.country }}</small>
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </mat-expansion-panel>
     </mat-accordion>
 </mat-dialog-content>
 <mat-action-row>

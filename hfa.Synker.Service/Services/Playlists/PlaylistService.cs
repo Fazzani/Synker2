@@ -52,7 +52,7 @@ namespace hfa.Synker.Service.Services.Playlists
         /// <param name="token"></param>
         /// <returns></returns>
         public async Task<Playlist> SynkPlaylist(Func<Playlist> getPlaylist, FileProvider provider, bool force = false,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             var pl = getPlaylist();
             if (pl == null)
@@ -82,7 +82,7 @@ namespace hfa.Synker.Service.Services.Playlists
         /// Execute Handlers on Tvgmedias list
         /// </summary>
         /// <returns></returns>
-        public List<TvgMedia> ExecuteHandlersAsync(List<TvgMedia> tvgmedias, CancellationToken cancellationToken = default(CancellationToken))
+        public List<TvgMedia> ExecuteHandlersAsync(List<TvgMedia> tvgmedias, CancellationToken cancellationToken = default)
         {
             if (tvgmedias == null)
                 throw new ArgumentNullException(nameof(tvgmedias));
@@ -107,7 +107,7 @@ namespace hfa.Synker.Service.Services.Playlists
         /// <param name="token"></param>
         /// <returns></returns>
         public async Task<(IEnumerable<TvgMedia> tvgMedia, IEnumerable<TvgMedia> removed)> DiffWithSource(Func<Playlist> getPlaylist, FileProvider provider, bool force = false,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             var pl = getPlaylist();
             if (pl == null)
@@ -128,22 +128,22 @@ namespace hfa.Synker.Service.Services.Playlists
         /// <param name="elasticConnectionClient"></param>
         /// <param name="synkConfig"></param>
         /// <returns></returns>
-        private TvgMediaHandler FabricHandleMedias(IElasticConnectionClient elasticConnectionClient = default(IElasticConnectionClient), SynkConfig synkConfig = default(SynkConfig))
+        private TvgMediaHandler FabricHandleMedias(IElasticConnectionClient elasticConnectionClient = default, SynkConfig synkConfig = default)
         {
             //TODO : Passer synkconfig dans _contextHandler ( no s'il est singleton )
 
-            var cleanNameHandler = new TvgMediaCleanNameHandler(_contextHandler);
+            //var cleanNameHandler = new TvgMediaCleanNameHandler(_contextHandler);
             var cultureHandler = new TvgMediaCultureMatcherHandler(_contextHandler);
             var shiftHandler = new TvgMediaShiftMatcherHandler(_contextHandler);
-            var groupHandler = new TvgMediaGroupMatcherHandler(_contextHandler);
+            //var groupHandler = new TvgMediaGroupMatcherHandler(_contextHandler);
 
             cultureHandler.SetSuccessor(shiftHandler);
-            shiftHandler.SetSuccessor(groupHandler);
-            if (elasticConnectionClient != default(IElasticConnectionClient))
-            {
-                var epgHandler = new TvgMediaEpgMatcherNameHandler(_contextHandler, elasticConnectionClient, _elasticConfig);
-                groupHandler.SetSuccessor(epgHandler);
-            }
+            //shiftHandler.SetSuccessor(groupHandler);
+            //if (elasticConnectionClient != default(IElasticConnectionClient))
+            //{
+            //    var epgHandler = new TvgMediaEpgMatcherNameHandler(_contextHandler, elasticConnectionClient, _elasticConfig);
+            //    groupHandler.SetSuccessor(epgHandler);
+            //}
             // epgHandler.SetSuccessor(cleanNameHandler);
             return cultureHandler;
         }
