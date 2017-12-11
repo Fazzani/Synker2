@@ -17,7 +17,7 @@ import { TvgMedia, Tvg, TvgSource } from "../../types/media.type";
 import { TvgMediaModifyDialog } from '../media/media.component';
 import { MediaRefService } from '../../services/mediaref/mediaref.service';
 import { FormControl } from '@angular/forms';
-import { KEY_CODE, KEY } from '../../types/common.type';
+import { KEY_CODE, KEY, PageListState } from '../../types/common.type';
 import { mediaRef } from "../../types/mediaref.type";
 import { PlaylistDiffDialog } from './playlist.diff.component';
 import { snakbar_duration } from '../../variables';
@@ -44,6 +44,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     routeSub: any;
     playlistId: string;
     playlistBS: BehaviorSubject<PlaylistModel> | null;
+    pagelistState: PageListState;
     /** media ctor */
     constructor(private route: ActivatedRoute, private playlistService: PlaylistService, private mediaRefService: MediaRefService, private commonService: CommonService,
         public dialog: MatDialog, public snackBar: MatSnackBar) { }
@@ -52,6 +53,11 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     ngOnInit(): void {
         this.playlistBS = new BehaviorSubject<PlaylistModel>(null);
         this.dataSource = new MatTableDataSource<TvgMedia>([]);
+
+        this.paginator.pageSizeOptions = [50, 100, 250, 1000];
+        this.pagelistState = this.commonService.JsonToObject<PageListState>(localStorage.getItem(Constants.MediaPageListKey))
+        if (this.pagelistState == null)
+            this.pagelistState = <PageListState>{ filter: "", pageIndex: 0, pageSize: this.paginator.pageSizeOptions[0] };
 
         this.routeSub = this.route.params.subscribe(params => {
             this.playlistId = params['id']; // (+) converts string 'id' to a number
@@ -71,9 +77,8 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             }
         });
 
-        this.paginator.pageIndex = 0;
-        this.paginator.pageSizeOptions = [50, 100, 250, 1000];
-        this.paginator.pageSize = this.paginator.pageSizeOptions[0];
+        this.paginator.pageIndex = this.pagelistState.pageIndex;
+        this.paginator.pageSize = this.pagelistState.pageSize;
         this.dataSource.paginator = this.paginator;
 
         //this.filter.nativeElement.value = storedQuery != null && storedQuery.query != null && storedQuery.query != {} ? JSON.stringify(storedQuery.query) : "";
@@ -83,12 +88,18 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             .debounceTime(1000)
             .distinctUntilChanged()
             .subscribe((x) => {
+
                 if (!this.dataSource) { return; }
                 console.log("subscriptionTableEvent => ", x);
-                if ((x as PageEvent).length === undefined)
-                    this.paginator.pageIndex = 0;
+                if (x as PageEvent) {
+                    if ((x as PageEvent).length === undefined)
+                        this.paginator.pageIndex = 0;
 
-                this.dataSource.filter = this.filter.nativeElement.value;
+                }
+                this.pagelistState.pageIndex = this.dataSource.paginator.pageIndex;
+                this.pagelistState.pageSize = this.dataSource.paginator.pageSize;
+                this.dataSource.filter = this.pagelistState.filter = this.filter.nativeElement.value;
+                localStorage.setItem(Constants.MediaPageListKey, JSON.stringify(this.pagelistState));
                 this.dataSource.paginator = this.paginator;
             });
     }
@@ -131,6 +142,10 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
     openDialog(media: TvgMedia): void {
 
+        if (media.tvg == null) {
+            media.tvg = <Tvg>{};
+            media.tvg.tvgSource = <TvgSource>{};
+        }
         let dialogRef = this.dialog.open(TvgMediaModifyDialog, {
             width: '550px',
             data: [media, this.playlistBS.getValue().tvgSites]
@@ -167,14 +182,34 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
     }
 
-    delete(id: string): void {
-        // this.dataSource.delete(id);
-        /**
-         * .subscribe(res => {
-                this.snackBar.open("media ref removed");
-            });
-         */
+    deleteSelected(): void {
+        const confirm = window.confirm('Do you really want to delete all selected medias?');
+        Observable
+            .of("")
+            .filter(() => confirm)
+            .switchMap(x => {
+                this.dataSource.data = this.dataSource.data.filter(x => !x.selected);
+                this.playlistBS.next(this.playlistBS.value);
+                return x;
+            })
+            .subscribe(res => this.snackBar.open("Selected Media was deleted"));
     }
+
+    delete(id: string): void {
+        const confirm = window.confirm('Do you really want to delete this media?');
+        let mediaIndex = this.dataSource.data.findIndex(x => x.id == id);
+        console.log(`media ${id} with index ${mediaIndex} removed`);
+        Observable
+            .of(id)
+            .filter(() => confirm)
+            .switchMap(x => {
+                this.dataSource.data.splice(mediaIndex, 1);
+                this.playlistBS.next(this.playlistBS.value);
+                return x;
+            })
+            .subscribe(res => this.snackBar.open("Media was deleted"));
+    }
+
 
     synk(): void {
         this.playlistService.synk(new PlaylistPostModel()).subscribe(res => {

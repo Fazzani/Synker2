@@ -216,3 +216,9 @@ mat-dialog-container {
 .mat-snack-bar-container {
     background-color: $primary-color-font;
 }
+
+.mat-cell {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}

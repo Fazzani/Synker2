@@ -54,4 +54,5 @@ export class Constants {
     //LocalStorage epgQuery key
     static LS_EpgQueryKey: string = "epgQuery";
     static LS_MediaRefQueryKey: string = "mediaRefQuery";
+    static MediaPageListKey: string = "mediaPageList";
 }

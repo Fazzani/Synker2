@@ -57,6 +57,11 @@ namespace Hfa.WebApi.Controllers
             return new OkObjectResult(response.Source);
         }
 
+        /// <summary>
+        /// Synchronize Picons index from Github repository
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("synk")]
         public async Task<IActionResult> Synk(CancellationToken cancellationToken)

@@ -59,6 +59,7 @@ namespace hfa.Synker.Service.Entities.Playlists
         }
 
         private List<String> _tvgSites { get; set; }
+
         [NotMapped]
         public List<string> TvgSites
         {

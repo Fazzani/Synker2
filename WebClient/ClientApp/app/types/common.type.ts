@@ -26,6 +26,12 @@ export interface PagedResultBase {
     lastRowOnPage: number;
 }
 
+export interface PageListState {
+    pageIndex: number;
+    pageSize: number;
+    filter: string | any | null;
+}
+
 /**
  * PageResult
  * 

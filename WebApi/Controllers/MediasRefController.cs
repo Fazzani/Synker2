@@ -20,6 +20,7 @@ using hfa.WebApi.Common.Filters;
 using Microsoft.Extensions.Caching.Memory;
 using hfa.WebApi.Models.Elastic;
 using Hfa.WebApi.Commmon;
+using hfa.Synker.Service.Services;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Hfa.WebApi.Controllers
@@ -30,13 +31,15 @@ namespace Hfa.WebApi.Controllers
     {
         IMediaRefService _mediaRefService;
         IMemoryCache _memoryCache;
+        private ISitePackService _sitePackService;
 
-        public MediasRefController(IMemoryCache memoryCache, IMediaRefService mediaRefService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
+        public MediasRefController(IMemoryCache memoryCache, IMediaRefService mediaRefService, ISitePackService sitePackService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _mediaRefService = mediaRefService;
             _memoryCache = memoryCache;
+            _sitePackService = sitePackService;
         }
 
         [HttpPost]
@@ -167,7 +170,6 @@ namespace Hfa.WebApi.Controllers
             return Ok(tvgSites);
         }
 
-
         [ResponseCache(CacheProfileName = "Long")]
         [HttpGet]
         [Route("sitepacks")]
@@ -176,7 +178,7 @@ namespace Hfa.WebApi.Controllers
             var sitePacks = await _memoryCache.GetOrCreateAsync($"{CacheKeys.SitePacksKey}-{filter}", async entry =>
             {
                 entry.SlidingExpiration = TimeSpan.FromHours(12);
-                var response = await _mediaRefService.ListSitePackAsync(filter, cancellationToken);
+                var response = await _sitePackService.ListSitePackAsync(filter, cancellationToken);
                 return response.Select(x => new { x.Site, x.Country }).Distinct();
             });
             return new OkObjectResult(sitePacks);

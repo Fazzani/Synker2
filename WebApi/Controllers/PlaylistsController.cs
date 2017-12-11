@@ -343,7 +343,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         /// <summary>
-        ///  Match playlist tvg 
+        ///  Match playlist tvg (site pack directement)
         /// </summary>
         /// <param name="id"></param>
         /// <param name="cancellationToken"></param>
@@ -371,8 +371,23 @@ namespace Hfa.WebApi.Controllers
             playlistEntity.UpdateContent(playlistEntity.TvgMedias);
 
             var res = await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation($"{nameof(MatchFiltredByTvgSites)} saved : {res}");
+            _logger.LogInformation($"{nameof(MatchTvg)} saved : {res}");
             return Ok(PlaylistModel.ToModel(playlistEntity, Url));
+        }
+
+        /// <summary>
+        ///  Match playlist tvg (site pack directement)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("matchtvg/media")]
+        [ValidateModel]
+        public async Task<IActionResult> MatchTvgByMedia([FromBody] TvgMedia media, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var sitePack = await _sitePackService.MatchMediaNameAndBySiteAsync(media.DisplayName, media.Tvg.TvgSource.Site, cancellationToken);
+            return Ok(sitePack);
         }
 
         [ResponseCache(CacheProfileName = "Long")]

@@ -16,5 +16,14 @@ namespace hfa.Synker.Service.Services
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<SitePackChannel> MatchMediaNameAndBySiteAsync(string mediaName, string site, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// List SitePack
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<List<SitePackChannel>> ListSitePackAsync(string filter, CancellationToken cancellationToken);
+
     }
 }

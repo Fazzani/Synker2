@@ -39,13 +39,33 @@ namespace hfa.Synker.Service.Services
             {
                 From = 0,
                 Size = 1,
-                Query = new TermQuery { Field = "site.keyword",  Value = site } & 
-                        new  MatchQuery { Field ="channel_name", Query = mediaName }
+                Query = new TermQuery { Field = "site.keyword", Value = site } &
+                        new MatchQuery { Field = "channel_name", Query = mediaName, Fuzziness = Fuzziness.Auto }
             };
 
             var sitePacks = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(req, cancellationToken);
 
             return sitePacks.Documents.FirstOrDefault();
+        }
+
+        /// <summary>
+        /// List SitePack channels
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<List<SitePackChannel>> ListSitePackAsync(string filter, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation($"Lister les SitePackChannels");
+
+            var allMediasRef = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(s => s
+               .Index(_elasticConnectionClient.ElasticConfig.SitePackIndex)
+               .Size(10)
+               .From(0)
+               .Query(a => a.Wildcard(x => x.Field(f => f.Site).Value(filter)))
+               , cancellationToken);
+
+            return allMediasRef.Documents.Distinct().ToList();
         }
     }
 }

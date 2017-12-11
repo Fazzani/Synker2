@@ -1,5 +1,4 @@
-<!-- TODO: figure out if the <nav> should go inside of a <header> element. -->
-<nav class="docs-navbar noselect" >
+<nav class="navbar">
     <a mat-button class="docs-button" routerLink="/" aria-label="Synker">
         <img class="docs-angular-logo svglogo"
              src="../../../../../wwwroot/assets/img/Mj2wCGp6m8.svg"
@@ -39,8 +38,8 @@
             <mat-icon>perm_identity</mat-icon>
             <span>Login</span>
         </button>
-        <button mat-menu-item *ngIf="(isAuthenticated | async)">
-            <img [src]="(user | async)?.photo" class="profile-image img-circle">
+        <button mat-menu-item *ngIf="(isAuthenticated | async)" class="profile-image-menu">
+            <img [src]="(user | async)?.photo" class="img-circle">
             <span>{{(user | async)?.firstName}} {{(user | async)?.lastName}}</span>
         </button>
         <button mat-menu-item>
