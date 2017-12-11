@@ -118,6 +118,6 @@
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected" class="noselect"></mat-row>
     </mat-table>
-    <mat-paginator #paginator [pageSizeOptions]="[50, 100, 250, 1000]" [pageSize]="50" class="noselect">
+    <mat-paginator #paginator [pageSizeOptions]="paginator.pageSizeOptions" [pageSize]="this.paginator.pageSize" class="noselect">
     </mat-paginator>
 </div>

@@ -59,6 +59,12 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.pagelistState == null)
             this.pagelistState = <PageListState>{ filter: "", pageIndex: 0, pageSize: this.paginator.pageSizeOptions[0] };
 
+        console.log('pagelistState => ', this.pagelistState);
+
+        this.paginator.pageIndex = this.pagelistState.pageIndex;
+        this.paginator.pageSize = this.pagelistState.pageSize;
+        this.dataSource.paginator = this.paginator;
+
         this.routeSub = this.route.params.subscribe(params => {
             this.playlistId = params['id']; // (+) converts string 'id' to a number
             console.log('Loading playlist ', this.playlistId);
@@ -74,14 +80,9 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.dataSource = new MatTableDataSource<TvgMedia>(x.tvgMedias);
                 this.dataSource.paginator = this.paginator;
                 this.dataSource.sort = this.sort;
+                this.dataSource.filter = this.filter.nativeElement.value = this.pagelistState.filter;
             }
         });
-
-        this.paginator.pageIndex = this.pagelistState.pageIndex;
-        this.paginator.pageSize = this.pagelistState.pageSize;
-        this.dataSource.paginator = this.paginator;
-
-        //this.filter.nativeElement.value = storedQuery != null && storedQuery.query != null && storedQuery.query != {} ? JSON.stringify(storedQuery.query) : "";
 
         this.subscriptionTableEvent = this.paginator.page.asObservable()
             .merge(Observable.fromEvent<EventTargetLike>(this.filter.nativeElement, 'keyup'))
