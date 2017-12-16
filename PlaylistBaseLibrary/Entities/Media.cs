@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace PlaylistManager.Entities
 {
@@ -94,6 +95,32 @@ namespace PlaylistManager.Entities
         public MediaType MediaType { get; set; }
 
         public string Group { get; set; }
+
+        public string GetTrimedDisplayName() => Regex.Replace(DisplayName, @"\s+", "");
+
+        public int? GetChannelNumber() => GetChannelNumber(Name);
+        public static int? GetChannelNumber(string mediaName)
+        {
+            var match = Regex.Match(mediaName, "\b(?:[^\\+])(?<number>\\d{1,2})\b");
+            if (match.Success && match.Groups["number"].Success)
+            {
+                return Convert.ToInt32(match.Groups["number"]?.Value);
+            }
+            return null;
+        }
+
+        public string CleanNameForSearch() => CleanMediaNameForSearch(DisplayName);
+
+        public static string CleanMediaNameForSearch(string mediaName)
+        {
+            mediaName = Regex.Replace(mediaName, "\\s(((?:f?h|s?){1}d\\b|\\d{2,3}0p)|\\+\\d|\\(.*\\))", string.Empty, RegexOptions.IgnoreCase);
+            var match = Regex.Match(mediaName, "(?<name>[a-z\\s]+)", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace | RegexOptions.CultureInvariant);
+            if (match.Success && match.Groups["name"].Success)
+            {
+                return match.Groups["name"].Value;
+            }
+            return mediaName;
+        }
 
         #endregion
 

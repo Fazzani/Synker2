@@ -18,7 +18,7 @@ namespace hfa.Synker.Service.Services.Elastic
         private ElasticClient _client;
         private static object syncRoot = new Object();
         ILoggerFactory _loggerFactory;
-        static string[] stopWords = { "hd", "tn:", "vip:", "vip", "ca:", "usa:", "ch:", "sd", "fhd", "ar", "fr", "fr:", "ar:", "1080p", "720p", "(fr)", "(ar)", "+1", "+2", "+4", "+6", "+8", "arb", "vip", "it", "my" };
+        static string[] stopWords = { "hd", "sd", "fhd", "tn:", "vip:", "vip", "ca:", "usa:", "ch:", "ar", "fr", "fr:", "ar:", "1080p", "720p", "(fr)", "(ar)", "+1", "+2", "+4", "+6", "+8", "arb", "vip", "it", "my" };
         private ElasticConfig _config;
 
         public ElasticConnectionClient(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory)
@@ -64,22 +64,34 @@ namespace hfa.Synker.Service.Services.Elastic
                      .Setting("max_result_window", 1_000_000)
                      .Analysis(a => a
                      .CharFilters(cf => cf
-                             .PatternReplace("picons_name_filter_regex", pat => pat.Pattern("^\\s+|\\s+$|\\s+(?=\\s)").Replacement(""))
+                             .PatternReplace("picons_name_filter_regex_removeWhiteSpace", pat => pat.Pattern("(?i)^\\s+|\\s+$|\\s+(?=\\s)|\\bf?hd|\\bsd|\\b\\d{2,3}0p").Replacement(string.Empty))
+                             .PatternReplace("picons_name_filter_regex_quality", pat => pat.Pattern("(?i)\\bf?hd\\b|\\bsd\\b|(\\(|\\s)\\d{2,3}0p\\s?\\)?").Replacement(string.Empty))
+                             .PatternReplace("picons_name_filter_regex_shift", pat => pat.Pattern("\\s\\+\\d").Replacement(string.Empty))
+                             .PatternReplace("picons_name_filter_regex_replace_plus", pat => pat.Pattern("\\+").Replacement("plus"))
                          )
                          .TokenFilters(t => t.EdgeNGram("autocomplete_filter", auf => auf.MinGram(2).MaxGram(15))
-                                            .Stop("channel_name_token_filter", ss => ss.StopWords(stopWords))
-                                            .WordDelimiter("piconWordDelimiter", wd => wd.CatenateAll(true)))
-                         .Tokenizers(tk => tk.Pattern("pattern_mediaref", ptk => ptk.Pattern(@"\W+|plus").Flags("CASE_INSENSITIVE|COMMENTS"))
-                                            .Pattern("pattern_mediaref_autocomplete", ptk => ptk.Pattern(@"\\w\\s$").Flags("CASE_INSENSITIVE|COMMENTS")))
+                                             .Stop("channel_name_token_filter", ss => ss.StopWords(stopWords))
+                                             .WordDelimiter("piconWordDelimiter", wd => wd.CatenateAll(true).PreserveOriginal(false).CatenateWords(true).SplitOnCaseChange(false).SplitOnNumerics(false).GenerateWordParts(false)))
+                         .Tokenizers(tk => tk.Pattern("pattern_mediaref", ptk => ptk.Pattern(@".").Flags("CASE_INSENSITIVE|COMMENTS"))
+                                             .Pattern("pattern_mediaref_autocomplete", ptk => ptk.Pattern(@"\\w\\s$").Flags("CASE_INSENSITIVE|COMMENTS")))
                          .Analyzers(an => an
                              .Custom("autocomplete_analyzer", ca => ca
                                  .Tokenizer("pattern_mediaref_autocomplete")
-                                 .CharFilters("picons_name_filter_regex")
-                                 .Filters("lowercase", "piconWordDelimiter", "autocomplete_filter")
+                                 .CharFilters("picons_name_filter_regex_quality", "picons_name_filter_regex_shift", "picons_name_filter_regex_replace_plus")
+                                 .Filters("lowercase", "piconWordDelimiter", "autocomplete_filter", "asciifolding")
+                             )
+                             .Custom("picons_name_analyzer", ca => ca
+                                 .Tokenizer("keyword")
+                                 .CharFilters("picons_name_filter_regex_quality", "picons_name_filter_regex_shift", "picons_name_filter_regex_replace_plus")
+                                 .Filters("lowercase", "standard", "piconWordDelimiter", "channel_name_token_filter", "asciifolding")
+                             ).Custom("picons_search_name_analyzer", ca => ca
+                                 .Tokenizer("keyword")
+                                 .CharFilters("picons_name_filter_regex_quality", "picons_name_filter_regex_shift", "picons_name_filter_regex_replace_plus")
+                                 .Filters("lowercase", "standard", "piconWordDelimiter", "channel_name_token_filter", "asciifolding")
                              )
                              .Custom("mediaref_name_analyzer", ca => ca
                                  .Tokenizer("standard")
-                                 .Filters("lowercase", "standard")
+                                 .Filters("lowercase", "standard", "asciifolding")
                              )
                              .Standard("standard", sd => sd.StopWords(stopWords))
                          )
@@ -108,9 +120,11 @@ namespace hfa.Synker.Service.Services.Elastic
                                  .Text(t => t
                                   .Name(pt => pt.Name)
                                   .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
-                                  .Analyzer("mediaref_name_analyzer")
-                                  .SearchAnalyzer("standard"))))
+                                  .Analyzer("picons_name_analyzer")
+                                  .SearchAnalyzer("picons_name_analyzer"))))
                  ));
+
+            _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(response.DebugInformation);
         }
 
         public void MappingPlaylistConfig()

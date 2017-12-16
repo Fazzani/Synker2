@@ -30,32 +30,36 @@
         </button>
         <mat-menu #menu="matMenu">
             <button mat-menu-item (click)="deleteSelected()">
-                <mat-icon  class="mat-12" >delete_sweep</mat-icon>
+                <mat-icon class="mat-12">delete_sweep</mat-icon>
                 <span>Delete All</span>
             </button>
-            <button mat-menu-item>
-                <mat-icon class="mat-12" aria-label="Synchronize" matTooltip="Synchronize" (click)="synk()">autorenew</mat-icon>
+            <button mat-menu-item (click)="synk()">
+                <mat-icon class="mat-12" aria-label="Synchronize" matTooltip="Synchronize">autorenew</mat-icon>
                 <span>Check Synchronize</span>
             </button>
-            <button mat-menu-item>
-                <mat-icon class="mat-12" aria-label="Mes TvgSites" matTooltip="Mes TvgSites" (click)="openUpdateTvgSite()">style</mat-icon>
+            <button mat-menu-item (click)="openUpdateTvgSite()">
+                <mat-icon class="mat-12" aria-label="Mes TvgSites" matTooltip="Mes TvgSites">style</mat-icon>
                 <span>Mes TvgSites</span>
             </button>
-            <button mat-menu-item>
-                <mat-icon class="mat-12" aria-label="Match Filtred tvgSites" matTooltip="Match Filtred tvgSites" (click)="matchFiltredTvgSites()">settings_ethernet</mat-icon>
+            <button mat-menu-item (click)="matchFiltredTvgSites()">
+                <mat-icon class="mat-12" aria-label="Match Filtred tvgSites" matTooltip="Match Filtred tvgSites">settings_ethernet</mat-icon>
                 <span>Match Filtred tvgSites</span>
             </button>
             <button mat-menu-item>
                 <mat-icon class="mat-12" aria-label="Match tvg" matTooltip="" (click)="matchTvg()">settings_ethernet</mat-icon>
                 <span>Match tvg specified in medias</span>
             </button>
-            <button mat-menu-item>
-                <mat-icon class="mat-12" aria-label="Execute Handlers" matTooltip="Execute Handlers" (click)="executeHandlers()">pan_tool</mat-icon>
+            <button mat-menu-item (click)="executeHandlers()">
+                <mat-icon class="mat-12" aria-label="Execute Handlers" matTooltip="Execute Handlers">pan_tool</mat-icon>
                 <span>Execute Handlers</span>
             </button>
-            <button mat-menu-item>
-                <mat-icon class="mat-12" aria-label="Diff with source" matTooltip="Diff with source" (click)="openDiffPlaylist()">compare_arrows</mat-icon>
+            <button mat-menu-item (click)="openDiffPlaylist()">
+                <mat-icon class="mat-12" aria-label="Diff with source" matTooltip="Diff with source">compare_arrows</mat-icon>
                 <span>Diff with source</span>
+            </button>
+            <button mat-menu-item (click)="matchPicons()">
+                <mat-icon class="mat-12" aria-label="Match picons" matTooltip="Match picons">format_paint</mat-icon>
+                <span>Match picons</span>
             </button>
         </mat-menu>
 

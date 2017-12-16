@@ -234,6 +234,22 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
+    matchPicons(): void {
+        this.playlistService.matchPicons(this.dataSource.data.filter((v, i) => v.selected)).subscribe(res => {
+
+            res.forEach(x => {
+                var index = this.playlistBS.value.tvgMedias.findIndex(f => f.id == x.id);
+
+                if (index > 0) {
+                    this.playlistBS.value.tvgMedias[index] = x;
+                    console.log('match picons media : ', x);
+                }
+            });
+            this.playlistBS.next(this.playlistBS.value);
+            this.snackBar.open("Matching picons finished");
+        });
+    }
+
     match(): void {
         this.playlistService.match(this.playlistBS.getValue().publicId).subscribe(res => {
             this.playlistBS.next(res);

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Nest;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PlaylistManager.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,6 +63,34 @@ namespace hfa.Synker.Service.Services.Picons
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Match medias names with picons
+        /// </summary>
+        /// <param name="mediaName"></param>
+        /// <param name="mediaNumber"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<List<Picon>> MatchAsync(string mediaName, int? mediaNumber, double minimumShouldMatch = 90.0, CancellationToken cancellationToken = default)
+        {
+            //string queryString = $"name:{mediaName}*";
+            //if (mediaNumber.HasValue)
+            //{
+            //    queryString += $" AND ch_number:{mediaNumber}";
+            //}
+            //var response = await _elasticConnectionClient.Client.SearchAsync<Picon>(x =>
+            //x.Query(q => q.QueryString(qs => qs.Query(queryString).Fuzziness(Fuzziness.Auto)))
+            //        .Sort(s => s.Field(f => f.Name_length, SortOrder.Ascending)),
+            //cancellationToken);
+            QueryContainer container = new MatchQuery { Field = new Field("name"), Query = mediaName, Fuzziness = Fuzziness.Auto, MinimumShouldMatch = MinimumShouldMatch.Percentage(minimumShouldMatch) };
+
+            if (mediaNumber.HasValue)
+                container &= new MatchQuery { Field = new Field("ch_number"), Query = mediaNumber.ToString() };
+
+            var response = await _elasticConnectionClient.Client.SearchAsync<Picon>(x => x.Query(q => container), cancellationToken);
+
+            return response.Documents.ToList();
         }
 
         /// <summary>

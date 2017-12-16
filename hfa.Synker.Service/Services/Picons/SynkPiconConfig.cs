@@ -23,6 +23,8 @@ namespace hfa.Synker.Service.Services.Picons
     public class Picon : IEqualityComparer<Picon>
     {
         private string _id;
+        private int _nameLength;
+
         public string Id
         {
             get
@@ -62,6 +64,21 @@ namespace hfa.Synker.Service.Services.Picons
         }
 
         public DateTime UpdatedDate { get; set; } = DateTime.Now;
+
+        public string Ch_number { get; set; }
+
+        public int Name_length
+        {
+            get
+            {
+                if (_nameLength == default)
+                {
+                    _nameLength = Name.Length;
+                }
+                return _nameLength;
+            }
+            set { _nameLength = value; }
+        }
     }
 
     public class GithubApiResponse

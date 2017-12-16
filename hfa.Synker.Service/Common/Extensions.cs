@@ -61,7 +61,7 @@ namespace System
     //    //}
     //}
 
-    
+
     public static class Extensions
     {
 
@@ -125,6 +125,15 @@ namespace System
 
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
+
+
+        /// <summary>
+        /// Remove all whitespaces
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string FullTrim(this string text)
+            => Regex.Replace(text, @"\s+", "");
 
         /// <summary>
         /// Scoring two strings

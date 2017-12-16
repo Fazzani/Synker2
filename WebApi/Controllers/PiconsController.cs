@@ -15,6 +15,7 @@ using hfa.Synker.Service.Services.Picons;
 using hfa.Synker.Service.Entities.MediasRef;
 using hfa.WebApi.Models.Xmltv;
 using hfa.WebApi.Models.Elastic;
+using PlaylistManager.Entities;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -73,6 +74,41 @@ namespace Hfa.WebApi.Controllers
                 return BadRequest(elasticResponse.DebugInformation);
 
             return new OkObjectResult(elasticResponse.Items);
+        }
+
+        /// <summary>
+        /// Match tvgmedia names with picons
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("match")]
+        public IActionResult Match([FromBody]List<TvgMedia> tvgmedias, CancellationToken cancellationToken)
+        {
+            tvgmedias.AsParallel().WithCancellation(cancellationToken).ForAll(m =>
+            {
+                var picons = _piconsService.MatchAsync(m.DisplayName, m.GetChannelNumber(), 90, cancellationToken).GetAwaiter().GetResult();
+                if (m.Tvg == null)
+                    m.Tvg = new Tvg();
+                m.Tvg.Logo = picons.FirstOrDefault()?.RawUrl;
+            });
+
+            return Ok(tvgmedias);
+        }
+
+        /// <summary>
+        /// Match mediaName and mediaNumber by picon
+        /// </summary>
+        /// <param name="mediaName"></param>
+        /// <param name="mediaNumber"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("match/{mediaName}")]
+        public async Task<IActionResult> Match([FromRoute]string mediaName, CancellationToken cancellationToken)
+        {
+            var picons = await _piconsService.MatchAsync(mediaName, Media.GetChannelNumber(mediaName), 90, cancellationToken);
+            return Ok(picons.FirstOrDefault()?.RawUrl);
         }
     }
 }
