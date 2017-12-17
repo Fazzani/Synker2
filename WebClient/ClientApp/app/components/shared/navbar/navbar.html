@@ -9,8 +9,8 @@
     <div class="spacer"></div>
 
     <a mat-icon-button *ngIf="(isAuthenticated | async)" aria-hidden="true">
-         <span class="notif-number">{{messages?.rowCount}}</span>
-        <mat-icon>message</mat-icon> 
+        <span class="notif-number">{{messages?.rowCount}}</span>
+        <mat-icon>message</mat-icon>
         <span class="mderial-icons mdl-badge mdl-badge--overlap" matTooltip="You have {{messages?.rowCount}} messages !" [attr.data-badge]="messages?.rowCount">message</span>
     </a>
 
@@ -19,7 +19,7 @@
         <span>Sign in</span>
     </a>
     <a mat-button class="docs-button" [routerLink]="['/register', {modal: 'true', 'dialog': 'register'}]" aria-label="Register"
-        *ngIf="!(isAuthenticated | async)">
+       *ngIf="!(isAuthenticated | async)">
         <mat-icon>fingerprint</mat-icon>
         <span>Register</span>
     </a>

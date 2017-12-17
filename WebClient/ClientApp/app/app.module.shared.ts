@@ -90,7 +90,6 @@ const appRoutes: Routes = [
     providers: [
         CommonService,
         TvgMediaService,
-        CommonService,
         MessageService,
         NotificationService,
         XmltvService,

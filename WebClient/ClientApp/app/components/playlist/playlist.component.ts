@@ -26,7 +26,7 @@ import { sitePackChannel } from '../../types/sitepackchannel.type';
 @Component({
     selector: 'playlist',
     templateUrl: './playlist.component.html',
-    providers: [PlaylistService, CommonService],
+    providers: [PlaylistService],
     host: {
         '(window:keyup)': 'handleKeyboardEvent($event)'
     }
@@ -51,6 +51,9 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
     /** Called by Angular after media component initialized */
     ngOnInit(): void {
+
+        this.commonService.displayLoader(true);
+
         this.playlistBS = new BehaviorSubject<PlaylistModel>(null);
         this.dataSource = new MatTableDataSource<TvgMedia>([]);
 
@@ -81,6 +84,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.dataSource.paginator = this.paginator;
                 this.dataSource.sort = this.sort;
                 this.dataSource.filter = this.filter.nativeElement.value = this.pagelistState.filter;
+                this.commonService.displayLoader(false);
             }
         });
 
@@ -213,13 +217,16 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
     synk(): void {
+        this.commonService.displayLoader(true);
         this.playlistService.synk(new PlaylistPostModel()).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was synchronized with source");
+            this.commonService.displayLoader(false);
         });
     }
 
     executeHandlers(): void {
+        this.commonService.displayLoader(true);
         this.playlistService.executeHandlers(this.dataSource.data.filter((v, i) => v.selected)).subscribe(res => {
             res.forEach(x => {
                 var index = this.playlistBS.value.tvgMedias.findIndex(f => f.id == x.id);
@@ -231,10 +238,12 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             });
             this.playlistBS.next(this.playlistBS.value);
             this.snackBar.open("Executing handlers finished");
+            this.commonService.displayLoader(false);
         });
     }
 
     matchPicons(): void {
+        this.commonService.displayLoader(true);
         this.playlistService.matchPicons(this.dataSource.data.filter((v, i) => v.selected)).subscribe(res => {
 
             res.forEach(x => {
@@ -247,20 +256,25 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             });
             this.playlistBS.next(this.playlistBS.value);
             this.snackBar.open("Matching picons finished");
+            this.commonService.displayLoader(false);
         });
     }
 
     match(): void {
+        this.commonService.displayLoader(true);
         this.playlistService.match(this.playlistBS.getValue().publicId).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was matched with all MediaRef");
+            this.commonService.displayLoader(false);
         });
     }
 
     matchTvg(): void {
+        this.commonService.displayLoader(true);
         this.playlistService.matchtvg(this.playlistBS.getValue().publicId).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was matched with all MediaRef");
+            this.commonService.displayLoader(false);
         });
     }
 
@@ -275,16 +289,20 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     //}
 
     matchFiltredTvgSites(onlyNotMatched: boolean = false): void {
+        this.commonService.displayLoader(true);
         this.playlistService.matchFiltredTvgSites(this.playlistBS.getValue().publicId, onlyNotMatched).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was matched with filtred TvgSites");
+            this.commonService.displayLoader(false);
         });
     }
 
     save(): void {
+        this.commonService.displayLoader(true);
         console.log("saving playlist..");
         this.playlistService.update(this.playlistBS.getValue()).subscribe(res => {
             this.snackBar.open("Playlist was saved successfully");
+            this.commonService.displayLoader(false);
         });
     }
 
