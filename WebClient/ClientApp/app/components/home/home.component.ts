@@ -15,7 +15,8 @@ import { Observable } from 'rxjs/Observable';
 export class HomeComponent implements OnInit, OnDestroy {
     playlists: PagedResult<PlaylistModel>;
     query: QueryListBaseModel;
-    constructor(private renderer: Renderer, private playlistService: PlaylistService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar, private clipboardService: ClipboardService) { }
+    constructor(private renderer: Renderer, private playlistService: PlaylistService, private commonService: CommonService, public dialog: MatDialog,
+        public snackBar: MatSnackBar, private clipboardService: ClipboardService) { }
 
     ngOnInit(): void {
 
@@ -24,6 +25,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.query.pageSize = 20;
         this.playlistService.list(this.query).subscribe(x => {
             this.playlists = x;
+            this.commonService.displayLoader(false);
         });
     }
 
