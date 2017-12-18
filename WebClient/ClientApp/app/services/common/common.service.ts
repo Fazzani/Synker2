@@ -4,13 +4,12 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable()
 export class CommonService {
 
-    public loaderStatus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    public loaderStatus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
     /**
      * @constructor
      */
     constructor() { }
-
 
     displayLoader(value: boolean) {
         this.loaderStatus.next(value);
@@ -50,7 +49,6 @@ export class CommonService {
         return null;
     }
 }
-
 
 /**
  * Les contances de l'application
