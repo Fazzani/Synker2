@@ -361,7 +361,11 @@ namespace Hfa.WebApi.Controllers
 
             var list = playlistEntity.TvgMedias;
 
-            list.Where(x => x.Tvg != null && x.Tvg.TvgSource != null).AsParallel().ForAll(media =>
+            list
+                .Where(x => x.Tvg != null && x.Tvg.TvgSource != null)
+                .AsParallel()
+                .WithCancellation(cancellationToken)
+                .ForAll(media =>
                   {
                       var matched = _sitePackService.MatchMediaNameAndBySiteAsync(media.DisplayName, media.Tvg.TvgSource.Site, cancellationToken).GetAwaiter().GetResult();
                       media.Tvg.Id = matched?.id;

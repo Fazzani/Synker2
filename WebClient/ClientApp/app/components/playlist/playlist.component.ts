@@ -134,6 +134,13 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.dataSource.sort = this.sort;
     }
 
+    ngOnDestroy() {
+        // this.subscriptionTableEvent.unsubscribe();
+        this.routeSub.unsubscribe();
+    }
+
+    // #region dialogs
+
     openUpdateListDialog(): void {
         let dialogRef = this.dialog.open(TvgMediaListModifyDialog, {
             width: '550px',
@@ -183,8 +190,16 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
-    update(playlist: PlaylistPostModel): void {
+    // #endregion
 
+    //#region CRUD
+    save(): void {
+        this.commonService.displayLoader(true);
+        console.log("saving playlist..");
+        this.playlistService.update(this.playlistBS.getValue()).subscribe(res => {
+            this.snackBar.open("Playlist was saved successfully");
+            this.commonService.displayLoader(false);
+        });
     }
 
     deleteSelected(): void {
@@ -215,6 +230,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             .subscribe(res => this.snackBar.open("Media was deleted"));
     }
 
+    //#endregion
 
     synk(): void {
         this.commonService.displayLoader(true);
@@ -225,6 +241,9 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
+    /**
+     * Execute handlers on selected medias
+     */
     executeHandlers(): void {
         this.commonService.displayLoader(true);
         this.playlistService.executeHandlers(this.dataSource.data.filter((v, i) => v.selected)).subscribe(res => {
@@ -242,6 +261,9 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
+    /**
+     * Mach picons
+     */
     matchPicons(): void {
         this.commonService.displayLoader(true);
         this.playlistService.matchPicons(this.dataSource.data.filter((v, i) => v.selected)).subscribe(res => {
@@ -260,15 +282,9 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
-    match(): void {
-        this.commonService.displayLoader(true);
-        this.playlistService.match(this.playlistBS.getValue().publicId).subscribe(res => {
-            this.playlistBS.next(res);
-            this.snackBar.open("Playlist was matched with all MediaRef");
-            this.commonService.displayLoader(false);
-        });
-    }
-
+    /**
+     * Match with all defined tvg in sitepack
+     */
     matchTvg(): void {
         this.commonService.displayLoader(true);
         this.playlistService.matchtvg(this.playlistBS.getValue().publicId).subscribe(res => {
@@ -278,16 +294,10 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
-    ///**
-    // * add media playlist to mediaRef
-    // * @param media
-    // */
-    //addToMediaRef(media: TvgMedia): void {
-    //    this.mediaRefService.save(new mediaRef(media.displayName, media.lang)).subscribe(res => {
-    //        this.snackBar.open("media was added to mediaRef successfully");
-    //    });
-    //}
-
+    /**
+     * Match with TvgSites defined on the playlist
+     * @param onlyNotMatched
+     */
     matchFiltredTvgSites(onlyNotMatched: boolean = false): void {
         this.commonService.displayLoader(true);
         this.playlistService.matchFiltredTvgSites(this.playlistBS.getValue().publicId, onlyNotMatched).subscribe(res => {
@@ -297,19 +307,18 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
-    save(): void {
-        this.commonService.displayLoader(true);
-        console.log("saving playlist..");
-        this.playlistService.update(this.playlistBS.getValue()).subscribe(res => {
-            this.snackBar.open("Playlist was saved successfully");
-            this.commonService.displayLoader(false);
-        });
-    }
-
+    /**
+     * Select All media present in current playlist
+     */
     selectAll() {
         this.dataSource.data.forEach(x => x.selected = true);
     }
 
+    /**
+     * Toggle Selection on selected medias in current playlist
+     * @param media
+     * @param event
+     */
     toggleSelected(media: TvgMedia, event: any): void {
         //console.log('toggleSelected ', media);
         //console.log(event);
@@ -321,10 +330,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         media.selected = !media.selected;
     }
 
-    ngOnDestroy() {
-        // this.subscriptionTableEvent.unsubscribe();
-        this.routeSub.unsubscribe();
-    }
 }
 
 //---------------------------------------------------------------------------------    Playlist ModifyDialog
