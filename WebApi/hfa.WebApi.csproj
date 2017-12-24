@@ -21,7 +21,7 @@
     <PackageReference Include="Microsoft.AspNetCore.WebSockets" Version="2.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" />
     <!--<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="2.0.0" />-->
-    <PackageReference Include="NEST" Version="5.5.0" />
+    <PackageReference Include="NEST" Version="5.6.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="Pastebin.API.CSharp" Version="1.0.4" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.0.1" />

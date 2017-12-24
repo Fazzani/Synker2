@@ -42,16 +42,18 @@ namespace hfa.Synker.Service.Services.Picons
                 if (responseCommits.IsSuccessStatusCode)
                 {
                     var contentComits = await responseCommits.Content.ReadAsStringAsync();
-                    dynamic commitsObj = (JArray)JsonConvert.DeserializeObject(contentComits);
+                    JArray commitsObj = JsonConvert.DeserializeObject<JArray>(contentComits);
 
-                    var responseTrees = await client.GetAsync(synkPiconConfig.TreeApiUrl(commitsObj[0].commit.sha.Value));
+                    var tmp = commitsObj[0]["commit"].Value<string>("sha");
+
+                    var responseTrees = await client.GetAsync(synkPiconConfig.TreeApiUrl(commitsObj[0]["commit"].Value<string>("sha")));
 
                     if (responseTrees.IsSuccessStatusCode)
                     {
                         var logoChannelsTree = await responseTrees.Content.ReadAsStringAsync();
                         JObject contentTree = JsonConvert.DeserializeObject<JObject>(logoChannelsTree);
 
-                        var responseTree = await client.GetAsync(synkPiconConfig.TreeApiUrl(contentTree["tree"][0]["sha"].Value<string>()));
+                        var responseTree = await client.GetAsync(synkPiconConfig.TreeApiUrl(contentTree["tree"][1].Value<string>("sha")));
                         if (responseTree.IsSuccessStatusCode)
                         {
                             var piconsTree = await responseTree.Content.ReadAsStringAsync();

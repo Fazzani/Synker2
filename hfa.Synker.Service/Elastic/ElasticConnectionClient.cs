@@ -45,13 +45,18 @@ namespace hfa.Synker.Service.Services.Elastic
                 .InferMappingFor<Tvg>(m => m.IdProperty(p => p.Id))
                 .InferMappingFor<tvProgramme>(m => m.IdProperty(p => p.Id).IndexName("xmltv-*"))
                 .InferMappingFor<MediaRef>(m => m.IndexName(_config.MediaRefIndex).IdProperty(p => p.Id))
-                .InferMappingFor<Picon>(m => m.IndexName(_config.MediaRefIndex).IdProperty(p => p.Id))
+                .InferMappingFor<Picon>(m => m.IndexName(_config.PiconIndex).IdProperty(p => p.Id))
                 .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).IdProperty(p => p.id));
 
             if (!Client.IndexExists(_config.DefaultIndex).Exists)
                 MappingPlaylistConfig();
+
             if (!Client.IndexExists(_config.MediaRefIndex).Exists)
                 MappingMediaRefConfig(_config.MediaRefIndex);
+
+            //Picon index
+            if (!Client.IndexExists(_config.PiconIndex).Exists)
+                MappingPicons(_config.PiconIndex);
 
             Client.Map<tv>(x => x.Index("xmltv-*").AutoMap());
         }
@@ -63,32 +68,7 @@ namespace hfa.Synker.Service.Services.Elastic
             .Settings(s => s
                      .Setting("max_result_window", 1_000_000)
                      .Analysis(a => a
-                     .CharFilters(cf => cf
-                             .PatternReplace("picons_name_filter_regex_removeWhiteSpace", pat => pat.Pattern("(?i)^\\s+|\\s+$|\\s+(?=\\s)|\\bf?hd|\\bsd|\\b\\d{2,3}0p").Replacement(string.Empty))
-                             .PatternReplace("picons_name_filter_regex_quality", pat => pat.Pattern("(?i)\\bf?hd\\b|\\bsd\\b|(\\(|\\s)\\d{2,3}0p\\s?\\)?").Replacement(string.Empty))
-                             .PatternReplace("picons_name_filter_regex_shift", pat => pat.Pattern("\\s\\+\\d").Replacement(string.Empty))
-                             .PatternReplace("picons_name_filter_regex_replace_plus", pat => pat.Pattern("\\+").Replacement("plus"))
-                         )
-                         .TokenFilters(t => t.EdgeNGram("autocomplete_filter", auf => auf.MinGram(2).MaxGram(15))
-                                             .Stop("channel_name_token_filter", ss => ss.StopWords(stopWords))
-                                             .WordDelimiter("piconWordDelimiter", wd => wd.CatenateAll(true).PreserveOriginal(false).CatenateWords(true).SplitOnCaseChange(false).SplitOnNumerics(false).GenerateWordParts(false)))
-                         .Tokenizers(tk => tk.Pattern("pattern_mediaref", ptk => ptk.Pattern(@".").Flags("CASE_INSENSITIVE|COMMENTS"))
-                                             .Pattern("pattern_mediaref_autocomplete", ptk => ptk.Pattern(@"\\w\\s$").Flags("CASE_INSENSITIVE|COMMENTS")))
                          .Analyzers(an => an
-                             .Custom("autocomplete_analyzer", ca => ca
-                                 .Tokenizer("pattern_mediaref_autocomplete")
-                                 .CharFilters("picons_name_filter_regex_quality", "picons_name_filter_regex_shift", "picons_name_filter_regex_replace_plus")
-                                 .Filters("lowercase", "piconWordDelimiter", "autocomplete_filter", "asciifolding")
-                             )
-                             .Custom("picons_name_analyzer", ca => ca
-                                 .Tokenizer("keyword")
-                                 .CharFilters("picons_name_filter_regex_quality", "picons_name_filter_regex_shift", "picons_name_filter_regex_replace_plus")
-                                 .Filters("lowercase", "standard", "piconWordDelimiter", "channel_name_token_filter", "asciifolding")
-                             ).Custom("picons_search_name_analyzer", ca => ca
-                                 .Tokenizer("keyword")
-                                 .CharFilters("picons_name_filter_regex_quality", "picons_name_filter_regex_shift", "picons_name_filter_regex_replace_plus")
-                                 .Filters("lowercase", "standard", "piconWordDelimiter", "channel_name_token_filter", "asciifolding")
-                             )
                              .Custom("mediaref_name_analyzer", ca => ca
                                  .Tokenizer("standard")
                                  .Filters("lowercase", "standard", "asciifolding")
@@ -113,7 +93,48 @@ namespace hfa.Synker.Service.Services.Elastic
                                         .Keyword(k => k.Name(km => km.Aspect_ratio))
                                         .Keyword(k => k.Name(km => km.Audio_track))
                                         .Text(tx => tx.Name(txn => txn.Name).Fields(f => f.Keyword(k => k.Name(keywordProperty))))))
-                     )).Map<Picon>(x => x.Properties(p =>
+                     ))
+                 ));
+
+            _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(response.DebugInformation);
+        }
+
+        public void MappingPicons(string indexName)
+        {
+            var keywordProperty = new PropertyName("keyword");
+            var response = Client.CreateIndex(indexName, c => c
+            .Settings(s => s
+                     .Setting("max_result_window", _config.MaxResultWindow)
+                     .Analysis(a => a
+                     .CharFilters(cf => cf
+                             .PatternReplace("picons_name_filter_regex_removeWhiteSpace", pat => pat.Pattern("(?i)^\\s+|\\s+$|\\s+(?=\\s)|\\bf?hd|\\bsd|\\b\\d{2,3}0p").Replacement(string.Empty))
+                             .PatternReplace("picons_name_filter_regex_quality", pat => pat.Pattern("(?i)\\bf?hd\\b|\\bsd\\b|(\\(|\\s)\\d{2,3}0p\\s?\\)?").Replacement(string.Empty))
+                             .PatternReplace("picons_name_filter_regex_shift", pat => pat.Pattern("\\s\\+\\d").Replacement(string.Empty))
+                             .PatternReplace("picons_name_filter_regex_replace_plus", pat => pat.Pattern("\\+").Replacement("plus"))
+                         )
+                         .TokenFilters(t => t.EdgeNGram("autocomplete_filter", auf => auf.MinGram(2).MaxGram(15))
+                                             .Stop("channel_name_token_filter", ss => ss.StopWords(stopWords))
+                                             .WordDelimiter("piconWordDelimiter", wd => wd.CatenateAll(true).PreserveOriginal(false).CatenateWords(true).SplitOnCaseChange(false).SplitOnNumerics(false).GenerateWordParts(false)))
+                         .Analyzers(an => an
+                             .Custom("picons_name_analyzer", ca => ca
+                                 .Tokenizer("keyword")
+                                 .CharFilters("picons_name_filter_regex_quality", "picons_name_filter_regex_shift", "picons_name_filter_regex_replace_plus")
+                                 .Filters("lowercase", "standard", "piconWordDelimiter", "channel_name_token_filter", "asciifolding")
+                             ).Custom("picons_search_name_analyzer", ca => ca
+                                 .Tokenizer("keyword")
+                                 .CharFilters("picons_name_filter_regex_quality", "picons_name_filter_regex_shift", "picons_name_filter_regex_replace_plus")
+                                 .Filters("lowercase", "standard", "piconWordDelimiter", "channel_name_token_filter", "asciifolding")
+                             )
+                             .Custom("mediaref_name_analyzer", ca => ca
+                                 .Tokenizer("standard")
+                                 .Filters("lowercase", "standard", "asciifolding")
+                             )
+                             .Standard("standard", sd => sd.StopWords(stopWords))
+                         )
+                     )
+                 )
+            .Mappings(m =>
+                 m.Map<Picon>(x => x.Properties(p =>
                                 p.Keyword(t => t.Name(pt => pt.Path))
                                  .Keyword(t => t.Name(pt => pt.RawUrl))
                                  .Keyword(t => t.Name(pt => pt.Url))
