@@ -344,6 +344,11 @@ namespace Hfa.WebApi.Controllers
                            media.Tvg.Id = matched.Xmltv_id;
                            media.Tvg.TvgIdentify = matched.id;
                            media.Tvg.TvgSiteSource = matched.Site;
+                           if (media.Tvg.TvgSource == null)
+                               media.Tvg.TvgSource = new hfa.PlaylistBaseLibrary.Entities.TvgSource();
+                           media.Tvg.TvgSource.Site = matched.Site;
+                           media.Tvg.TvgSource.Country = matched.Country;
+                           media.Tvg.TvgSource.Code = matched.Site_id;
                        }
                    }
                });
