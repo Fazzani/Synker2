@@ -48,6 +48,26 @@ namespace hfa.Synker.Service.Services
             return sitePacks.Documents.FirstOrDefault();
         }
 
+        public async Task<SitePackChannel> MatchTermByDispaynamesAndFiltredBySiteNameAsync(string mediaName, string culture,  IEnumerable<string> tvgSites, CancellationToken cancellationToken)
+        {
+            var req = new SearchRequest<SitePackChannel>
+            {
+                From = 0,
+                Size = 1000,
+                Query = Query<SitePackChannel>.Match(x => x.Name("Channel_name")
+                             .Field(f => f.Channel_name)
+                             .Query(mediaName))
+                        & Query<SitePackChannel>.Terms(m => m.Field(new Field("site.keyword")).Terms(tvgSites).Boost(1.2)),
+                MinScore = 0.5
+            };
+
+            var allMediasRef = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(req, cancellationToken);
+
+            return allMediasRef
+                    .Documents
+                    .FirstOrDefault(x=>x.Country.Equals(culture, StringComparison.InvariantCultureIgnoreCase));
+        }
+
         /// <summary>
         /// List SitePack channels
         /// </summary>

@@ -330,9 +330,22 @@ namespace Hfa.WebApi.Controllers
 
             list.AsParallel().ForAll(media =>
                {
-                   var matched = _mediaRefService.MatchTermByDispaynamesAndFiltredBySiteNameAsync(media.DisplayName, media.Lang, playlistEntity.TvgSites, cancellationToken).GetAwaiter().GetResult();
-                   media.Group = matched?.DefaultSite;
-                   media.Tvg = matched?.Tvg;
+                   var matched = _sitePackService.MatchTermByDispaynamesAndFiltredBySiteNameAsync(media.DisplayName, media.Lang, playlistEntity.TvgSites, cancellationToken).GetAwaiter().GetResult();
+                   if (matched != null)
+                   {
+                       media.Group = matched.Country;
+                       if (media.Tvg == null)
+                       {
+                           media.Tvg = new Tvg { Name = matched.Channel_name,  TvgIdentify = matched.id, TvgSiteSource = matched.Site, Id = matched.Xmltv_id };
+                       }
+                       else
+                       {
+                           media.Tvg.Name = matched.Channel_name;
+                           media.Tvg.Id = matched.Xmltv_id;
+                           media.Tvg.TvgIdentify = matched.id;
+                           media.Tvg.TvgSiteSource = matched.Site;
+                       }
+                   }
                });
 
             playlistEntity.UpdateContent(playlistEntity.TvgMedias);

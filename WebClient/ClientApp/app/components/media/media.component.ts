@@ -127,8 +127,6 @@ export class TvgMediaModifyDialog implements OnInit, OnDestroy {
     tvgSelectionChange(event: MatAutocompleteSelectedEvent): void {
         let sitechannel = <sitePackChannel>event.option.value;
         console.log('tvgSelectionChange', event);
-        if (this.mediaAndTvgSites[0].tvg == null)
-            this.mediaAndTvgSites[0].tvg = <Tvg>{};
         this.mediaAndTvgSites[0].tvg.id = sitechannel.xmltv_id;
         this.mediaAndTvgSites[0].tvg.name = sitechannel.channel_name;
         this.mediaAndTvgSites[0].tvg.tvgIdentify = sitechannel.id;

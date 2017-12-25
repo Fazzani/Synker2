@@ -26,5 +26,7 @@ namespace hfa.Synker.Service.Services
         /// <returns></returns>
         Task<List<SitePackChannel>> ListSitePackAsync(string filter, int count = 10, CancellationToken cancellationToken = default);
 
+        Task<SitePackChannel> MatchTermByDispaynamesAndFiltredBySiteNameAsync(string mediaName, string culture, IEnumerable<string> tvgSites, CancellationToken cancellationToken);
+
     }
 }

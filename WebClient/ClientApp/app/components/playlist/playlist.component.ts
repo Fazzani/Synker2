@@ -444,7 +444,7 @@ export class TvgSitesListModifyDialog implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.mediaRefService.tvgSites()
             .flatMap(m => m.map(c => <any>({ id: c.id, site: c.site, country: c.country, selected: false })))
-            .do(x => x.selected = this.data.tvgSites.findIndex(f => f == x.name) >= 0)
+            .do(x => x.selected = this.data.tvgSites.findIndex(f => f == x.site) >= 0)
             .subscribe(m => this.tvgSites.push(m));
     }
 
@@ -453,7 +453,7 @@ export class TvgSitesListModifyDialog implements OnInit, OnDestroy {
 
     save(): void {
         console.log('Saving TvgSites');
-        this.data.tvgSites = this.tvgSites.filter(x => x.selected).map(x => x.name);
+        this.data.tvgSites = this.tvgSites.filter(x => x.selected).map(x => x.site);
         this.playlistService.updateLight(this.data).subscribe(ok => this.dialogRef.close());
     }
     onNoClick(): void {
