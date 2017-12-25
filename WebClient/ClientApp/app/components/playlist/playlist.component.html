@@ -41,8 +41,8 @@
                 <mat-icon class="mat-12" aria-label="Match Filtred tvgSites" matTooltip="Match Filtred tvgSites">settings_ethernet</mat-icon>
                 <span>Match Filtred tvgSites</span>
             </button>
-            <button mat-menu-item>
-                <mat-icon class="mat-12" aria-label="Match tvg" matTooltip="" (click)="matchTvg()">settings_ethernet</mat-icon>
+            <button mat-menu-item (click)="matchTvg()">
+                <mat-icon class="mat-12" aria-label="Match tvg" matTooltip="">settings_ethernet</mat-icon>
                 <span>Match tvg specified in medias</span>
             </button>
             <button mat-menu-item (click)="executeHandlers()">

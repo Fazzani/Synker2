@@ -74,8 +74,8 @@ export class MediaRefService extends BaseService {
    * List tvg sites
    * @returns
    */
-    tvgSites(): Observable<string[]> {
-        return this.http.get<string[]>(variables.BASE_API_URL + 'mediasref/tvgsites').map(res => {
+    tvgSites(): Observable<sitePackChannel[]> {
+        return this.http.get<sitePackChannel[]>(variables.BASE_API_URL + 'sitepack/tvgsites').map(res => {
             return res;
         }, err => this.handleError(err));
     }

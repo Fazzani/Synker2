@@ -38,6 +38,7 @@ import { PiconService } from './services/picons/picons.service';
 import { SearchPipe } from "./pipes/search.pipe";
 import { PlaylistAddDialog } from './components/playlist/playlist.add.component';
 import { PlaylistDiffDialog } from './components/playlist/playlist.diff.component';
+import { SitePackService } from './services/sitepack/sitepack.service';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -98,6 +99,7 @@ const appRoutes: Routes = [
         MediaRefService,
         PlaylistService,
         PiconService,
+        SitePackService,
         EpgService,
         {
             provide: HTTP_INTERCEPTORS,

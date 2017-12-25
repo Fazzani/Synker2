@@ -52,20 +52,21 @@ namespace hfa.Synker.Service.Services
         /// List SitePack channels
         /// </summary>
         /// <param name="filter"></param>
+        /// <param name="count"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<List<SitePackChannel>> ListSitePackAsync(string filter, CancellationToken cancellationToken)
+        public async Task<List<SitePackChannel>> ListSitePackAsync(string filter, int count = 10, CancellationToken cancellationToken = default)
         {
             _logger.LogInformation($"Lister les SitePackChannels");
 
-            var allMediasRef = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(s => s
+            var tvgSites = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(s => s
                .Index(_elasticConnectionClient.ElasticConfig.SitePackIndex)
-               .Size(10)
+               .Size(count)
                .From(0)
                .Query(a => a.Wildcard(x => x.Field(f => f.Site).Value(filter)))
                , cancellationToken);
 
-            return allMediasRef.Documents.Distinct().ToList();
+            return tvgSites.Documents.Distinct(new DistinctTvgSiteBySite()).ToList();
         }
     }
 }

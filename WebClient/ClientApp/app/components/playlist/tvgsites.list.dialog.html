@@ -6,8 +6,8 @@
 </div>
 <mat-dialog-content style="margin-top:70px">
     <table>
-        <tr *ngFor="let tvg of tvgSites | search:'name':query">
-            <td>{{tvg.name}}</td>
+        <tr *ngFor="let tvg of tvgSites | search:'site':query">
+            <td>{{tvg.site}} (<small>{{tvg.country}}</small>)</td>
             <td><mat-checkbox [(ngModel)]="tvg.selected"></mat-checkbox></td>
         </tr>
     </table>

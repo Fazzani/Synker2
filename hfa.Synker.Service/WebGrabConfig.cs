@@ -126,4 +126,32 @@ namespace hfa.Synker.Service.Services.Xmltv
             };
         }
     }
+
+    public class DistinctTvgSiteBySite : IEqualityComparer<SitePackChannel>
+    {
+        public bool Equals(SitePackChannel x, SitePackChannel y)
+        {
+            if (object.ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            if (x is null || y is null)
+            {
+                return false;
+            }
+
+            return x.Site.Equals(y.Site, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        public int GetHashCode(SitePackChannel obj)
+        {
+            if (obj is null)
+            {
+                return 0;
+            }
+            return obj.Site.GetHashCode();
+        }
+
+    }
 }

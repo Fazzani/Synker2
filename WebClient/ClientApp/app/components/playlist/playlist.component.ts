@@ -443,7 +443,7 @@ export class TvgSitesListModifyDialog implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.mediaRefService.tvgSites()
-            .flatMap(m => m.map(c => <any>({ name: c, selected: false })))
+            .flatMap(m => m.map(c => <any>({ id: c.id, site: c.site, country: c.country, selected: false })))
             .do(x => x.selected = this.data.tvgSites.findIndex(f => f == x.name) >= 0)
             .subscribe(m => this.tvgSites.push(m));
     }

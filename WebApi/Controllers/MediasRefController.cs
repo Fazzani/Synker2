@@ -158,27 +158,13 @@ namespace Hfa.WebApi.Controllers
 
         [ResponseCache(CacheProfileName = "Long")]
         [HttpGet]
-        [Route("tvgsites")]
-        public async Task<IActionResult> TvgSitesAsync(CancellationToken cancellationToken)
-        {
-            var tvgSites = await _memoryCache.GetOrCreateAsync(CacheKeys.SitesKey, async entry =>
-            {
-                entry.SlidingExpiration = TimeSpan.FromHours(12);
-                var response = await _mediaRefService.ListTvgSitesAsync(cancellationToken);
-                return response;
-            });
-            return Ok(tvgSites);
-        }
-
-        [ResponseCache(CacheProfileName = "Long")]
-        [HttpGet]
         [Route("sitepacks")]
         public async Task<IActionResult> SitePacksAsync([FromQuery]string filter, CancellationToken cancellationToken)
         {
             var sitePacks = await _memoryCache.GetOrCreateAsync($"{CacheKeys.SitePacksKey}-{filter}", async entry =>
             {
                 entry.SlidingExpiration = TimeSpan.FromHours(12);
-                var response = await _sitePackService.ListSitePackAsync(filter, cancellationToken);
+                var response = await _sitePackService.ListSitePackAsync(filter, cancellationToken: cancellationToken);
                 return response.Select(x => new { x.Site, x.Country }).Distinct();
             });
             return new OkObjectResult(sitePacks);

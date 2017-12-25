@@ -13,10 +13,12 @@ import 'rxjs/add/observable/fromEvent';
 import { map, catchError, merge, debounceTime, distinctUntilChanged, switchMap, startWith } from 'rxjs/operators';
 
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
-import { TvgMedia, Tvg } from '../../types/media.type';
+import { TvgMedia, Tvg, TvgSource } from '../../types/media.type';
 import { MediaRefService } from '../../services/mediaref/mediaref.service';
 import { mediaRef } from '../../types/mediaref.type';
 import { snakbar_duration } from '../../variables';
+import { SitePackService } from '../../services/sitepack/sitepack.service';
+import { sitePackChannel } from '../../types/sitepackchannel.type';
 
 @Component({
     selector: 'app-media',
@@ -91,13 +93,13 @@ export class MediaComponent implements OnInit, OnDestroy {
     templateUrl: './media.dialog.html'
 })
 export class TvgMediaModifyDialog implements OnInit, OnDestroy {
-    tvgMedias: Observable<mediaRef[]>;
-    private searchTerms = new Subject<string>();  
+    tvgMedias: Observable<sitePackChannel[]>;
+    private searchTerms = new Subject<string>();
     private filter: string;
 
     constructor(
         public dialogRef: MatDialogRef<TvgMediaModifyDialog>,
-        private mediarefService: MediaRefService,
+        private sitePackService: SitePackService,
         @Inject(MAT_DIALOG_DATA) public mediaAndTvgSites: [TvgMedia, string[]]) {
 
         console.log('mediaAndTvgSites => ', mediaAndTvgSites);
@@ -111,25 +113,31 @@ export class TvgMediaModifyDialog implements OnInit, OnDestroy {
         let res = this.mediaAndTvgSites[1].map(x => `\"${x}\"`).reduce((p, c) => `${p} OR ${c}`);
 
         this.tvgMedias = this.searchTerms
-            .debounceTime(1000)         
-            .distinctUntilChanged()   
-            .switchMap(term => term  
-                ? this.mediarefService.simpleSearch<mediaRef>(`displayNames : "${term}"^5 AND defaultSite:(${res})^2`, "mediaref").map(x => x.result)
-                : Observable.of<mediaRef[]>([]))
+            .debounceTime(1000)
+            .distinctUntilChanged()
+            .switchMap(term => term
+                ? this.sitePackService.simpleSearch<sitePackChannel>(`site : ${term}*^5 OR xmltv_id: ${term}`, "sitepack").map(x => x.result)
+                : Observable.of<sitePackChannel[]>([]))
             .catch(error => {
                 console.log(error);
-                return Observable.of<mediaRef[]>([]);
-            });  
+                return Observable.of<sitePackChannel[]>([]);
+            });
     }
 
     tvgSelectionChange(event: MatAutocompleteSelectedEvent): void {
+        let sitechannel = <sitePackChannel>event.option.value;
         console.log('tvgSelectionChange', event);
-        this.mediaAndTvgSites[0].tvg = event.option.value.tvg;
+        if (this.mediaAndTvgSites[0].tvg == null)
+            this.mediaAndTvgSites[0].tvg = <Tvg>{};
+        this.mediaAndTvgSites[0].tvg.id = sitechannel.xmltv_id;
+        this.mediaAndTvgSites[0].tvg.name = sitechannel.channel_name;
+        this.mediaAndTvgSites[0].tvg.tvgIdentify = sitechannel.id;
+        this.mediaAndTvgSites[0].tvg.tvgSource = <TvgSource>{ country: sitechannel.country, site: sitechannel.site };
     }
 
     search(term: string): void {
         this.searchTerms.next(term);
-    }  
+    }
 
     save(): void {
         this.dialogRef.close();

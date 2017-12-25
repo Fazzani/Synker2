@@ -21,9 +21,10 @@ namespace hfa.Synker.Service.Services
         /// List SitePack
         /// </summary>
         /// <param name="filter"></param>
+        /// <param name="count"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<List<SitePackChannel>> ListSitePackAsync(string filter, CancellationToken cancellationToken);
+        Task<List<SitePackChannel>> ListSitePackAsync(string filter, int count = 10, CancellationToken cancellationToken = default);
 
     }
 }
