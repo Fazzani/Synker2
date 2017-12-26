@@ -172,7 +172,7 @@ namespace hfa.PlaylistBaseLibrary.Providers
         }
 
         public string Format(Media media) => media is TvgMedia ?
-         $"#EXTINF:{(Byte)media.MediaType} tvg-id=\"{ ((TvgMedia)media).Tvg?.Id}\" tvg-logo=\"{((TvgMedia)media).Tvg?.Logo}\" tvg-name=\"{((TvgMedia)media).Tvg?.Name}\" audio-track=\"{((TvgMedia)media).Tvg?.Audio_track}\" tvg-shift=\"{((TvgMedia)media).Tvg?.Shift}\" aspect-ratio=\"{((TvgMedia)media).Tvg?.Aspect_ratio}\" group-title=\"{media.Group}\", {media.DisplayName.Trim()}{ Environment.NewLine}{media.Url}{ Environment.NewLine}" :
+         $"#EXTINF:{(Byte)media.MediaType} tvg-id=\"{((TvgMedia)media).Tvg?.Id}\" tvg-logo=\"{((TvgMedia)media).Tvg?.Logo}\" tvg-name=\"{((TvgMedia)media).Tvg?.Name}\" audio-track=\"{((TvgMedia)media).Tvg?.Audio_track}\" tvg-shift=\"{((TvgMedia)media).Tvg?.Shift}\" aspect-ratio=\"{((TvgMedia)media).Tvg?.Aspect_ratio}\" group-title=\"{media.Group}\", {media.DisplayName.Trim()}{ Environment.NewLine}{media.Url}{ Environment.NewLine}" :
             $"#EXTINF:{(Byte)media.MediaType} group-title=\"{media.Group}\", {media.DisplayName.Trim()}{Environment.NewLine}{media.Url}{Environment.NewLine}";
 
     }

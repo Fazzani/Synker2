@@ -22,6 +22,7 @@ import { mediaRef } from "../../types/mediaref.type";
 import { PlaylistDiffDialog } from './playlist.diff.component';
 import { snakbar_duration } from '../../variables';
 import { sitePackChannel } from '../../types/sitepackchannel.type';
+import { PiconService } from '../../services/picons/picons.service';
 
 @Component({
     selector: 'playlist',
@@ -46,7 +47,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     playlistBS: BehaviorSubject<PlaylistModel> | null;
     pagelistState: PageListState;
     /** media ctor */
-    constructor(private route: ActivatedRoute, private playlistService: PlaylistService, private mediaRefService: MediaRefService, private commonService: CommonService,
+    constructor(private route: ActivatedRoute, private piconService: PiconService, private playlistService: PlaylistService, private mediaRefService: MediaRefService, private commonService: CommonService,
         public dialog: MatDialog, public snackBar: MatSnackBar) { }
 
     /** Called by Angular after media component initialized */
@@ -232,6 +233,18 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
     //#endregion
 
+    /**
+    * Synchronize all picons from github
+    */
+    synkPiconsGlobal(): void {
+        this.commonService.displayLoader(true);
+
+        this.piconService.synk().subscribe(res => {
+            this.snackBar.open("Picons index was synchronized");
+            this.commonService.displayLoader(false);
+        });
+    }
+
     synk(): void {
         this.commonService.displayLoader(true);
         this.playlistService.synk(new PlaylistPostModel()).subscribe(res => {
@@ -250,7 +263,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             res.forEach(x => {
                 var index = this.playlistBS.value.tvgMedias.findIndex(f => f.id == x.id);
 
-                if (index > 0) {
+                if (index >= 0) {
                     this.playlistBS.value.tvgMedias[index] = x;
                     console.log('executeHandlers media : ', x);
                 }
@@ -267,11 +280,10 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     matchPicons(): void {
         this.commonService.displayLoader(true);
         this.playlistService.matchPicons(this.dataSource.data.filter((v, i) => v.selected)).subscribe(res => {
-
             res.forEach(x => {
                 var index = this.playlistBS.value.tvgMedias.findIndex(f => f.id == x.id);
 
-                if (index > 0) {
+                if (index >= 0) {
                     this.playlistBS.value.tvgMedias[index] = x;
                     console.log('match picons media : ', x);
                 }

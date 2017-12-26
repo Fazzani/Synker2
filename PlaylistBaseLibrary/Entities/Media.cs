@@ -101,7 +101,7 @@ namespace PlaylistManager.Entities
         public int? GetChannelNumber() => GetChannelNumber(Name);
         public static int? GetChannelNumber(string mediaName)
         {
-            var match = Regex.Match(mediaName, "\b(?:[^\\+])(?<number>\\d{1,2})\b");
+            var match = Regex.Match(mediaName, @"\b(?:[^\+])(?<number>\d{1,2})\b", RegexOptions.IgnoreCase| RegexOptions.CultureInvariant);
             if (match.Success && match.Groups["number"].Success)
             {
                 return Convert.ToInt32(match.Groups["number"]?.Value);

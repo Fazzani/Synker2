@@ -324,7 +324,7 @@ namespace Hfa.WebApi.Controllers
             var list = playlistEntity.TvgMedias;
 
             if (onlyNotMatched)
-                list = playlistEntity.TvgMedias.Where(x => x.Tvg == null).ToList();
+                list = playlistEntity.TvgMedias.Where(x => x.Tvg == null || string.IsNullOrEmpty(x.Tvg.Id)).ToList();
 
             //TODO : Match by culture and Country code
 
@@ -336,7 +336,7 @@ namespace Hfa.WebApi.Controllers
                        media.Group = matched.Country;
                        if (media.Tvg == null)
                        {
-                           media.Tvg = new Tvg { Name = matched.Channel_name,  TvgIdentify = matched.id, TvgSiteSource = matched.Site, Id = matched.Xmltv_id };
+                           media.Tvg = new Tvg { Name = matched.Channel_name, TvgIdentify = matched.id, TvgSiteSource = matched.Site, Id = matched.Xmltv_id };
                        }
                        else
                        {
@@ -369,7 +369,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("matchtvg/{id}")]
         [ValidateModel]
-        public async Task<IActionResult> MatchTvg([FromRoute] string id, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> MatchTvg([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
         {
             var idGuid = GetInternalId(id);
 
@@ -378,6 +378,8 @@ namespace Hfa.WebApi.Controllers
                 return NotFound(playlistEntity);
 
             var list = playlistEntity.TvgMedias;
+            if (onlyNotMatched)
+                list = playlistEntity.TvgMedias.Where(x => x.Tvg == null || string.IsNullOrEmpty(x.Tvg.Id)).ToList();
 
             list
                 .Where(x => x.Tvg != null && x.Tvg.TvgSource != null)
@@ -386,8 +388,11 @@ namespace Hfa.WebApi.Controllers
                 .ForAll(media =>
                   {
                       var matched = _sitePackService.MatchMediaNameAndBySiteAsync(media.DisplayName, media.Tvg.TvgSource.Site, cancellationToken).GetAwaiter().GetResult();
-                      media.Tvg.Id = matched?.id;
-                      media.Tvg.Name = matched?.Xmltv_id;
+                      if (matched != null)
+                      {
+                          media.Tvg.Id = matched.id;
+                          media.Tvg.Name = matched.Xmltv_id;
+                      }
                   });
 
             playlistEntity.UpdateContent(playlistEntity.TvgMedias);

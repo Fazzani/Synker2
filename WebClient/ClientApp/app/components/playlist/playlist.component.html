@@ -24,6 +24,9 @@
         <a mat-icon-button>
             <mat-icon class="mat-24" aria-label="Select All" matTooltip="Select All" (click)="selectAll()">select_all</mat-icon>
         </a>
+        <a mat-icon-button>
+            <mat-icon class="mat-24" aria-label="Synchronize picons global" matTooltip="Synchronize picons global (from github)" (click)="synkPiconsGlobal()">add_a_photo</mat-icon>
+        </a>
         <!-- Menu -->
         <button mat-icon-button [matMenuTriggerFor]="menu">
             <mat-icon>more_vert</mat-icon>
@@ -98,7 +101,7 @@
         <!-- tvg.identify -->
         <ng-container matColumnDef="tvg.tvgIdentify">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Tvg id </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row?.tvg?.tvgIdentify}} </mat-cell>
+            <mat-cell *matCellDef="let row"> {{row?.tvg?.id}} </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="actions">
