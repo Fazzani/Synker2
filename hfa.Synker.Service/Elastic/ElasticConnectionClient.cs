@@ -107,7 +107,7 @@ namespace hfa.Synker.Service.Services.Elastic
                      .Setting("max_result_window", _config.MaxResultWindow)
                      .Analysis(a => a
                      .CharFilters(cf => cf
-                             .PatternReplace("picons_name_filter_regex_removeWhiteSpace", pat => pat.Pattern("(?i)^\\s+|\\s+$|\\s+(?=\\s)|\\bf?hd|\\bsd|\\bh265|\\bfull hd|\\btv|\\b\\d{2,3}0p").Replacement(string.Empty))
+                             .PatternReplace("picons_name_filter_regex_removeWhiteSpace", pat => pat.Pattern("(?i)^\\s+|\\s+$|\\s+(?=\\s)|\\bf?hd|\\bsd|\\bh265|\\bfull\\s?hd|\\btv|\\b\\d{2,3}0p").Replacement(string.Empty))
                              .PatternReplace("picons_name_filter_regex_quality", pat => pat.Pattern("(?i)\\bf?hd\\b|\\bsd\\b|(\\(|\\s)\\d{2,3}0p\\s?\\)?").Replacement(string.Empty))
                              .PatternReplace("picons_name_filter_regex_shift", pat => pat.Pattern("\\s\\+\\d").Replacement(string.Empty))
                              .PatternReplace("picons_name_filter_regex_replace_plus", pat => pat.Pattern("\\+").Replacement("plus"))
