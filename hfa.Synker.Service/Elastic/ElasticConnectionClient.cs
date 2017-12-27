@@ -14,6 +14,7 @@ namespace hfa.Synker.Service.Services.Elastic
 {
     public class ElasticConnectionClient : IElasticConnectionClient
     {
+        private const string SITE_PACK_RETREIVE_COUNTRY_PIPELINE = "sitepack_retreive_country";
         private ConnectionSettings _settings;
         private ElasticClient _client;
         private static object syncRoot = new Object();
@@ -54,11 +55,65 @@ namespace hfa.Synker.Service.Services.Elastic
             if (!Client.IndexExists(_config.MediaRefIndex).Exists)
                 MappingMediaRefConfig(_config.MediaRefIndex);
 
+            //SitePack index
+            if (!Client.IndexExists(_config.SitePackIndex).Exists)
+            {
+                MappingSitePackConfig(_config.SitePackIndex);
+            }
+
+            //Create sitepack_retreive_country
+            var pipe = Client.GetPipeline(r => r.Id(new Id(SITE_PACK_RETREIVE_COUNTRY_PIPELINE)));
+            if (pipe.Pipelines.Count == 0)
+            {
+                var respPipeSitePack = Client.PutPipeline("SITE_PACK_RETREIVE_COUNTRY_PIPELINE", f => f
+                 .Description("Used for retreiving country from source field")
+                 .Processors(p => p.Script(s => s.Inline("if(ctx.source != null) { ctx.country =  /\\//.split(ctx.source)[4]; }"))));
+
+                _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(respPipeSitePack.DebugInformation);
+            }
+
             //Picon index
             if (!Client.IndexExists(_config.PiconIndex).Exists)
                 MappingPicons(_config.PiconIndex);
 
             Client.Map<tv>(x => x.Index("xmltv-*").AutoMap());
+        }
+
+        private void MappingSitePackConfig(string indexName)
+        {
+            var keywordProperty = new PropertyName("keyword");
+            var response = Client.CreateIndex(indexName, c => c
+            .Settings(s => s
+                     .Setting("max_result_window", 1_000_000)
+                     .Analysis(a => a
+                         .Analyzers(an => an
+                             .Custom("sitepack_name_analyzer", ca => ca
+                                 .Tokenizer("standard")
+                                 .Filters("lowercase", "standard", "asciifolding")
+                             )
+                             .Standard("standard", sd => sd.StopWords(stopWords))
+                         )
+                     )
+                 )
+            .Mappings(m =>
+                 m.Map<SitePackChannel>(x => x
+                         .Properties(p =>
+                             p.Keyword(t => t.Name(pt => pt.MediaType))
+                              .Keyword(t => t.Name(pt => pt.Site))
+                              .Keyword(t => t.Name(pt => pt.Source))
+                              .Keyword(t => t.Name(pt => pt.Site_id))
+                              .Keyword(t => t.Name(pt => pt.Xmltv_id))
+                              .Text(t => t
+                                .Name(pt => pt.DisplayNames)
+                                .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
+                                .Analyzer("sitepack_name_analyzer")
+                                .SearchAnalyzer("sitepack_name_analyzer"))
+
+                     ))
+                 ));
+
+            _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(response.DebugInformation);
+
         }
 
         public void MappingMediaRefConfig(string indexName)

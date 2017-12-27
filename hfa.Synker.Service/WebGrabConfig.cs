@@ -34,7 +34,7 @@ namespace hfa.Synker.Service.Services.Xmltv
         [XmlIgnore]
         public string id { get; set; }
         [XmlAttribute(AttributeName = "update")]
-        public string Update { get; set; }
+        public DateTime Update { get; set; }
         [XmlAttribute(AttributeName = "site")]
         public string Site { get; set; }
         [XmlAttribute(AttributeName = "site_id")]
@@ -45,18 +45,10 @@ namespace hfa.Synker.Service.Services.Xmltv
         public string Channel_name { get; set; }
         [XmlIgnore]
         public string Source { get; set; }
-        [XmlIgnore]
+       
         public string Country
         {
-            get
-            {
-                if (string.IsNullOrEmpty(_country) && !string.IsNullOrEmpty(Source))
-                {
-                    var tab = Source.Split('/');
-                    _country = tab[tab.Length - 2];
-                }
-                return _country;
-            }
+            get;set;
         }
 
         private List<string> _displayNames;
@@ -66,8 +58,10 @@ namespace hfa.Synker.Service.Services.Xmltv
             {
                 if (_displayNames == null)
                 {
-                    _displayNames = new List<string>();
-                    _displayNames.Add(Channel_name);
+                    _displayNames = new List<string>
+                    {
+                        Channel_name
+                    };
                 }
                 return _displayNames;
             }
