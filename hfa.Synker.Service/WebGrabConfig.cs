@@ -45,28 +45,10 @@ namespace hfa.Synker.Service.Services.Xmltv
         public string Channel_name { get; set; }
         [XmlIgnore]
         public string Source { get; set; }
-       
-        public string Country
-        {
-            get;set;
-        }
 
-        private List<string> _displayNames;
-        public List<string> DisplayNames
-        {
-            get
-            {
-                if (_displayNames == null)
-                {
-                    _displayNames = new List<string>
-                    {
-                        Channel_name
-                    };
-                }
-                return _displayNames;
-            }
-            set { _displayNames = value; }
-        }
+        public string Country { get; set; }
+
+        public List<string> DisplayNames { get; set; }
 
         public SitePackMediaTypes MediaType { get; set; }
 

@@ -12,7 +12,7 @@ export class sitePackChannel implements ISelectable {
     xmltv_id: string;
     channel_name: string;
     country: string;
-    displayNames: string[];
+    displayNames: Array<string>;
     mediaType: SitePackMediaTypes;
     selected: boolean;
 }

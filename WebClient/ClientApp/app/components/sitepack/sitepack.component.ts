@@ -31,7 +31,7 @@ import { sitePackChannel } from '../../types/sitepackchannel.type';
 export class SitePackComponent implements OnInit, OnDestroy {
     subscriptionTableEvent: Subscription;
 
-    displayedColumns = ['logo', 'displayNames', 'channel_name', 'country', 'mediaType', 'actions'];
+    displayedColumns = ['logo', 'displayNames', 'site', 'country', 'mediaType', 'channel_name', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
@@ -69,7 +69,7 @@ export class SitePackComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Modify mediaRef dialog
+     * Modify sitePack dialog
      * @param spChannel
      */
     openDialog(spChannel: sitePackChannel): void {
@@ -118,15 +118,15 @@ export class SitePackComponent implements OnInit, OnDestroy {
     }
 
     save(): void {
-        console.log("saving mediasref..");
+        console.log("saving site pack..");
         this.dataSource.save().subscribe(res => {
-            this.snackBar.open("Medias was saved successfully");
+            this.snackBar.open("site pack was saved successfully");
         });
     }
 
     update(spChannel: sitePackChannel): void {
         this.sitePackService.save(spChannel).subscribe(x =>
-            this.snackBar.open("Medias referentiel was synchronized")
+            this.snackBar.open("Site pack was synchronized")
         );
     }
 
@@ -148,7 +148,7 @@ export class SitePackComponent implements OnInit, OnDestroy {
     }
 }
 
-//---------------------------------------------------------------------------------   MediaRef ModifyDialog
+//---------------------------------------------------------------------------------   Site Pack ModifyDialog
 @Component({
     selector: 'sitepack-modify-dialog',
     templateUrl: './sitepack.dialog.html'
@@ -168,7 +168,7 @@ export class SitePackModifyDialog implements OnInit, OnDestroy {
     constructor(
         private piconService: PiconService,
         public dialogRef: MatDialogRef<SitePackModifyDialog>,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
+        @Inject(MAT_DIALOG_DATA) public data: sitePackChannel) {
     }
 
     ngOnInit(): void {
@@ -177,7 +177,7 @@ export class SitePackModifyDialog implements OnInit, OnDestroy {
             .distinctUntilChanged()
             .subscribe((x: EventTargetLike) => {
                 let query = <SimpleQueryElastic>{
-                    From: 0, IndexName: 'sitepack', Query: `name: ${this.filterPicon.nativeElement.value}`, Size: 10
+                    From: 0, IndexName: 'picons', Query: `name: ${this.filterPicon.nativeElement.value}`, Size: 10
                 }
                 this.piconsFilter = this.piconService.search(query).map(x => x.result).do(x => console.log(x));
             });
@@ -210,7 +210,7 @@ export class SitePackModifyDialog implements OnInit, OnDestroy {
         }
     }
 
-    remove(data: any, model: any): void {
+    remove(data: any, model: any[]): void {
         let index = model.indexOf(data);
 
         if (index >= 0) {
@@ -261,6 +261,9 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
      * @returns Obersvable<mediaRef[]>
      */
     getData(): Observable<sitePackChannel[]> {
+
+        this.commonService.displayLoader(true);
+
         let pageSize = this.paginator.pageSize === undefined ? 25 : this.paginator.pageSize;
         let query = <SimpleQueryElastic>{ From: pageSize * (isNaN(this.paginator.pageIndex) ? 0 : this.paginator.pageIndex), IndexName: 'sitepack', Query: this.filter, Size: pageSize }
 
@@ -275,6 +278,7 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
         res.subscribe(x => {
             this.medias.next(x);
             this.data = x;
+            this.commonService.displayLoader(false);
         });
 
         return res;

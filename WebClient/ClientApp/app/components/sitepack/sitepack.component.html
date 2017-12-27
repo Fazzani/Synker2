@@ -26,7 +26,7 @@
         <ng-container matColumnDef="logo">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Logo </mat-header-cell>
             <mat-cell *matCellDef="let row">
-                <img [src]="row.tvg?.logo" class="logo-grid" />
+                <img [src]="row.logo" class="logo-grid" />
             </mat-cell>
         </ng-container>
         <!-- displaynames -->
@@ -35,10 +35,10 @@
             <mat-cell *matCellDef="let row"> {{row.displayNames}} </mat-cell>
         </ng-container>
 
-        <!-- channel_name -->
-        <ng-container matColumnDef="channel_name">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Channel name </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.channel_name}} </mat-cell>
+        <!-- site -->
+        <ng-container matColumnDef="site">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Site </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.site}} </mat-cell>
         </ng-container>
 
         <!-- Country -->
@@ -51,6 +51,12 @@
         <ng-container matColumnDef="mediaType">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Media Type </mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row.mediaType}} </mat-cell>
+        </ng-container>
+
+        <!-- channel_name -->
+        <ng-container matColumnDef="channel_name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Channel name </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.channel_name}} </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="actions">

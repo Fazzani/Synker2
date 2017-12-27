@@ -11,8 +11,9 @@
     <mat-form-field>
         <input matInput [(ngModel)]="data.country" placeholder="Country..." name="data.country" readonly class="full-width">
     </mat-form-field>
-    <!--Displaynames-->
+    <!--Display names-->
     <mat-form-field class="chip-list" name="data.displayNames">
+        {{data.displayNames|json}}
         <mat-chip-list #displaynamesInput ng-model="data.displayNames" required>
             <mat-chip color="accent" *ngFor="let name of data.displayNames" [selectable]="selectable" [removable]="removable" (remove)="remove(name, data.displayNames)">
                 {{name}}
@@ -29,15 +30,16 @@
     <mat-form-field>
         <input matInput [(ngModel)]="data.mediaType" placeholder="MediaType..." name="data.mediaType" required>
     </mat-form-field>
+    <!-- Logo -->
     <mat-form-field class="full-width">
-        <input matInput #filterPicon [matAutocomplete]="auto" [(ngModel)]="data.tvg.logo" placeholder="icon..." name="data.tvg.logo" (focus)="onfocusPicon(data.tvg.logo)" (blur)="onblurPicon(data.tvg.logo)">
+        <input matInput #filterPicon [matAutocomplete]="auto" [(ngModel)]="data.logo" placeholder="icon..." name="data.logo" (focus)="onfocusPicon(data.logo)" (blur)="onblurPicon(data.logo)">
         <mat-autocomplete #auto="matAutocomplete" class="primary">
             <mat-option *ngFor="let picon of piconsFilter | async" [value]="picon.rawUrl">
                 <img style="vertical-align:middle;" aria-hidden src="{{picon.rawUrl}}" height="50" />
                 <small>{{picon.name }}</small>
             </mat-option>
         </mat-autocomplete>
-        <img [src]="data.tvg.logo" class="logo-medium" />
+        <img [src]="data.logo" class="logo-medium" />
     </mat-form-field>
     <mat-action-row>
         <button mat-raised-button (click)="dialogRef.close()">Close</button>

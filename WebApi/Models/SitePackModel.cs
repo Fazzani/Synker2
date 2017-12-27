@@ -21,6 +21,9 @@ namespace hfa.WebApi.Models
             Source = hit.Source.Source;
             Update = hit.Source.Update;
             Channel_name = hit.Source.Channel_name;
+            Country = hit.Source.Country;
+            MediaType = hit.Source.MediaType;
+            DisplayNames = hit.Source.DisplayNames;
             return this;
         }
     }

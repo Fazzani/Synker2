@@ -39,8 +39,8 @@ namespace hfa.Synker.Service.Services
             {
                 From = 0,
                 Size = 1,
-                Query = new TermQuery { Field = "site.keyword", Value = site } &
-                        new MatchQuery { Field = "channel_name", Query = mediaName, Fuzziness = Fuzziness.Auto }
+                Query = new TermQuery { Field = "site.keyword", Value = site }
+                & new MatchQuery { Field = "channel_name", Query = mediaName, Fuzziness = Fuzziness.Auto }
             };
 
             var sitePacks = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(req, cancellationToken);
@@ -48,16 +48,15 @@ namespace hfa.Synker.Service.Services
             return sitePacks.Documents.FirstOrDefault();
         }
 
-        public async Task<SitePackChannel> MatchTermByDispaynamesAndFiltredBySiteNameAsync(string mediaName, string culture, IEnumerable<string> tvgSites, CancellationToken cancellationToken)
+        public async Task<SitePackChannel> MatchTermByDispaynamesAndFiltredBySiteNameAsync(string mediaName, string country, IEnumerable<string> tvgSites, CancellationToken cancellationToken)
         {
             var req = new SearchRequest<SitePackChannel>
             {
                 From = 0,
                 Size = 1000,
-                Query = Query<SitePackChannel>.Match(x => x.Name("Channel_name")
-                             .Field(f => f.Channel_name)
-                             .Query(mediaName))
-                        & Query<SitePackChannel>.Terms(m => m.Field(new Field("site.keyword")).Terms(tvgSites).Boost(1.2)),
+                Query = Query<SitePackChannel>.Match(x => x.Name("DisplayNames").Field(f => f.DisplayNames).Query(mediaName))
+                        & Query<SitePackChannel>.Terms(m => m.Field(new Field("site.keyword")).Terms(tvgSites).Boost(1.2))
+                        & Query<SitePackChannel>.Terms(m => m.Field(new Field("country.keyword")).Terms(country).Boost(2.0)),
                 MinScore = 0.5
             };
 
@@ -65,7 +64,7 @@ namespace hfa.Synker.Service.Services
 
             return allMediasRef
                     .Documents
-                    .FirstOrDefault(x => x.Country.Equals(culture, StringComparison.InvariantCultureIgnoreCase));
+                    .FirstOrDefault(x => x.Country.Equals(country, StringComparison.InvariantCultureIgnoreCase));
         }
 
         /// <summary>
