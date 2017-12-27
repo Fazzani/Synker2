@@ -1,0 +1,45 @@
+<form class="form-popin">
+    <!--Id-->
+    <mat-form-field>
+        <input matInput [(ngModel)]="data.id" placeholder="id..." name="data.id" readonly class="full-width">
+    </mat-form-field>
+    <!--channel_name-->
+    <mat-form-field>
+        <input matInput [(ngModel)]="data.channel_name" placeholder="Channel name..." name="data.channel_name" readonly class="full-width">
+    </mat-form-field>
+    <!--Country-->
+    <mat-form-field>
+        <input matInput [(ngModel)]="data.country" placeholder="Country..." name="data.country" readonly class="full-width">
+    </mat-form-field>
+    <!--Displaynames-->
+    <mat-form-field class="chip-list" name="data.displayNames">
+        <mat-chip-list #displaynamesInput ng-model="data.displayNames" required>
+            <mat-chip color="accent" *ngFor="let name of data.displayNames" [selectable]="selectable" [removable]="removable" (remove)="remove(name, data.displayNames)">
+                {{name}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+            <input placeholder="New name..."
+                   [matChipInputFor]="displaynamesInput"
+                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                   [matChipInputAddOnBlur]="addOnBlur"
+                   (matChipInputTokenEnd)="add($event, data.displayNames)" />
+        </mat-chip-list>
+    </mat-form-field>
+    <!--mediaType-->
+    <mat-form-field>
+        <input matInput [(ngModel)]="data.mediaType" placeholder="MediaType..." name="data.mediaType" required>
+    </mat-form-field>
+    <mat-form-field class="full-width">
+        <input matInput #filterPicon [matAutocomplete]="auto" [(ngModel)]="data.tvg.logo" placeholder="icon..." name="data.tvg.logo" (focus)="onfocusPicon(data.tvg.logo)" (blur)="onblurPicon(data.tvg.logo)">
+        <mat-autocomplete #auto="matAutocomplete" class="primary">
+            <mat-option *ngFor="let picon of piconsFilter | async" [value]="picon.rawUrl">
+                <img style="vertical-align:middle;" aria-hidden src="{{picon.rawUrl}}" height="50" />
+                <small>{{picon.name }}</small>
+            </mat-option>
+        </mat-autocomplete>
+        <img [src]="data.tvg.logo" class="logo-medium" />
+    </mat-form-field>
+    <mat-action-row>
+        <button mat-raised-button (click)="dialogRef.close()">Close</button>
+    </mat-action-row>
+</form>

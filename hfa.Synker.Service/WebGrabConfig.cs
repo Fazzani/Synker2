@@ -59,6 +59,23 @@ namespace hfa.Synker.Service.Services.Xmltv
             }
         }
 
+        private List<string> _displayNames;
+        public List<string> DisplayNames
+        {
+            get
+            {
+                if (_displayNames == null)
+                {
+                    _displayNames = new List<string>();
+                    _displayNames.Add(Channel_name);
+                }
+                return _displayNames;
+            }
+            set { _displayNames = value; }
+        }
+
+        public SitePackMediaTypes MediaType { get; set; }
+
         public bool Equals(SitePackChannel x, SitePackChannel y)
         {
             if (object.ReferenceEquals(x, y))
@@ -67,7 +84,7 @@ namespace hfa.Synker.Service.Services.Xmltv
             }
 
             // If one object null the return false
-            if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
+            if (x is null || y is null)
             {
                 return false;
             }
@@ -77,14 +94,20 @@ namespace hfa.Synker.Service.Services.Xmltv
 
         public int GetHashCode(SitePackChannel obj)
         {
-            if (object.ReferenceEquals(obj, null))
+            if (obj is null)
             {
                 return 0;
             }
             return obj.id.GetHashCode();
         }
 
-        public override string ToString() => $"{Channel_name} {id} {Country}";
+        public override string ToString() => $"{MediaType}:{Channel_name} {id} {Country}";
+    }
+
+    public enum SitePackMediaTypes
+    {
+        Channel = 0,
+        Radio = 1
     }
 
     [XmlRoot(ElementName = "settings")]

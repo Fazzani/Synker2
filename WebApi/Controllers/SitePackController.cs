@@ -33,7 +33,7 @@ namespace Hfa.WebApi.Controllers
         IMemoryCache _memoryCache;
         private ISitePackService _sitePackService;
 
-        public SitePackController(IMemoryCache memoryCache,  ISitePackService sitePackService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
+        public SitePackController(IMemoryCache memoryCache, ISitePackService sitePackService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
@@ -55,18 +55,6 @@ namespace Hfa.WebApi.Controllers
             return await SearchQueryStringAsync<SitePackChannel, SitePackModel>(request, cancellationToken);
         }
 
-        //[HttpPost]
-        //[Route("synk")]
-        //public async Task<IActionResult> SynkAsync(CancellationToken cancellationToken)
-        //{
-        //    var result = await _sitePackService.SynkAsync(cancellationToken);
-
-        //    if (!result.IsValid)
-        //        return BadRequest(result.DebugInformation);
-
-        //    return new OkObjectResult(result.Items);
-        //}
-
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
@@ -76,6 +64,44 @@ namespace Hfa.WebApi.Controllers
                 return BadRequest(response.DebugInformation);
 
             return new OkObjectResult(response.Source);
+        }
+
+        [HttpPost]
+        [ValidateModel]
+        public async Task<IActionResult> Save([FromBody]List<SitePackChannel> sitepacks, CancellationToken cancellationToken)
+        {
+            var response = await _sitePackService.SaveAsync(sitepacks, cancellationToken);
+
+            if (!response.IsValid)
+                return BadRequest(response.DebugInformation);
+
+            return new OkObjectResult(response.Items);
+        }
+
+        [HttpPut("{id}")]
+        [ValidateModel]
+        public async Task<IActionResult> Put(string id, [FromBody]SitePackChannel value, CancellationToken cancellationToken)
+        {
+            var response = await _sitePackService.SaveAsync(new List<SitePackChannel> { value }, cancellationToken);
+
+            if (!response.IsValid)
+                return BadRequest(response.DebugInformation);
+
+            return new OkObjectResult(response.Items);
+        }
+
+        [HttpPost(nameof(DeleteMany))]
+        public async Task<IActionResult> DeleteMany([FromBody] string[] ids, CancellationToken cancellationToken)
+        {
+            var response = await _sitePackService.DeleteManyAsync(ids, cancellationToken);
+            return new OkObjectResult(response);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
+        {
+            var response = await _sitePackService.DeleteManyAsync(new[] { id }, cancellationToken);
+            return new OkObjectResult(response);
         }
 
         [ResponseCache(CacheProfileName = "Long")]

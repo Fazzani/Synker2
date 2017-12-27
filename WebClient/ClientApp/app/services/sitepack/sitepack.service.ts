@@ -27,8 +27,8 @@ export class SitePackService extends BaseService {
         }).catch(this.handleError);
     }
 
-    synk(): Observable<ElasticResponse<sitePackChannel>> {
-        return this.http.post(variables.BASE_API_URL + 'sitepack/synk', null).map(res => {
+    save(...sitePacks: sitePackChannel[]): Observable<ElasticResponse<sitePackChannel>> {
+        return this.http.post(variables.BASE_API_URL + this.BaseUrl, sitePacks).map(res => {
             return res;
         }).catch(this.handleError);
     }

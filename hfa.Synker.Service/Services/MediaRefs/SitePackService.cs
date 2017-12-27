@@ -48,7 +48,7 @@ namespace hfa.Synker.Service.Services
             return sitePacks.Documents.FirstOrDefault();
         }
 
-        public async Task<SitePackChannel> MatchTermByDispaynamesAndFiltredBySiteNameAsync(string mediaName, string culture,  IEnumerable<string> tvgSites, CancellationToken cancellationToken)
+        public async Task<SitePackChannel> MatchTermByDispaynamesAndFiltredBySiteNameAsync(string mediaName, string culture, IEnumerable<string> tvgSites, CancellationToken cancellationToken)
         {
             var req = new SearchRequest<SitePackChannel>
             {
@@ -65,7 +65,7 @@ namespace hfa.Synker.Service.Services
 
             return allMediasRef
                     .Documents
-                    .FirstOrDefault(x=>x.Country.Equals(culture, StringComparison.InvariantCultureIgnoreCase));
+                    .FirstOrDefault(x => x.Country.Equals(culture, StringComparison.InvariantCultureIgnoreCase));
         }
 
         /// <summary>
@@ -87,6 +87,20 @@ namespace hfa.Synker.Service.Services
                , cancellationToken);
 
             return tvgSites.Documents.Distinct(new DistinctTvgSiteBySite()).ToList();
+        }
+
+        public async Task<IBulkResponse> SaveAsync(List<SitePackChannel> sitepacks, CancellationToken cancellationToken)
+        {
+            var descriptor = new BulkDescriptor();
+            descriptor.IndexMany(sitepacks);
+            descriptor.Refresh(Elasticsearch.Net.Refresh.True);
+            return await _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
+        }
+
+        public async Task<long> DeleteManyAsync(string[] ids, CancellationToken cancellationToken)
+        {
+            var response = await _elasticConnectionClient.Client.DeleteByQueryAsync<SitePackChannel>(x => x.Query(q => q.Ids(i => i.Values(ids))));
+            return response.Deleted;
         }
     }
 }

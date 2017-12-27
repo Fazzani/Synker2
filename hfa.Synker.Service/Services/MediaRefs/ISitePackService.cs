@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using hfa.Synker.Service.Services.Xmltv;
+using Nest;
 
 namespace hfa.Synker.Service.Services
 {
@@ -27,6 +28,7 @@ namespace hfa.Synker.Service.Services
         Task<List<SitePackChannel>> ListSitePackAsync(string filter, int count = 10, CancellationToken cancellationToken = default);
 
         Task<SitePackChannel> MatchTermByDispaynamesAndFiltredBySiteNameAsync(string mediaName, string culture, IEnumerable<string> tvgSites, CancellationToken cancellationToken);
-
+        Task<IBulkResponse> SaveAsync(List<SitePackChannel> sitepacks, CancellationToken cancellationToken);
+        Task<long> DeleteManyAsync(string[] ids, CancellationToken cancellationToken);
     }
 }

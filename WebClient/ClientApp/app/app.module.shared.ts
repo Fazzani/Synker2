@@ -39,6 +39,7 @@ import { SearchPipe } from "./pipes/search.pipe";
 import { PlaylistAddDialog } from './components/playlist/playlist.add.component';
 import { PlaylistDiffDialog } from './components/playlist/playlist.diff.component';
 import { SitePackService } from './services/sitepack/sitepack.service';
+import { SitePackComponent, SitePackModifyDialog } from './components/sitepack/sitepack.component';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -46,7 +47,7 @@ const appRoutes: Routes = [
     { path: 'tvgmedia', component: MediaComponent, canActivate: [LoginRouteGuard] },
     { path: 'epg', component: EpgComponent, canActivate: [LoginRouteGuard] },
     { path: 'xmltv', component: XmltvComponent, canActivate: [LoginRouteGuard] },
-    { path: 'mediaref', component: MediaRefComponent, canActivate: [LoginRouteGuard] },
+    { path: 'sitepack', component: SitePackComponent, canActivate: [LoginRouteGuard] },
     { path: 'playlist/:id', component: PlaylistComponent, canActivate: [LoginRouteGuard] },
     { path: 'signin', component: DialogComponent },
     { path: 'register', component: DialogComponent },
@@ -59,6 +60,7 @@ const appRoutes: Routes = [
         HomeComponent,
         MediaComponent,
         MediaRefComponent,
+        SitePackComponent,
         EpgComponent,
         XmltvComponent,
         TvgMediaModifyDialog,
@@ -73,6 +75,7 @@ const appRoutes: Routes = [
         TvgSitesListModifyDialog,
         PlaylistAddDialog,
         PlaylistDiffDialog,
+        SitePackModifyDialog,
         SearchPipe
     ],
     imports: [
@@ -87,7 +90,7 @@ const appRoutes: Routes = [
         ClipboardModule,
         RouterModule.forRoot(appRoutes, { enableTracing: false })
     ],
-    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, MediaRefModifyDialog, TvgMediaListModifyDialog, TvgSitesListModifyDialog, PlaylistAddDialog, PlaylistModifyDialog, PlaylistDiffDialog],
+    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, MediaRefModifyDialog, TvgMediaListModifyDialog, TvgSitesListModifyDialog, PlaylistAddDialog, PlaylistModifyDialog, PlaylistDiffDialog, SitePackModifyDialog],
     providers: [
         CommonService,
         TvgMediaService,

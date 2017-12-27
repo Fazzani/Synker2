@@ -1,8 +1,10 @@
-﻿/**
+﻿import { ISelectable } from "./common.type";
+
+/**
  * SitePack channel Model
  * @description SitePack channel Model.
  */
-export interface sitePackChannel {
+export class sitePackChannel implements ISelectable {
     id: string;
     update: string;
     site: string;
@@ -10,4 +12,12 @@ export interface sitePackChannel {
     xmltv_id: string;
     channel_name: string;
     country: string;
+    displayNames: string[];
+    mediaType: SitePackMediaTypes;
+    selected: boolean;
+}
+
+export enum SitePackMediaTypes {
+    Channel,
+    Radio
 }
