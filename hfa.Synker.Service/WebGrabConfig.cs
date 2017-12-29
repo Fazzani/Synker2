@@ -47,6 +47,7 @@ namespace hfa.Synker.Service.Services.Xmltv
         public string Source { get; set; }
 
         public string Country { get; set; }
+        public string Logo { get; set; }
 
         public List<string> DisplayNames { get; set; }
 

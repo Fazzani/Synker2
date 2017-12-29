@@ -15,6 +15,7 @@ export class sitePackChannel implements ISelectable {
     displayNames: Array<string>;
     mediaType: SitePackMediaTypes;
     selected: boolean;
+    logo: string;
 }
 
 export enum SitePackMediaTypes {

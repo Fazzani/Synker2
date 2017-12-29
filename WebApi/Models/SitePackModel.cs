@@ -24,6 +24,7 @@ namespace hfa.WebApi.Models
             Country = hit.Source.Country;
             MediaType = hit.Source.MediaType;
             DisplayNames = hit.Source.DisplayNames;
+            Logo = hit.Source.Logo;
             return this;
         }
     }

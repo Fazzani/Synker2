@@ -37,6 +37,7 @@ using hfa.Synker.Service.Services.MediaRefs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using hfa.Synker.Service.Services;
+using hfa.Synker.Service.Services.Scraper;
 
 namespace hfa.WebApi
 {
@@ -73,9 +74,11 @@ namespace hfa.WebApi
                .AddScoped<IPlaylistService, PlaylistService>()
                .AddScoped<IMediaRefService, MediaRefService>()
                .AddScoped<ISitePackService, SitePackService>()
+               .AddScoped<IMediaScraper, MediaScraper>()
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))
+               .Configure<GlobalOptions>(Configuration.GetSection(nameof(GlobalOptions)))
                .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)));
 
             services.AddMemoryCache();

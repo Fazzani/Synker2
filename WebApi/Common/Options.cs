@@ -50,4 +50,9 @@ namespace hfa.WebApi.Common
         public string Passphrase { get; set; }
         
     }
+
+    public class GlobalOptions
+    {
+        public string TmdbAPI { get; set; }
+    }
 }
