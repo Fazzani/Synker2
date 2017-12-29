@@ -29,8 +29,6 @@ namespace hfa.Synker.Service.Services.Xmltv
     [XmlRoot(ElementName = "channel")]
     public class SitePackChannel : IEqualityComparer<SitePackChannel>
     {
-        private string _country;
-
         [XmlIgnore]
         public string id { get; set; }
         [XmlAttribute(AttributeName = "update")]

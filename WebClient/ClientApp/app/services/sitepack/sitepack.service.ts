@@ -28,7 +28,7 @@ export class SitePackService extends BaseService {
     }
 
     save(...sitePacks: sitePackChannel[]): Observable<ElasticResponse<sitePackChannel>> {
-        return this.http.post(variables.BASE_API_URL + this.BaseUrl, sitePacks).map(res => {
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/save`, sitePacks).map(res => {
             return res;
         }).catch(this.handleError);
     }

@@ -113,7 +113,6 @@ namespace hfa.Synker.Service.Services.Elastic
                  ));
 
             _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(response.DebugInformation);
-
         }
 
         public void MappingMediaRefConfig(string indexName)

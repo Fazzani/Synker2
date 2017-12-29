@@ -134,6 +134,11 @@ export class SitePackComponent implements OnInit, OnDestroy {
         this.ngOnInit();
     }
 
+    /**
+     * 
+     * @param {sitePackChannel} media
+     * @param {any} event
+     */
     toggleSelected(media: sitePackChannel, event: any): void {
         if (!event.ctrlKey) {
             this.dataSource.data.filter((v, i) => v.id != media.id).forEach((m, i) => {

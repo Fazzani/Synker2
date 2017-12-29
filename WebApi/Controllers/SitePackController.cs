@@ -68,9 +68,15 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [ValidateModel]
+        [Route("save")]
         public async Task<IActionResult> Save([FromBody]List<SitePackChannel> sitepacks, CancellationToken cancellationToken)
         {
-            sitepacks.ForEach(x => x.DisplayNames = x.DisplayNames.Distinct().ToList());
+            sitepacks.ForEach(x =>
+            {
+                if (x.DisplayNames == null)
+                    x.DisplayNames = new List<string> { x.Channel_name };
+                x.DisplayNames = x.DisplayNames.Distinct().ToList();
+            });
 
             var response = await _sitePackService.SaveAsync(sitepacks, cancellationToken);
 

@@ -353,10 +353,10 @@ namespace Hfa.WebApi.Controllers
                    }
                });
 
-            playlistEntity.UpdateContent(playlistEntity.TvgMedias);
+            //playlistEntity.UpdateContent(playlistEntity.TvgMedias);
 
-            var res = await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation($"{nameof(MatchFiltredByTvgSites)} saved : {res}");
+            //var res = await _dbContext.SaveChangesAsync(cancellationToken);
+            //_logger.LogInformation($"{nameof(MatchFiltredByTvgSites)} saved : {res}");
             return Ok(PlaylistModel.ToModel(playlistEntity, Url));
         }
 
@@ -395,10 +395,10 @@ namespace Hfa.WebApi.Controllers
                       }
                   });
 
-            playlistEntity.UpdateContent(playlistEntity.TvgMedias);
+            //playlistEntity.UpdateContent(playlistEntity.TvgMedias);
 
-            var res = await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation($"{nameof(MatchTvg)} saved : {res}");
+            //var res = await _dbContext.SaveChangesAsync(cancellationToken);
+           // _logger.LogInformation($"{nameof(MatchTvg)} saved : {res}");
             return Ok(PlaylistModel.ToModel(playlistEntity, Url));
         }
 

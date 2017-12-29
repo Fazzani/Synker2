@@ -54,7 +54,7 @@ namespace hfa.Synker.Service.Services
             {
                 From = 0,
                 Size = 1000,
-                Query = Query<SitePackChannel>.Match(x => x.Name("DisplayNames").Field(f => f.DisplayNames).Query(mediaName))
+                Query = Query<SitePackChannel>.Match(x => x.Name("DisplayNames").Field(f => f.DisplayNames).Query(mediaName).Fuzziness(Fuzziness.Auto))
                         & Query<SitePackChannel>.Terms(m => m.Field(new Field("site.keyword")).Terms(tvgSites).Boost(1.2))
                         & Query<SitePackChannel>.Terms(m => m.Field(new Field("country.keyword")).Terms(country).Boost(2.0)),
                 MinScore = 0.5
@@ -64,7 +64,7 @@ namespace hfa.Synker.Service.Services
 
             return allMediasRef
                     .Documents
-                    .FirstOrDefault(x => x.Country.Equals(country, StringComparison.InvariantCultureIgnoreCase));
+                    .FirstOrDefault();
         }
 
         /// <summary>
