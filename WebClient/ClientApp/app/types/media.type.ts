@@ -13,7 +13,7 @@ export interface TvgMedia extends ISelectable {
     group?: string;
     position: number;
     enabled: boolean;
-    mediaType: number;
+    mediaType: MediaType;
     url: string;
     lang: string;
     urls: Array<string>;
@@ -22,6 +22,13 @@ export interface TvgMedia extends ISelectable {
     startLineHeader?: string;
 }
 
+export enum MediaType {
+    LiveTv = 0,
+    Radio = 1,
+    Video = 2,
+    Audio = 3,
+    Other = 4
+}
 /**
  * Tvg channel field
  * 

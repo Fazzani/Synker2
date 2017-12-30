@@ -13,7 +13,7 @@ import 'rxjs/add/observable/fromEvent';
 import { map, catchError, merge, debounceTime, distinctUntilChanged, switchMap, startWith } from 'rxjs/operators';
 
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
-import { TvgMedia, Tvg, TvgSource } from '../../types/media.type';
+import { TvgMedia, Tvg, TvgSource, MediaType } from '../../types/media.type';
 import { MediaRefService } from '../../services/mediaref/mediaref.service';
 import { mediaRef } from '../../types/mediaref.type';
 import { snakbar_duration } from '../../variables';
@@ -93,14 +93,18 @@ export class MediaComponent implements OnInit, OnDestroy {
     templateUrl: './media.dialog.html'
 })
 export class TvgMediaModifyDialog implements OnInit, OnDestroy {
+    mediaTypes: typeof MediaType;
     tvgMedias: Observable<sitePackChannel[]>;
     private searchTerms = new Subject<string>();
     private filter: string;
+    compareFn: ((f1: any, f2: any) => boolean) | null = this.compareByValue;
 
     constructor(
         public dialogRef: MatDialogRef<TvgMediaModifyDialog>,
         private sitePackService: SitePackService,
         @Inject(MAT_DIALOG_DATA) public mediaAndTvgSites: [TvgMedia, string[]]) {
+
+        this.mediaTypes = MediaType;
 
         console.log('mediaAndTvgSites => ', mediaAndTvgSites);
         if (mediaAndTvgSites[0].tvg == null) {
@@ -122,6 +126,10 @@ export class TvgMediaModifyDialog implements OnInit, OnDestroy {
                 console.log(error);
                 return Observable.of<sitePackChannel[]>([]);
             });
+    }
+
+    compareByValue(f1: any, f2: any) {
+        return f1 != null && f2 != null && f1 == f2;
     }
 
     tvgSelectionChange(event: MatAutocompleteSelectedEvent): void {

@@ -34,21 +34,45 @@ export class SitePackService extends BaseService {
     }
 
     /**
-   * List tvg sites
+   * Get countries or filter by country name
+   * @param {string} filter country filter not required
    * @returns
    */
-    tvgSites(): Observable<sitePackChannel[]> {
-        return this.http.get<sitePackChannel[]>(variables.BASE_API_URL + 'sitepack/tvgsites').map(res => {
+    countries(filter?: string): Observable<string[]> {
+        let f = filter ? filter : "_all";
+        return this.http.get(`${variables.BASE_API_URL}${this.BaseUrl}/countries?filter=${f}`).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
+    /**
+     * * find tvg by mediaName and Site
+     * @param {string} mediaName
+     * @param {string} site?
+     * @returns
+     */
+    matchTvgByMedia(mediaName: string, site?: string): Observable<sitePackChannel> {
+        return this.http.get<sitePackChannel>(`${variables.BASE_API_URL}${this.BaseUrl}/matchtvg/name/${mediaName}?site=${site}`).map(res => {
             return res;
         }, err => this.handleError(err));
     }
 
     /**
- * List tvg sites
- * @returns
- */
+     * List tvg sites
+     * @returns
+     */
+    tvgSites(): Observable<sitePackChannel[]> {
+        return this.http.get<sitePackChannel[]>(`${variables.BASE_API_URL}${this.BaseUrl}/tvgsites`).map(res => {
+            return res;
+        }, err => this.handleError(err));
+    }
+
+    /**
+     * List tvg sites
+     * @returns
+     */
     sitePacks(filter: string): Observable<sitePackChannel[]> {
-        return this.http.get<sitePackChannel[]>(variables.BASE_API_URL + 'sitepack/sitepacks?filter=' + filter).map(res => {
+        return this.http.get<sitePackChannel[]>(`${variables.BASE_API_URL}${this.BaseUrl}/sitepacks?filter=${filter}`).map(res => {
             return res;
         }, err => this.handleError(err));
     }

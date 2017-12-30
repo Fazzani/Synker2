@@ -19,6 +19,15 @@ namespace hfa.Synker.Service.Services
         Task<SitePackChannel> MatchMediaNameAndBySiteAsync(string mediaName, string site, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Search by MediaName and filter by country (Lang)
+        /// </summary>
+        /// <param name="mediaName"></param>
+        /// <param name="country"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<SitePackChannel> MatchMediaNameAndCountryAsync(string mediaName, string country, CancellationToken cancellationToken);
+
+        /// <summary>
         /// List SitePack
         /// </summary>
         /// <param name="filter"></param>
@@ -30,5 +39,13 @@ namespace hfa.Synker.Service.Services
         Task<SitePackChannel> MatchTermByDispaynamesAndFiltredBySiteNameAsync(string mediaName, string culture, IEnumerable<string> tvgSites, CancellationToken cancellationToken);
         Task<IBulkResponse> SaveAsync(List<SitePackChannel> sitepacks, CancellationToken cancellationToken);
         Task<long> DeleteManyAsync(string[] ids, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// List Countries
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<List<string>> ListCountriesAsync(string filter, CancellationToken cancellationToken);
     }
 }

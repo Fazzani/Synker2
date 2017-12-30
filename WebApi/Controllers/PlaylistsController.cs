@@ -289,16 +289,16 @@ namespace Hfa.WebApi.Controllers
             if (playlist == null)
                 return NotFound(playlist);
 
-            playlist.TvgMedias.AsParallel().ForAll(media =>
-            {
-                var matched = _mediaRefService.MatchTermByDispaynamesAsync(media.DisplayName, cancellationToken).GetAwaiter().GetResult();
-
-                if (matched != null)
+            playlist.TvgMedias.Where(m => m.MediaType == MediaType.LiveTv).AsParallel().ForAll(media =>
                 {
-                    media.Group = matched.Cultures.FirstOrDefault();
-                    media.Tvg = matched.Tvg;
-                }
-            });
+                    var matched = _mediaRefService.MatchTermByDispaynamesAsync(media.DisplayName, cancellationToken).GetAwaiter().GetResult();
+
+                    if (matched != null)
+                    {
+                        media.Group = matched.Cultures.FirstOrDefault();
+                        media.Tvg = matched.Tvg;
+                    }
+                });
 
             return Ok(PlaylistModel.ToModel(playlist, Url));
         }
@@ -321,7 +321,7 @@ namespace Hfa.WebApi.Controllers
             if (playlistEntity == null)
                 return NotFound(playlistEntity);
 
-            var list = playlistEntity.TvgMedias;
+            var list = playlistEntity.TvgMedias.Where(m => m.MediaType == MediaType.LiveTv).ToList();
 
             if (onlyNotMatched)
                 list = playlistEntity.TvgMedias.Where(x => x.Tvg == null || string.IsNullOrEmpty(x.Tvg.Id)).ToList();
@@ -377,7 +377,7 @@ namespace Hfa.WebApi.Controllers
             if (playlistEntity == null)
                 return NotFound(playlistEntity);
 
-            var list = playlistEntity.TvgMedias;
+            var list = playlistEntity.TvgMedias.Where(m => m.MediaType == MediaType.LiveTv).ToList();
             if (onlyNotMatched)
                 list = playlistEntity.TvgMedias.Where(x => x.Tvg == null || string.IsNullOrEmpty(x.Tvg.Id)).ToList();
 
@@ -398,7 +398,7 @@ namespace Hfa.WebApi.Controllers
             //playlistEntity.UpdateContent(playlistEntity.TvgMedias);
 
             //var res = await _dbContext.SaveChangesAsync(cancellationToken);
-           // _logger.LogInformation($"{nameof(MatchTvg)} saved : {res}");
+            // _logger.LogInformation($"{nameof(MatchTvg)} saved : {res}");
             return Ok(PlaylistModel.ToModel(playlistEntity, Url));
         }
 

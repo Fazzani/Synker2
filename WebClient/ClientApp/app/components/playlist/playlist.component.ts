@@ -13,7 +13,7 @@ import { EventTargetLike } from "rxjs/observable/FromEventObservable";
 import { PlaylistModel, PlaylistPostModel } from "../../types/playlist.type";
 import { PlaylistService } from "../../services/playlists/playlist.service";
 import { ActivatedRoute } from '@angular/router';
-import { TvgMedia, Tvg, TvgSource } from "../../types/media.type";
+import { TvgMedia, Tvg, TvgSource, MediaType } from "../../types/media.type";
 import { TvgMediaModifyDialog } from '../media/media.component';
 import { MediaRefService } from '../../services/mediaref/mediaref.service';
 import { FormControl } from '@angular/forms';
@@ -23,6 +23,8 @@ import { PlaylistDiffDialog } from './playlist.diff.component';
 import { snakbar_duration } from '../../variables';
 import { sitePackChannel } from '../../types/sitepackchannel.type';
 import { PiconService } from '../../services/picons/picons.service';
+import { SitePackService } from '../../services/sitepack/sitepack.service';
+import { KeysPipe } from '../../pipes/enumKey.pipe';
 
 @Component({
     selector: 'playlist',
@@ -47,7 +49,8 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     playlistBS: BehaviorSubject<PlaylistModel> | null;
     pagelistState: PageListState;
     /** media ctor */
-    constructor(private route: ActivatedRoute, private piconService: PiconService, private playlistService: PlaylistService, private mediaRefService: MediaRefService, private commonService: CommonService,
+    constructor(private route: ActivatedRoute, private piconService: PiconService, private playlistService: PlaylistService,
+        private sitePackService: SitePackService, private commonService: CommonService,
         public dialog: MatDialog, public snackBar: MatSnackBar) { }
 
     /** Called by Angular after media component initialized */
@@ -295,7 +298,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     /**
-     * Match with all defined tvg in sitepack
+     * Try match tvg with Sites defined in media
      */
     matchTvg(): void {
         this.commonService.displayLoader(true);
@@ -315,6 +318,22 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.playlistService.matchFiltredTvgSites(this.playlistBS.getValue().publicId, onlyNotMatched).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was matched with filtred TvgSites");
+            this.commonService.displayLoader(false);
+        });
+    }
+
+    /**
+     * Find tvg for median name  and country
+     * @param {TvgMedia} media
+     */
+    matchTvgByMediaAndCountry(media: TvgMedia): void {
+        this.commonService.displayLoader(true);
+
+        this.sitePackService.matchTvgByMedia(media.displayName, media.lang).subscribe(sitepack => {
+            if (sitepack != null) {
+                media.tvg.name = sitepack.channel_name;
+                media.tvg.id = sitepack.xmltv_id;
+            }
             this.commonService.displayLoader(false);
         });
     }
@@ -370,42 +389,53 @@ export class PlaylistModifyDialog {
     templateUrl: './tvgmedia.list.dialog.html'
 })
 export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
+    mediaTypes: typeof MediaType;
     sitePacks: sitePackChannel[];
     cultures: string[];
-    selected: string;
+    selectedLang: string;
     group: string;
     keyUpSitePack = new Subject<any>();
     filterChannelName: string;
+    selectedMediaType: MediaType;
 
-    constructor(private mediaRefService: MediaRefService,
+    constructor(private sitePackService: SitePackService, private commonService: CommonService,
         public dialogRef: MatDialogRef<TvgMediaListModifyDialog>,
         @Inject(MAT_DIALOG_DATA) public data: TvgMedia[]) {
+
+        this.mediaTypes = MediaType;
 
         const subscription = this.keyUpSitePack
             .map(event => '*' + event.target.value + '*')
             .debounceTime(1000)
             .distinctUntilChanged()
-            .subscribe(search => mediaRefService.sitePacks(search).subscribe(res => this.sitePacks = res));
+            .subscribe(search => sitePackService.sitePacks(search).subscribe(res => this.sitePacks = res));
     }
 
     ngOnInit(): void {
 
-        if (this.data != undefined && this.data.length > 0)
-            this.selected = this.data[0].lang;
+        if (this.data != undefined && this.data.length > 0) {
+            this.selectedLang = this.data[0].lang;
+            this.selectedMediaType = this.data[0].mediaType;
+        }
 
-        this.mediaRefService.cultures().subscribe(c => {
+        this.sitePackService.countries().subscribe(c => {
             this.cultures = c;
         });
     }
 
     onChangeLang(event): void {
-        console.log("culture was changed : ", this.selected);
-        this.data.forEach(m => m.lang = this.selected);
+        console.log("culture was changed : ", this.selectedLang);
+        this.data.forEach(m => m.lang = this.selectedLang);
     }
 
     onChangeGroup(event): void {
         console.log("Group was changed : ", this.group);
         this.data.forEach(m => m.group = this.group);
+    }
+
+    onChangeMediaType(mediaType: number): void {
+        console.log("MediaType was changed : ", mediaType);
+        this.data.forEach(m => m.mediaType = mediaType);
     }
 
     onChangeTvgSourceSite(sitePack: sitePackChannel): void {
@@ -440,7 +470,7 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
     ngOnDestroy(): void {
     }
 }
-//---------------------------------------------------------------------------------    TvgSites ListModifyDialog
+//---------------------------------------------------------------------------------   TvgSites ListModifyDialog
 @Component({
     selector: 'tvgsites-list-modify-dialog',
     templateUrl: './tvgsites.list.dialog.html'

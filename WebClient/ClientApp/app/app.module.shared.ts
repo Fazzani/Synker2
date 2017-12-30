@@ -40,6 +40,7 @@ import { PlaylistAddDialog } from './components/playlist/playlist.add.component'
 import { PlaylistDiffDialog } from './components/playlist/playlist.diff.component';
 import { SitePackService } from './services/sitepack/sitepack.service';
 import { SitePackComponent, SitePackModifyDialog } from './components/sitepack/sitepack.component';
+import { KeysPipe } from './pipes/enumKey.pipe';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -76,7 +77,8 @@ const appRoutes: Routes = [
         PlaylistAddDialog,
         PlaylistDiffDialog,
         SitePackModifyDialog,
-        SearchPipe
+        SearchPipe,
+        KeysPipe
     ],
     imports: [
         BrowserModule,

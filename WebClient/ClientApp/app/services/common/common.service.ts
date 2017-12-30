@@ -48,6 +48,19 @@ export class CommonService {
         }
         return null;
     }
+
+    stringEnumToKeyValue(stringEnum) {
+        const keyValue = [];
+        const keys = Object.keys(stringEnum).filter((value, index) => {
+            return !(index % 2);
+        });
+
+        for (const k of keys) {
+            keyValue.push({ key: k, value: stringEnum[k] });
+        }
+
+        return keyValue;
+    }
 }
 
 /**
@@ -59,5 +72,6 @@ export class Constants {
     //LocalStorage epgQuery key
     static LS_EpgQueryKey: string = "epgQuery";
     static LS_MediaRefQueryKey: string = "mediaRefQuery";
+    static LS_SiteQueryKey: string = "SitePackQuery";
     static MediaPageListKey: string = "mediaPageList";
 }

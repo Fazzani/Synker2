@@ -39,11 +39,12 @@ export class SitePackComponent implements OnInit, OnDestroy {
     currentItem: sitePackChannel | null;
 
     /** media ctor */
-    constructor(private sitePackService: SitePackService, private piconService: PiconService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar) { }
+    constructor(private sitePackService: SitePackService, private piconService: PiconService, private commonService: CommonService, public dialog: MatDialog,
+        public snackBar: MatSnackBar) { }
 
     /** Called by Angular after media component initialized */
     ngOnInit(): void {
-        let storedQuery = this.commonService.JsonToObject<SimpleQueryElastic>(localStorage.getItem(Constants.LS_MediaRefQueryKey));
+        let storedQuery = this.commonService.JsonToObject<SimpleQueryElastic>(localStorage.getItem(Constants.LS_SiteQueryKey));
         console.log("storedQuery ", storedQuery);
 
         this.paginator.pageIndex = storedQuery != null ? Math.floor(storedQuery.From / storedQuery.Size) : 0;
@@ -122,6 +123,14 @@ export class SitePackComponent implements OnInit, OnDestroy {
         this.dataSource.save().subscribe(res => {
             this.snackBar.open("site pack was saved successfully");
         });
+    }
+
+    /**
+     * Force save all site packs
+     */
+    saveAll(): void {
+        console.log("saving all site pack..");
+        this.dataSource.saveAll();
     }
 
     update(spChannel: sitePackChannel): void {
@@ -272,10 +281,10 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
         let pageSize = this.paginator.pageSize === undefined ? 25 : this.paginator.pageSize;
         let query = <SimpleQueryElastic>{ From: pageSize * (isNaN(this.paginator.pageIndex) ? 0 : this.paginator.pageIndex), IndexName: 'sitepack', Query: this.filter, Size: pageSize }
 
-        localStorage.setItem(Constants.LS_MediaRefQueryKey, JSON.stringify(query));
+        localStorage.setItem(Constants.LS_SiteQueryKey, JSON.stringify(query));
 
         let res = this.sitePackService.search<sitePackChannel>(query).map((v, i) => {
-            console.log("recup epg ", v);
+            console.log("Getting sitepacks ", v);
             this._paginator.value.length = v.total;
             return v.result;
         });
@@ -287,6 +296,17 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
         });
 
         return res;
+    }
+
+    /**
+     * Force save all site packs
+     */
+    saveAll(): void {
+        let query = <SimpleQueryElastic>{ From: 0, IndexName: 'sitepack', Query: "", Size: 1000000 }
+
+        this.sitePackService.search<sitePackChannel>(query).map(v => {
+            this.sitePackService.save(...v.result).subscribe();
+        }).subscribe(x => console.log(x));
     }
 
     delete(id: string): void {

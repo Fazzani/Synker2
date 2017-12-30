@@ -139,5 +139,41 @@ namespace Hfa.WebApi.Controllers
             });
             return new OkObjectResult(sitePacks);
         }
+
+        /// <summary>
+        /// match tvg by media name and country
+        /// </summary>
+        /// <param name="mediaName"></param>
+        /// <param name="country"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("matchtvg/name/{mediaName}")]
+        public async Task<IActionResult> MatchTvgByMediaName([FromRoute] string mediaName, [FromQuery] string country, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var sitePack = await _sitePackService.MatchMediaNameAndBySiteAsync(mediaName, country, cancellationToken);
+            return Ok(sitePack);
+        }
+
+        /// <summary>
+        /// Countries list
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "filter" })]
+        [HttpGet]
+        [Route("countries")]
+        public async Task<IActionResult> CountriesAsync([FromQuery]string filter, CancellationToken cancellationToken)
+        {
+            var cultures = await _memoryCache.GetOrCreateAsync(CacheKeys.CulturesKey, async entry =>
+            {
+                entry.SlidingExpiration = TimeSpan.FromHours(12);
+                var response = await _sitePackService.ListCountriesAsync(filter, cancellationToken);
+                return response;
+            });
+            return Ok(cultures);
+        }
+
     }
 }

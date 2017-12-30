@@ -17,6 +17,13 @@
     <mat-form-field>
         <input matInput [(ngModel)]="mediaAndTvgSites[0].url" placeholder="Url..." name="media.url" class="full-width">
     </mat-form-field>
+    <mat-form-field>
+        <mat-select placeholder="Media Type" [(ngModel)]="mediaAndTvgSites[0].mediaType" name="media.mediatype" [compareWith]="compareFn">
+            <mat-option *ngFor="let mediatype of mediaTypes | keys" [value]="mediatype.value">
+                {{mediatype.key}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
     <mat-expansion-panel>
         <mat-expansion-panel-header>
             <mat-panel-title>

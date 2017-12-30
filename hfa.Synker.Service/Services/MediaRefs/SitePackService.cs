@@ -39,8 +39,23 @@ namespace hfa.Synker.Service.Services
             {
                 From = 0,
                 Size = 1,
-                Query = new TermQuery { Field = "site.keyword", Value = site }
-                & new MatchQuery { Field = "channel_name", Query = mediaName, Fuzziness = Fuzziness.Auto }
+                Query = new TermQuery { Field = "site", Value = site }
+                & new MatchQuery { Field = "displayNames", Query = mediaName, Fuzziness = Fuzziness.Auto }
+            };
+
+            var sitePacks = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(req, cancellationToken);
+
+            return sitePacks.Documents.FirstOrDefault();
+        }
+
+        public async Task<SitePackChannel> MatchMediaNameAndCountryAsync(string mediaName, string country, CancellationToken cancellationToken)
+        {
+            var req = new SearchRequest<SitePackChannel>
+            {
+                From = 0,
+                Size = 1,
+                Query = new TermQuery { Field = "country", Value = country }
+               & new MatchQuery { Field = "displayNames", Query = mediaName, Fuzziness = Fuzziness.Auto }
             };
 
             var sitePacks = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(req, cancellationToken);
@@ -53,10 +68,10 @@ namespace hfa.Synker.Service.Services
             var req = new SearchRequest<SitePackChannel>
             {
                 From = 0,
-                Size = 1000,
-                Query = Query<SitePackChannel>.Match(x => x.Name("DisplayNames").Field(f => f.DisplayNames).Query(mediaName).Fuzziness(Fuzziness.Auto))
-                        & Query<SitePackChannel>.Terms(m => m.Field(new Field("site.keyword")).Terms(tvgSites).Boost(1.2))
-                        & Query<SitePackChannel>.Terms(m => m.Field(new Field("country.keyword")).Terms(country).Boost(2.0)),
+                Size = 1,
+                Query = Query<SitePackChannel>.Match(x => x.Name("displayNames").Field(f => f.DisplayNames).Query(mediaName).Fuzziness(Fuzziness.Auto))
+                        & Query<SitePackChannel>.Terms(m => m.Field(new Field("site")).Terms(tvgSites).Boost(1.2))
+                        & Query<SitePackChannel>.Term(m => m.Country.Suffix("keyword"), country, 2.0),
                 MinScore = 0.5
             };
 
@@ -101,5 +116,29 @@ namespace hfa.Synker.Service.Services
             var response = await _elasticConnectionClient.Client.DeleteByQueryAsync<SitePackChannel>(x => x.Query(q => q.Ids(i => i.Values(ids))));
             return response.Deleted;
         }
+
+        /// <summary>
+        /// Countries list
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<List<string>> ListCountriesAsync(string filter, CancellationToken cancellationToken)
+        {
+            var response = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(s => s
+              .Index(_elasticConnectionClient.ElasticConfig.SitePackIndex)
+              .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
+              .From(0)
+              .Aggregations(a => a
+                  .Terms("unique", te => te
+                      .Field(f => f.Country.Suffix("keyword"))
+                      .Order(TermsOrder.TermAscending)
+                  )
+              )
+           , cancellationToken);
+
+            return response.Documents.Select(x => x.Country).Distinct().ToList();
+        }
+
     }
 }

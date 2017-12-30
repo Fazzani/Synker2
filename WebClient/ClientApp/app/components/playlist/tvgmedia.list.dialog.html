@@ -13,9 +13,16 @@
             </mat-expansion-panel-header>
 
             <mat-form-field>
-                <mat-select placeholder="Lang" [(ngModel)]="selected" (ngModelChange)="onChangeLang($event)" name="data.lang">
+                <mat-select placeholder="Lang" [(ngModel)]="selectedLang" (ngModelChange)="onChangeLang($event)" name="data.lang">
                     <mat-option *ngFor="let cult of cultures" [value]="cult">
                         {{cult}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-select placeholder="Media Type" [(ngModel)]="selectedMediaType" (ngModelChange)="onChangeMediaType(selectedMediaType)" name="data.mediatype">
+                    <mat-option *ngFor="let mediatype of mediaTypes | keys" [value]="mediatype.value">
+                        {{mediatype.key}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>

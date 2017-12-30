@@ -113,9 +113,9 @@
                 <button mat-icon-button color="warn" (click)="delete(row.id)" matTooltip="Remove">
                     <mat-icon class="mat-24" aria-label="">delete</mat-icon>
                 </button>
-                <!--<button mat-icon-button color="primary" (click)="addToMediaRef(row)" matTooltip="Add to mediaRef">
-                    <mat-icon class="mat-24" aria-label="">add</mat-icon>
-                </button>-->
+                <button mat-icon-button color="primary" (click)="matchTvgByMediaAndCountry(row)" matTooltip="Match Tvg by media name and country">
+                    <mat-icon class="mat-24" aria-label="">label</mat-icon>
+                </button>
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
