@@ -29,9 +29,9 @@ namespace hfa.Synker.Service.Services.Scraper
                 var client = new TMDbClient(apiKey);
                 var cleanTerm = term.Replace(".", " ");
                 cleanTerm = Regex.Replace(cleanTerm, @"\b\d{4}\b", string.Empty, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);//YEAR
-                cleanTerm = Regex.Replace(cleanTerm, @"\bs\d{2}e\d{2}\b", string.Empty, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);//SEASON EPISODE
-                cleanTerm = Regex.Replace(cleanTerm, @"\b\d{3,4}p\b", string.Empty, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);//QUALITY
-                cleanTerm = cleanTerm.RemoveStrings("french", "avi", "dvdrip", "xvid", "bluray", "4k");
+                cleanTerm = Regex.Replace(cleanTerm, @"\bs\d{1,2}ep?\d{1,2}\b", string.Empty, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);//SEASON EPISODE,,
+                cleanTerm = Regex.Replace(cleanTerm, @"\b(\d{3,4}p)(h|s)d(tv)?|4k\b", string.Empty, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);//QUALITY
+                cleanTerm = cleanTerm.RemoveStrings("french", "avi", "dvdrip", "xvid", "bluray", "hdcam", "cam", "vostfr", "fr", "ar","en");
 
                 _logger.LogDebug($"scraping input {term} => {cleanTerm}");
 

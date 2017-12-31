@@ -85,13 +85,13 @@ namespace Hfa.WebApi.Controllers
         [Route("match")]
         public IActionResult Match([FromBody]List<TvgMedia> tvgmedias, CancellationToken cancellationToken)
         {
-            tvgmedias.AsParallel().WithCancellation(cancellationToken).ForAll(m =>
-            {
-                var picons = _piconsService.MatchAsync(m.DisplayName, m.GetChannelNumber(), 90, cancellationToken).GetAwaiter().GetResult();
-                if (m.Tvg == null)
-                    m.Tvg = new Tvg();
-                m.Tvg.Logo = picons.FirstOrDefault()?.RawUrl;
-            });
+            tvgmedias.Where(x => x.MediaType == MediaType.LiveTv || x.MediaType == MediaType.Radio).AsParallel().WithCancellation(cancellationToken).ForAll(m =>
+                {
+                    var picons = _piconsService.MatchAsync(m.DisplayName, m.GetChannelNumber(), 90, cancellationToken).GetAwaiter().GetResult();
+                    if (m.Tvg == null)
+                        m.Tvg = new Tvg();
+                    m.Tvg.Logo = picons.FirstOrDefault()?.RawUrl;
+                });
 
             return Ok(tvgmedias);
         }
