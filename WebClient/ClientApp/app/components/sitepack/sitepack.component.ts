@@ -60,8 +60,11 @@ export class SitePackComponent implements OnInit, OnDestroy {
             .subscribe((x) => {
                 if (!this.dataSource) { return; }
                 console.log("subscriptionTableEvent => ", x);
-                if ((x as PageEvent).length === undefined)
-                    this.paginator.pageIndex = 0;
+                if ((x as PageEvent).pageIndex !== undefined)
+                    this.paginator.pageIndex = (x as PageEvent).pageIndex;
+                else
+                    if ((x as PageEvent).length === undefined)
+                        this.paginator.pageIndex = 0;
 
                 this.dataSource.filter = this.filter.nativeElement.value;
                 this.dataSource.paginator = this.paginator;
@@ -155,6 +158,11 @@ export class SitePackComponent implements OnInit, OnDestroy {
             });
         }
         media.selected = !media.selected;
+    }
+
+    updateManualPage(index) {
+        console.log(`go to page ${index}`);
+        this.paginator.page.emit(<PageEvent>{ pageIndex: index });
     }
 
     ngOnDestroy() {

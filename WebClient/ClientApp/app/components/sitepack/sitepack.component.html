@@ -76,7 +76,14 @@
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected" class="noselect"></mat-row>
     </mat-table>
-    <mat-paginator #paginator [length]="dataSource.paginator.length" [pageIndex]="dataSource.paginator.pageIndex" [pageSize]="dataSource.paginator.pageSize"
-                   [pageSizeOptions]="dataSource.paginator.pageSizeOptions" class="noselect">
-    </mat-paginator>
+    <div class="container footer">
+        <div class="page-select">
+            <mat-form-field floatPlaceholder="never">
+                <input matInput [(ngModel)]="paginator.pageIndex" placeholder="Page..." type="number" (ngModelChange)="updateManualPage($event)">
+            </mat-form-field>
+        </div>
+        <mat-paginator #paginator [length]="dataSource.paginator.length" [pageIndex]="dataSource.paginator.pageIndex" [pageSize]="dataSource.paginator.pageSize"
+                       [pageSizeOptions]="dataSource.paginator.pageSizeOptions" class="noselect">
+        </mat-paginator>
+    </div>
 </div>

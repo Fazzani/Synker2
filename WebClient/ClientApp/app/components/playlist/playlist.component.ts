@@ -36,6 +36,7 @@ import { KeysPipe } from '../../pipes/enumKey.pipe';
 })
 /** mediaref component*/
 export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
+    manualPage: number | null;
     key: number;
     subscriptionTableEvent: Subscription;
 
@@ -62,9 +63,9 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.dataSource = new MatTableDataSource<TvgMedia>([]);
 
         this.paginator.pageSizeOptions = [50, 100, 250, 1000];
-        this.pagelistState = this.commonService.JsonToObject<PageListState>(localStorage.getItem(Constants.MediaPageListKey))
+        this.pagelistState = this.commonService.JsonToObject<PageListState>(localStorage.getItem(Constants.MediaPageListKey + this.playlistId))
         if (this.pagelistState == null)
-            this.pagelistState = <PageListState>{ filter: "", pageIndex: 0, pageSize: this.paginator.pageSizeOptions[0] };
+            this.pagelistState = <PageListState>{ filter: "", pageIndex: 1, pageSize: this.paginator.pageSizeOptions[0] };
 
         console.log('pagelistState => ', this.pagelistState);
 
@@ -101,15 +102,18 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
                 if (!this.dataSource) { return; }
                 console.log("subscriptionTableEvent => ", x);
                 if (x as PageEvent) {
-                    if ((x as PageEvent).length === undefined)
-                        this.paginator.pageIndex = 0;
-
+                    if ((x as PageEvent).pageIndex !== undefined)
+                        this.paginator.pageIndex = (x as PageEvent).pageIndex;
+                    else
+                        if ((x as PageEvent).length === undefined)
+                            this.paginator.pageIndex = 1;
                 }
+                
+                this.dataSource.paginator = this.paginator;
                 this.pagelistState.pageIndex = this.dataSource.paginator.pageIndex;
                 this.pagelistState.pageSize = this.dataSource.paginator.pageSize;
                 this.dataSource.filter = this.pagelistState.filter = this.filter.nativeElement.value;
-                localStorage.setItem(Constants.MediaPageListKey, JSON.stringify(this.pagelistState));
-                this.dataSource.paginator = this.paginator;
+                localStorage.setItem(Constants.MediaPageListKey + this.playlistId, JSON.stringify(this.pagelistState));
             });
     }
 
@@ -387,6 +391,10 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         media.selected = !media.selected;
     }
 
+    updateManualPage(index) {
+        console.log(`go to page ${index}`);
+        this.paginator.page.emit(<PageEvent>{ pageIndex: index });
+    }
 }
 
 //---------------------------------------------------------------------------------    Playlist ModifyDialog

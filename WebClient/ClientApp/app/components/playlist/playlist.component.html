@@ -3,10 +3,10 @@
         <mat-form-field floatPlaceholder="never">
             <input matInput #filter placeholder="Filter medias...">
             <!--<mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let option of options" [value]="option">
-                {{ option }}
-            </mat-option>
-        </mat-autocomplete>-->
+                <mat-option *ngFor="let option of options" [value]="option">
+                    {{ option }}
+                </mat-option>
+            </mat-autocomplete>-->
         </mat-form-field>
         <span class="spacer"></span>
         <a mat-icon-button>
@@ -128,6 +128,16 @@
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected" class="noselect"></mat-row>
     </mat-table>
-    <mat-paginator #paginator [pageSizeOptions]="paginator.pageSizeOptions" [pageSize]="this.paginator.pageSize" class="noselect">
-    </mat-paginator>
+    <div class="container footer">
+
+        <div class="page-select">
+            <mat-form-field floatPlaceholder="never">
+                <input matInput [(ngModel)]="paginator.pageIndex" placeholder="Page..." type="number" (ngModelChange)="updateManualPage($event)">
+            </mat-form-field>
+        </div>
+        <mat-paginator #paginator [length]="dataSource.paginator.length" [pageIndex]="dataSource.paginator.pageIndex" [pageSize]="dataSource.paginator.pageSize"
+                       [pageSizeOptions]="dataSource.paginator.pageSizeOptions" class="noselect">
+        </mat-paginator>
+
+    </div>
 </div>
