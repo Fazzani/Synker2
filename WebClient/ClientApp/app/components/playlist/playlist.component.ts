@@ -297,6 +297,32 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
+    //#region TMDB VOD
+    /**
+     * Try match playlist VOD information
+     */
+    matchVideos(): void {
+        this.commonService.displayLoader(true);
+        this.playlistService.matchVideos(this.playlistBS.getValue().publicId).subscribe(res => {
+            this.playlistBS.next(res);
+            this.snackBar.open("Playlist was matched with all VOD");
+            this.commonService.displayLoader(false);
+        });
+    }
+
+    /**
+     * Try match media VOD information
+     */
+    matchVideo(media: TvgMedia): void {
+        this.commonService.displayLoader(true);
+        this.playlistService.matchVideo(media.displayName).subscribe(res => {
+            this.snackBar.open(`Matching with VOD ${media.displayName} ${res}`);
+            media.tvg.logo = res.posterPath;
+            this.commonService.displayLoader(false);
+        });
+    }
+    //#endregion
+
     /**
      * Try match tvg with Sites defined in media
      */
@@ -304,7 +330,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.commonService.displayLoader(true);
         this.playlistService.matchtvg(this.playlistBS.getValue().publicId).subscribe(res => {
             this.playlistBS.next(res);
-            this.snackBar.open("Playlist was matched with all MediaRef");
+            this.snackBar.open("Playlist was matched with all sitepacks");
             this.commonService.displayLoader(false);
         });
     }

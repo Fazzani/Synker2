@@ -7,6 +7,6 @@ namespace hfa.Synker.Service.Services.Scraper
 {
     public interface IMediaScraper
     {
-        Task<List<MediaInfo>> SearchAsync(string term, string apiKey, CancellationToken cancellationToken);
+        Task<List<MediaInfo>> SearchAsync(string term, string apiKey, string posterBaseUrl, CancellationToken cancellationToken);
     }
 }

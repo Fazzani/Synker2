@@ -5,7 +5,9 @@ using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Services.MediaRefs;
 using hfa.Synker.Service.Services.Playlists;
+using hfa.Synker.Service.Services.Scraper;
 using hfa.Synker.Services.Dal;
+using hfa.WebApi.Common;
 using hfa.WebApi.Common.Filters;
 using hfa.WebApi.Models.Playlists;
 using Hfa.WebApi.Commmon;
@@ -35,22 +37,24 @@ namespace Hfa.WebApi.Controllers
     public class PlaylistsController : BaseController
     {
         private IPlaylistService _playlistService;
-        private IMediaRefService _mediaRefService;
+        private IMediaScraper _mediaScraper;
         IMemoryCache _memoryCache;
         private ISitePackService _sitePackService;
+        private GlobalOptions _globalOptions;
 
-        private string userPlaylistKey => $"{UserId}:{CacheKeys.PlaylistByUser}";
+        private string UserPlaylistKey => $"{UserId}:{CacheKeys.PlaylistByUser}";
 
         Guid GetInternalId(string id) => new Guid(Encoding.UTF8.DecodeBase64(id));
 
-        public PlaylistsController(IMemoryCache memoryCache, IMediaRefService mediaRefService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
+        public PlaylistsController(IMemoryCache memoryCache, IMediaScraper mediaScraper, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IOptions<GlobalOptions> globalOptions,
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IPlaylistService playlistService, ISitePackService sitePackService)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _playlistService = playlistService;
-            _mediaRefService = mediaRefService;
+            _mediaScraper = mediaScraper;
             _memoryCache = memoryCache;
             _sitePackService = sitePackService;
+            _globalOptions = globalOptions.Value;
         }
 
         /// <summary>
@@ -61,19 +65,19 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         public async Task<IActionResult> List([FromBody] QueryListBaseModel query, CancellationToken cancellationToken, [FromQuery] bool light = true)
         {
-            var plCacheKey = $"{userPlaylistKey}_{query.GetHashCode()}";
+            var plCacheKey = $"{UserPlaylistKey}_{query.GetHashCode()}";
             var playlists = await _memoryCache.GetOrCreateAsync(plCacheKey, async entry =>
             {
-                if (_memoryCache.TryGetValue(userPlaylistKey, out List<string> list))
+                if (_memoryCache.TryGetValue(UserPlaylistKey, out List<string> list))
                 {
-                    list.Add(userPlaylistKey);
+                    list.Add(UserPlaylistKey);
                 }
                 else
                 {
                     list = new List<string> { plCacheKey };
                 }
 
-                _memoryCache.Set(userPlaylistKey, list);
+                _memoryCache.Set(UserPlaylistKey, list);
 
                 entry.SlidingExpiration = TimeSpan.FromHours(2);
                 return await Task.Run(() =>
@@ -272,36 +276,36 @@ namespace Hfa.WebApi.Controllers
             }
         }
 
-        /// <summary>
-        /// Match playlist with media ref
-        /// </summary>
-        /// <param name="playlistPostModel"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("match/{id}")]
-        [ValidateModel]
-        public IActionResult Match([FromRoute] string id, CancellationToken cancellationToken)
-        {
-            var idGuid = GetInternalId(id);
+        ///// <summary>
+        ///// Match playlist with media ref
+        ///// </summary>
+        ///// <param name="playlistPostModel"></param>
+        ///// <param name="cancellationToken"></param>
+        ///// <returns></returns>
+        //[HttpPost]
+        //[Route("match/{id}")]
+        //[ValidateModel]
+        //public IActionResult Match([FromRoute] string id, CancellationToken cancellationToken)
+        //{
+        //    var idGuid = GetInternalId(id);
 
-            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
-            if (playlist == null)
-                return NotFound(playlist);
+        //    var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+        //    if (playlist == null)
+        //        return NotFound(playlist);
 
-            playlist.TvgMedias.Where(m => m.MediaType == MediaType.LiveTv).AsParallel().ForAll(media =>
-                {
-                    var matched = _mediaRefService.MatchTermByDispaynamesAsync(media.DisplayName, cancellationToken).GetAwaiter().GetResult();
+        //    playlist.TvgMedias.Where(m => m.MediaType == MediaType.LiveTv).AsParallel().ForAll(media =>
+        //        {
+        //            var matched = _sitePackService.MatchMediaNameAndBySiteAsync(media.DisplayName,media.Tvg.TvgSource.Country, cancellationToken).GetAwaiter().GetResult();
 
-                    if (matched != null)
-                    {
-                        media.Group = matched.Cultures.FirstOrDefault();
-                        media.Tvg = matched.Tvg;
-                    }
-                });
+        //            if (matched != null)
+        //            {
+        //                media.Group = matched.Cultures.FirstOrDefault();
+        //                media.Tvg = matched.Tvg;
+        //            }
+        //        });
 
-            return Ok(PlaylistModel.ToModel(playlist, Url));
-        }
+        //    return Ok(PlaylistModel.ToModel(playlist, Url));
+        //}
 
         /// <summary>
         ///  Match playlist with media ref
@@ -324,7 +328,7 @@ namespace Hfa.WebApi.Controllers
             var list = playlistEntity.TvgMedias.Where(m => m.MediaType == MediaType.LiveTv).ToList();
 
             if (onlyNotMatched)
-                list = playlistEntity.TvgMedias.Where(x => x.Tvg == null || string.IsNullOrEmpty(x.Tvg.Id)).ToList();
+                list = list.Where(x => x.Tvg == null || string.IsNullOrEmpty(x.Tvg.Id)).ToList();
 
             //TODO : Match by culture and Country code
 
@@ -377,10 +381,10 @@ namespace Hfa.WebApi.Controllers
             if (playlistEntity == null)
                 return NotFound(playlistEntity);
 
+            //Matching Live TV
             var list = playlistEntity.TvgMedias.Where(m => m.MediaType == MediaType.LiveTv).ToList();
             if (onlyNotMatched)
-                list = playlistEntity.TvgMedias.Where(x => x.Tvg == null || string.IsNullOrEmpty(x.Tvg.Id)).ToList();
-
+                list = list.Where(x => x.Tvg == null || string.IsNullOrEmpty(x.Tvg.Id)).ToList();
             list
                 .Where(x => x.Tvg != null && x.Tvg.TvgSource != null)
                 .AsParallel()
@@ -395,11 +399,82 @@ namespace Hfa.WebApi.Controllers
                       }
                   });
 
-            //playlistEntity.UpdateContent(playlistEntity.TvgMedias);
+            //Matching movies
+            list = playlistEntity.TvgMedias.Where(m => m.MediaType == MediaType.Video).ToList();
+            if (onlyNotMatched)
+                list = playlistEntity.TvgMedias.Where(x => x.Tvg == null || string.IsNullOrEmpty(x.Tvg.Logo)).ToList();
 
-            //var res = await _dbContext.SaveChangesAsync(cancellationToken);
-            // _logger.LogInformation($"{nameof(MatchTvg)} saved : {res}");
+            list
+                .Where(x => x.Tvg != null && x.Tvg.TvgSource != null)
+                .AsParallel()
+                .WithCancellation(cancellationToken)
+                .ForAll(media =>
+                {
+                    var matched = _mediaScraper.SearchAsync(media.DisplayName, _globalOptions.TmdbAPI, _globalOptions.TmdbPosterBaseUrl, cancellationToken).GetAwaiter().GetResult();
+                    if (matched != null)
+                    {
+                        media.Tvg.Logo = matched.FirstOrDefault().PosterPath;
+                    }
+                });
+
             return Ok(PlaylistModel.ToModel(playlistEntity, Url));
+        }
+
+        [HttpPost]
+        [Route("matchvideos/{id}")]
+        [ValidateModel]
+        public async Task<IActionResult> MatchVideos([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var idGuid = GetInternalId(id);
+
+            var playlistEntity = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+            if (playlistEntity == null)
+                return NotFound(playlistEntity);
+
+            var list = playlistEntity.TvgMedias.Where(m => m.MediaType == MediaType.Video).ToList();
+            if (onlyNotMatched)
+                list = list.Where(x => x.Tvg == null || string.IsNullOrEmpty(x.Tvg.Logo)).ToList();
+            int limitRequest = 40;
+
+            list
+                .AsParallel()
+                .WithCancellation(cancellationToken)
+                .ForAll(media =>
+                {
+                    while (limitRequest <= 0)
+                    {
+                        _logger.LogInformation($"Scrapper Media limit TMDB (40 request/10s) was raeched {media.DisplayName}");
+                        Thread.Sleep(10001);
+                        if (limitRequest <= 0)
+                            Interlocked.Add(ref limitRequest, 40);
+                    }
+
+                    Interlocked.Decrement(ref limitRequest);
+                    _logger.LogInformation($"Scrapping media {limitRequest}: {media.DisplayName}");
+
+                    var matched = _mediaScraper.SearchAsync(media.DisplayName, _globalOptions.TmdbAPI, _globalOptions.TmdbPosterBaseUrl, cancellationToken).GetAwaiter().GetResult();
+                    if (matched != null)
+                    {
+                        media.Tvg.Logo = matched.FirstOrDefault().PosterPath;
+                    }
+                });
+
+            return Ok(PlaylistModel.ToModel(playlistEntity, Url));
+        }
+
+        [HttpPost]
+        [Route("matchvideo/{name}")]
+        [ValidateModel]
+        public async Task<IActionResult> MatchVideo([FromRoute] string name, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var matched = await _mediaScraper.SearchAsync(name, _globalOptions.TmdbAPI, _globalOptions.TmdbPosterBaseUrl, cancellationToken);
+
+            if (matched != null)
+            {
+                return Ok(matched.FirstOrDefault());
+            }
+
+            return NotFound();
         }
 
         /// <summary>
@@ -536,13 +611,13 @@ namespace Hfa.WebApi.Controllers
 
         private void ClearCache()
         {
-            if (_memoryCache.TryGetValue(userPlaylistKey, out List<string> list))
+            if (_memoryCache.TryGetValue(UserPlaylistKey, out List<string> list))
             {
                 foreach (var item in list)
                 {
                     _memoryCache.Remove(item);
                 }
-                list.Remove(userPlaylistKey);
+                list.Remove(UserPlaylistKey);
             }
         }
 

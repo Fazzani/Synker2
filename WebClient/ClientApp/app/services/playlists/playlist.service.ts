@@ -68,6 +68,28 @@ export class PlaylistService extends BaseService {
         }).catch(this.handleError);
     }
 
+    /**
+     * Match VOD Playlist
+     * @param {string} id
+     * @returns
+     */
+    matchVideos(id: string): Observable<PlaylistModel> {
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/matchvideos/${id}`, null).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
+    /**
+     * Match VOD by name
+     * @param {string} mediaName
+     * @returns Poster Paht
+     */
+    matchVideo(mediaName: string): Observable<any> {
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/matchvideo/${mediaName}`, null).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
     //export(fromType: string, toType: string, ): Observable<any> {
     //    return this.http.post(variables.BASE_API_URL + 'playlists/export/' + fromType + '/' + toType, null).map(res => {
     //        return res;

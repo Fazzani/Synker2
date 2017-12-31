@@ -60,6 +60,10 @@
                 <mat-icon class="mat-12" aria-label="Match picons" matTooltip="Match picons">format_paint</mat-icon>
                 <span>Match picons</span>
             </button>
+            <button mat-menu-item (click)="matchVideos()">
+                <mat-icon class="mat-12" aria-label="Match videos" matTooltip="Match videos">video_call</mat-icon>
+                <span>Match videos</span>
+            </button>
         </mat-menu>
 
     </mat-toolbar>
@@ -115,6 +119,9 @@
                 </button>
                 <button mat-icon-button color="primary" (click)="matchTvgByMediaAndCountry(row)" matTooltip="Match Tvg by media name and country">
                     <mat-icon class="mat-24" aria-label="">label</mat-icon>
+                </button>
+                <button mat-icon-button color="primary" (click)="matchVideo(row)" matTooltip="Match VOD">
+                    <mat-icon class="mat-24" aria-label="">video_label</mat-icon>
                 </button>
             </mat-cell>
         </ng-container>

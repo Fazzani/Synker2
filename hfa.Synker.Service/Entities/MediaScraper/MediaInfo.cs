@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TMDbLib.Objects.General;
 
 namespace hfa.Synker.Service.Entities.MediaScraper
 {
@@ -12,5 +13,7 @@ namespace hfa.Synker.Service.Entities.MediaScraper
         public string Id { get; set; }
         public DateTime? ReleaseDate { get; set; }
         public string OriginalName { get; set; }
+
+        public MediaType MediaType { get; set; }
     }
 }

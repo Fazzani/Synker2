@@ -54,5 +54,6 @@ namespace hfa.WebApi.Common
     public class GlobalOptions
     {
         public string TmdbAPI { get; set; }
+        public string TmdbPosterBaseUrl { get; set; }
     }
 }
