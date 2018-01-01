@@ -34,3 +34,14 @@ export interface Login {
     username: string;
     password: string;
 }
+
+export class AuthModel {
+    public userName: string;
+    public password: string;
+    public refreshToken: string;
+    public grantType: GrantType;
+}
+export enum GrantType {
+    password = 0,
+    refreshToken
+}

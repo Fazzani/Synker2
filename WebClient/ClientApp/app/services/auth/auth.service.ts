@@ -2,7 +2,7 @@
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BaseService } from '../base/base.service';
-import { AuthResponse, User, RegisterUser, Login } from '../../types/auth.type';
+import { AuthResponse, User, RegisterUser, Login, AuthModel } from '../../types/auth.type';
 // All the RxJS stuff we need
 import { JwtHelper, tokenNotExpired } from 'angular2-jwt';
 import { Observable } from 'rxjs/Observable';
@@ -70,7 +70,7 @@ export class AuthService extends BaseService {
      * 
      * @memberof AuthService
      */
-    public isAuthenticated(): void {
+    public isAuthenticated(): Observable<boolean> {
         // return a boolean reflecting 
         // whether or not the token is expired
         let res = tokenNotExpired('accessToken');
@@ -79,7 +79,9 @@ export class AuthService extends BaseService {
             this.getNewToken();
             res = tokenNotExpired('accessToken');
         }
+
         this.decodeToken();
+        return Observable.of(res);
     }
 
     /**
@@ -127,29 +129,34 @@ export class AuthService extends BaseService {
      */
     public getNewToken(): void {
 
-        let refreshToken: string = localStorage.getItem('refreshToken');
+        let refreshToken: string | null = localStorage.getItem('refreshToken');
+        let accessToken: string | null = localStorage.getItem('accessToken');
 
-        if (refreshToken != null) {
+        if (refreshToken != null && accessToken != null) {
 
             // Token endpoint & params.  
             let tokenEndpoint: string = this.TOKEN_ENDPOINT;
+            this.ConvertTokenToUser(accessToken).subscribe(user => {
+                if (user != null) {
+                    let params: AuthModel = <AuthModel>{
+                        grantType: 1,
+                        refreshToken: refreshToken,
+                        userName: user.email
+                    };
 
-            let params: any = {
-                grantType: 1,
-                refreshToken: refreshToken
-            };
+                    this.http.post(tokenEndpoint, params)
+                        .subscribe(
+                        (res: AuthResponse) => {
 
-            this.http.post(tokenEndpoint, params)
-                .subscribe(
-                (res: AuthResponse) => {
-
-                    // Successful if there's an access token in the response.  
-                    if (typeof res.accessToken !== 'undefined') {
-                        this.decodeToken();
-                        // Stores access token & refresh token.  
-                        this.store(res);
-                    }
-                });
+                            // Successful if there's an access token in the response.  
+                            if (typeof res.accessToken !== 'undefined') {
+                                this.decodeToken();
+                                // Stores access token & refresh token.  
+                                this.store(res);
+                            }
+                        });
+                }
+            }, err => console.log(err));
         }
     }
 
@@ -211,7 +218,7 @@ export class AuthService extends BaseService {
 
         this.redirectUrl = null;
 
-        this.user = null;
+        this.user = new BehaviorSubject(null);
 
         // Revokes token.  
         this.revokeToken();
@@ -245,6 +252,20 @@ export class AuthService extends BaseService {
             let jwtHelper: JwtHelper = new JwtHelper();
             this.authenticated.next(true);
             this.user.next(this.mapTokenToUserModel(jwtHelper.decodeToken(token)));
+        }
+    }
+
+    /**
+     * Get User Model from Token (decode jwt token)
+     * @param {any} token
+     * @returns
+     */
+    private ConvertTokenToUser(token: any): Observable<User> {
+        try {
+            let jwtHelper: JwtHelper = new JwtHelper();
+            return Observable.of(this.mapTokenToUserModel(jwtHelper.decodeToken(token)));
+        } catch (e) {
+            Observable.throw(e);
         }
 
     }

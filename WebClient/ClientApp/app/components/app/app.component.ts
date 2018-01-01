@@ -4,6 +4,8 @@ import './app.component.css'
 import { NotificationService } from '../../services/notification/notification.service';
 import { MatSnackBar } from '@angular/material';
 import { CommonService } from '../../services/common/common.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app',
@@ -14,7 +16,8 @@ export class AppComponent implements OnInit {
     color = 'primary';
     objLoaderStatus: boolean;
 
-    constructor(private notifService: NotificationService, public snackBar: MatSnackBar, private commonService: CommonService) {
+    constructor(private notifService: NotificationService, public snackBar: MatSnackBar, private commonService: CommonService,
+        private authService: AuthService, private router: Router) {
 
         this.objLoaderStatus = false;
 
@@ -29,6 +32,14 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
+
+        this.authService.authenticated.distinctUntilChanged().subscribe(isAuth => {
+            if (!isAuth) {
+                this.authService.redirectUrl = this.router.routerState.snapshot.url;
+                this.router.navigate(['/signin', { dialog: 'signin', modal: 'true' }]);
+            }
+        });
+
         this.commonService.loaderStatus.subscribe((val: boolean) => {
             console.log('new loader data : ', val);
             this.objLoaderStatus = val;

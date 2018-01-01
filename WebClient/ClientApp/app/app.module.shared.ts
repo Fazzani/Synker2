@@ -41,6 +41,7 @@ import { PlaylistDiffDialog } from './components/playlist/playlist.diff.componen
 import { SitePackService } from './services/sitepack/sitepack.service';
 import { SitePackComponent, SitePackModifyDialog } from './components/sitepack/sitepack.component';
 import { KeysPipe } from './pipes/enumKey.pipe';
+import { JwtInterceptor } from './infrastructure/JwtInterceptor';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -113,6 +114,10 @@ const appRoutes: Routes = [
         }, {
             provide: HTTP_INTERCEPTORS,
             useClass: TokenInterceptor,
+            multi: true
+        }, {
+            provide: HTTP_INTERCEPTORS,
+            useClass: JwtInterceptor,
             multi: true
         }]
 })
