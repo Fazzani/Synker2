@@ -8,6 +8,7 @@ import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
 import * as variables from '../../variables';
 import { picon } from '../../types/picon.type';
+import { TvgMedia } from '../../types/media.type';
 
 @Injectable()
 export class PiconService extends BaseService {
@@ -41,6 +42,12 @@ export class PiconService extends BaseService {
 
     synk(): Observable<ElasticResponse<picon>> {
         return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/synk`, null).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
+    match(model: TvgMedia[], distance: number = 90, shouldMatchChannelNumber: boolean = true): Observable<TvgMedia[]> {
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/match?distance=${distance}&shouldMatchChannelNumber=${shouldMatchChannelNumber}`, model).map(res => {
             return res;
         }).catch(this.handleError);
     }
