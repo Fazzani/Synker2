@@ -14,7 +14,9 @@ namespace hfa.Synker.Service.Services.Elastic
 {
     public class ElasticConnectionClient : IElasticConnectionClient
     {
-        private const string SITE_PACK_RETREIVE_COUNTRY_PIPELINE = "sitepack_retreive_country";
+        public const string SITE_PACK_RETREIVE_COUNTRY_PIPELINE = "sitepack_retreive_country";
+        public const string PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE = "picons_retreive_channel_number";
+
         private ConnectionSettings _settings;
         private ElasticClient _client;
         private static object syncRoot = new Object();
@@ -62,14 +64,25 @@ namespace hfa.Synker.Service.Services.Elastic
             }
 
             //Create sitepack_retreive_country
-            var pipe = Client.GetPipeline(r => r.Id(new Id(SITE_PACK_RETREIVE_COUNTRY_PIPELINE)));
-            if (pipe.Pipelines.Count == 0)
+            var pipeCountry = Client.GetPipeline(r => r.Id(new Id(SITE_PACK_RETREIVE_COUNTRY_PIPELINE)));
+            if (pipeCountry.Pipelines == null || pipeCountry.Pipelines.Count == 0)
             {
-                var respPipeSitePack = Client.PutPipeline("SITE_PACK_RETREIVE_COUNTRY_PIPELINE", f => f
+                var respPipeSitePack = Client.PutPipeline(new Id(SITE_PACK_RETREIVE_COUNTRY_PIPELINE), f => f
                  .Description("Used for retreiving country from source field")
                  .Processors(p => p.Script(s => s.Inline("if(ctx.source != null) { ctx.country =  /\\//.split(ctx.source)[4]; }"))));
 
                 _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(respPipeSitePack.DebugInformation);
+            }
+
+            //Create picons channel number pipeline
+            var pipeChannelNumber = Client.GetPipeline(r => r.Id(new Id(PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE)));
+            if (pipeChannelNumber.Pipelines == null || pipeChannelNumber.Pipelines.Count == 0)
+            {
+                var respPipePicons = Client.PutPipeline(new Id(PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE), f => f
+                 .Description("Used for retreiving channel number from picon name and add new field ch_number to store the value into")
+                 .Processors(p => p.Script(s => s.Inline("if(ctx.name != null) { Matcher m = /(?:[^\\+])(\\d{1,2})/.matcher(ctx.name); if(m!=null && m.find())  { ctx.ch_number = m.group(1); } }"))));
+
+                _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(respPipePicons.DebugInformation);
             }
 
             //Picon index

@@ -131,12 +131,8 @@ namespace Hfa.WebApi.Controllers
         [Route("sitepacks")]
         public async Task<IActionResult> SitePacksAsync([FromQuery]string filter, CancellationToken cancellationToken)
         {
-            var sitePacks = await _memoryCache.GetOrCreateAsync($"{CacheKeys.SitePacksKey}-{filter}", async entry =>
-            {
-                entry.SlidingExpiration = TimeSpan.FromHours(12);
-                var response = await _sitePackService.ListSitePackAsync(filter, cancellationToken: cancellationToken);
-                return response.Select(x => new { x.Site, x.Country }).Distinct();
-            });
+            var response = await _sitePackService.ListSitePackAsync(filter, cancellationToken: cancellationToken);
+            var sitePacks = response.Select(x => new { x.Site, x.Country });
             return new OkObjectResult(sitePacks);
         }
 

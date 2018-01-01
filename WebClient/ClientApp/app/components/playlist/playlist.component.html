@@ -68,6 +68,11 @@
 
     </mat-toolbar>
     <mat-table #table [dataSource]="dataSource" matSort class="noselect">
+        <!-- position -->
+        <ng-container matColumnDef="position">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Position </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row?.position}} </mat-cell>
+        </ng-container>
         <!-- icon Column -->
         <ng-container matColumnDef="tvg.logo">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Logo </mat-header-cell>
@@ -126,7 +131,7 @@
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected" class="noselect"></mat-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected" [class.disabled]="!row.enabled" class="noselect"></mat-row>
     </mat-table>
     <div class="container footer">
 

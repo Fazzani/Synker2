@@ -381,12 +381,8 @@ namespace Hfa.WebApi.Controllers
             if (playlistEntity == null)
                 return NotFound(playlistEntity);
 
-            //Matching Live TV
-            var list = playlistEntity.TvgMedias.Where(m => m.MediaType == MediaType.LiveTv).ToList();
-            if (onlyNotMatched)
-                list = list.Where(x => x.Tvg == null || string.IsNullOrEmpty(x.Tvg.Id)).ToList();
-            list
-                .Where(x => x.Tvg != null && x.Tvg.TvgSource != null)
+            playlistEntity.TvgMedias
+                .Where(m => m.MediaType == MediaType.LiveTv && (!onlyNotMatched || m.Tvg == null || string.IsNullOrEmpty(m.Tvg.Id)))
                 .AsParallel()
                 .WithCancellation(cancellationToken)
                 .ForAll(media =>
@@ -400,9 +396,9 @@ namespace Hfa.WebApi.Controllers
                   });
 
             //Matching movies
-            list = playlistEntity.TvgMedias.Where(m => m.MediaType == MediaType.Video).ToList();
+            var list = playlistEntity.TvgMedias.Where(m => m.MediaType == MediaType.Video).ToList();
             if (onlyNotMatched)
-                list = playlistEntity.TvgMedias.Where(x => x.Tvg == null || string.IsNullOrEmpty(x.Tvg.Logo)).ToList();
+                list = list.Where(x => x.Tvg == null || string.IsNullOrEmpty(x.Tvg.Logo)).ToList();
 
             list
                 .Where(x => x.Tvg != null && x.Tvg.TvgSource != null)
@@ -431,19 +427,17 @@ namespace Hfa.WebApi.Controllers
             if (playlistEntity == null)
                 return NotFound(playlistEntity);
 
-            var list = playlistEntity.TvgMedias.Where(m => m.MediaType == MediaType.Video).ToList();
-            if (onlyNotMatched)
-                list = list.Where(x => x.Tvg == null || string.IsNullOrEmpty(x.Tvg.Logo)).ToList();
             int limitRequest = 40;
 
-            list
+            playlistEntity.TvgMedias
+                .Where(m => m.MediaType == MediaType.Video)
                 .AsParallel()
                 .WithCancellation(cancellationToken)
                 .ForAll(media =>
                 {
                     while (limitRequest <= 0)
                     {
-                        _logger.LogInformation($"Scrapper Media limit TMDB (40 request/10s) was raeched {media.DisplayName}");
+                        _logger.LogInformation($"Scrapper Media limit TMDB (40 request/10s) was reached {media.DisplayName}");
                         Thread.Sleep(10001);
                         if (limitRequest <= 0)
                             Interlocked.Add(ref limitRequest, 40);
@@ -458,7 +452,7 @@ namespace Hfa.WebApi.Controllers
                         media.Tvg.Logo = matched.FirstOrDefault().PosterPath;
                     }
                 });
-
+           
             return Ok(PlaylistModel.ToModel(playlistEntity, Url));
         }
 
@@ -507,7 +501,7 @@ namespace Hfa.WebApi.Controllers
             using (var ms = new MemoryStream())
             using (var sourceProvider = FileProvider.Create(provider, providersOptions.Value, ms))
             using (var pl = new Playlist<TvgMedia>(sourceProvider))
-            using (var sourcePl = new Playlist<TvgMedia>(playlist.TvgMedias))
+            using (var sourcePl = new Playlist<TvgMedia>(playlist.TvgMedias.Where(x=>x.Enabled)))
             {
                 ms.Seek(0, SeekOrigin.Begin);
                 await pl.PushAsync(sourcePl, cancellationToken);

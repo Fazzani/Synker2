@@ -141,6 +141,15 @@ body {
     }
 }
 
+.disabled[role="row"] {
+    color: $primary-color-font-disabled;
+    transition: ease-in color 0.3s;
+
+    .mat-cell {
+        color: inherit !important;
+    }
+}
+
 .full-width {
     width: 95%;
 }
@@ -201,10 +210,10 @@ mat-dialog-container {
     }
 }
 
-.tab-content{
-    overflow:auto;
-    max-height:500px;
-    min-height:100px;
+.tab-content {
+    overflow: auto;
+    max-height: 500px;
+    min-height: 100px;
 }
 
 .mat-snack-bar-container {
@@ -216,6 +225,7 @@ mat-dialog-container {
     white-space: nowrap;
     overflow: hidden;
 }
+
 .footer {
     box-shadow: #121315 -1px -2px 10px 0px;
     position: fixed;
@@ -224,7 +234,8 @@ mat-dialog-container {
     flex-direction: row;
     width: 100%;
     background: $primary-color-bg-dark !important;
-    justify-content:flex-end;
+    justify-content: flex-end;
+
     .page-select {
         display: flex;
         align-items: center;
@@ -233,7 +244,7 @@ mat-dialog-container {
 
         .label {
             margin: 0 4px;
-            width:100%;
+            width: 100%;
         }
 
         .mat-form-field {
@@ -245,4 +256,12 @@ mat-dialog-container {
 .mat-paginator {
     background-color: transparent !important;
     display: flex;
+}
+
+.mat-checkbox, mat-slide-toggle {
+    display: inline-block;
+    margin-left: 32px;
+    flex: auto;
+    min-width: 0;
+    width: 180px;
 }

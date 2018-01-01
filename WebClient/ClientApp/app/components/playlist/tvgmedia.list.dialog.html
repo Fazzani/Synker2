@@ -29,7 +29,10 @@
             <mat-form-field floatPlaceholder="never">
                 <input matInput placeholder="Groups..." [(ngModel)]="group" (ngModelChange)="onChangeGroup($event)">
             </mat-form-field>
-
+            <!-- Enabled -->
+            <mat-slide-toggle [(ngModel)]="enabled" name="media.enabled" (ngModelChange)="onChangeEnabled(enabled)">
+                Enabled
+            </mat-slide-toggle>
         </mat-expansion-panel>
         <!-- Fix channel names -->
         <mat-expansion-panel (opened)="panelOpenState = true"

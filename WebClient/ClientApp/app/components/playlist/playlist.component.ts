@@ -40,7 +40,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     key: number;
     subscriptionTableEvent: Subscription;
 
-    displayedColumns = ['tvg.logo', 'name', 'displayName', 'lang', 'group', 'tvg.name', 'tvg.tvgIdentify', 'actions'];
+    displayedColumns = ['position', 'tvg.logo', 'name', 'displayName', 'lang', 'group', 'tvg.name', 'tvg.tvgIdentify', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
@@ -314,7 +314,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
      * Try match tvg with Sites defined in media
      */
     matchTvg(): void {
-        this.playlistService.matchtvg(this.playlistBS.getValue().publicId).subscribe(res => {
+        this.playlistService.matchtvg(this.playlistBS.getValue().publicId,false).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was matched with all sitepacks");
         });
@@ -408,6 +408,7 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
     keyUpSitePack = new Subject<any>();
     filterChannelName: string;
     selectedMediaType: MediaType;
+    enabled: boolean = true;
 
     constructor(private sitePackService: SitePackService, private commonService: CommonService,
         public dialogRef: MatDialogRef<TvgMediaListModifyDialog>,
@@ -442,6 +443,11 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
     onChangeGroup(event): void {
         console.log("Group was changed : ", this.group);
         this.data.forEach(m => m.group = this.group);
+    }
+
+    onChangeEnabled(enabled: boolean): void {
+        console.log("disabled was changed : ", enabled);
+        this.data.forEach(m => m.enabled = enabled);
     }
 
     onChangeMediaType(mediaType: number): void {
@@ -489,13 +495,13 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
 export class TvgSitesListModifyDialog implements OnInit, OnDestroy {
     tvgSites: any[] = [];
 
-    constructor(private playlistService: PlaylistService, private mediaRefService: MediaRefService,
+    constructor(private playlistService: PlaylistService, private sitePackService: SitePackService,
         public dialogRef: MatDialogRef<TvgSitesListModifyDialog>,
         @Inject(MAT_DIALOG_DATA) public data: PlaylistModel) {
     }
 
     ngOnInit(): void {
-        this.mediaRefService.tvgSites()
+        this.sitePackService.tvgSites()
             .flatMap(m => m.map(c => <any>({ id: c.id, site: c.site, country: c.country, selected: false })))
             .do(x => x.selected = this.data.tvgSites.findIndex(f => f == x.site) >= 0)
             .subscribe(m => this.tvgSites.push(m));

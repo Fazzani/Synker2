@@ -95,12 +95,12 @@ namespace hfa.Synker.Service.Services
 
             var tvgSites = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(s => s
                .Index(_elasticConnectionClient.ElasticConfig.SitePackIndex)
-               .Size(count)
+               .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
                .From(0)
                .Query(a => a.Wildcard(x => x.Field(f => f.Site).Value(filter)))
                , cancellationToken);
 
-            return tvgSites.Documents.Distinct(new DistinctTvgSiteBySite()).ToList();
+            return tvgSites.Documents.Distinct(new DistinctTvgSiteBySite()).Take(count).ToList();
         }
 
         public async Task<IBulkResponse> SaveAsync(List<SitePackChannel> sitepacks, CancellationToken cancellationToken)

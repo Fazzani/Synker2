@@ -22,24 +22,24 @@ export class PlaylistService extends BaseService {
         let params = new HttpParams();
         params = params.set("light", light ? "true" : "false");
 
-        return this.http.get(variables.BASE_API_URL + 'playlists/' + id, { params: params })
+        return this.http.get(`${variables.BASE_API_URL}${this.BaseUrl}/${id}`, { params: params })
             .catch(this.handleError);
     }
 
     list(query: QueryListBaseModel): Observable<PagedResult<PlaylistModel>> {
-        return this.http.post(variables.BASE_API_URL + 'playlists/search', query).map(res => {
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/search`, query).map(res => {
             return res;
         }).catch(this.handleError);
     }
 
     synk(model: PlaylistPostModel): Observable<PlaylistModel> {
-        return this.http.post(variables.BASE_API_URL + 'playlists/synk', model).map(res => {
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/synk`, model).map(res => {
             return res;
         }).catch(this.handleError);
     }
 
     executeHandlers(model: TvgMedia[]): Observable<TvgMedia[]> {
-        return this.http.post(variables.BASE_API_URL + 'playlists/handlers', model).map(res => {
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/handlers`, model).map(res => {
             return res;
         }).catch(this.handleError);
     }
@@ -51,19 +51,19 @@ export class PlaylistService extends BaseService {
     }
 
     match(id: string): Observable<PlaylistModel> {
-        return this.http.post(variables.BASE_API_URL + 'playlists/match/' + id, null).map(res => {
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/match/$${id}`, null).map(res => {
             return res;
         }).catch(this.handleError);
     }
 
-    matchtvg(id: string): Observable<PlaylistModel> {
-        return this.http.post(variables.BASE_API_URL + 'playlists/matchtvg/' + id, null).map(res => {
+    matchtvg(id: string, onlyNotMatched: boolean = true): Observable<PlaylistModel> {
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/matchtvg/${id}?onlyNotMatched=${onlyNotMatched}`, null).map(res => {
             return res;
         }).catch(this.handleError);
     }
 
-    matchFiltredTvgSites(id: string, onlyNotMatched: boolean): Observable<PlaylistModel> {
-        return this.http.post(variables.BASE_API_URL + 'playlists/matchfiltred/' + id + '?onlyNotMatched=' + onlyNotMatched, null).map(res => {
+    matchFiltredTvgSites(id: string, onlyNotMatched: boolean = true): Observable<PlaylistModel> {
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/matchfiltred/${id}?onlyNotMatched=${onlyNotMatched}`, null).map(res => {
             return res;
         }).catch(this.handleError);
     }
@@ -97,28 +97,28 @@ export class PlaylistService extends BaseService {
     //}
 
     diff(model: PlaylistPostModel): Observable<PlaylistModel> {
-        return this.http.post(variables.BASE_API_URL + 'playlists/diff', model).map(res => {
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/diff`, model).map(res => {
             return res;
         }).catch(this.handleError);
     }
 
     addByUrl(p: PlaylistPostModel): Observable<PlaylistModel> {
-        return this.http.post(variables.BASE_API_URL + 'playlists/create', p,
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/create`, p,
             { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' }).catch(this.handleError);
     }
 
     addByStream(p: PlaylistPostModel): Observable<PlaylistModel> {
-        return this.http.post(variables.BASE_API_URL + 'playlists/create/m3u', p,
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/create/m3u`, p,
             { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' }).catch(this.handleError);
     }
 
     update(p: PlaylistModel): Observable<PlaylistModel> {
-        return this.http.put(variables.BASE_API_URL + 'playlists/' + p.publicId, p,
+        return this.http.put(`${variables.BASE_API_URL}${this.BaseUrl}/${p.publicId}`, p,
             { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' }).catch(this.handleError);
     }
 
     updateLight(p: PlaylistModel): Observable<any> {
-        return this.http.put(variables.BASE_API_URL + 'playlists/light/' + p.publicId, p,
+        return this.http.put(`${variables.BASE_API_URL}${this.BaseUrl}/light/${p.publicId}`, p,
             { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' })
             .catch(this.handleError);
     }
