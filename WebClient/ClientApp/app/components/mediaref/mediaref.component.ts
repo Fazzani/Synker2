@@ -87,10 +87,8 @@ export class MediaRefComponent implements OnInit, OnDestroy {
      * Synchronize mediaRef from sitepack index
      */
     synk(): void {
-        this.commonService.displayLoader(true);
         this.mediaRefService.synk().subscribe(res => {
             this.snackBar.open("Medias referentiel was synchronized");
-            this.commonService.displayLoader(false);
         });
     }
 
@@ -98,11 +96,8 @@ export class MediaRefComponent implements OnInit, OnDestroy {
      * Synchronize all picons from github
      */
     synkPiconsGlobal(): void {
-        this.commonService.displayLoader(true);
-
         this.piconService.synk().subscribe(res => {
             this.snackBar.open("Picons index was synchronized");
-            this.commonService.displayLoader(false);
         });
     }
 
@@ -110,11 +105,9 @@ export class MediaRefComponent implements OnInit, OnDestroy {
      * Match mediaRef with picons
      */
     synkPiconsForMediaRef(): void {
-        this.commonService.displayLoader(true);
         this.mediaRefService.synkPicons().subscribe(res => {
             this.snackBar.open("Picons was synchronized for all mediaRef");
             this.reload();
-            this.commonService.displayLoader(false);
         });
     }
 

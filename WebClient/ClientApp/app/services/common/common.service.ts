@@ -12,6 +12,7 @@ export class CommonService {
     constructor() { }
 
     displayLoader(value: boolean) {
+        console.log('displayLoader => value', value);
         this.loaderStatus.next(value);
     }
 

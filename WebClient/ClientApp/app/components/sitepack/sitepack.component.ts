@@ -91,11 +91,9 @@ export class SitePackComponent implements OnInit, OnDestroy {
      * Synchronize all picons from github
      */
     synkPiconsGlobal(): void {
-        this.commonService.displayLoader(true);
 
         this.piconService.synk().subscribe(res => {
             this.snackBar.open("Picons index was synchronized");
-            this.commonService.displayLoader(false);
         });
     }
 
@@ -103,11 +101,9 @@ export class SitePackComponent implements OnInit, OnDestroy {
     // * Match mediaRef with picons
     // */
     //synkPiconsForMediaRef(): void {
-    //    this.commonService.displayLoader(true);
     //    this.mediaRefService.synkPicons().subscribe(res => {
     //        this.snackBar.open("Picons was synchronized for all mediaRef");
     //        this.reload();
-    //        this.commonService.displayLoader(false);
     //    });
     //}
 
@@ -284,8 +280,6 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
      */
     getData(): Observable<sitePackChannel[]> {
 
-        this.commonService.displayLoader(true);
-
         let pageSize = this.paginator.pageSize === undefined ? 25 : this.paginator.pageSize;
         let query = <SimpleQueryElastic>{ From: pageSize * (isNaN(this.paginator.pageIndex) ? 0 : this.paginator.pageIndex), IndexName: 'sitepack', Query: this.filter, Size: pageSize }
 
@@ -300,7 +294,6 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
         res.subscribe(x => {
             this.medias.next(x);
             this.data = x;
-            this.commonService.displayLoader(false);
         });
 
         return res;

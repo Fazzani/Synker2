@@ -57,8 +57,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     /** Called by Angular after media component initialized */
     ngOnInit(): void {
 
-        this.commonService.displayLoader(true);
-
         this.playlistBS = new BehaviorSubject<PlaylistModel>(null);
         this.dataSource = new MatTableDataSource<TvgMedia>([]);
 
@@ -89,7 +87,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.dataSource.paginator = this.paginator;
                 this.dataSource.sort = this.sort;
                 this.dataSource.filter = this.filter.nativeElement.value = this.pagelistState.filter;
-                this.commonService.displayLoader(false);
             }
         });
 
@@ -202,11 +199,9 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
     //#region CRUD
     save(): void {
-        this.commonService.displayLoader(true);
         console.log("saving playlist..");
         this.playlistService.update(this.playlistBS.getValue()).subscribe(res => {
             this.snackBar.open("Playlist was saved successfully");
-            this.commonService.displayLoader(false);
         });
     }
 
@@ -244,20 +239,16 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     * Synchronize all picons from github
     */
     synkPiconsGlobal(): void {
-        this.commonService.displayLoader(true);
 
         this.piconService.synk().subscribe(res => {
             this.snackBar.open("Picons index was synchronized");
-            this.commonService.displayLoader(false);
         });
     }
 
     synk(): void {
-        this.commonService.displayLoader(true);
         this.playlistService.synk(new PlaylistPostModel()).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was synchronized with source");
-            this.commonService.displayLoader(false);
         });
     }
 
@@ -265,7 +256,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
      * Execute handlers on selected medias
      */
     executeHandlers(): void {
-        this.commonService.displayLoader(true);
         this.playlistService.executeHandlers(this.dataSource.data.filter((v, i) => v.selected)).subscribe(res => {
             res.forEach(x => {
                 var index = this.playlistBS.value.tvgMedias.findIndex(f => f.id == x.id);
@@ -277,7 +267,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             });
             this.playlistBS.next(this.playlistBS.value);
             this.snackBar.open("Executing handlers finished");
-            this.commonService.displayLoader(false);
         });
     }
 
@@ -285,7 +274,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
      * Mach picons
      */
     matchPicons(): void {
-        this.commonService.displayLoader(true);
         this.playlistService.matchPicons(this.dataSource.data.filter((v, i) => v.selected)).subscribe(res => {
             res.forEach(x => {
                 var index = this.playlistBS.value.tvgMedias.findIndex(f => f.id == x.id);
@@ -297,7 +285,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             });
             this.playlistBS.next(this.playlistBS.value);
             this.snackBar.open("Matching picons finished");
-            this.commonService.displayLoader(false);
         });
     }
 
@@ -306,11 +293,9 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
      * Try match playlist VOD information
      */
     matchVideos(): void {
-        this.commonService.displayLoader(true);
         this.playlistService.matchVideos(this.playlistBS.getValue().publicId).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was matched with all VOD");
-            this.commonService.displayLoader(false);
         });
     }
 
@@ -318,11 +303,9 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
      * Try match media VOD information
      */
     matchVideo(media: TvgMedia): void {
-        this.commonService.displayLoader(true);
         this.playlistService.matchVideo(media.displayName).subscribe(res => {
             this.snackBar.open(`Matching with VOD ${media.displayName} ${res}`);
             media.tvg.logo = res.posterPath;
-            this.commonService.displayLoader(false);
         });
     }
     //#endregion
@@ -331,11 +314,9 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
      * Try match tvg with Sites defined in media
      */
     matchTvg(): void {
-        this.commonService.displayLoader(true);
         this.playlistService.matchtvg(this.playlistBS.getValue().publicId).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was matched with all sitepacks");
-            this.commonService.displayLoader(false);
         });
     }
 
@@ -344,11 +325,9 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
      * @param onlyNotMatched
      */
     matchFiltredTvgSites(onlyNotMatched: boolean = false): void {
-        this.commonService.displayLoader(true);
         this.playlistService.matchFiltredTvgSites(this.playlistBS.getValue().publicId, onlyNotMatched).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was matched with filtred TvgSites");
-            this.commonService.displayLoader(false);
         });
     }
 
@@ -357,14 +336,12 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
      * @param {TvgMedia} media
      */
     matchTvgByMediaAndCountry(media: TvgMedia): void {
-        this.commonService.displayLoader(true);
 
         this.sitePackService.matchTvgByMedia(media.displayName, media.lang).subscribe(sitepack => {
             if (sitepack != null) {
                 media.tvg.name = sitepack.channel_name;
                 media.tvg.id = sitepack.xmltv_id;
             }
-            this.commonService.displayLoader(false);
         });
     }
 

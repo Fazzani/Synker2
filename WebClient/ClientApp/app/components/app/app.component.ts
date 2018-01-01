@@ -9,8 +9,7 @@ import { Router } from '@angular/router';
 
 @Component({
     selector: 'app',
-    templateUrl: './app.component.html',
-    providers: [CommonService]
+    templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
     color = 'primary';
@@ -32,7 +31,6 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-
         this.authService.authenticated.distinctUntilChanged().subscribe(isAuth => {
             if (!isAuth) {
                 this.authService.redirectUrl = this.router.routerState.snapshot.url;
@@ -40,7 +38,7 @@ export class AppComponent implements OnInit {
             }
         });
 
-        this.commonService.loaderStatus.subscribe((val: boolean) => {
+        this.commonService.loaderStatus.distinctUntilChanged().debounceTime(2000).subscribe((val: boolean) => {
             console.log('new loader data : ', val);
             this.objLoaderStatus = val;
         });
