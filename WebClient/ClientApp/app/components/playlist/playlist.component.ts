@@ -272,9 +272,11 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
     /**
      * Mach picons
+     * @param {number = 90} distance minimum should match
+     * @param {boolean = true} shouldMatchChannelNumber should Match Channel Number
      */
-    matchPicons(): void {
-        this.playlistService.matchPicons(this.dataSource.data.filter((v, i) => v.selected)).subscribe(res => {
+    matchPicons(distance: number = 90, shouldMatchChannelNumber: boolean = true): void {
+        this.playlistService.matchPicons(this.dataSource.data.filter((v, i) => v.selected), distance, shouldMatchChannelNumber).subscribe(res => {
             res.forEach(x => {
                 var index = this.playlistBS.value.tvgMedias.findIndex(f => f.id == x.id);
 

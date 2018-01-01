@@ -44,8 +44,8 @@ export class PlaylistService extends BaseService {
         }).catch(this.handleError);
     }
 
-    matchPicons(model: TvgMedia[]): Observable<TvgMedia[]> {
-        return this.http.post(variables.BASE_API_URL + 'picons/match', model).map(res => {
+    matchPicons(model: TvgMedia[], distance: number = 90, shouldMatchChannelNumber: boolean = true): Observable<TvgMedia[]> {
+        return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/match?distance=${distance}&shouldMatchChannelNumber=${shouldMatchChannelNumber}`, model).map(res => {
             return res;
         }).catch(this.handleError);
     }

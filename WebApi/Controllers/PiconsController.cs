@@ -83,11 +83,11 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("match")]
-        public IActionResult Match([FromBody]List<TvgMedia> tvgmedias, CancellationToken cancellationToken)
+        public IActionResult Match([FromBody]List<TvgMedia> tvgmedias, [FromQuery] int distance = 90, [FromQuery] bool shouldMatchChannelNumber = true, CancellationToken cancellationToken = default(CancellationToken))
         {
-            tvgmedias.Where(x => x.MediaType == MediaType.LiveTv || x.MediaType == MediaType.Radio).AsParallel().WithCancellation(cancellationToken).ForAll(m =>
+            tvgmedias.AsParallel().WithCancellation(cancellationToken).ForAll(m =>
                 {
-                    var picons = _piconsService.MatchAsync(m.DisplayName, m.GetChannelNumber(), 90, cancellationToken).GetAwaiter().GetResult();
+                    var picons = _piconsService.MatchAsync(m.DisplayName, shouldMatchChannelNumber ? m.GetChannelNumber() : null, distance, cancellationToken).GetAwaiter().GetResult();
                     if (m.Tvg == null)
                         m.Tvg = new Tvg();
                     m.Tvg.Logo = picons.FirstOrDefault()?.RawUrl;
