@@ -81,3 +81,8 @@ export enum KEY {
     S = 's',
     T = 't'
 }
+
+export class Exception {
+    title: string;
+    message: string;
+}

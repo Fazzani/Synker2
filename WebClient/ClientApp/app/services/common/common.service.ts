@@ -1,15 +1,21 @@
 ﻿import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { Exception } from '../../types/common.type';
 
 @Injectable()
 export class CommonService {
 
     public loaderStatus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+    public error: BehaviorSubject<Exception> = new BehaviorSubject<Exception>(null);
 
     /**
      * @constructor
      */
     constructor() { }
+
+    displayError(title: string, message: string) {
+        this.error.next(<Exception>{ title: title, message: message });
+    }
 
     displayLoader(value: boolean) {
         console.log('displayLoader => value', value);

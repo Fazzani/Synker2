@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import 'hammerjs';
 import './app.component.css'
 import { NotificationService } from '../../services/notification/notification.service';
@@ -6,12 +6,14 @@ import { MatSnackBar } from '@angular/material';
 import { CommonService } from '../../services/common/common.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
+import { Exception } from '../../types/common.type';
 
 @Component({
     selector: 'app',
     templateUrl: './app.component.html'
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
+
     color = 'primary';
     objLoaderStatus: boolean;
 
@@ -42,5 +44,12 @@ export class AppComponent implements OnInit {
             console.log('new loader data : ', val);
             this.objLoaderStatus = val;
         });
+
+        this.commonService.error.distinctUntilChanged().filter(err => err != null).subscribe((err: Exception) => {
+            this.snackBar.open(err.message);
+        });
+    }
+
+    ngOnDestroy(): void {
     }
 }
