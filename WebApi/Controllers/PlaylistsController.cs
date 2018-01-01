@@ -390,8 +390,10 @@ namespace Hfa.WebApi.Controllers
                       var matched = _sitePackService.MatchMediaNameAndBySiteAsync(media.DisplayName, media.Tvg?.TvgSource.Site, cancellationToken).GetAwaiter().GetResult();
                       if (matched != null)
                       {
-                          media.Tvg.Id = matched.id;
-                          media.Tvg.Name = matched.Xmltv_id;
+                          media.Tvg.Id = matched.Xmltv_id;
+                          media.Tvg.Name = matched.Channel_name;
+                          media.Tvg.TvgIdentify = matched.id;
+                          media.Tvg.TvgSiteSource = matched.Site;
                       }
                   });
 
