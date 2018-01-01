@@ -387,7 +387,7 @@ namespace Hfa.WebApi.Controllers
                 .WithCancellation(cancellationToken)
                 .ForAll(media =>
                   {
-                      var matched = _sitePackService.MatchMediaNameAndBySiteAsync(media.DisplayName, media.Tvg.TvgSource.Site, cancellationToken).GetAwaiter().GetResult();
+                      var matched = _sitePackService.MatchMediaNameAndBySiteAsync(media.DisplayName, media.Tvg?.TvgSource.Site, cancellationToken).GetAwaiter().GetResult();
                       if (matched != null)
                       {
                           media.Tvg.Id = matched.id;

@@ -105,7 +105,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
                         if ((x as PageEvent).length === undefined)
                             this.paginator.pageIndex = 1;
                 }
-                
+
                 this.dataSource.paginator = this.paginator;
                 this.pagelistState.pageIndex = this.dataSource.paginator.pageIndex;
                 this.pagelistState.pageSize = this.dataSource.paginator.pageSize;
@@ -316,7 +316,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
      * Try match tvg with Sites defined in media
      */
     matchTvg(): void {
-        this.playlistService.matchtvg(this.playlistBS.getValue().publicId,false).subscribe(res => {
+        this.playlistService.matchtvg(this.playlistBS.getValue().publicId, false).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was matched with all sitepacks");
         });

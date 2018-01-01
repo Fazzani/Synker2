@@ -39,9 +39,13 @@ namespace hfa.Synker.Service.Services
             {
                 From = 0,
                 Size = 1,
-                Query = new TermQuery { Field = "site", Value = site }
-                & new MatchQuery { Field = "displayNames", Query = mediaName, Fuzziness = Fuzziness.Auto }
+                Query = new MatchQuery { Field = "displayNames", Query = mediaName, Fuzziness = Fuzziness.Auto }
             };
+
+            if (!string.IsNullOrEmpty(site))
+            {
+                req.Query &= new TermQuery { Field = "site", Value = site };
+            }
 
             var sitePacks = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(req, cancellationToken);
 
