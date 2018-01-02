@@ -454,7 +454,7 @@ namespace Hfa.WebApi.Controllers
                         media.Tvg.Logo = matched.FirstOrDefault().PosterPath;
                     }
                 });
-           
+
             return Ok(PlaylistModel.ToModel(playlistEntity, Url));
         }
 
@@ -503,11 +503,13 @@ namespace Hfa.WebApi.Controllers
             using (var ms = new MemoryStream())
             using (var sourceProvider = FileProvider.Create(provider, providersOptions.Value, ms))
             using (var pl = new Playlist<TvgMedia>(sourceProvider))
-            using (var sourcePl = new Playlist<TvgMedia>(playlist.TvgMedias.Where(x=>x.Enabled)))
+            using (var sourcePl = new Playlist<TvgMedia>(playlist.TvgMedias.Where(x => x.Enabled)))
             {
                 ms.Seek(0, SeekOrigin.Begin);
-                await pl.PushAsync(sourcePl, cancellationToken);
-                return File(ms.GetBuffer(), "text/plain");
+                return await pl.PushAsync(sourcePl, cancellationToken).ContinueWith(t =>
+                 {
+                     return File(ms.ToArray(), "text/plain");
+                 });
             }
         }
 
