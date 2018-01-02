@@ -12,6 +12,7 @@
                 </mat-panel-description>
             </mat-expansion-panel-header>
 
+            <!-- Lang -->
             <mat-form-field>
                 <mat-select placeholder="Lang" [(ngModel)]="selectedLang" (ngModelChange)="onChangeLang($event)" name="data.lang">
                     <mat-option *ngFor="let cult of cultures" [value]="cult">
@@ -19,6 +20,7 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
+            <!-- MadiaType -->
             <mat-form-field>
                 <mat-select placeholder="Media Type" [(ngModel)]="selectedMediaType" (ngModelChange)="onChangeMediaType(selectedMediaType)" name="data.mediatype">
                     <mat-option *ngFor="let mediatype of mediaTypes | keys" [value]="mediatype.value">
@@ -26,8 +28,14 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
+            <!-- Groups -->
             <mat-form-field floatPlaceholder="never">
-                <input matInput placeholder="Groups..." [(ngModel)]="group" (ngModelChange)="onChangeGroup($event)">
+                <input matInput placeholder="Groups..." [(ngModel)]="group" [matAutocomplete]="autoGroup" (keyup)="searchGroups$.next($event.target.value)">
+                <mat-autocomplete #autoGroup="matAutocomplete">
+                    <mat-option *ngFor="let g of groups" [value]="g" (onSelectionChange)="onChangeGroup(g)">
+                        <span>{{ g }}</span>
+                    </mat-option>
+                </mat-autocomplete>
             </mat-form-field>
             <!-- Enabled -->
             <mat-slide-toggle [(ngModel)]="enabled" name="media.enabled" (ngModelChange)="onChangeEnabled(enabled)">

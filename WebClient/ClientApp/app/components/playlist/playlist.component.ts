@@ -270,6 +270,8 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
+    //#region Matching
+
     /**
      * Mach picons
      * @param {number = 90} distance minimum should match
@@ -346,6 +348,21 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             }
         });
     }
+    //#endregion
+
+    /**
+     * Group channels
+     */
+    groupMedias(): void {
+        const source = Observable.from(this.dataSource.data);
+
+        source
+            .groupBy(x => x.group)
+            .mergeMap(group => group.toArray());
+
+    }
+
+
 
     /**
      * Select All media present in current playlist
@@ -370,6 +387,10 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         media.selected = !media.selected;
     }
 
+    /**
+     * GO TO PAGE
+     * @param index
+     */
     updateManualPage(index) {
         console.log(`go to page ${index}`);
         this.paginator.page.emit(<PageEvent>{ pageIndex: index });
@@ -406,11 +427,14 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
     sitePacks: sitePackChannel[];
     cultures: string[];
     selectedLang: string;
-    group: string;
     keyUpSitePack = new Subject<any>();
     filterChannelName: string;
     selectedMediaType: MediaType;
     enabled: boolean = true;
+
+    group: string;
+    groups: string[];
+    searchGroups$ = new Subject<string>();
 
     constructor(private sitePackService: SitePackService, private commonService: CommonService,
         public dialogRef: MatDialogRef<TvgMediaListModifyDialog>,
@@ -418,11 +442,23 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
 
         this.mediaTypes = MediaType;
 
+        // AutoComplete sitepacks
         const subscription = this.keyUpSitePack
             .map(event => '*' + event.target.value + '*')
             .debounceTime(1000)
             .distinctUntilChanged()
             .subscribe(search => sitePackService.sitePacks(search).subscribe(res => this.sitePacks = res));
+
+        //AutoComplete groups
+        this.searchGroups$
+            .map(m => m.toLowerCase())
+            .debounceTime(1000)
+            .distinctUntilChanged()
+            .do(x => { this.groups = [];})
+            .switchMap(m => this.data.filter(f => f.group != null && f.group.toLowerCase().indexOf(m) >= 0))
+            .map(x => x.group)
+            .distinct()
+            .subscribe(x => this.groups.push(x));
     }
 
     ngOnInit(): void {
