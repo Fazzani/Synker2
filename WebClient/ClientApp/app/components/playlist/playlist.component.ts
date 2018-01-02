@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject, AfterViewInit } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
-import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatTableDataSource, MatSelect } from '@angular/material';
+import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatTableDataSource, MatSelect, MatAutocompleteTrigger } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -25,6 +25,7 @@ import { sitePackChannel } from '../../types/sitepackchannel.type';
 import { PiconService } from '../../services/picons/picons.service';
 import { SitePackService } from '../../services/sitepack/sitepack.service';
 import { KeysPipe } from '../../pipes/enumKey.pipe';
+import { EventEmitter } from 'events';
 
 @Component({
     selector: 'playlist',
@@ -149,7 +150,9 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     openUpdateListDialog(): void {
         let dialogRef = this.dialog.open(TvgMediaListModifyDialog, {
             width: '550px',
-            data: this.dataSource.data.filter((v, i) => v.selected)
+            data: [
+                this.dataSource.data.filter((v, i) => v.selected),
+                Observable.from(this.dataSource.data.map(x => x.group).filter(x => x != null)).distinct().toArray()]
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -198,6 +201,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     // #endregion
 
     //#region CRUD
+
     save(): void {
         console.log("saving playlist..");
         this.playlistService.update(this.playlistBS.getValue()).subscribe(res => {
@@ -362,8 +366,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
     }
 
-
-
     /**
      * Select All media present in current playlist
      */
@@ -431,34 +433,50 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
     filterChannelName: string;
     selectedMediaType: MediaType;
     enabled: boolean = true;
+    data: TvgMedia[];
 
-    group: string;
+    groupsfiltred: string[];
     groups: string[];
-    searchGroups$ = new Subject<string>();
+    group: string;
+    searchGroups$ = new Subject<KeyboardEvent>();
+    @ViewChild(MatAutocompleteTrigger) autoTrigger: MatAutocompleteTrigger;
 
     constructor(private sitePackService: SitePackService, private commonService: CommonService,
         public dialogRef: MatDialogRef<TvgMediaListModifyDialog>,
-        @Inject(MAT_DIALOG_DATA) public data: TvgMedia[]) {
+        @Inject(MAT_DIALOG_DATA) public tup: [TvgMedia[], Observable<string[]>]) {
+
+        this.data = tup[0];
+        tup[1].subscribe(x => this.groups = x);
 
         this.mediaTypes = MediaType;
 
         // AutoComplete sitepacks
         const subscription = this.keyUpSitePack
             .map(event => '*' + event.target.value + '*')
-            .debounceTime(1000)
+            .debounceTime(500)
             .distinctUntilChanged()
             .subscribe(search => sitePackService.sitePacks(search).subscribe(res => this.sitePacks = res));
 
         //AutoComplete groups
         this.searchGroups$
-            .map(m => m.toLowerCase())
-            .debounceTime(1000)
+            .filter(x => x.keyCode != 13)
+            .map(m => m.key.toLowerCase())
             .distinctUntilChanged()
-            .do(x => { this.groups = [];})
-            .switchMap(m => this.data.filter(f => f.group != null && f.group.toLowerCase().indexOf(m) >= 0))
-            .map(x => x.group)
+            .do(() => { this.groupsfiltred = [] })
+            .map(m => this.groups.filter(f => f.toLowerCase().indexOf(this.group) >= 0))
             .distinct()
-            .subscribe(x => this.groups.push(x));
+            .subscribe(x => {
+                console.log(x);
+                this.groupsfiltred = x;
+            });
+
+        this.searchGroups$
+            .filter(x => x.keyCode == 13)
+            .subscribe(x => {
+                console.log(this.group);
+                this.autoTrigger.closePanel();
+                this.onChangeGroup(this.group);
+            });
     }
 
     ngOnInit(): void {
@@ -478,9 +496,9 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
         this.data.forEach(m => m.lang = this.selectedLang);
     }
 
-    onChangeGroup(event): void {
-        console.log("Group was changed : ", this.group);
-        this.data.forEach(m => m.group = this.group);
+    onChangeGroup(g): void {
+        console.log("Group was changed : ", g);
+        this.data.forEach(m => m.group = g);
     }
 
     onChangeEnabled(enabled: boolean): void {
