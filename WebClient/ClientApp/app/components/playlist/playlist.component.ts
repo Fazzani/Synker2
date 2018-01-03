@@ -104,12 +104,13 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
                     else
                         if ((x as PageEvent).length === undefined)
                             this.paginator.pageIndex = 1;
+                    this.dataSource.paginator = this.paginator;
+                    this.pagelistState.pageIndex = this.dataSource.paginator.pageIndex;
+                    this.pagelistState.pageSize = this.dataSource.paginator.pageSize;
                 }
 
-                this.dataSource.paginator = this.paginator;
-                this.pagelistState.pageIndex = this.dataSource.paginator.pageIndex;
-                this.pagelistState.pageSize = this.dataSource.paginator.pageSize;
-                this.dataSource.filter = this.pagelistState.filter = this.filter.nativeElement.value;
+                this.pagelistState.filter = this.filter.nativeElement.value;
+                this.dataSource.filter = (this.pagelistState.filter as string).toLowerCase().trim();
                 localStorage.setItem(Constants.MediaPageListKey + this.playlistId, JSON.stringify(this.pagelistState));
             });
     }
@@ -117,9 +118,9 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     private initPaginator() {
         this.paginator.pageIndex = this.pagelistState.pageIndex;
         this.paginator.pageSize = this.pagelistState.pageSize;
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-        this.dataSource.filter = this.filter.nativeElement.value = this.pagelistState.filter;
+        this.dataSource!.paginator = this.paginator;
+        this.dataSource!.sort = this.sort;
+        this.dataSource!.filter = this.filter.nativeElement.value = this.pagelistState.filter;
     }
 
     reload(): void {
@@ -199,7 +200,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             width: '550px',
             data: [
                 this.dataSource.data.filter((v, i) => v.selected),
-                Observable.from(this.dataSource.data.map(x => x.group.toLowerCase()).filter(x => x != null)).distinct().toArray()]
+                Observable.from(this.dataSource.data.filter(f => f.group != null).map(x => x.group.toLowerCase())).distinct().toArray()]
         });
 
         dialogRef.afterClosed().subscribe(result => {
