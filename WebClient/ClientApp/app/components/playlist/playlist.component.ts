@@ -152,7 +152,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             width: '550px',
             data: [
                 this.dataSource.data.filter((v, i) => v.selected),
-                Observable.from(this.dataSource.data.map(x => x.group).filter(x => x != null)).distinct().toArray()]
+                Observable.from(this.dataSource.data.map(x => x.group.toLowerCase()).filter(x => x != null)).distinct().toArray()]
         });
 
         dialogRef.afterClosed().subscribe(result => {
