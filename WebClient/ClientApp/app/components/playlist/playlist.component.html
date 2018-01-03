@@ -131,7 +131,8 @@
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected" [class.disabled]="!row.enabled" class="noselect"></mat-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" (mousedown)="onSelectionStart(row.position)" 
+        (mouseenter)="onSelection(row.position)" (mouseup)="onSelectionEnd()"  (click)="toggleSelected(row, $event)" [class.active]="row.selected" [class.disabled]="!row.enabled" class="noselect"></mat-row>
     </mat-table>
     <div class="container footer">
 

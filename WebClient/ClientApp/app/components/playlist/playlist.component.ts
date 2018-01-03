@@ -50,6 +50,9 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     playlistId: string;
     playlistBS: BehaviorSubject<PlaylistModel> | null;
     pagelistState: PageListState;
+    mouseDown: boolean = false;
+    select: boolean = false;
+
     /** media ctor */
     constructor(private route: ActivatedRoute, private piconService: PiconService, private playlistService: PlaylistService,
         private sitePackService: SitePackService, private commonService: CommonService,
@@ -123,6 +126,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.ngOnInit();
     }
 
+    //#region row selection
     handleKeyboardEvent(event: KeyboardEvent) {
         console.log(event);
         //Select ALL
@@ -137,6 +141,47 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
                 .forEach(m => m.selected = !m.selected);
         }
     }
+
+    onSelectionStart(position) {
+        this.mouseDown = true;
+        this.select = !this.dataSource.data.filter(x => x.position == position)[0].selected;
+    }
+    onSelection(position) {
+        if (!this.mouseDown)
+            return;
+
+        console.log("Selected!", this.select, position);
+        this.dataSource.data.filter(x => x.position == position)[0].selected = this.select;
+    }
+    onSelectionEnd() {
+        this.mouseDown = false;
+    }
+
+
+    /**
+     * Select All media present in current playlist
+     */
+    selectAll() {
+        this.dataSource.data.forEach(x => x.selected = true);
+    }
+
+    /**
+     * Toggle Selection on selected medias in current playlist
+     * @param media
+     * @param event
+     */
+    toggleSelected(media: TvgMedia, event: any): void {
+        //console.log('toggleSelected ', media);
+        //console.log(event);
+        if (!event.ctrlKey) {
+            this.dataSource.data.filter((v, i) => v.id != media.id).forEach((m, i) => {
+                m.selected = false;
+            });
+        }
+        media.selected = !media.selected;
+    }
+
+    //#endregion
 
     ngAfterViewInit() {
         console.log('ngAfterViewInit _____________________________________________');
@@ -357,38 +402,12 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     //#endregion
 
     /**
-     * Group channels
+     * Group medias
      */
     groupMedias(): void {
-        const source = Observable.from(this.dataSource.data);
-
-        source
+        Observable.from(this.dataSource.data)
             .groupBy(x => x.group)
             .mergeMap(group => group.toArray());
-
-    }
-
-    /**
-     * Select All media present in current playlist
-     */
-    selectAll() {
-        this.dataSource.data.forEach(x => x.selected = true);
-    }
-
-    /**
-     * Toggle Selection on selected medias in current playlist
-     * @param media
-     * @param event
-     */
-    toggleSelected(media: TvgMedia, event: any): void {
-        //console.log('toggleSelected ', media);
-        //console.log(event);
-        if (!event.ctrlKey) {
-            this.dataSource.data.filter((v, i) => v.id != media.id).forEach((m, i) => {
-                m.selected = false;
-            });
-        }
-        media.selected = !media.selected;
     }
 
     /**
