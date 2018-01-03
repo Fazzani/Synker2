@@ -60,21 +60,19 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
         this.playlistBS = new BehaviorSubject<PlaylistModel>(null);
         this.dataSource = new MatTableDataSource<TvgMedia>([]);
-
         this.paginator.pageSizeOptions = [50, 100, 250, 1000];
-        this.pagelistState = this.commonService.JsonToObject<PageListState>(localStorage.getItem(Constants.MediaPageListKey + this.playlistId))
-        if (this.pagelistState == null)
-            this.pagelistState = <PageListState>{ filter: "", pageIndex: 1, pageSize: this.paginator.pageSizeOptions[0] };
-
-        console.log('pagelistState => ', this.pagelistState);
-
-        this.paginator.pageIndex = this.pagelistState.pageIndex;
-        this.paginator.pageSize = this.pagelistState.pageSize;
-        this.dataSource.paginator = this.paginator;
 
         this.routeSub = this.route.params.subscribe(params => {
             this.playlistId = params['id']; // (+) converts string 'id' to a number
             console.log('Loading playlist ', this.playlistId);
+            this.pagelistState = this.commonService.JsonToObject<PageListState>(localStorage.getItem(Constants.MediaPageListKey + this.playlistId))
+            if (this.pagelistState == null)
+                this.pagelistState = <PageListState>{ filter: "", pageIndex: 1, pageSize: this.paginator.pageSizeOptions[0] };
+
+            console.log('pagelistState => ', this.pagelistState);
+
+            this.initPaginator();
+
             // In a real app: dispatch action to load the details here.
             this.playlistService.get(this.playlistId, false).subscribe(x => {
                 this.playlistBS.next(x);
@@ -85,9 +83,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             console.log('playlist updated');
             if (x != null && x.tvgMedias != null) {
                 this.dataSource = new MatTableDataSource<TvgMedia>(x.tvgMedias);
-                this.dataSource.paginator = this.paginator;
-                this.dataSource.sort = this.sort;
-                this.dataSource.filter = this.filter.nativeElement.value = this.pagelistState.filter;
+                this.initPaginator();
             }
         });
 
@@ -115,6 +111,14 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             });
     }
 
+    private initPaginator() {
+        this.paginator.pageIndex = this.pagelistState.pageIndex;
+        this.paginator.pageSize = this.pagelistState.pageSize;
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.dataSource.filter = this.filter.nativeElement.value = this.pagelistState.filter;
+    }
+
     reload(): void {
         this.ngOnInit();
     }
@@ -136,8 +140,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
     ngAfterViewInit() {
         console.log('ngAfterViewInit _____________________________________________');
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
     }
 
     ngOnDestroy() {
