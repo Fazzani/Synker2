@@ -25,3 +25,8 @@ artifacts:
  - path: .\WebApi\artifactsWebApi
    name: WebApi
    type: WebDeployPackage
+deploy:
+  - provider: Environment
+    name: Synker Api Prod
+    on:
+      branch: Develop

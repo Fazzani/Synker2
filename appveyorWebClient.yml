@@ -17,7 +17,7 @@ environment:
 matrix:
   fast_finish: true
 install:
-  - choco install googlechrome -y 
+  - choco install googlechrome -y --ignore-checksums
   - ps: Install-Product node $Env:nodejs_version
   - npm i -g npm@latest
   - npm i -g webpack@latest
@@ -46,3 +46,8 @@ test_script:
   - cmd: cd ../hfa.synker.batch.test/
   - cmd: dotnet xunit -appveyor -notrait "Category=Integration"
   - cmd: cd ../WebClient && npm run test:ci
+deploy:
+  - provider: Environment
+    name: Synker WebClient Prod
+    on:
+      branch: Develop
