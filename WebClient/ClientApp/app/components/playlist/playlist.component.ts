@@ -26,6 +26,7 @@ import { PiconService } from '../../services/picons/picons.service';
 import { SitePackService } from '../../services/sitepack/sitepack.service';
 import { KeysPipe } from '../../pipes/enumKey.pipe';
 import { EventEmitter } from 'events';
+import { GroupsDialog } from '../group/groups.component';
 
 @Component({
     selector: 'playlist',
@@ -223,6 +224,13 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
         dialogRef.afterClosed().subscribe(result => {
             this.snackBar.open(media.displayName + " was modified", "", { duration: snakbar_duration });
+        });
+    }
+
+    openGroupsDialog(): void {
+        let dialogRef = this.dialog.open(GroupsDialog, {
+            width: '550px',
+            data: this.playlistBS.getValue()
         });
     }
 

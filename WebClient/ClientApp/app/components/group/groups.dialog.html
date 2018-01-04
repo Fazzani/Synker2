@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Playlist groups</h2>
+<mat-dialog-content>
+    <mat-grid-list cols="3" rowHeight="40px">
+        <mat-grid-tile *ngFor="let group of groupMedias | async">
+            <mat-icon mat-list-icon>folder</mat-icon>
+            <h4 mat-line class="group-name" *ngIf="group.group != null; else nothing">{{group.group}}</h4>
+            <ng-template #nothing><h4 mat-line class="group-name">Not assigned</h4></ng-template>
+            <p mat-line style="padding-left:5px"> {{group.count}} </p>
+        </mat-grid-tile>
+    </mat-grid-list>
+</mat-dialog-content>
+<mat-action-row class="action-row-bottom">
+    <button mat-raised-button (click)="dialogRef.close()">Close</button>
+</mat-action-row>

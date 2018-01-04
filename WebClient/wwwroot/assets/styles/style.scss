@@ -265,3 +265,14 @@ mat-dialog-container {
     min-width: 0;
     width: 180px;
 }
+
+.mat-grid-tile {
+    .mat-figure {
+        justify-content: flex-start !important;
+
+        .group-name {
+            padding-left: 5px;
+            color: brown
+        }
+    }
+}
