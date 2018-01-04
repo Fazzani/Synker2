@@ -67,7 +67,7 @@
         </mat-menu>
 
     </mat-toolbar>
-    <mat-table #table [dataSource]="dataSource" matSort class="noselect">
+    <mat-table #table [dataSource]="dataSource" matSort class="noselect" [trackBy]="trackByPosition">
         <!-- position -->
         <ng-container matColumnDef="position">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Position </mat-header-cell>

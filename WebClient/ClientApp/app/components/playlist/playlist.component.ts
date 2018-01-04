@@ -193,6 +193,8 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.routeSub.unsubscribe();
     }
 
+    trackByPosition = (index, item) => +item.position;
+
     // #region dialogs
 
     openUpdateListDialog(): void {
