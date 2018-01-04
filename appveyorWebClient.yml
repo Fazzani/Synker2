@@ -17,7 +17,7 @@ environment:
 matrix:
   fast_finish: true
 install:
-  - choco install googlechrome
+  - choco install googlechrome -y 
   - ps: Install-Product node $Env:nodejs_version
   - npm i -g npm@latest
   - npm i -g webpack@latest
