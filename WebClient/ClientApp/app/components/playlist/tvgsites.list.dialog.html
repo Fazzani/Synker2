@@ -5,12 +5,12 @@
     </mat-form-field>
 </div>
 <mat-dialog-content style="margin-top:70px">
-    <table>
-        <tr *ngFor="let tvg of tvgSites | search:'site':query">
-            <td>{{tvg.site}} (<small>{{tvg.country}}</small>)</td>
-            <td><mat-checkbox [(ngModel)]="tvg.selected"></mat-checkbox></td>
-        </tr>
-    </table>
+    <mat-selection-list >
+        <mat-list-option *ngFor="let tvg of tvgSites | search:'site':query" [selected]="tvg.selected" (selectionChange)="tvg.selected = $event.selected">
+            {{tvg.site}} : {{tvg.country}} 
+        </mat-list-option>
+    </mat-selection-list>
+
 </mat-dialog-content>
 
 <mat-action-row>

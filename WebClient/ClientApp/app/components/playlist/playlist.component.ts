@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject, AfterViewInit } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
-import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatTableDataSource, MatSelect, MatAutocompleteTrigger } from '@angular/material';
+import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatTableDataSource, MatSelect, MatAutocompleteTrigger, MatSelectionListChange } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -579,7 +579,7 @@ export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
     templateUrl: './tvgsites.list.dialog.html'
 })
 export class TvgSitesListModifyDialog implements OnInit, OnDestroy {
-    tvgSites: any[] = [];
+    tvgSites: sitePackChannel[] = [];
 
     constructor(private playlistService: PlaylistService, private sitePackService: SitePackService,
         public dialogRef: MatDialogRef<TvgSitesListModifyDialog>,
@@ -588,12 +588,12 @@ export class TvgSitesListModifyDialog implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.sitePackService.tvgSites()
-            .flatMap(m => m.map(c => <any>({ id: c.id, site: c.site, country: c.country, selected: false })))
+            .flatMap(m => m)
             .do(x => x.selected = this.data.tvgSites.findIndex(f => f == x.site) >= 0)
-            .subscribe(m => this.tvgSites.push(m));
-    }
-
-    onChange(event): void {
+            .subscribe(m => {
+                this.tvgSites.push(m);
+                this.tvgSites.sort(this.compareFn);
+            });
     }
 
     save(): void {
@@ -601,6 +601,10 @@ export class TvgSitesListModifyDialog implements OnInit, OnDestroy {
         this.data.tvgSites = this.tvgSites.filter(x => x.selected).map(x => x.site);
         this.playlistService.updateLight(this.data).subscribe(ok => this.dialogRef.close());
     }
+
+    compareFn = (a: sitePackChannel, b: sitePackChannel) =>
+        (a.selected === b.selected) ? 0 : a.selected ? -1 : 1;
+
     onNoClick(): void {
         this.dialogRef.close();
     }
@@ -608,3 +612,4 @@ export class TvgSitesListModifyDialog implements OnInit, OnDestroy {
     ngOnDestroy(): void {
     }
 }
+
