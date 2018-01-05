@@ -13,7 +13,7 @@ export class BaseService {
     constructor(protected http: HttpClient, protected BaseUrl: string) { }
 
     search<T>(query: SimpleQueryElastic): Observable<ElasticResponse<T>> {
-        return this.http.post(variables.BASE_API_URL + `${this.BaseUrl}/_searchstring`, query).map(res => {
+        return this.http.post(variables.BASE_API_URL + `${this.BaseUrl}/_searchstring`, query).map((res : ElasticResponse<T>) => {
             return res;
         }).catch(this.handleError);
     }
