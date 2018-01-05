@@ -53,6 +53,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     pagelistState: PageListState;
     mouseDown: boolean = false;
     select: boolean = false;
+    atLeastOneSelected: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
     /** media ctor */
     constructor(private route: ActivatedRoute, private piconService: PiconService, private playlistService: PlaylistService,
@@ -88,6 +89,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             if (x != null && x.tvgMedias != null) {
                 this.dataSource = new MatTableDataSource<TvgMedia>(x.tvgMedias);
                 this.initPaginator();
+
             }
         });
 
@@ -155,14 +157,15 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     onSelectionEnd() {
         this.mouseDown = false;
+        this.atLeastOneSelected.next(this.dataSource.data.filter(f => f.selected).length);
     }
-
 
     /**
      * Select All media present in current playlist
      */
     selectAll() {
         this.dataSource.data.forEach(x => x.selected = true);
+        this.atLeastOneSelected.next(this.dataSource.data.filter(f => f.selected).length);
     }
 
     /**
@@ -179,6 +182,8 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             });
         }
         media.selected = !media.selected;
+
+        this.atLeastOneSelected.next(this.dataSource.data.filter(f => f.selected).length);
     }
 
     //#endregion
@@ -190,6 +195,62 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     ngOnDestroy() {
         // this.subscriptionTableEvent.unsubscribe();
         this.routeSub.unsubscribe();
+    }
+
+
+    /**
+     * Switch media position
+     * @param {TvgMedia} x
+     * @param {TvgMedia} y
+     */
+    switchPosition(x: number, y: number) {
+        let p = this.dataSource.data[x];
+        this.dataSource.data[x].position = this.dataSource.data[y].position;
+        this.dataSource.data[y].position = p.position;
+        this.dataSource.data[x] = this.dataSource.data[y];
+        this.dataSource.data[y] = p;
+    }
+
+    moveUp = (index: number) => {
+        let selectedItems = this.dataSource.data.filter(x => x.selected);
+        selectedItems.forEach((x, i) => {
+            let index = this.dataSource.data.indexOf(x);
+            let index2 = index + selectedItems.length;
+            this.switchPosition(index, index2);
+        });
+    };
+
+    moveDown = (index: number) => {
+        let selectedItems = this.dataSource.data.filter(x => x.selected);
+        selectedItems.forEach((x, i) => {
+            let index = this.dataSource.data.indexOf(x);
+            let index2 = index + selectedItems.length;
+            this.switchPosition(index, index2);
+        });
+    };
+
+    /**
+     * Reorgonize medias
+     * @returns
+     */
+    orgonizeMedias(): void {
+        //this.dataSource.data
+        //    .sort((a, b) => a.displayName === b.displayName ? 0 : a.displayName > b.displayName ? 1 : -1)
+        //    .sort((a, b) => a.group === b.group ? 0 : a.group > b.group ? 1 : -1)
+        //    .forEach((t, i) => t.position = ++i);
+        let counter: number = 1;
+        Observable
+            .from(this.dataSource.data)
+            .groupBy(x => x.group)
+            .mergeMap(x => x
+                .toArray()
+                .map(m => m.sort((a, b) => a.displayName === b.displayName ? 0 : a.displayName > b.displayName ? 1 : -1)))
+            .flatMap(x => x)
+            .do(x => console.log(x.group))
+            .map((t, i) => {
+                t.position = counter++;
+                return t;
+            }).subscribe(null);
     }
 
     trackByPosition = (index, item) => +item.position;
@@ -305,7 +366,10 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
-    synk(): void {
+    /**
+     * Force reset from source
+     */
+    reset(): void {
         this.playlistService.synk(new PlaylistPostModel()).subscribe(res => {
             this.playlistBS.next(res);
             this.snackBar.open("Playlist was synchronized with source");
