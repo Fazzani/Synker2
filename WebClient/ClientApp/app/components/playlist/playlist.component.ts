@@ -99,16 +99,14 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
                 if (!this.dataSource) { return; }
                 console.log("subscriptionTableEvent => ", x);
-                if (x as PageEvent) {
-                    if ((x as PageEvent).pageIndex !== undefined)
-                        this.paginator.pageIndex = (x as PageEvent).pageIndex;
-                    else
-                        if ((x as PageEvent).length === undefined)
-                            this.paginator.pageIndex = 1;
-                    this.dataSource.paginator = this.paginator;
-                    this.pagelistState.pageIndex = this.dataSource.paginator.pageIndex;
-                    this.pagelistState.pageSize = this.dataSource.paginator.pageSize;
+                this.paginator.pageIndex = 0;
+                if (x as PageEvent && (x as PageEvent).pageIndex !== undefined) {
+                    this.paginator.pageIndex = (x as PageEvent).pageIndex;
                 }
+
+                this.dataSource.paginator = this.paginator;
+                this.pagelistState.pageIndex = this.dataSource.paginator.pageIndex;
+                this.pagelistState.pageSize = this.dataSource.paginator.pageSize;
 
                 this.pagelistState.filter = this.filter.nativeElement.value;
                 this.dataSource.filter = (this.pagelistState.filter as string).toLowerCase().trim();
