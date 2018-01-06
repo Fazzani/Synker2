@@ -43,6 +43,7 @@ import { SitePackComponent, SitePackModifyDialog } from './components/sitepack/s
 import { KeysPipe } from './pipes/enumKey.pipe';
 import { JwtInterceptor } from './infrastructure/JwtInterceptor';
 import { GroupsDialog } from './components/group/groups.component';
+import { MatchTvgDialog } from './components/matchTvg/matchTvg.component';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -80,6 +81,7 @@ const appRoutes: Routes = [
         PlaylistDiffDialog,
         SitePackModifyDialog,
         GroupsDialog,
+        MatchTvgDialog,
         SearchPipe,
         KeysPipe
     ],
@@ -96,7 +98,7 @@ const appRoutes: Routes = [
         RouterModule.forRoot(appRoutes, { enableTracing: false })
     ],
     entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, MediaRefModifyDialog, TvgMediaListModifyDialog,
-        TvgSitesListModifyDialog, PlaylistAddDialog, PlaylistModifyDialog, PlaylistDiffDialog, SitePackModifyDialog, GroupsDialog],
+        TvgSitesListModifyDialog, PlaylistAddDialog, PlaylistModifyDialog, PlaylistDiffDialog, SitePackModifyDialog, GroupsDialog, MatchTvgDialog],
     providers: [
         CommonService,
         TvgMediaService,

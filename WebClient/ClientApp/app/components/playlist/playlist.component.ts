@@ -26,6 +26,8 @@ import { SitePackService } from '../../services/sitepack/sitepack.service';
 import { KeysPipe } from '../../pipes/enumKey.pipe';
 import { EventEmitter } from 'events';
 import { GroupsDialog } from '../group/groups.component';
+import { TvgMediaService } from '../../services/tvgmedia/tvgmedia.service';
+import { MatchTvgDialog } from '../matchTvg/matchTvg.component';
 
 @Component({
     selector: 'playlist',
@@ -55,7 +57,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
     /** media ctor */
     constructor(private route: ActivatedRoute, private piconService: PiconService, private playlistService: PlaylistService,
-        private sitePackService: SitePackService, private commonService: CommonService,
+        private sitePackService: SitePackService, private commonService: CommonService, private tvgMediaService: TvgMediaService,
         public dialog: MatDialog, public snackBar: MatSnackBar) {
     }
 
@@ -99,7 +101,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
                         }
                     };
                 this.initPaginator();
-
             }
         });
 
@@ -331,6 +332,17 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
+    openMatchTvgDialog(): void {
+        let dialogRef = this.dialog.open(MatchTvgDialog, {
+            width: '800px',
+            data: [this.dataSource.data, this.playlistBS.getValue().tvgSites]
+        });
+
+        dialogRef.afterClosed().subscribe((result : Array<TvgMedia>) => {
+            this.snackBar.open("Matching Tvg finished", "", { duration: snakbar_duration });
+        });
+    }
+
     // #endregion
 
     //#region CRUD
@@ -454,40 +466,8 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     //#endregion
 
-    /**
-     * Try match tvg with Sites defined in media
-     */
-    matchTvg(): void {
-        this.playlistService.matchtvg(this.playlistBS.getValue().publicId, false).subscribe(res => {
-            this.playlistBS.next(res);
-            this.snackBar.open("Playlist was matched with all sitepacks");
-        });
-    }
-
-    /**
-     * Match with TvgSites defined on the playlist
-     * @param onlyNotMatched
-     */
-    matchFiltredTvgSites(onlyNotMatched: boolean = false): void {
-        this.playlistService.matchFiltredTvgSites(this.playlistBS.getValue().publicId, onlyNotMatched).subscribe(res => {
-            this.playlistBS.next(res);
-            this.snackBar.open("Playlist was matched with filtred TvgSites");
-        });
-    }
-
-    /**
-     * Find tvg for median name  and country
-     * @param {TvgMedia} media
-     */
-    matchTvgByMediaAndCountry(media: TvgMedia): void {
-
-        this.sitePackService.matchTvgByMedia(media.displayName, media.lang).subscribe(sitepack => {
-            if (sitepack != null) {
-                media.tvg.name = sitepack.channel_name;
-                media.tvg.id = sitepack.xmltv_id;
-            }
-        });
-    }
+   
+    
     //#endregion
 
     /**

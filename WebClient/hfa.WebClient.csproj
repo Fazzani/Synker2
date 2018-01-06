@@ -39,6 +39,7 @@
     <None Remove="ClientApp\app\services\notification\notification.service.ts" />
     <None Remove="ClientApp\app\types\auth.type.ts" />
     <None Remove="ClientApp\app\types\elasticQuery.type.ts" />
+    <None Remove="ClientApp\app\types\matchTvgPostModel.ts" />
     <None Remove="ClientApp\app\types\picon.type.ts" />
     <None Remove="ClientApp\app\types\xmltv.type.ts" />
     <None Remove="ClientApp\app\variables.ts" />
@@ -66,6 +67,7 @@
     <TypeScriptCompile Include="ClientApp\app\services\tvgmedia\tvgmedia.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\epg\epg.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\common.type.ts" />
+    <TypeScriptCompile Include="ClientApp\app\types\matchTvgPostModel.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\media.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\auth.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\elasticQuery.type.ts" />

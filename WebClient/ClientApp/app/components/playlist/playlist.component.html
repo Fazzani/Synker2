@@ -52,13 +52,9 @@
                 <mat-icon class="mat-12" aria-label="Force reset from source" matTooltip="Force reset from source">autorenew</mat-icon>
                 <span>Force reset from source</span>
             </button>
-            <button mat-menu-item (click)="matchFiltredTvgSites()">
-                <mat-icon class="mat-12" aria-label="Match Filtred tvgSites" matTooltip="Match Filtred tvgSites">settings_ethernet</mat-icon>
-                <span>Match Filtred tvgSites</span>
-            </button>
-            <button mat-menu-item (click)="matchTvg()">
-                <mat-icon class="mat-12" aria-label="Match tvg" matTooltip="">settings_ethernet</mat-icon>
-                <span>Match tvg specified in medias</span>
+            <button mat-menu-item (click)="openMatchTvgDialog()">
+                <mat-icon class="mat-12" aria-label="Match tvg" matTooltip="Match tvg">settings_ethernet</mat-icon>
+                <span>Match tvg</span>
             </button>
             <button mat-menu-item (click)="executeHandlers()" *ngIf="(atLeastOneSelected|async) > 0">
                 <mat-icon class="mat-12" aria-label="Execute Handlers" matTooltip="Execute Handlers">pan_tool</mat-icon>

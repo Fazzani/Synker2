@@ -67,6 +67,33 @@ namespace hfa.Synker.Service.Services
             return sitePacks.Documents.FirstOrDefault();
         }
 
+        public async Task<SitePackChannel> MatchTvgAsync(string mediaName, string country, IEnumerable<string> tvgSites, double minScore, CancellationToken cancellationToken)
+        {
+            var req = new SearchRequest<SitePackChannel>
+            {
+                From = 0,
+                Size = 1,
+                Query = Query<SitePackChannel>.Match(x => x.Name("displayNames").Field(f => f.DisplayNames).Query(mediaName).Fuzziness(Fuzziness.Auto)),
+                MinScore = minScore
+            };
+
+            if (!string.IsNullOrEmpty(country))
+            {
+                req.Query &= Query<SitePackChannel>.Term(m => m.Country.Suffix("keyword"), country, 1.2);
+            }
+
+            if (tvgSites != null && tvgSites.Any())
+            {
+                req.Query &= Query<SitePackChannel>.Terms(m => m.Field(new Field("site")).Terms(tvgSites).Boost(1.1));
+            }
+
+            var allMediasRef = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(req, cancellationToken);
+
+            return allMediasRef
+                    .Documents
+                    .FirstOrDefault();
+        }
+
         public async Task<SitePackChannel> MatchTermByDispaynamesAndFiltredBySiteNameAsync(string mediaName, string country, IEnumerable<string> tvgSites, CancellationToken cancellationToken)
         {
             var req = new SearchRequest<SitePackChannel>

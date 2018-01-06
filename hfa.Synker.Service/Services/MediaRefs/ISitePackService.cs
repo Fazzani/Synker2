@@ -47,5 +47,17 @@ namespace hfa.Synker.Service.Services
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<List<string>> ListCountriesAsync(string filter, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Match Tvg media by mediaName AND/OR Country
+        /// AND/OR TvgSites
+        /// </summary>
+        /// <param name="mediaName"></param>
+        /// <param name="country"></param>
+        /// <param name="tvgSites"></param>
+        /// <param name="minScore"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<SitePackChannel> MatchTvgAsync(string mediaName, string country, IEnumerable<string> tvgSites, double minScore, CancellationToken cancellationToken);
     }
 }

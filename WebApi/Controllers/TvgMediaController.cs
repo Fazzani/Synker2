@@ -18,6 +18,8 @@ using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 using hfa.WebApi.Models.TvgMedias;
+using hfa.Synker.Service.Services;
+using hfa.WebApi.Models;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -26,18 +28,20 @@ namespace Hfa.WebApi.Controllers
     [Authorize]
     public class TvgMediaController : BaseController
     {
-        public TvgMediaController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 
-            SynkerDbContext context)
+        private ISitePackService _sitePackService;
+
+        public TvgMediaController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
+            SynkerDbContext context, ISitePackService sitePackService)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
-
+            _sitePackService = sitePackService;
         }
 
         [HttpPost]
         [Route("_search")]
         public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
         {
-            return await SearchAsync<TvgMedia,TvgMediaModel>(request.ToString(), cancellationToken);
+            return await SearchAsync<TvgMedia, TvgMediaModel>(request.ToString(), cancellationToken);
         }
 
         // [ElasticResult]
@@ -79,6 +83,21 @@ namespace Hfa.WebApi.Controllers
                 return NotFound();
 
             return new OkObjectResult(response.GetResultListModel<TvgMedia, TvgMediaModel>());
+        }
+
+        /// <summary>
+        ///  Match playlist tvg (site pack directement)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("matchtvg")]
+        [ValidateModel]
+        public async Task<IActionResult> MatchTvg([FromBody] MatchTvgPostModel matchTvgPostModel, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var sitePack = await _sitePackService.MatchTvgAsync(matchTvgPostModel.MediaName, matchTvgPostModel.Country, matchTvgPostModel.TvgSites, matchTvgPostModel.MinScore, cancellationToken);
+            return Ok(sitePack);
         }
 
         [HttpPost]

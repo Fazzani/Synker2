@@ -1,18 +1,6 @@
 ﻿@import '~@angular/material/prebuilt-themes/purple-green.css';
 @import '_variables';
 
-/* .navbar {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
-      align-items: center;
-      padding: 8px 16px;
-  } */
-
 .docs-button {
     &[mat-button],
     &[mat-raised-button] {
@@ -70,7 +58,7 @@ img {
     }
 }
 
-.mat-table, .primary {
+.mat-table, .primary, .mat-stepper-horizontal, .mat-stepper-vertical {
     background: $primary-color-bg !important;
 }
 
@@ -79,8 +67,6 @@ img {
         margin-bottom: 56px;
     }
 }
-
-
 
 .example-loading-shade {
     position: absolute;
@@ -165,11 +151,7 @@ body {
     color: $primary-color-font-dark
 }
 
-.mat-dialog-container {
-    .mat-dialog-content {
-        overflow: auto !important;
-    }
-}
+
 
 .noselect {
     -webkit-touch-callout: none; /* iOS Safari */
@@ -202,11 +184,21 @@ mat-dialog-container {
             flex-direction: column;
         }
 
+        .mat-dialog-content {
+            overflow: auto !important;
+        }
+
         height: inherit;
     }
 
     .action-row-bottom {
         align-self: flex-end;
+    }
+
+    .mat-card-content {
+        display: flex;
+        flex-direction: column;
+        text-align:left;
     }
 }
 
@@ -283,3 +275,4 @@ mat-dialog-container {
         }
     }
 }
+
