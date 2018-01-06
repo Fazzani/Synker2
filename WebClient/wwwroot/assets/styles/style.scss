@@ -269,10 +269,17 @@ mat-dialog-container {
 .mat-grid-tile {
     .mat-figure {
         justify-content: flex-start !important;
+        color: $primary-color-font;
 
-        .group-name {
+        &:hover {
+            background-color: aquamarine;
+            color: $primary-color-bg-dark !important;
+            transition: ease .5s background-color;
+        }
+
+        .group-name, a {
             padding-left: 5px;
-            color: brown
+            color:inherit;
         }
     }
 }

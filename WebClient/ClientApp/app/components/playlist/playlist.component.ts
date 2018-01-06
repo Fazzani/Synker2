@@ -18,7 +18,6 @@ import { TvgMediaModifyDialog } from '../media/media.component';
 import { MediaRefService } from '../../services/mediaref/mediaref.service';
 import { FormControl } from '@angular/forms';
 import { KEY_CODE, KEY, PageListState } from '../../types/common.type';
-import { mediaRef } from "../../types/mediaref.type";
 import { PlaylistDiffDialog } from './playlist.diff.component';
 import { snakbar_duration } from '../../variables';
 import { sitePackChannel } from '../../types/sitepackchannel.type';
@@ -41,7 +40,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     manualPage: number | null;
     key: number;
     subscriptionTableEvent: Subscription;
-
     displayedColumns = ['position', 'tvg.logo', 'name', 'displayName', 'lang', 'group', 'tvg.name', 'tvg.tvgIdentify', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -58,13 +56,15 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     /** media ctor */
     constructor(private route: ActivatedRoute, private piconService: PiconService, private playlistService: PlaylistService,
         private sitePackService: SitePackService, private commonService: CommonService,
-        public dialog: MatDialog, public snackBar: MatSnackBar) { }
+        public dialog: MatDialog, public snackBar: MatSnackBar) {
+    }
 
     /** Called by Angular after media component initialized */
     ngOnInit(): void {
 
         this.playlistBS = new BehaviorSubject<PlaylistModel>(null);
         this.dataSource = new MatTableDataSource<TvgMedia>([]);
+
         this.paginator.pageSizeOptions = [50, 100, 250, 1000];
 
         this.routeSub = this.route.params.subscribe(params => {
@@ -88,6 +88,16 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             console.log('playlist updated');
             if (x != null && x.tvgMedias != null) {
                 this.dataSource = new MatTableDataSource<TvgMedia>(x.tvgMedias);
+                this.dataSource.filterPredicate =
+                    (data: TvgMedia, filter: string) => {
+                        filter = filter.toLowerCase();
+                        let values = filter.split(":");
+                        if (values.length > 1 && data[values[0].trim()]) {
+                            return data[values[0].trim()].trim().toLowerCase().indexOf(values[1].toLowerCase().trim()) != -1;
+                        } else {
+                            return data.name.toLowerCase().indexOf(filter) != -1;
+                        }
+                    };
                 this.initPaginator();
 
             }
@@ -199,7 +209,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.routeSub.unsubscribe();
     }
 
-
     /**
      * Switch media position
      * @param {TvgMedia} x
@@ -290,6 +299,13 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         let dialogRef = this.dialog.open(GroupsDialog, {
             width: '550px',
             data: this.playlistBS.getValue()
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result != null) {
+                this.filter.nativeElement.value = `group : ${result}`;
+                this.paginator.page.emit(<PageEvent>{ pageIndex: 0 });;
+            }
         });
     }
 

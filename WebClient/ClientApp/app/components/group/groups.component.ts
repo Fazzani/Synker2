@@ -22,6 +22,8 @@ export class GroupsDialog implements OnInit, OnDestroy {
         this.groupMedias = this.getGroupMedias();
     }
 
+    filterByGroup = (group) => this.dialogRef.close(group);
+
     /**
      * Group medias
      */
