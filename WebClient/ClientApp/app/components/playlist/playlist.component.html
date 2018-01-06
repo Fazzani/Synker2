@@ -147,7 +147,7 @@
                  (mouseenter)="onSelection(row.position)" (mouseup)="onSelectionEnd()" (click)="toggleSelected(row, $event)" [class.active]="row.selected" [class.disabled]="!row.enabled" class="noselect"></mat-row>
     </mat-table>
     <div class="container footer">
-        <div>Selected items count : {{atLeastOneSelected | async}}</div>
+        <div class="page-select" *ngIf="(atLeastOneSelected | async) > 0"> {{atLeastOneSelected | async}} selected items</div>
         <div class="page-select">
             <mat-form-field floatPlaceholder="never">
                 <input matInput [(ngModel)]="paginator.pageIndex" placeholder="Page..." type="number" (ngModelChange)="updateManualPage($event)">

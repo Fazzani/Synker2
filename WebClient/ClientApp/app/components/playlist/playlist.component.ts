@@ -137,10 +137,12 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             this.dataSource
                 ._pageData(this.dataSource.filteredData)
                 .forEach(m => m.selected = true);
+            this.atLeastOneSelected.next(this.dataSource.data.filter(f => f.selected).length);
         } else if (event.key == KEY.I && event.ctrlKey) {
             this.dataSource
                 ._pageData(this.dataSource.filteredData)
                 .forEach(m => m.selected = !m.selected);
+            this.atLeastOneSelected.next(this.dataSource.data.filter(f => f.selected).length);
         }
     }
 
@@ -234,10 +236,8 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
      * @returns
      */
     orgonizeMedias(): void {
-        //this.dataSource.data
-        //    .sort((a, b) => a.displayName === b.displayName ? 0 : a.displayName > b.displayName ? 1 : -1)
-        //    .sort((a, b) => a.group === b.group ? 0 : a.group > b.group ? 1 : -1)
-        //    .forEach((t, i) => t.position = ++i);
+        this.commonService.displayLoader(true);
+
         let counter: number = 1;
         Observable
             .from(this.dataSource.data)
@@ -250,7 +250,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             .map((t, i) => {
                 t.position = counter++;
                 return t;
-            }).subscribe(null);
+            }).subscribe(x => this.commonService.displayLoader(false));
     }
 
     trackByPosition = (index, item) => +item.position;
