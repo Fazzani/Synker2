@@ -40,7 +40,7 @@ export class AppComponent implements OnInit, OnDestroy {
                     this.router.navigate(['signin']);
                 }
             });
-        }, 2000);
+        }, 1000);
 
         this.commonService.loaderStatus.distinctUntilChanged().debounceTime(2000).subscribe((val: boolean) => {
             console.log('new loader data : ', val);

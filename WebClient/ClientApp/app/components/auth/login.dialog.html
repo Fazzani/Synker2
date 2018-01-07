@@ -2,10 +2,10 @@
 <form #UserLogin="ngForm" (ngSubmit)="login(UserLogin.form.value)">
     <mat-dialog-content>
         <mat-form-field>
-            <input matInput [(ngModel)]="username" name="username" placeholder="Username...">
+            <input matInput [(ngModel)]="username" name="username" placeholder="Username..." required>
         </mat-form-field>
         <mat-form-field>
-            <input matInput type="password" [(ngModel)]="password" name="password" placeholder="Password...">
+            <input matInput type="password" [(ngModel)]="password" name="password" placeholder="Password..." required>
         </mat-form-field>
     </mat-dialog-content>
     <mat-dialog-actions>

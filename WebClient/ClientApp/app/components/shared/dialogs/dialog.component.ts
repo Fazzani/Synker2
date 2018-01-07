@@ -3,6 +3,8 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatButtonModule, MatMenuModule, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatDialog, MatDialogConfig } from '@angular/material';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Login, User, RegisterUser } from '../../../types/auth.type';
+import { CommonService } from '../../../services/common/common.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'synker-dialog',
@@ -63,7 +65,7 @@ export class RegisterComponent implements OnInit {
 })
 export class LoginDialog {
 
-    constructor(public dialogRef: MatDialogRef<LoginDialog>, private authService: AuthService, private router: Router) {
+    constructor(public dialogRef: MatDialogRef<LoginDialog>, private authService: AuthService, private router: Router, private commonService: CommonService) {
     }
 
     login(user: Login): void {
@@ -72,7 +74,12 @@ export class LoginDialog {
                 console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
                 this.dialogRef.close(true);
             },
-                err => console.log(err))
+                (err: HttpErrorResponse) => {
+                    if (err.status == 401)
+                        this.commonService.displayError('Logon Failure', 'Logon Failure Unknown username or bad password');
+                    else
+                        this.commonService.displayError('Logon Failure', err.error);
+                })
     }
 }
 
@@ -81,8 +88,10 @@ export class LoginDialog {
     templateUrl: '../../../components/auth/register.dialog.html'
 })
 export class RegisterDialog {
+    photo: any;
 
-    constructor( @Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<RegisterDialog>, private authService: AuthService) {
+    constructor( @Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<RegisterDialog>, private authService: AuthService
+        , private commonService: CommonService) {
     }
 
     register(registerUser: RegisterUser): void {
@@ -91,6 +100,19 @@ export class RegisterDialog {
                 console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
                 this.dialogRef.close(true);
             },
-                err => console.log(err.error))
+                err => this.commonService.displayError('Registration Failure', err.error))
+    }
+    changeListener($event): void {
+        this.readThis($event.target);
+    }
+
+    readThis(inputValue: any): void {
+        var file: File = inputValue.files[0];
+        var myReader: FileReader = new FileReader();
+
+        myReader.onloadend = (e) => {
+            this.photo = myReader.result;
+        }
+        myReader.readAsDataURL(file);
     }
 }
