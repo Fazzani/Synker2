@@ -5,6 +5,8 @@ branches:
   only:
   - master
   - Develop
+only_commits:
+  message: /buildlibrary|build/
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
