@@ -35,10 +35,10 @@
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
-                <img [src]="photo" class="logo-medium" />
-
-                <button type="button" mat-button (click)="imgFileInput.click()">Add a photo</button>
-                <input hidden type="file" #imgFileInput accept="image/*" (change)="changeListener($event)" name="image"/>
+            <img [src]="photo" class="logo-medium" />
+            <input type="hidden" [(ngModel)]="photo" name="photo" />
+            <button type="button" mat-button (click)="imgFileInput.click()">Add a photo</button>
+            <input hidden type="file" #imgFileInput accept="image/*" (change)="changeListener($event)" name="image" />
         </div>
         <div fxLayout="row">
             <mat-form-field>

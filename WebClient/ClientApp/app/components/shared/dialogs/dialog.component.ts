@@ -43,8 +43,17 @@ export class RegisterComponent implements OnInit {
 
     ngOnInit() {
         this.activatedRoute.queryParamMap.subscribe(params => {
+
             let data = <RegisterUser>{};
-            data.genders = [{ value: 0, viewValue: "Mr" }, { value: 0, viewValue: "Mrs" }];
+
+            data.genders = [
+                {
+                    value: 0, viewValue: "Mr"
+                },
+                {
+                    value: 1, viewValue: "Mrs"
+                }];
+
             setTimeout(() => {
                 let dialogRef = this.dialog.open(RegisterDialog, <MatDialogConfig>{
                     disableClose: true,
@@ -71,7 +80,7 @@ export class LoginDialog {
     login(user: Login): void {
         if (user != null)
             this.authService.Signin(user).subscribe(res => {
-                console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
+                //console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
                 this.dialogRef.close(true);
             },
                 (err: HttpErrorResponse) => {
@@ -97,11 +106,12 @@ export class RegisterDialog {
     register(registerUser: RegisterUser): void {
         if (registerUser != null)
             this.authService.Register(registerUser).subscribe(res => {
-                console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
+                //console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
                 this.dialogRef.close(true);
             },
                 err => this.commonService.displayError('Registration Failure', err.error))
     }
+
     changeListener($event): void {
         this.readThis($event.target);
     }
