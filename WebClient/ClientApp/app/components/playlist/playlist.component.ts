@@ -465,8 +465,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
     //#endregion
-
-   
     
     //#endregion
 

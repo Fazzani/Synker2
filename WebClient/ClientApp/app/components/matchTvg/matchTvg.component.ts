@@ -20,7 +20,7 @@ export class MatchTvgDialog implements OnInit, OnDestroy {
     tvgSites: string[];
     medias: TvgMedia[];
     matchTvgFormModel: MatchTvgFormModel = new MatchTvgFormModel();
-    progress: number = 50;
+    progress: number = 0;
     matchingTvgSiteTypes: typeof MatchingTvgSiteTypeEnum;
     compareFn: ((f1: any, f2: any) => boolean) | null = this.compareByValue;
 
