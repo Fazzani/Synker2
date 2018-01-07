@@ -11,6 +11,7 @@ import { HttpHeaders } from "@angular/common/http";
 import * as variables from "../../variables";
 import { TvgMedia } from '../../types/media.type';
 import { MatchTvgPostModel } from '../../types/matchTvgPostModel';
+import { sitePackChannel } from '../../types/sitepackchannel.type';
 
 @Injectable()
 export class TvgMediaService extends BaseService {
@@ -38,7 +39,7 @@ export class TvgMediaService extends BaseService {
             { headers: new HttpHeaders().set('Content-Type', 'application/json'), responseType: 'text' }).catch(this.handleError);
     }
 
-    matchTvg(matchTvgPostModel: MatchTvgPostModel) {
+    matchTvg(matchTvgPostModel: MatchTvgPostModel) : Observable<sitePackChannel>{
         return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/matchtvg`, matchTvgPostModel).map(res => {
             return res;
         }).catch(this.handleError);

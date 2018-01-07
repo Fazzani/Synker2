@@ -5,6 +5,8 @@ import { TvgMediaService } from '../../services/tvgmedia/tvgmedia.service';
 import { MatchTvgPostModel, MatchTvgFormModel, MatchingTvgSiteTypeEnum } from '../../types/matchTvgPostModel';
 import { TvgMedia } from '../../types/media.type';
 import { sitePackChannel } from '../../types/sitepackchannel.type';
+import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs';
 
 /**
 *  url tests
@@ -18,9 +20,11 @@ export class MatchTvgDialog implements OnInit, OnDestroy {
     tvgSites: string[];
     medias: TvgMedia[];
     matchTvgFormModel: MatchTvgFormModel = new MatchTvgFormModel();
-    progress: number = 0;
+    progress: number = 50;
     matchingTvgSiteTypes: typeof MatchingTvgSiteTypeEnum;
     compareFn: ((f1: any, f2: any) => boolean) | null = this.compareByValue;
+
+    obs: BehaviorSubject<TvgMedia> = new BehaviorSubject<TvgMedia>(null);
 
     constructor(
         public dialogRef: MatDialogRef<MatchTvgDialog>, @Inject(MAT_DIALOG_DATA) public tup: [TvgMedia[], string[]],
@@ -51,7 +55,9 @@ export class MatchTvgDialog implements OnInit, OnDestroy {
         if (!this.matchTvgFormModel.overrideTvg)
             mediasToMatch = mediasToMatch.filter(x => x.tvg == null || x.tvg.id == '');
 
-        mediasToMatch.forEach(x => {
+        let index = 0;
+
+        mediasToMatch.forEach((x, i) => {
 
             model.mediaName = x.displayName;
 
@@ -68,6 +74,9 @@ export class MatchTvgDialog implements OnInit, OnDestroy {
             }
 
             this.tvgMediaService.matchTvg(model).subscribe((res: sitePackChannel) => {
+
+                this.progress = (++index / mediasToMatch.length) * 100;
+                console.log(this.progress);
                 if (res != null) {
                     console.log(`media was ${x} matched with sitepack ${res}`);
                     x.tvg.id = res.xmltv_id;
@@ -76,20 +85,15 @@ export class MatchTvgDialog implements OnInit, OnDestroy {
                     x.tvg.tvgSource.code = res.site_id;
                     x.tvg.tvgSource.country = res.country;
                 }
-                //res.forEach(x => {
-                //    var index = this.playlistBS.value.tvgMedias.findIndex(f => f.id == x.id);
-
-                //    if (index >= 0) {
-                //        this.playlistBS.value.tvgMedias[index] = x;
-                //        console.log('match picons media : ', x);
-                //    }
-                //});
-                //this.playlistBS.next(this.playlistBS.value);
-                //this.snackBar.open("Matching picons finished");
+                this.obs.next(x);
+                if (i == (mediasToMatch.length - 1))
+                    this.obs.complete();
             });
         });
 
-        this.dialogRef.close(this.medias);
+        this.obs.subscribe(x => {
+            console.log(x);
+        }, err => { }, () => this.dialogRef.close(this.medias));
     }
 
     ngOnDestroy() {
