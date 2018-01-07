@@ -1,6 +1,6 @@
 ﻿<h2 mat-dialog-title>Login</h2>
 <form #UserLogin="ngForm" (ngSubmit)="login(UserLogin.form.value)">
-    <mat-dialog-content fxLayout="row">
+    <mat-dialog-content>
         <mat-form-field>
             <input matInput [(ngModel)]="username" name="username" placeholder="Username...">
         </mat-form-field>
