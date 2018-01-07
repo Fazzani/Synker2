@@ -12,7 +12,7 @@ import { HomeComponent } from './components/home/home.component';
 import { MediaComponent, TvgMediaModifyDialog } from './components/media/media.component';
 import { EpgComponent, EpgModifyDialog } from './components/epg/epg.component';
 import { XmltvComponent, XmltvModifyDialog } from './components/xmltv/xmltv.component';
-import { DialogComponent, LoginDialog, RegisterDialog } from './components/shared/dialogs/dialog.component';
+import { DialogComponent, LoginDialog, RegisterDialog, RegisterComponent } from './components/shared/dialogs/dialog.component';
 import { LoginRouteGuard } from './services/auth/loginRouteGuard.service';
 
 import { AuthService } from './services/auth/auth.service';
@@ -46,7 +46,6 @@ import { GroupsDialog } from './components/group/groups.component';
 import { MatchTvgDialog } from './components/matchTvg/matchTvg.component';
 
 const appRoutes: Routes = [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: 'home', component: HomeComponent, canActivate: [LoginRouteGuard] },
     { path: 'tvgmedia', component: MediaComponent, canActivate: [LoginRouteGuard] },
     { path: 'epg', component: EpgComponent, canActivate: [LoginRouteGuard] },
@@ -54,8 +53,9 @@ const appRoutes: Routes = [
     { path: 'sitepack', component: SitePackComponent, canActivate: [LoginRouteGuard] },
     { path: 'playlist/:id', component: PlaylistComponent, canActivate: [LoginRouteGuard] },
     { path: 'signin', component: DialogComponent },
-    { path: 'register', component: DialogComponent },
-    { path: '**', redirectTo: 'home' }
+    { path: 'register', component: RegisterComponent },
+    { path: '', redirectTo: '/home', pathMatch: 'full' },
+    { path: '**', redirectTo: '/home' }
 ];
 
 @NgModule({
@@ -65,6 +65,7 @@ const appRoutes: Routes = [
         MediaComponent,
         MediaRefComponent,
         SitePackComponent,
+        RegisterComponent,
         EpgComponent,
         XmltvComponent,
         TvgMediaModifyDialog,
@@ -95,7 +96,7 @@ const appRoutes: Routes = [
         NavBarModule,
         ReactiveFormsModule,
         ClipboardModule,
-        RouterModule.forRoot(appRoutes, { enableTracing: false })
+        RouterModule.forRoot(appRoutes, { enableTracing: true })
     ],
     entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, MediaRefModifyDialog, TvgMediaListModifyDialog,
         TvgSitesListModifyDialog, PlaylistAddDialog, PlaylistModifyDialog, PlaylistDiffDialog, SitePackModifyDialog, GroupsDialog, MatchTvgDialog],

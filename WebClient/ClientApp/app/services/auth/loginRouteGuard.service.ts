@@ -17,7 +17,7 @@ export class LoginRouteGuard implements CanActivate, CanActivateChild {
                 let url: string = state.url;
                 this.authService.redirectUrl = url;
                 // Not signed in so redirects to signin page.  
-                this.router.navigate(['/signin', { dialog: 'signin', modal: 'true' }]);
+                this.router.navigate(['/signin']);
                 return false;
             }
             return x;
@@ -32,7 +32,7 @@ export class LoginRouteGuard implements CanActivate, CanActivateChild {
                 let url: string = state.url;
                 this.authService.redirectUrl = url;
                 // Not signed in so redirects to signin page.  
-                this.router.navigate(['/signin', { dialog: 'signin', modal: 'true' }]);
+                this.router.navigate(['/signin']);
                 return false;
             }
             return x;

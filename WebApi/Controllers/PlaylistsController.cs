@@ -116,7 +116,6 @@ namespace Hfa.WebApi.Controllers
             if (playlistEntity == null)
                 return NotFound(playlistEntity);
 
-
             playlistEntity.Status = playlist.Status;
             playlistEntity.Freindlyname = playlist.Freindlyname;
             playlistEntity.TvgSites = playlist.TvgSites;

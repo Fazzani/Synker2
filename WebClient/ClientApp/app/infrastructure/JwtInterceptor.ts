@@ -31,9 +31,9 @@ export class JwtInterceptor implements HttpInterceptor {
                     console.log('JwtInterceptor 401');
                     this.authService.isAuthenticated().distinctUntilChanged().subscribe(isAuth => {
                         console.log(`JwtInterceptor 401 isAuth = ${isAuth}`);
-                        if (!isAuth) {
+                        if (!isAuth && (this.router.routerState.snapshot.url != 'signin' && this.router.routerState.snapshot.url != 'register')) {
                             this.authService.redirectUrl = this.router.routerState.snapshot.url;
-                            this.router.navigate(['/signin', { dialog: 'signin', modal: 'true' }]);
+                            this.router.navigate(['signin']);
                         }
                     });
                 } else {

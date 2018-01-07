@@ -1,14 +1,14 @@
 ﻿<h2 mat-dialog-title>Register</h2>
 <form #UserRegister="ngForm" (ngSubmit)="register(UserRegister.form.value)" novalidate>
-    <mat-dialog-content fxLayout='column'>
-        <div fxLayout='row'>
+    <mat-dialog-content fxLayout="column">
+        <div fxLayout="row">
             <mat-select placeholder="Gender..." [(ngModel)]="gender" name="gender">
                 <mat-option *ngFor="let gender of data.genders" [value]="gender.value">
                     {{ gender.viewValue }}
                 </mat-option>
             </mat-select>
         </div>
-        <div fxLayout='row'>
+        <div fxLayout="row">
             <mat-form-field>
                 <input matInput [(ngModel)]="firstname" name="firstname" placeholder="Firstname..." required>
             </mat-form-field>
@@ -17,7 +17,7 @@
                 <input matInput [(ngModel)]="lastname" name="lastname" placeholder="Lastname..." required>
             </mat-form-field>
         </div>
-        <div fxLayout='row'>
+        <div fxLayout="row">
             <mat-form-field>
                 <input matInput [(ngModel)]="email" name="email" placeholder="Email..." required>
             </mat-form-field>
@@ -31,7 +31,7 @@
                 <img [src]="photo" class="logo-medium" />
             </mat-form-field>
         </div>
-        <div fxLayout='row'>
+        <div fxLayout="row">
             <mat-form-field>
                 <input matInput [(ngModel)]="username" name="username" placeholder="Username..." required #usernameControl="ngModel">
                 <mat-error *ngIf="usernameControl.touched && usernameControl.invalid">
@@ -56,10 +56,8 @@
             </mat-form-field>
         </div>
     </mat-dialog-content>
-    <mat-dialog-actions>
-        <button mat-raised-button mat-dialog-close>Cancel</button>
+    <mat-dialog-actions fxLayout="row">
+        <button mat-raised-button routerLink="/signin" mat-dialog-close>Cancel</button>
         <button mat-raised-button [disabled]="!UserRegister.form.valid">Register</button>
     </mat-dialog-actions>
-    <pre>
-</pre>
 </form>

@@ -2,39 +2,29 @@
     <a mat-button class="docs-button" routerLink="/" aria-label="Synker">
         <span>Synker beta</span>
     </a>
-    <a mat-button class="docs-button" routerLink="/tvgmedia">Medias</a>
-    <a mat-button class="docs-button" routerLink="/epg">EPG</a>
-    <a mat-button class="docs-button" routerLink="/xmltv">Xmltv</a>
-    <a mat-button class="docs-button" routerLink="/sitepack">Site Pack</a>
-    <div class="spacer"></div>
-
+    <!-- This fills the remaining space of the current row -->
+    <div fxLayout="row" fxShow="false" fxShow.gt-sm>
+        <a mat-button class="docs-button" routerLink="/epg">EPG</a>
+        <a mat-button class="docs-button" routerLink="/xmltv">Xmltv</a>
+        <a mat-button class="docs-button" routerLink="/sitepack">Sites Pack</a>
+    </div>
+    <span class="fill-remaining-space"></span>
     <a mat-icon-button *ngIf="(isAuthenticated | async)" aria-hidden="true">
         <span class="notif-number">{{messages?.rowCount}}</span>
         <mat-icon>message</mat-icon>
-        <span class="mderial-icons mdl-badge mdl-badge--overlap" matTooltip="You have {{messages?.rowCount}} messages !" [attr.data-badge]="messages?.rowCount">message</span>
+        <!--<span class="mderial-icons mdl-badge mdl-badge--overlap" matTooltip="You have {{messages?.rowCount}} messages !" [attr.data-badge]="messages?.rowCount">message</span>-->
     </a>
 
-    <a mat-button class="docs-button" [routerLink]="['/signin', {modal: 'true', 'dialog': 'signin'}]" aria-label="Sign in" *ngIf="!(isAuthenticated | async)">
-        <mat-icon>perm_identity</mat-icon>
-        <span>Sign in</span>
-    </a>
-    <a mat-button class="docs-button" [routerLink]="['/register', {modal: 'true', 'dialog': 'register'}]" aria-label="Register"
-       *ngIf="!(isAuthenticated | async)">
-        <mat-icon>fingerprint</mat-icon>
-        <span>Register</span>
-    </a>
+  
     <a href="#" class="dropdown-toggle" data-toggle="dropdown" *ngIf="(isAuthenticated | async)">
         <img [src]="(user | async)?.photo" class="profile-image img-circle">
     </a>
-    <a mat-icon-button [matMenuTriggerFor]="menu" *ngIf="(isAuthenticated | async)">
+    <a mat-icon-button [matMenuTriggerFor]="menu" *ngIf="(isAuthenticated | async)" fxHide="false">
         <mat-icon>more_vert</mat-icon>
     </a>
 
-    <mat-menu #menu="matMenu">
-        <button mat-menu-item [routerLink]="['/signin', {modal: 'true', 'dialog': 'signin'}]" *ngIf="!(isAuthenticated | async)">
-            <mat-icon>perm_identity</mat-icon>
-            <span>Login</span>
-        </button>
+    <mat-menu x-position="before" #menu="matMenu">
+
         <button mat-menu-item *ngIf="(isAuthenticated | async)" class="profile-image-menu">
             <img [src]="(user | async)?.photo" class="img-circle">
             <span>{{(user | async)?.firstName}} {{(user | async)?.lastName}}</span>
@@ -47,6 +37,21 @@
             <mat-icon>notifications_off</mat-icon>
             <span>Github</span>
         </a>
+
+        <!-- Mobile actions Menu-->
+        <button mat-menu-item routerLink="/epg" *ngIf="(isAuthenticated | async)" fxHide.gt-sm>
+            <mat-icon>event</mat-icon>
+            <span>EPG</span>
+        </button>
+        <button mat-menu-item routerLink="/xmltv" *ngIf="(isAuthenticated | async)" fxHide.gt-sm>
+            <mat-icon>dns</mat-icon>
+            <span>Xmltv</span>
+        </button>
+        <button mat-menu-item routerLink="/sitepack" *ngIf="(isAuthenticated | async)" fxHide.gt-sm>
+            <mat-icon>description</mat-icon>
+            <span>Sites Pack</span>
+        </button>
+        <!-- Logout -->
         <button mat-menu-item (click)="signout()" *ngIf="(isAuthenticated | async)">
             <mat-icon>power_settings_new</mat-icon>
             <span>Sign out</span>

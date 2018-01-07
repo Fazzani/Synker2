@@ -33,12 +33,14 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.authService.authenticated.distinctUntilChanged().subscribe(isAuth => {
-            if (!isAuth) {
-                this.authService.redirectUrl = this.router.routerState.snapshot.url;
-                this.router.navigate(['/signin', { dialog: 'signin', modal: 'true' }]);
-            }
-        });
+        setTimeout(_ => {
+            this.authService.authenticated.distinctUntilChanged().subscribe(isAuth => {
+                if (!isAuth && this.router.url != 'signin' && this.router.url != 'register') {
+                    this.authService.redirectUrl = this.router.routerState.snapshot.url;
+                    this.router.navigate(['signin']);
+                }
+            });
+        }, 2000);
 
         this.commonService.loaderStatus.distinctUntilChanged().debounceTime(2000).subscribe((val: boolean) => {
             console.log('new loader data : ', val);
