@@ -1,28 +1,32 @@
 ﻿<div class="site-container">
-    <mat-toolbar color="custom">
-        <mat-form-field floatPlaceholder="never">
-            <input matInput #filter placeholder="Filter site packs...">
-        </mat-form-field>
-        <span class="spacer"></span>
-        <!-- Buttons -->
-        <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Save" matTooltip="Save" (click)="save()">save</mat-icon>
-        </a>
-        <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Save all" matTooltip="Save all" (click)="saveAll()">done_all</mat-icon>
-        </a>
-        <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Update" matTooltip="Update" (click)="reload()">update</mat-icon>
-        </a>
-        <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Synchronize" matTooltip="Synchronize" (click)="synk()">system_update_alt</mat-icon>
-        </a>
-        <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Synchronize picons" matTooltip="Match picons" (click)="synkPiconsForMediaRef()">adjust</mat-icon>
-        </a>
-        <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Synchronize picons global" matTooltip="Synchronize picons global (from github)" (click)="synkPiconsGlobal()">add_a_photo</mat-icon>
-        </a>
+    <mat-toolbar color="custom" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlexFill>
+        <div style="display:flex; flex:1">
+            <mat-form-field floatPlaceholder="never">
+                <input matInput #filter placeholder="Filter site packs...">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row">
+
+            <!-- Buttons -->
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Save" matTooltip="Save" (click)="save()">save</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Save all" matTooltip="Save all" (click)="saveAll()">done_all</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Update" matTooltip="Update" (click)="reload()">update</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Synchronize" matTooltip="Synchronize" (click)="synk()">system_update_alt</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Synchronize picons" matTooltip="Match picons" (click)="synkPiconsForMediaRef()">adjust</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Synchronize picons global" matTooltip="Synchronize picons global (from github)" (click)="synkPiconsGlobal()">add_a_photo</mat-icon>
+            </a>
+        </div>
     </mat-toolbar>
     <mat-table #table [dataSource]="dataSource" matSort class="noselect">
         <!-- logo -->
@@ -76,13 +80,13 @@
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected" class="noselect"></mat-row>
     </mat-table>
-    <div class="container footer">
-        <div class="page-select">
+    <div class="container footer" fxLayout="row">
+        <div class="page-select" fxLayout="row" fxShow="false" fxShow.gt-sm>
             <mat-form-field floatPlaceholder="never">
                 <input matInput [(ngModel)]="paginator.pageIndex" placeholder="Page..." type="number" (ngModelChange)="updateManualPage($event)">
             </mat-form-field>
         </div>
-        <mat-paginator #paginator [length]="dataSource.paginator.length" [pageIndex]="dataSource.paginator.pageIndex" [pageSize]="dataSource.paginator.pageSize"
+        <mat-paginator fxLayoutAlign="end center" fxFlex #paginator [length]="dataSource.paginator.length" [pageIndex]="dataSource.paginator.pageIndex" [pageSize]="dataSource.paginator.pageSize"
                        [pageSizeOptions]="dataSource.paginator.pageSizeOptions" class="noselect">
         </mat-paginator>
     </div>

@@ -1,48 +1,51 @@
-﻿<div class="site-container">
-    <mat-toolbar color="custom">
-        <mat-form-field floatPlaceholder="never">
-            <input matInput #filter placeholder="Filter medias...">
-            <!--<mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let option of options" [value]="option">
-                    {{ option }}
-                </mat-option>
-            </mat-autocomplete>-->
-        </mat-form-field>
-        <span class="spacer"></span>
-        <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Update" matTooltip="Update" (click)="reload()">cached</mat-icon>
-        </a>
-        <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Save" matTooltip="Save" (click)="save()">save</mat-icon>
-        </a>
-        <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Mes TvgSites" matTooltip="Mes TvgSites" (click)="openUpdateTvgSite()">style</mat-icon>
-        </a>
-        <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Groups" matTooltip="Groups" (click)="openGroupsDialog()">folder</mat-icon>
-        </a>
-        <a mat-icon-button *ngIf="(atLeastOneSelected|async) > 0">
-            <mat-icon class="mat-24" aria-label="Bulk Update" matTooltip="Bulk Update" (click)="openUpdateListDialog()">done</mat-icon>
-        </a>
-        <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Orgonize" matTooltip="Orgonize" (click)="orgonizeMedias()">reorder</mat-icon>
-        </a>
-        <a mat-icon-button *ngIf="(atLeastOneSelected|async) > 0">
-            <mat-icon class="mat-24" aria-label="switch Position Desc" matTooltip="switch Position Up" (click)="moveUp()">keyboard_arrow_up</mat-icon>
-        </a>
-        <a mat-icon-button *ngIf="(atLeastOneSelected|async) > 0">
-            <mat-icon class="mat-24" aria-label="switch Position Down" matTooltip="switch Position Down" (click)="moveDown()">keyboard_arrow_down</mat-icon>
-        </a>
-        <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Select All" matTooltip="Select All" (click)="selectAll()">select_all</mat-icon>
-        </a>
-        <a mat-icon-button>
-            <mat-icon class="mat-24" aria-label="Synchronize picons global" matTooltip="Synchronize picons global (from github)" (click)="synkPiconsGlobal()">add_a_photo</mat-icon>
-        </a>
-        <!-- Menu -->
-        <button mat-icon-button [matMenuTriggerFor]="menu">
-            <mat-icon>more_vert</mat-icon>
-        </button>
+﻿<div fxLayout="column" style="margin-top:56px">
+    <mat-toolbar color="custom" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlexFill>
+        <div  style="display:flex; flex:1">
+            <mat-form-field floatPlaceholder="never">
+                <input matInput #filter placeholder="Filter medias...">
+                <!--<mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let option of options" [value]="option">
+                {{ option }}
+            </mat-option>
+        </mat-autocomplete>-->
+            </mat-form-field>
+        </div>
+        <div fxLayout="row">
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Update" matTooltip="Update" (click)="reload()">cached</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Save" matTooltip="Save" (click)="save()">save</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Mes TvgSites" matTooltip="Mes TvgSites" (click)="openUpdateTvgSite()">style</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Groups" matTooltip="Groups" (click)="openGroupsDialog()">folder</mat-icon>
+            </a>
+            <a mat-icon-button *ngIf="(atLeastOneSelected|async) > 0">
+                <mat-icon class="mat-24" aria-label="Bulk Update" matTooltip="Bulk Update" (click)="openUpdateListDialog()">done</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Orgonize" matTooltip="Orgonize" (click)="orgonizeMedias()">reorder</mat-icon>
+            </a>
+            <a mat-icon-button *ngIf="(atLeastOneSelected|async) > 0">
+                <mat-icon class="mat-24" aria-label="switch Position Desc" matTooltip="switch Position Up" (click)="moveUp()">keyboard_arrow_up</mat-icon>
+            </a>
+            <a mat-icon-button *ngIf="(atLeastOneSelected|async) > 0">
+                <mat-icon class="mat-24" aria-label="switch Position Down" matTooltip="switch Position Down" (click)="moveDown()">keyboard_arrow_down</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Select All" matTooltip="Select All" (click)="selectAll()">select_all</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Synchronize picons global" matTooltip="Synchronize picons global (from github)" (click)="synkPiconsGlobal()">add_a_photo</mat-icon>
+            </a>
+            <!-- Menu -->
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+        </div>
         <mat-menu #menu="matMenu">
             <button mat-menu-item (click)="deleteSelected()" *ngIf="(atLeastOneSelected|async) > 0">
                 <mat-icon class="mat-12">delete_sweep</mat-icon>
@@ -75,7 +78,7 @@
         </mat-menu>
 
     </mat-toolbar>
-    <mat-table #table [dataSource]="dataSource" matSort class="noselect" [trackBy]="trackByPosition">
+    <mat-table #table [dataSource]="dataSource" matSort class="noselect" [trackBy]="trackByPosition"  style="margin-bottom:62px">
         <!-- position -->
         <ng-container matColumnDef="position">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Position </mat-header-cell>
@@ -142,14 +145,14 @@
         <mat-row *matRowDef="let row; columns: displayedColumns;" (mousedown)="onSelectionStart(row.position)"
                  (mouseenter)="onSelection(row.position)" (mouseup)="onSelectionEnd()" (click)="toggleSelected(row, $event)" [class.active]="row.selected" [class.disabled]="!row.enabled" class="noselect"></mat-row>
     </mat-table>
-    <div class="container footer">
-        <div class="page-select" *ngIf="(atLeastOneSelected | async) > 0"> {{atLeastOneSelected | async}} selected items</div>
-        <div class="page-select">
+    <div class="container footer" fxLayout="row">
+        <div class="page-select" fxLayout="row" fxShow="false" fxShow.gt-sm>
+            <span *ngIf="(atLeastOneSelected | async) > 0">{{atLeastOneSelected | async}} selected items</span>
             <mat-form-field floatPlaceholder="never">
                 <input matInput [(ngModel)]="paginator.pageIndex" placeholder="Page..." type="number" (ngModelChange)="updateManualPage($event)">
             </mat-form-field>
         </div>
-        <mat-paginator #paginator [length]="dataSource.paginator.length" [pageIndex]="dataSource.paginator.pageIndex" [pageSize]="dataSource.paginator.pageSize"
+        <mat-paginator fxLayoutAlign="end center" fxFlex #paginator [length]="dataSource.paginator.length" [pageIndex]="dataSource.paginator.pageIndex" [pageSize]="dataSource.paginator.pageSize"
                        [pageSizeOptions]="dataSource.paginator.pageSizeOptions" class="noselect">
         </mat-paginator>
 
