@@ -1,6 +1,5 @@
 ﻿<h2 mat-dialog-title>Update bulk</h2>
 <mat-dialog-content>
-
     <mat-accordion>
         <mat-expansion-panel>
             <mat-expansion-panel-header>
@@ -30,7 +29,7 @@
             </mat-form-field>
             <!-- Groups -->
             <mat-form-field floatPlaceholder="never">
-                <input matInput placeholder="Groups..." [(ngModel)]="group" [matAutocomplete]="autoGroup" (keyup)="searchGroups$.next($event)">
+                <input matInput placeholder="Groups..." [(ngModel)]="group" [matAutocomplete]="autoGroup" (keyup)="searchGroups$.next($event)" (blur)="onNewGroup(group)">
                 <mat-autocomplete #autoGroup="matAutocomplete">
                     <mat-option *ngFor="let g of groupsfiltred" [value]="g" (onSelectionChange)="onChangeGroup(g)">
                         <span>{{ g }}</span>

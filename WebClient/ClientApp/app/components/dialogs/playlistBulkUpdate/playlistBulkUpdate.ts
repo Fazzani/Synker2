@@ -47,23 +47,22 @@ export class PlaylistBulkUpdate implements OnInit, OnDestroy {
         //AutoComplete groups
         this.searchGroups$
             .filter(x => x.keyCode != 13)
-            .map(m => m.key.toLowerCase())
+            .debounceTime(500)
+            .map(m => m.key)
             .distinctUntilChanged()
             .do(() => { this.groupsfiltred = [] })
-            .map(m => this.groups.filter(f => f.toLowerCase().indexOf(this.group) >= 0))
+            .map(m => this.groups.filter(f => f.toLowerCase().indexOf(this.group.toLowerCase()) >= 0))
             .distinct()
             .subscribe(x => {
                 console.log(x);
                 this.groupsfiltred = x;
             });
+    }
 
-        this.searchGroups$
-            .filter(x => x.keyCode == 13)
-            .subscribe(x => {
-                console.log(this.group);
-                this.autoTrigger.closePanel();
-                this.onChangeGroup(this.group);
-            });
+    onNewGroup(group: string): void {
+        this.autoTrigger.closePanel();
+        this.groups.push(group);
+        this.onChangeGroup(group);
     }
 
     ngOnInit(): void {

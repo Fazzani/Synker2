@@ -76,7 +76,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         private sitePackService: SitePackService, private commonService: CommonService, private tvgMediaService: TvgMediaService,
         public dialog: MatDialog, public snackBar: MatSnackBar) {
 
-        console.log('----------------------------------- ', this.columnDefs);
     }
 
     /** Called by Angular after media component initialized */
@@ -285,7 +284,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // #region dialogs
 
-    openUpdateListDialog(): void {
+    openBulkUpdateDialog(): void {
         let dialogRef = this.dialog.open(PlaylistBulkUpdate, {
             width: '550px',
             data: [

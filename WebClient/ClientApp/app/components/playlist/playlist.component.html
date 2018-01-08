@@ -24,7 +24,7 @@
                 <mat-icon class="mat-24" aria-label="Groups" matTooltip="Groups" (click)="openGroupsDialog()">folder</mat-icon>
             </a>
             <a mat-icon-button *ngIf="(atLeastOneSelected|async) > 0">
-                <mat-icon class="mat-24" aria-label="Bulk Update" matTooltip="Bulk Update" (click)="openUpdateListDialog()">done</mat-icon>
+                <mat-icon class="mat-24" aria-label="Bulk Update" matTooltip="Bulk Update" (click)="openBulkUpdateDialog()">done</mat-icon>
             </a>
             <a mat-icon-button>
                 <mat-icon class="mat-24" aria-label="Orgonize" matTooltip="Orgonize" (click)="orgonizeMedias()">reorder</mat-icon>
