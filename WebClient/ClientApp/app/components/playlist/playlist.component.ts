@@ -18,7 +18,6 @@ import { TvgMediaModifyDialog } from '../media/media.component';
 import { MediaRefService } from '../../services/mediaref/mediaref.service';
 import { FormControl } from '@angular/forms';
 import { KEY_CODE, KEY, PageListState } from '../../types/common.type';
-import { PlaylistDiffDialog } from './playlist.diff.component';
 import { snakbar_duration } from '../../variables';
 import { sitePackChannel } from '../../types/sitepackchannel.type';
 import { PiconService } from '../../services/picons/picons.service';
@@ -28,6 +27,9 @@ import { EventEmitter } from 'events';
 import { GroupsDialog } from '../group/groups.component';
 import { TvgMediaService } from '../../services/tvgmedia/tvgmedia.service';
 import { MatchTvgDialog } from '../matchTvg/matchTvg.component';
+import { PlaylistBulkUpdate } from '../dialogs/playlistBulkUpdate/playlistBulkUpdate';
+import { PlaylistTvgSitesDialog } from '../dialogs/playlistTvgSites/PlaylistTvgSitesDialog';
+import { PlaylistDiffDialog } from '../dialogs/playlistDiff/playlist.diff.component';
 
 @Component({
     selector: 'playlist',
@@ -42,7 +44,21 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     manualPage: number | null;
     key: number;
     subscriptionTableEvent: Subscription;
-    displayedColumns = ['position', 'tvg.logo', 'name', 'displayName', 'lang', 'group', 'tvg.name', 'tvg.tvgIdentify', 'actions'];
+    columns = [
+        { columnDef: 'position', header: 'Position', cell: (row: TvgMedia) => `${row.position}`, showed: true, actionColumn: false },
+        { columnDef: 'tvg.logo', header: 'Logo', cell: (row: TvgMedia) => `${row.tvg.logo}`, showed: true, actionColumn: false, isImage : true },
+        { columnDef: 'name', header: 'Name', cell: (row: TvgMedia) => `${row.name}`, showed: true, actionColumn: false },
+        { columnDef: 'displayName', header: 'DisplayName', cell: (row: TvgMedia) => `${row.displayName}`, showed: true, actionColumn: false },
+        { columnDef: 'lang', header: 'Lang', cell: (row: TvgMedia) => `${row.lang}`, showed: true, actionColumn: false },
+        { columnDef: 'group', header: 'Group', cell: (row: TvgMedia) => `${row.group}`, showed: true, actionColumn: false },
+        { columnDef: 'tvg.name', header: 'Tvg name', cell: (row: TvgMedia) => `${row.tvg.name}`, showed: true, actionColumn: false },
+        { columnDef: 'tvg.tvgIdentify', header: 'Tvg id', cell: (row: TvgMedia) => `${row.tvg.tvgIdentify}`, showed: true, actionColumn: false },
+        { columnDef: 'actions', header: 'Actions', cell: (row: TvgMedia) => ``, showed: true, actionColumn: true }
+    ];
+
+    columnDefs = this.columns.filter(x => !x.actionColumn && x.showed);
+    displayedColumns = this.columns.map(x => x.columnDef);
+
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
@@ -59,6 +75,8 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     constructor(private route: ActivatedRoute, private piconService: PiconService, private playlistService: PlaylistService,
         private sitePackService: SitePackService, private commonService: CommonService, private tvgMediaService: TvgMediaService,
         public dialog: MatDialog, public snackBar: MatSnackBar) {
+
+        console.log('----------------------------------- ', this.columnDefs);
     }
 
     /** Called by Angular after media component initialized */
@@ -268,7 +286,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     // #region dialogs
 
     openUpdateListDialog(): void {
-        let dialogRef = this.dialog.open(TvgMediaListModifyDialog, {
+        let dialogRef = this.dialog.open(PlaylistBulkUpdate, {
             width: '550px',
             data: [
                 this.dataSource.data.filter((v, i) => v.selected),
@@ -322,7 +340,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     openUpdateTvgSite(): void {
-        let dialogRef = this.dialog.open(TvgSitesListModifyDialog, {
+        let dialogRef = this.dialog.open(PlaylistTvgSitesDialog, {
             width: '550px',
             data: this.playlistBS.getValue()
         });
@@ -338,7 +356,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             data: [this.dataSource.data, this.playlistBS.getValue().tvgSites]
         });
 
-        dialogRef.afterClosed().subscribe((result : Array<TvgMedia>) => {
+        dialogRef.afterClosed().subscribe((result: Array<TvgMedia>) => {
             this.snackBar.open("Matching Tvg finished", "", { duration: snakbar_duration });
         });
     }
@@ -465,7 +483,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
     //#endregion
-    
+
     //#endregion
 
     /**
@@ -484,190 +502,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     updateManualPage(index) {
         console.log(`go to page ${index}`);
         this.paginator.page.emit(<PageEvent>{ pageIndex: index });
-    }
-}
-
-//---------------------------------------------------------------------------------    Playlist ModifyDialog
-@Component({
-    selector: 'playlist-modify-dialog',
-    templateUrl: './playlist.dialog.html'
-})
-export class PlaylistModifyDialog {
-
-    constructor(
-        public dialogRef: MatDialogRef<PlaylistModifyDialog>,
-        @Inject(MAT_DIALOG_DATA) public data: PlaylistModel[]) { }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    save(): void {
-        console.log('BulkUpdate saving');
-        // this.playlistService.updateLight(this.data).subscribe(ok => this.dialogRef.close());
-    }
-}
-//---------------------------------------------------------------------------------    TvgMedia bulk ListModifyDialog
-@Component({
-    selector: 'tvgmedia-list-modify-dialog',
-    templateUrl: './tvgmedia.list.dialog.html'
-})
-export class TvgMediaListModifyDialog implements OnInit, OnDestroy {
-    mediaTypes: typeof MediaType;
-    sitePacks: sitePackChannel[];
-    cultures: string[];
-    selectedLang: string;
-    keyUpSitePack = new Subject<any>();
-    filterChannelName: string;
-    selectedMediaType: MediaType;
-    enabled: boolean = true;
-    data: TvgMedia[];
-
-    groupsfiltred: string[];
-    groups: string[];
-    group: string;
-    searchGroups$ = new Subject<KeyboardEvent>();
-    @ViewChild(MatAutocompleteTrigger) autoTrigger: MatAutocompleteTrigger;
-
-    constructor(private sitePackService: SitePackService, private commonService: CommonService,
-        public dialogRef: MatDialogRef<TvgMediaListModifyDialog>,
-        @Inject(MAT_DIALOG_DATA) public tup: [TvgMedia[], Observable<string[]>]) {
-
-        this.data = tup[0];
-        tup[1].subscribe(x => this.groups = x);
-
-        this.mediaTypes = MediaType;
-
-        // AutoComplete sitepacks
-        const subscription = this.keyUpSitePack
-            .map(event => '*' + event.target.value + '*')
-            .debounceTime(500)
-            .distinctUntilChanged()
-            .subscribe(search => sitePackService.sitePacks(search).subscribe(res => this.sitePacks = res));
-
-        //AutoComplete groups
-        this.searchGroups$
-            .filter(x => x.keyCode != 13)
-            .map(m => m.key.toLowerCase())
-            .distinctUntilChanged()
-            .do(() => { this.groupsfiltred = [] })
-            .map(m => this.groups.filter(f => f.toLowerCase().indexOf(this.group) >= 0))
-            .distinct()
-            .subscribe(x => {
-                console.log(x);
-                this.groupsfiltred = x;
-            });
-
-        this.searchGroups$
-            .filter(x => x.keyCode == 13)
-            .subscribe(x => {
-                console.log(this.group);
-                this.autoTrigger.closePanel();
-                this.onChangeGroup(this.group);
-            });
-    }
-
-    ngOnInit(): void {
-
-        if (this.data != undefined && this.data.length > 0) {
-            this.selectedLang = this.data[0].lang;
-            this.selectedMediaType = this.data[0].mediaType;
-        }
-
-        this.sitePackService.countries().subscribe(c => {
-            this.cultures = c;
-        });
-    }
-
-    onChangeLang(event): void {
-        console.log("culture was changed : ", this.selectedLang);
-        this.data.forEach(m => m.lang = this.selectedLang);
-    }
-
-    onChangeGroup(g): void {
-        console.log("Group was changed : ", g);
-        this.data.forEach(m => m.group = g);
-    }
-
-    onChangeEnabled(enabled: boolean): void {
-        console.log("disabled was changed : ", enabled);
-        this.data.forEach(m => m.enabled = enabled);
-    }
-
-    onChangeMediaType(mediaType: number): void {
-        console.log("MediaType was changed : ", mediaType);
-        this.data.forEach(m => m.mediaType = mediaType);
-    }
-
-    onChangeTvgSourceSite(sitePack: sitePackChannel): void {
-        console.log("tvgSourceSite was changed : ", sitePack);
-        this.data.forEach(m => {
-
-            if (m.tvg == null)
-                m.tvg = <Tvg>{};
-            if (m.tvg.tvgSource == null)
-                m.tvg.tvgSource = <TvgSource>{};
-
-            m.tvg.tvgSource.site = sitePack.site;
-            m.tvg.tvgSource.country = sitePack.country;
-        });
-    }
-
-    save(): void {
-        this.dialogRef.close();
-    }
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    applyFixChannelName(replace: string): void {
-        this.data
-            .filter(x => new RegExp(this.filterChannelName).test(x.displayName))
-            .forEach(x => {
-                x.displayName = x.displayName.replace(new RegExp(this.filterChannelName), replace);
-            });
-    }
-
-    ngOnDestroy(): void {
-    }
-}
-//---------------------------------------------------------------------------------   TvgSites ListModifyDialog
-@Component({
-    selector: 'tvgsites-list-modify-dialog',
-    templateUrl: './tvgsites.list.dialog.html'
-})
-export class TvgSitesListModifyDialog implements OnInit, OnDestroy {
-    tvgSites: sitePackChannel[] = [];
-
-    constructor(private playlistService: PlaylistService, private sitePackService: SitePackService,
-        public dialogRef: MatDialogRef<TvgSitesListModifyDialog>,
-        @Inject(MAT_DIALOG_DATA) public data: PlaylistModel) {
-    }
-
-    ngOnInit(): void {
-        this.sitePackService.tvgSites()
-            .flatMap(m => m)
-            .do(x => x.selected = this.data.tvgSites.findIndex(f => f == x.site) >= 0)
-            .subscribe(m => {
-                this.tvgSites.push(m);
-                this.tvgSites.sort(this.compareFn);
-            });
-    }
-
-    save(): void {
-        console.log('Saving TvgSites');
-        this.data.tvgSites = this.tvgSites.filter(x => x.selected).map(x => x.site);
-        this.playlistService.updateLight(this.data).subscribe(ok => this.dialogRef.close());
-    }
-
-    compareFn = (a: sitePackChannel, b: sitePackChannel) =>
-        (a.selected === b.selected) ? 0 : a.selected ? -1 : 1;
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    ngOnDestroy(): void {
     }
 }
 

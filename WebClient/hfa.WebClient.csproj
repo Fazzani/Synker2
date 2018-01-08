@@ -29,6 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\app\components\dialogs\playlistBulkUpdate\playlistBulkUpdate.ts" />
+    <None Remove="ClientApp\app\components\dialogs\playlistTvgSites\PlaylistTvgSitesDialog.ts" />
+    <None Remove="ClientApp\app\components\playlist\playlist.update.dialog.ts" />
     <None Remove="ClientApp\app\infrastructure\DefaultHttpInterceptor.ts" />
     <None Remove="ClientApp\app\infrastructure\JwtInterceptor.ts" />
     <None Remove="ClientApp\app\pipes\enumKey.pipe.ts" />
@@ -53,6 +56,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\app\components\dialogs\playlistBulkUpdate\playlistBulkUpdate.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\dialogs\playlistTvgSites\PlaylistTvgSitesDialog.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\dialogs\playlistUpdate\playlist.update.dialog.ts" />
     <TypeScriptCompile Include="ClientApp\app\infrastructure\DefaultHttpInterceptor.ts" />
     <TypeScriptCompile Include="ClientApp\app\infrastructure\JwtInterceptor.ts" />
     <TypeScriptCompile Include="ClientApp\app\pipes\enumKey.pipe.ts" />

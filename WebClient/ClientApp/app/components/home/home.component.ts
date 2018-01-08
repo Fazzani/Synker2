@@ -5,8 +5,8 @@ import { MatDialog, MatSnackBar } from '@angular/material';
 import { PlaylistModel } from '../../types/playlist.type';
 import { QueryListBaseModel, PagedResult } from '../../types/common.type';
 import { ClipboardService } from 'ngx-clipboard';
-import { PlaylistAddDialog } from '../playlist/playlist.add.component';
 import { Observable } from 'rxjs/Observable';
+import { PlaylistAddDialog } from '../dialogs/playlistAddNew/playlist.add.component';
 
 @Component({
     selector: 'home',

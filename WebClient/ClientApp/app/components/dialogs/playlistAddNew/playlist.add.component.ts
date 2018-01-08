@@ -1,8 +1,8 @@
 ﻿import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
-import { CommonService, Constants } from '../../services/common/common.service';
-import { PlaylistModel, PlaylistStatus, PlaylistPostModel, Providers } from "../../types/playlist.type";
-import { PlaylistService } from "../../services/playlists/playlist.service";
+import { PlaylistService } from '../../../services/playlists/playlist.service';
+import { CommonService } from '../../../services/common/common.service';
+import { PlaylistPostModel, PlaylistStatus, Providers } from '../../../types/playlist.type';
 
 /**
 *  url tests
