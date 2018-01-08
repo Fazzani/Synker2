@@ -29,7 +29,7 @@
             </mat-form-field>
             <!-- Groups -->
             <mat-form-field floatPlaceholder="never">
-                <input matInput placeholder="Groups..." [(ngModel)]="group" [matAutocomplete]="autoGroup" (keyup)="searchGroups$.next($event)" (blur)="onNewGroup(group)">
+                <input matInput placeholder="Groups..." [(ngModel)]="group" [matAutocomplete]="autoGroup" (keyup)="searchGroups$.next($event)" (blur)="onBlurGroup()">
                 <mat-autocomplete #autoGroup="matAutocomplete">
                     <mat-option *ngFor="let g of groupsfiltred" [value]="g" (onSelectionChange)="onChangeGroup(g)">
                         <span>{{ g }}</span>

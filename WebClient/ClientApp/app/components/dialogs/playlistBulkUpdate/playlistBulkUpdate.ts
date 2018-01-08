@@ -59,10 +59,19 @@ export class PlaylistBulkUpdate implements OnInit, OnDestroy {
             });
     }
 
-    onNewGroup(group: string): void {
-        this.autoTrigger.closePanel();
-        this.groups.push(group);
-        this.onChangeGroup(group);
+    onBlurGroup(): void {
+        setTimeout(() => {
+            if (this.autoTrigger.panelOpen)
+                this.autoTrigger.closePanel();
+            this.groups.push(this.group);
+            this.onChangeGroup(this.group);
+        }, 500);
+    }
+
+    onChangeGroup(g): void {
+        this.group = g;
+        console.log("Group was changed : ", g);
+        this.data.forEach(m => m.group = g);
     }
 
     ngOnInit(): void {
@@ -82,10 +91,7 @@ export class PlaylistBulkUpdate implements OnInit, OnDestroy {
         this.data.forEach(m => m.lang = this.selectedLang);
     }
 
-    onChangeGroup(g): void {
-        console.log("Group was changed : ", g);
-        this.data.forEach(m => m.group = g);
-    }
+
 
     onChangeEnabled(enabled: boolean): void {
         console.log("disabled was changed : ", enabled);
