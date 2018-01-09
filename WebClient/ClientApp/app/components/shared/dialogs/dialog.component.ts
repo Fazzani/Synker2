@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatButtonModule, MatMenuModule, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatDialog, MatDialogConfig } from '@angular/material';
 import { AuthService } from '../../../services/auth/auth.service';
@@ -72,23 +72,40 @@ export class RegisterComponent implements OnInit {
     selector: 'login-dialog',
     templateUrl: '../../../components/auth/login.dialog.html'
 })
-export class LoginDialog {
+export class LoginDialog implements OnInit, OnDestroy {
+
 
     constructor(public dialogRef: MatDialogRef<LoginDialog>, private authService: AuthService, private router: Router, private commonService: CommonService) {
     }
 
     login(user: Login): void {
-        if (user != null)
+        if (user != null) {
             this.authService.Signin(user).subscribe(res => {
                 //console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
                 this.dialogRef.close(true);
+                this.router.navigateByUrl(this.authService.redirectUrl);
             },
                 (err: HttpErrorResponse) => {
                     if (err.status == 401)
                         this.commonService.displayError('Logon Failure', 'Logon Failure Unknown username or bad password');
                     else
                         this.commonService.displayError('Logon Failure', err.error);
-                })
+                });
+        }
+    }
+
+    ngOnInit(): void {
+        if (this.authService.authenticated) {
+            this.dialogRef.close(true);
+
+            if (this.authService.redirectUrl)
+                this.router.navigateByUrl(this.authService.redirectUrl);
+            else
+                this.router.navigate(['home']);
+        }
+    }
+
+    ngOnDestroy(): void {
     }
 }
 
