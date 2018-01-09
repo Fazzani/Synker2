@@ -24,12 +24,12 @@ import { PiconService } from '../../services/picons/picons.service';
 import { SitePackService } from '../../services/sitepack/sitepack.service';
 import { KeysPipe } from '../../pipes/enumKey.pipe';
 import { EventEmitter } from 'events';
-import { GroupsDialog } from '../group/groups.component';
 import { TvgMediaService } from '../../services/tvgmedia/tvgmedia.service';
-import { MatchTvgDialog } from '../matchTvg/matchTvg.component';
 import { PlaylistBulkUpdate } from '../dialogs/playlistBulkUpdate/playlistBulkUpdate';
 import { PlaylistTvgSitesDialog } from '../dialogs/playlistTvgSites/PlaylistTvgSitesDialog';
 import { PlaylistDiffDialog } from '../dialogs/playlistDiff/playlist.diff.component';
+import { GroupsDialog } from '../dialogs/group/groups.component';
+import { MatchTvgDialog } from '../dialogs/matchTvg/matchTvg.component';
 
 @Component({
     selector: 'playlist',

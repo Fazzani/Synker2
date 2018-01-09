@@ -30,7 +30,6 @@ import { BASE_URL, BASE_API_URL, BASE_WS_URL } from './variables';
 import { TokenInterceptor } from './services/auth/token.interceptor';
 import { DefaultHttpInterceptor } from './infrastructure/DefaultHttpInterceptor'
 import { MediaRefService } from './services/mediaref/mediaref.service';
-import { MediaRefModifyDialog, MediaRefComponent } from './components/mediaref/mediaref.component';
 import { PlaylistService } from './services/playlists/playlist.service';
 import { ClipboardModule } from 'ngx-clipboard';
 import { PlaylistComponent } from "./components/playlist/playlist.component";
@@ -40,13 +39,13 @@ import { SitePackService } from './services/sitepack/sitepack.service';
 import { SitePackComponent, SitePackModifyDialog } from './components/sitepack/sitepack.component';
 import { KeysPipe } from './pipes/enumKey.pipe';
 import { JwtInterceptor } from './infrastructure/JwtInterceptor';
-import { GroupsDialog } from './components/group/groups.component';
-import { MatchTvgDialog } from './components/matchTvg/matchTvg.component';
 import { PlaylistTvgSitesDialog } from './components/dialogs/playlistTvgSites/PlaylistTvgSitesDialog';
 import { PlaylistBulkUpdate } from './components/dialogs/playlistBulkUpdate/playlistBulkUpdate';
 import { PlaylistAddDialog } from './components/dialogs/playlistAddNew/playlist.add.component';
 import { PlaylistDiffDialog } from './components/dialogs/playlistDiff/playlist.diff.component';
 import { PlaylistUpdateDialog } from './components/dialogs/playlistUpdate/playlist.update.dialog';
+import { GroupsDialog } from './components/dialogs/group/groups.component';
+import { MatchTvgDialog } from './components/dialogs/matchTvg/matchTvg.component';
 
 const appRoutes: Routes = [
     { path: 'home', component: HomeComponent, canActivate: [LoginRouteGuard] },
@@ -66,7 +65,6 @@ const appRoutes: Routes = [
         AppComponent,
         HomeComponent,
         MediaComponent,
-        MediaRefComponent,
         SitePackComponent,
         RegisterComponent,
         EpgComponent,
@@ -76,7 +74,6 @@ const appRoutes: Routes = [
         DialogComponent,
         LoginDialog,
         RegisterDialog,
-        MediaRefModifyDialog,
         PlaylistComponent,
         PlaylistUpdateDialog,
         PlaylistBulkUpdate,
@@ -101,7 +98,7 @@ const appRoutes: Routes = [
         ClipboardModule,
         RouterModule.forRoot(appRoutes, { enableTracing: true })
     ],
-    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, MediaRefModifyDialog, PlaylistBulkUpdate,
+    entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, PlaylistBulkUpdate,
         PlaylistTvgSitesDialog, PlaylistAddDialog, PlaylistUpdateDialog, PlaylistDiffDialog, SitePackModifyDialog, GroupsDialog, MatchTvgDialog],
     providers: [
         CommonService,

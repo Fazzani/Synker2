@@ -1,11 +1,10 @@
 ﻿import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
-import { CommonService, Constants } from '../../services/common/common.service';
-import { PlaylistModel, PlaylistStatus, PlaylistPostModel, Providers } from "../../types/playlist.type";
-import { PlaylistService } from "../../services/playlists/playlist.service";
 import { Observable } from 'rxjs/Observable';
 import { GroupedObservable } from 'rxjs/operators/groupBy';
-import { TvgMedia } from '../../types/media.type';
+import { CommonService } from '../../../services/common/common.service';
+import { PlaylistModel } from '../../../types/playlist.type';
+import { PlaylistService } from '../../../services/playlists/playlist.service';
 
 @Component({
     selector: 'groups-dialog',

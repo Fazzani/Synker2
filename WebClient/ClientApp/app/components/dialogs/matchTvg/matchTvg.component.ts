@@ -1,12 +1,12 @@
 ﻿import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
-import { CommonService, Constants } from '../../services/common/common.service';
-import { TvgMediaService } from '../../services/tvgmedia/tvgmedia.service';
-import { MatchTvgPostModel, MatchTvgFormModel, MatchingTvgSiteTypeEnum } from '../../types/matchTvgPostModel';
-import { TvgMedia } from '../../types/media.type';
-import { sitePackChannel } from '../../types/sitepackchannel.type';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs';
+import { MatchTvgPostModel, MatchTvgFormModel, MatchingTvgSiteTypeEnum } from '../../../types/matchTvgPostModel';
+import { TvgMediaService } from '../../../services/tvgmedia/tvgmedia.service';
+import { CommonService } from '../../../services/common/common.service';
+import { TvgMedia } from '../../../types/media.type';
+import { sitePackChannel } from '../../../types/sitepackchannel.type';
 
 /**
 *  url tests
@@ -84,6 +84,7 @@ export class MatchTvgDialog implements OnInit, OnDestroy {
                     x.tvg.tvgSource.site = res.site;
                     x.tvg.tvgSource.code = res.site_id;
                     x.tvg.tvgSource.country = res.country;
+                    x.tvg.tvgIdentify = res.site_id;
                 }
                 this.obs.next(x);
                 if (i == (mediasToMatch.length - 1))
