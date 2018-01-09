@@ -95,7 +95,7 @@ export class LoginDialog implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        if (this.authService.authenticated) {
+        if (this.authService.authenticated.getValue()) {
             this.dialogRef.close(true);
 
             if (this.authService.redirectUrl)
