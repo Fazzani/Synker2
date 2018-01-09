@@ -118,14 +118,13 @@ namespace Hfa.WebApi.Controllers
 
             playlistEntity.Status = playlist.Status;
             playlistEntity.Freindlyname = playlist.Freindlyname;
-            playlistEntity.TvgSites = playlist.TvgSites;
+             playlistEntity.TvgSites = playlist.TvgSites;
             playlistEntity.SynkConfig.Cron = playlist.Cron;
             playlistEntity.SynkConfig.Url = playlist.Url;
             playlistEntity.SynkConfig.SynkEpg = playlist.SynkEpg;
             playlistEntity.SynkConfig.SynkGroup = playlist.SynkGroup;
             playlistEntity.SynkConfig.SynkLogos = playlist.SynkLogos;
-            playlistEntity.UpdateContent(playlist.TvgMedias);
-
+            playlistEntity.Medias = JsonConvert.SerializeObject(playlist.TvgMedias);
             var updatedCount = await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation($"Updated Count : {updatedCount}");
             return Ok(updatedCount);
@@ -676,14 +675,13 @@ namespace Hfa.WebApi.Controllers
             using (var playlist = new Playlist<TvgMedia>(providerInstance))
             {
                 var sourceList = await playlist.PullAsync(cancellationToken);
-                var content = JsonConvert.SerializeObject(sourceList.ToArray());
 
                 var synkcfg = new SynkConfig { Url = playlistUrl };
                 var playlistEntity = new Playlist
                 {
                     UserId = UserId.Value,
                     Freindlyname = playlistName,
-                    Content = UTF8Encoding.UTF8.GetBytes(content),
+                    Medias = new JsonObject<List<TvgMedia>>(sourceList),
                     Status = PlaylistStatus.Enabled,
                     SynkConfig = synkcfg
                 };

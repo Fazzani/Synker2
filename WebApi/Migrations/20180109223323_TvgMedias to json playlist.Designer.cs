@@ -16,9 +16,10 @@ using System.Collections.Generic;
 namespace hfa.WebApi.Migrations
 {
     [DbContext(typeof(SynkerDbContext))]
-    partial class SynkerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180109223323_TvgMedias to json playlist")]
+    partial class TvgMediastojsonplaylist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,6 +159,10 @@ namespace hfa.WebApi.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("JSON");
 
                     b.Property<DateTime>("CreatedDate");
 

@@ -73,7 +73,7 @@ namespace hfa.Synker.Service.Services.Playlists
                   }).WithCancellation(cancellationToken);
 
                 if (newMedias.Any())
-                    pl.Content = UTF8Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(newMedias.Where(x => x.IsValid).ToArray()));
+                    pl.Medias = new JsonObject<List<TvgMedia>>(newMedias.Where(x => x.IsValid).ToList());
             }
             return pl;
         }
@@ -88,7 +88,7 @@ namespace hfa.Synker.Service.Services.Playlists
                 throw new ArgumentNullException(nameof(tvgmedias));
 
             var handler = FabricHandleMedias();
-           
+
             var newMedias = tvgmedias.AsParallel().Select(media =>
             {
                 handler.HandleTvgMedia(media);

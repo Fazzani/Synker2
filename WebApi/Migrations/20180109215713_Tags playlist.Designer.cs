@@ -9,16 +9,15 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
-using PlaylistManager.Entities;
 using System;
-using System.Collections.Generic;
 
 namespace hfa.WebApi.Migrations
 {
     [DbContext(typeof(SynkerDbContext))]
-    partial class SynkerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180109215713_Tags playlist")]
+    partial class Tagsplaylist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -159,6 +158,10 @@ namespace hfa.WebApi.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("JSON");
+
                     b.Property<DateTime>("CreatedDate");
 
                     b.Property<bool>("Favorite");
@@ -166,8 +169,6 @@ namespace hfa.WebApi.Migrations
                     b.Property<string>("Freindlyname")
                         .IsRequired()
                         .HasMaxLength(100);
-
-                    b.Property<JsonObject<List<TvgMedia>>>("Medias");
 
                     b.Property<byte>("Status");
 

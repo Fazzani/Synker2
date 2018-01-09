@@ -37,26 +37,12 @@ namespace hfa.Synker.Service.Entities.Playlists
 
         public PlaylistStatus Status { get; set; }
 
-        [Required]
-        public byte[] Content { get; set; }
-
-        TvgMedia[] _tvgMedias;
         [NotMapped]
-        public List<TvgMedia> TvgMedias
-        {
-            get
-            {
-                if (_tvgMedias != null)
-                    return _tvgMedias.ToList();
+        public List<TvgMedia> TvgMedias => Medias?.Object;
 
-                if (!Content.Any())
-                    return null;
+        public JsonObject<List<TvgMedia>> Medias { get; set; }
 
-                _tvgMedias = JsonConvert.DeserializeObject<TvgMedia[]>(Encoding.UTF8.GetString(Content));
-
-                return _tvgMedias.ToList();
-            }
-        }
+        public JsonObject<string> Tags { get; set; }
 
         private List<String> _tvgSites { get; set; }
 
@@ -75,29 +61,6 @@ namespace hfa.Synker.Service.Entities.Playlists
         }
 
         public bool Favorite { get; set; }
-
-        //Playlist<TvgMedia> _playlist;
-
-        //[NotMapped]
-        //public Playlist<TvgMedia> PlaylistObject
-        //{
-        //    get
-        //    {
-        //        if (_playlist == null && TvgMedias != null)
-        //        {
-        //            using (var ms = new MemoryStream())
-        //            {
-        //                _playlist = new Playlist<TvgMedia>(ms);
-        //            }
-        //        }
-        //        return _playlist;
-        //    }
-        //}
-
-        public void UpdateContent(List<TvgMedia> tvgMedias)
-        {
-            Content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(tvgMedias));
-        }
 
         [NotMapped]
         public bool IsSynchronizable => SynkConfig != null && !string.IsNullOrEmpty(SynkConfig.Url);
