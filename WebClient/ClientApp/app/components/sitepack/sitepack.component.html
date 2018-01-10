@@ -31,10 +31,15 @@
     <mat-table #table [dataSource]="dataSource" matSort class="noselect">
         <!-- logo -->
         <ng-container matColumnDef="logo">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Logo </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef> Logo </mat-header-cell>
             <mat-cell *matCellDef="let row">
                 <img [src]="row.logo" class="logo-grid" />
             </mat-cell>
+        </ng-container>
+        <!-- update date -->
+        <ng-container matColumnDef="update">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Update </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.update}} </mat-cell>
         </ng-container>
         <!-- displaynames -->
         <ng-container matColumnDef="displayNames">

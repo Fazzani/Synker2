@@ -49,13 +49,10 @@ namespace hfa.Synker.Service.Services.Elastic
                 .InferMappingFor<tvProgramme>(m => m.IdProperty(p => p.Id).IndexName("xmltv-*"))
                 .InferMappingFor<MediaRef>(m => m.IndexName(_config.MediaRefIndex).IdProperty(p => p.Id))
                 .InferMappingFor<Picon>(m => m.IndexName(_config.PiconIndex).IdProperty(p => p.Id))
-                .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).TypeName("doc").IdProperty(p => p.id));
+                .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).TypeName("doc").IdProperty(p => p.id).Rename(x=>x.Update, "update_date"));
 
             if (!Client.IndexExists(_config.DefaultIndex).Exists)
                 MappingPlaylistConfig();
-
-            if (!Client.IndexExists(_config.MediaRefIndex).Exists)
-                MappingMediaRefConfig(_config.MediaRefIndex);
 
             //SitePack index
             if (!Client.IndexExists(_config.SitePackIndex).Exists)
@@ -116,50 +113,13 @@ namespace hfa.Synker.Service.Services.Elastic
                               .Keyword(t => t.Name(pt => pt.Source))
                               .Keyword(t => t.Name(pt => pt.Site_id))
                               .Keyword(t => t.Name(pt => pt.Xmltv_id))
+                              .Keyword(t => t.Name(pt => pt.Update))
                               .Text(t => t
                                 .Name(pt => pt.DisplayNames)
                                 .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
                                 .Analyzer("sitepack_name_analyzer")
                                 .SearchAnalyzer("sitepack_name_analyzer"))
 
-                     ))
-                 ));
-
-            _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(response.DebugInformation);
-        }
-
-        public void MappingMediaRefConfig(string indexName)
-        {
-            var keywordProperty = new PropertyName("keyword");
-            var response = Client.CreateIndex(indexName, c => c
-            .Settings(s => s
-                     .Setting("max_result_window", 1_000_000)
-                     .Analysis(a => a
-                         .Analyzers(an => an
-                             .Custom("mediaref_name_analyzer", ca => ca
-                                 .Tokenizer("standard")
-                                 .Filters("lowercase", "standard", "asciifolding")
-                             )
-                             .Standard("standard", sd => sd.StopWords(stopWords))
-                         )
-                     )
-                 )
-            .Mappings(m =>
-                 m.Map<MediaRef>(x => x
-                         .Properties(p =>
-                             p.Keyword(t => t.Name(pt => pt.MediaType))
-                              .Text(t => t
-                                .Name(pt => pt.DisplayNames)
-                                .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
-                                .Analyzer("mediaref_name_analyzer")
-                                .SearchAnalyzer("mediaref_name_analyzer"))
-                             .Object<Tvg>(t => t.Name(n => n.Tvg).Properties(pt =>
-                                        pt.Keyword(k => k.Name(km => km.TvgIdentify))
-                                        .Keyword(k => k.Name(km => km.Logo))
-                                        .Keyword(k => k.Name(km => km.Shift))
-                                        .Keyword(k => k.Name(km => km.Aspect_ratio))
-                                        .Keyword(k => k.Name(km => km.Audio_track))
-                                        .Text(tx => tx.Name(txn => txn.Name).Fields(f => f.Keyword(k => k.Name(keywordProperty))))))
                      ))
                  ));
 

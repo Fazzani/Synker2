@@ -31,7 +31,7 @@ import { sitePackChannel } from '../../types/sitepackchannel.type';
 export class SitePackComponent implements OnInit, OnDestroy {
     subscriptionTableEvent: Subscription;
 
-    displayedColumns = ['logo', 'displayNames', 'site', 'country', 'mediaType', 'channel_name', 'actions'];
+    displayedColumns = ['logo', 'update', 'displayNames', 'site', 'country', 'mediaType', 'channel_name', 'actions'];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild('filter') filter: ElementRef;
@@ -114,7 +114,10 @@ export class SitePackComponent implements OnInit, OnDestroy {
             .of(id)
             .filter(() => confirm)
             .switchMap(x => this.sitePackService.delete(x))
-            .subscribe(res => this.snackBar.open("Medias referentiel was deleted"));
+            .subscribe(res => {
+                this.snackBar.open("Medias referentiel was deleted");
+                this.dataSource.getData();
+            });
     }
 
     save(): void {
@@ -275,8 +278,8 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
     };
 
     /**
-     * Get mediasref list from webapi
-     * @returns Obersvable<mediaRef[]>
+     * Get sitepacks from web api
+     * @returns Obersvable<sitePackChannel[]>
      */
     getData(): Observable<sitePackChannel[]> {
 

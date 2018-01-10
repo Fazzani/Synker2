@@ -105,8 +105,8 @@ namespace Hfa.WebApi.Controllers
             return new OkObjectResult(response);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
+        [HttpDelete]
+        public async Task<IActionResult> Delete([FromQuery]string id, CancellationToken cancellationToken)
         {
             var response = await _sitePackService.DeleteManyAsync(new[] { id }, cancellationToken);
             return new OkObjectResult(response);

@@ -76,4 +76,10 @@ export class SitePackService extends BaseService {
             return res;
         }, err => this.handleError(err));
     }
+
+    delete(id: string): Observable<number> {
+        return this.http.delete(variables.BASE_API_URL + `${this.BaseUrl}?id=${id}`).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
 }

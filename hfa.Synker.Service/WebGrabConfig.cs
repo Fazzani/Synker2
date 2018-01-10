@@ -31,7 +31,7 @@ namespace hfa.Synker.Service.Services.Xmltv
     {
         [XmlIgnore]
         public string id { get; set; }
-        [XmlAttribute(AttributeName = "update")]
+        [XmlIgnore]
         public DateTime Update { get; set; }
         [XmlAttribute(AttributeName = "site")]
         public string Site { get; set; }
@@ -44,11 +44,15 @@ namespace hfa.Synker.Service.Services.Xmltv
         [XmlIgnore]
         public string Source { get; set; }
 
+        [XmlIgnore]
         public string Country { get; set; }
+        [XmlIgnore]
         public string Logo { get; set; }
 
+        [XmlIgnore]
         public List<string> DisplayNames { get; set; }
 
+        [XmlIgnore]
         public SitePackMediaTypes MediaType { get; set; }
 
         public bool Equals(SitePackChannel x, SitePackChannel y)
