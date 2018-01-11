@@ -39,7 +39,7 @@
         <!-- update date -->
         <ng-container matColumnDef="update">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Update </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.update}} </mat-cell>
+            <mat-cell *matCellDef="let row"> {{row.update | date : 'medium'}} </mat-cell>
         </ng-container>
         <!-- displaynames -->
         <ng-container matColumnDef="displayNames">

@@ -37,7 +37,7 @@ export class JwtInterceptor implements HttpInterceptor {
                         }
                     });
                 } else {
-                    this.commonService.displayError(err.statusText, err.error);
+                    this.commonService.displayError(err.statusText, typeof err.error === "string" ? err.error : err.error.Message);
                 }
             }
             }).finally(()=> this.commonService.displayLoader(false));

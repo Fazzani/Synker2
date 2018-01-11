@@ -8,6 +8,7 @@ using hfa.Synker.Service.Services.Playlists;
 using hfa.Synker.Service.Services.Scraper;
 using hfa.Synker.Services.Dal;
 using hfa.WebApi.Common;
+using hfa.WebApi.Common.Exceptions;
 using hfa.WebApi.Common.Filters;
 using hfa.WebApi.Models.Playlists;
 using Hfa.WebApi.Commmon;
@@ -255,22 +256,29 @@ namespace Hfa.WebApi.Controllers
             if (providerType == null)
                 return BadRequest($"Provider type not found : {playlistPostModel.Provider}");
 
-            //Download playlist from url
-            using (var httpClient = new HttpClient())
+            try
             {
-                var playlistStream = await httpClient.GetStreamAsync(playlistPostModel.Url);
-                var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
-
-                var playlist = _dbContext.Playlist.FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.Url) ?? new Playlist
+                //Download playlist from url
+                using (var httpClient = new HttpClient())
                 {
-                    UserId = UserId.Value,
-                    Freindlyname = playlistPostModel.Freindlyname,
-                    Status = playlistPostModel.Status,
-                    SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
-                };
+                    var playlistStream = await httpClient.GetStreamAsync(playlistPostModel.Url);
+                    var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
 
-                var pl = await _playlistService.DiffWithSource(() => playlist, providerInstance, cancellationToken: cancellationToken);
-                return Ok(pl);
+                    var playlist = _dbContext.Playlist.FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.Url) ?? new Playlist
+                    {
+                        UserId = UserId.Value,
+                        Freindlyname = playlistPostModel.Freindlyname,
+                        Status = playlistPostModel.Status,
+                        SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
+                    };
+
+                    var pl = await _playlistService.DiffWithSource(() => playlist, providerInstance, cancellationToken: cancellationToken);
+                    return Ok(pl);
+                }
+            }
+            catch (HttpRequestException)
+            {
+                throw new BusinessException($"Playlist url {playlistPostModel.Url} not reachable");
             }
         }
 
