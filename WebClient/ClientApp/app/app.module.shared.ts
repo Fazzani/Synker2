@@ -46,6 +46,8 @@ import { PlaylistDiffDialog } from './components/dialogs/playlistDiff/playlist.d
 import { PlaylistUpdateDialog } from './components/dialogs/playlistUpdate/playlist.update.dialog';
 import { GroupsDialog } from './components/dialogs/group/groups.component';
 import { MatchTvgDialog } from './components/dialogs/matchTvg/matchTvg.component';
+import { ToastyModule } from 'ng2-toasty';
+import { PushNotificationsModule } from 'ng-push';
 
 const appRoutes: Routes = [
     { path: 'home', component: HomeComponent, canActivate: [LoginRouteGuard] },
@@ -88,7 +90,9 @@ const appRoutes: Routes = [
     ],
     imports: [
         BrowserModule,
-        // BrowserAnimationsModule,
+        BrowserAnimationsModule,
+        PushNotificationsModule,
+        ToastyModule,
         CommonModule,
         HttpClientModule,
         FormsModule,

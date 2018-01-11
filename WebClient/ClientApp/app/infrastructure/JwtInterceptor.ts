@@ -4,9 +4,11 @@ import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
 import { Injectable, Injector } from '@angular/core';
 import { CommonService } from '../services/common/common.service';
+import { ToastyService, ToastOptions } from 'ng2-toasty';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
+    toastyService: ToastyService;
     private authService: AuthService
     private commonService: CommonService;
 
@@ -16,8 +18,16 @@ export class JwtInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         this.authService = this.injector.get(AuthService);
         this.commonService = this.injector.get(CommonService);
-
+        this.toastyService = this.injector.get(ToastyService);
         this.commonService.displayLoader(true)
+
+        var toastOptions: ToastOptions = {
+            title: "My title",
+            msg: "The message",
+            showClose: true,
+            timeout: 4000,
+            theme: 'default'
+        };
 
         return next.handle(request).do((event: HttpEvent<any>) => {
             console.log('IN JwtInterceptor', event);
@@ -37,8 +47,11 @@ export class JwtInterceptor implements HttpInterceptor {
                         }
                     });
                 } else {
-                    this.commonService.displayError(err.statusText, typeof err.error === "string" ? err.error : err.error.Message);
+                    toastOptions.title = err.statusText;
+                    toastOptions.msg = typeof err.error === "string" ? err.error : err.error.Message;
                 }
+
+                this.toastyService.error(toastOptions);
             }
             }).finally(()=> this.commonService.displayLoader(false));
     }
