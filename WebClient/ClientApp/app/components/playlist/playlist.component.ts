@@ -46,7 +46,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     subscriptionTableEvent: Subscription;
     columns = [
         { columnDef: 'position', header: 'Position', cell: (row: TvgMedia) => `${row.position}`, showed: true, actionColumn: false },
-        { columnDef: 'tvg.logo', header: 'Logo', cell: (row: TvgMedia) => `${row.tvg.logo}`, showed: true, actionColumn: false, isImage : true },
+        { columnDef: 'tvg.logo', header: 'Logo', cell: (row: TvgMedia) => `${row.tvg.logo}`, showed: true, actionColumn: false, isImage: true },
         { columnDef: 'name', header: 'Name', cell: (row: TvgMedia) => `${row.name}`, showed: true, actionColumn: false },
         { columnDef: 'displayName', header: 'DisplayName', cell: (row: TvgMedia) => `${row.displayName}`, showed: true, actionColumn: false },
         { columnDef: 'lang', header: 'Lang', cell: (row: TvgMedia) => `${row.lang}`, showed: true, actionColumn: false },
@@ -407,7 +407,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     synkPiconsGlobal(): void {
 
         this.piconService.synk().subscribe(res => {
-            this.snackBar.open("Picons index was synchronized");
+            this.commonService.info('Success', "Picons index was synchronized");
         });
     }
 
@@ -417,7 +417,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     reset(): void {
         this.playlistService.synk(new PlaylistPostModel()).subscribe(res => {
             this.playlistBS.next(res);
-            this.snackBar.open("Playlist was synchronized with source");
+            this.commonService.info('Success', "Playlist was synchronized with source");
         });
     }
 
@@ -435,7 +435,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
             });
             this.playlistBS.next(this.playlistBS.value);
-            this.snackBar.open("Executing handlers finished");
+            this.commonService.info('Success', "Executing handlers finished");
         });
     }
 
@@ -457,18 +457,26 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
             });
             this.playlistBS.next(this.playlistBS.value);
-            this.snackBar.open("Matching picons finished");
+            this.commonService.info('Success', "Matching picons finished");
         });
     }
 
     //#region TMDB VOD
     /**
-     * Try match playlist VOD information
+     * Try match selected videos  VOD informations
      */
     matchVideos(): void {
-        this.playlistService.matchVideos(this.playlistBS.getValue().publicId).subscribe(res => {
-            this.playlistBS.next(res);
-            this.snackBar.open("Playlist was matched with all VOD");
+        this.playlistService.matchVideos(...this.dataSource.data.filter((v, i) => v.selected)).subscribe(res => {
+            res.forEach(x => {
+                var index = this.playlistBS.value.tvgMedias.findIndex(f => f.id == x.id);
+
+                if (index >= 0) {
+                    this.playlistBS.value.tvgMedias[index] = x;
+                    console.log('match picons media : ', x);
+                }
+            });
+            this.playlistBS.next(this.playlistBS.value);
+            this.commonService.info('Success', "Playlist was matched with all VOD");
         });
     }
 
@@ -477,7 +485,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
      */
     matchVideo(media: TvgMedia): void {
         this.playlistService.matchVideo(media.displayName).subscribe(res => {
-            this.snackBar.open(`Matching with VOD ${media.displayName} ${res}`);
+            this.commonService.info('Success', `Matching with VOD ${media.displayName} ${res}`);
             media.tvg.logo = res.posterPath;
         });
     }

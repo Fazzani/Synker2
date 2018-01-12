@@ -8,7 +8,7 @@ let fixture: ComponentFixture<CommonService>;
 describe('1st tests', () => {
     beforeEach(async(() =>
     {
-        service = new CommonService();
+        service = new CommonService(null);
     }));
 
     it('Json to object null', () => expect(service.JsonToObject("")).toBe(null));

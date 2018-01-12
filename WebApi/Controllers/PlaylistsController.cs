@@ -119,7 +119,7 @@ namespace Hfa.WebApi.Controllers
 
             playlistEntity.Status = playlist.Status;
             playlistEntity.Freindlyname = playlist.Freindlyname;
-             playlistEntity.TvgSites = playlist.TvgSites;
+            playlistEntity.TvgSites = playlist.TvgSites;
             playlistEntity.SynkConfig.Cron = playlist.Cron;
             playlistEntity.SynkConfig.Url = playlist.Url;
             playlistEntity.SynkConfig.SynkEpg = playlist.SynkEpg;
@@ -427,7 +427,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("matchvideos/{id}")]
         [ValidateModel]
-        public async Task<IActionResult> MatchVideos([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> MatchVideosByPlaylist([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
         {
             var idGuid = GetInternalId(id);
 
@@ -477,6 +477,23 @@ namespace Hfa.WebApi.Controllers
             }
 
             return NotFound();
+        }
+
+        [HttpPost]
+        [Route("matchvideos")]
+        [ValidateModel]
+        public IActionResult MatchVideos([FromBody]List<TvgMedia> tvgmedias, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            tvgmedias.AsParallel().WithCancellation(cancellationToken).ForAll(media =>
+           {
+               var matched = _mediaScraper.SearchAsync(media.DisplayName, _globalOptions.TmdbAPI, _globalOptions.TmdbPosterBaseUrl, cancellationToken).GetAwaiter().GetResult();
+
+               if (matched != null && matched.Any())
+               {
+                   media.Tvg.Logo = matched.FirstOrDefault().PosterPath;
+               }
+           });
+            return Ok(tvgmedias);
         }
 
         /// <summary>
