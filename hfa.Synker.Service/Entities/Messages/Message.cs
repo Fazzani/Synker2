@@ -1,6 +1,8 @@
-﻿using Nest;
+﻿using hfa.Synker.Service.Entities.Auth;
+using Nest;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace hfa.Synker.Services.Entities.Messages
 {
@@ -9,14 +11,17 @@ namespace hfa.Synker.Services.Entities.Messages
     {
         public static Message PingMessage => new Message { Content = "Ping", MessageType = MessageTypeEnum.Ping, Status = MessageStatus.None, TimeStamp = DateTime.Now };
 
+        [Key]
         public int Id { get; set; } 
         public string Content { get; set; }
         public DateTime TimeStamp { get; set; }
         public MessageTypeEnum MessageType { get; set; }
         public MessageStatus Status { get; set; }
 
-        [MaxLength(64)]
-        public string Author { get; set; }
+        [ForeignKey(nameof(UserId))]
+        public virtual User User { get; set; }
+
+        public int UserId { get; set; }
     }
 
     public enum MessageTypeEnum : int

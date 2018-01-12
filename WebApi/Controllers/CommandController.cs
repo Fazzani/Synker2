@@ -31,6 +31,11 @@ namespace hfa.WebApi.Controllers
 
         }
 
+        /// <summary>
+        /// All commands or commands by connected user
+        /// </summary>
+        /// <param name="all">if true get all commands</param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetCommand([FromQuery] bool? all)
         {

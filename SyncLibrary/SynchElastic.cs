@@ -228,7 +228,7 @@ namespace SyncLibrary
         {
             await _messagesService.SendAsync(new Message
             {
-                Author = options?.Author,
+                //Author = options?.Author,
                 Content = options.Message,
                 MessageType = (MessageTypeEnum)Enum.Parse(typeof(MessageTypeEnum), options.MessageType.ToString())
             },
