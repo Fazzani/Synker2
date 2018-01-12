@@ -12,7 +12,7 @@ import { HomeComponent } from './components/home/home.component';
 import { MediaComponent, TvgMediaModifyDialog } from './components/media/media.component';
 import { EpgComponent, EpgModifyDialog } from './components/epg/epg.component';
 import { XmltvComponent, XmltvModifyDialog } from './components/xmltv/xmltv.component';
-import { DialogComponent, LoginDialog, RegisterDialog, RegisterComponent } from './components/shared/dialogs/dialog.component';
+import { DialogComponent } from './components/shared/dialogs/dialog.component';
 import { LoginRouteGuard } from './services/auth/loginRouteGuard.service';
 
 import { AuthService } from './services/auth/auth.service';
@@ -48,6 +48,8 @@ import { GroupsDialog } from './components/dialogs/group/groups.component';
 import { MatchTvgDialog } from './components/dialogs/matchTvg/matchTvg.component';
 import { ToastyModule } from 'ng2-toasty';
 import { PushNotificationsModule } from 'ng-push';
+import { RegisterComponent, RegisterDialog } from './components/dialogs/auth/RegisterDialog';
+import { LoginDialog } from './components/dialogs/auth/LoginDialog';
 
 const appRoutes: Routes = [
     { path: 'home', component: HomeComponent, canActivate: [LoginRouteGuard] },

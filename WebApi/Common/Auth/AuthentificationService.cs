@@ -113,11 +113,21 @@ namespace hfa.WebApi.Common.Auth
         {
             var jwtHandler = new JwtSecurityTokenHandler();
 
-            if (user != null && ValidateToken(user.ConnectionState.AccessToken))
+            try
             {
-                user.ConnectionState.RefreshToken = refreshToken;
-                return GenerateToken(user);
+                if (user != null && ValidateToken(user.ConnectionState.AccessToken))
+                {
+                    user.ConnectionState.RefreshToken = refreshToken;
+                    return GenerateToken(user);
+                }
             }
+            catch (SecurityTokenExpiredException)
+            {
+                //Token expired do try to refresh it
+                if (ValidateToken(refreshToken))
+                    return GenerateToken(user);
+            }
+
             return null;
         }
 
@@ -148,15 +158,8 @@ namespace hfa.WebApi.Common.Auth
             {
                 var jwtToken = jwtHandler.ReadJwtToken(accessToken);
 
-                try
-                {
-                    var principal = jwtHandler.ValidateToken(accessToken, Parameters, out SecurityToken securityToken);
-                    return securityToken != null;
-                }
-                catch (SecurityTokenException)
-                {
-                    return false;
-                }
+                var principal = jwtHandler.ValidateToken(accessToken, Parameters, out SecurityToken securityToken);
+                return securityToken != null;
             }
             return false;
         }

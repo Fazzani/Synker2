@@ -7,6 +7,8 @@ import { CommonService } from '../../services/common/common.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { Exception } from '../../types/common.type';
+import { ToastyService } from 'ng2-toasty';
+import * as variables from "../../variables";
 
 @Component({
     selector: 'app',
@@ -18,7 +20,7 @@ export class AppComponent implements OnInit, OnDestroy {
     objLoaderStatus: boolean;
 
     constructor(private notifService: NotificationService, public snackBar: MatSnackBar, private commonService: CommonService,
-        private authService: AuthService, private router: Router) {
+        private authService: AuthService, private router: Router, private toastyService: ToastyService) {
 
         this.objLoaderStatus = false;
 
@@ -33,9 +35,23 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+
+        this.authService
+            .isAuthenticated()
+            .debounceTime(6000)
+            .distinctUntilChanged()
+            .subscribe(isAuth => {
+                debugger;
+                console.log(`----------- JwtInterceptor 401 isAuth = ${isAuth} current url ${this.router.routerState.snapshot.url} this.authService.redirectUrl: ${this.authService.redirectUrl}`);
+                if (!isAuth && (this.router.routerState.snapshot.url != variables.SIGN_IN_URL && this.router.routerState.snapshot.url != variables.REGISTER_URL)) {
+                    this.authService.redirectUrl = this.router.routerState.snapshot.url == variables.SIGN_IN_URL ? "/home" : this.router.routerState.snapshot.url;
+                    this.router.navigate(['signin']);
+                }
+            });
+
         setTimeout(_ => {
             this.authService.authenticated.distinctUntilChanged().subscribe(isAuth => {
-                if (!isAuth && this.router.url != 'signin' && this.router.url != 'register') {
+                if (!isAuth && this.router.url != variables.SIGN_IN_URL && this.router.url != variables.REGISTER_URL) {
                     this.authService.redirectUrl = this.router.routerState.snapshot.url;
                     this.router.navigate(['signin']);
                 }
@@ -48,7 +64,9 @@ export class AppComponent implements OnInit, OnDestroy {
         });
 
         this.commonService.error.distinctUntilChanged().filter(err => err != null).subscribe((err: Exception) => {
-            this.snackBar.open(err.message);
+            this.commonService.toastOptions.msg = err.message;
+            this.commonService.toastOptions.title = err.title;
+            this.toastyService.error(this.commonService.toastOptions);
         });
     }
 
