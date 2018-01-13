@@ -79,7 +79,7 @@ namespace hfa.Synker.Service.Services.Picons
             QueryContainer container = new MatchQuery
             {
                 Field = new Field("name"),
-                Query = mediaName,
+                Query = mediaName.ToLowerInvariant(),
                 Fuzziness = Fuzziness.Auto,
                 MinimumShouldMatch = MinimumShouldMatch.Percentage(minimumShouldMatch)
             };
