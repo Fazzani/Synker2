@@ -31,8 +31,21 @@ namespace hfa.Synker.Service.Services.Xmltv
     {
         [XmlIgnore]
         public string id { get; set; }
+        DateTime _update;
         [XmlIgnore]
-        public DateTime Update { get; set; }
+        public DateTime Update
+        {
+            get
+            {
+                if (_update == default || _update == null)
+                    _update = DateTime.UtcNow;
+                return _update;
+            }
+            set
+            {
+                _update = value;
+            }
+        }
         [XmlAttribute(AttributeName = "site")]
         public string Site { get; set; }
         [XmlAttribute(AttributeName = "site_id")]
