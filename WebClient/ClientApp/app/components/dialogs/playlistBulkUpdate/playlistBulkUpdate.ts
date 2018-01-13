@@ -45,26 +45,30 @@ export class PlaylistBulkUpdate implements OnInit, OnDestroy {
             .subscribe(search => sitePackService.sitePacks(search).subscribe(res => this.sitePacks = res));
 
         //AutoComplete groups
-        this.searchGroups$
-            .filter(x => x.keyCode != 13)
-            .debounceTime(500)
-            .map(m => m.key)
-            .distinctUntilChanged()
-            .do(() => { this.groupsfiltred = [] })
-            .map(m => this.groups.filter(f => f.toLowerCase().indexOf(this.group.toLowerCase()) >= 0))
-            .distinct()
-            .subscribe(x => {
-                console.log(x);
-                this.groupsfiltred = x;
-            });
+        if (this.group != null && this.group.length > 0) {
+            this.searchGroups$
+                .filter(x => x.keyCode != 13)
+                .debounceTime(500)
+                .map(m => m.key)
+                .distinctUntilChanged()
+                .do(() => { this.groupsfiltred = [] })
+                .map(m => this.groups.filter(f => f.toLowerCase().indexOf(this.group.toLowerCase()) >= 0))
+                .distinct()
+                .subscribe(x => {
+                    console.log(x);
+                    this.groupsfiltred = x;
+                });
+        }
     }
 
     onBlurGroup(): void {
         setTimeout(() => {
             if (this.autoTrigger.panelOpen)
                 this.autoTrigger.closePanel();
-            this.groups.push(this.group);
-            this.onChangeGroup(this.group);
+            if (this.group !== undefined) {
+                this.groups.push(this.group);
+                this.onChangeGroup(this.group);
+            }
         }, 500);
     }
 
@@ -90,8 +94,6 @@ export class PlaylistBulkUpdate implements OnInit, OnDestroy {
         console.log("culture was changed : ", this.selectedLang);
         this.data.forEach(m => m.lang = this.selectedLang);
     }
-
-
 
     onChangeEnabled(enabled: boolean): void {
         console.log("disabled was changed : ", enabled);
@@ -128,7 +130,7 @@ export class PlaylistBulkUpdate implements OnInit, OnDestroy {
         this.data
             .filter(x => new RegExp(this.filterChannelName).test(x.displayName))
             .forEach(x => {
-                x.displayName = x.displayName.replace(new RegExp(this.filterChannelName), replace);
+                x.displayName = x.displayName.replace(new RegExp(this.filterChannelName, "i"), replace);
             });
     }
 

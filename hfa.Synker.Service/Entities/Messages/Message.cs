@@ -9,10 +9,17 @@ namespace hfa.Synker.Services.Entities.Messages
     //[ElasticsearchType(IdProperty = nameof(Id))]
     public class Message
     {
-        public static Message PingMessage => new Message { Content = "Ping", MessageType = MessageTypeEnum.Ping, Status = MessageStatus.None, TimeStamp = DateTime.Now };
+        public static Message PingMessage => new Message
+        {
+            UserId = 3, //Batch
+            Content = "Ping",
+            MessageType = MessageTypeEnum.Ping,
+            Status = MessageStatus.None,
+            TimeStamp = DateTime.Now
+        };
 
         [Key]
-        public int Id { get; set; } 
+        public int Id { get; set; }
         public string Content { get; set; }
         public DateTime TimeStamp { get; set; }
         public MessageTypeEnum MessageType { get; set; }
@@ -20,7 +27,7 @@ namespace hfa.Synker.Services.Entities.Messages
 
         [ForeignKey(nameof(UserId))]
         public virtual User User { get; set; }
-
+        [Required]
         public int UserId { get; set; }
     }
 

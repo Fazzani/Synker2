@@ -16,6 +16,8 @@ using hfa.Synker.Service.Entities.MediasRef;
 using hfa.WebApi.Models.Xmltv;
 using hfa.WebApi.Models.Elastic;
 using PlaylistManager.Entities;
+using hfa.Synker.Service.Services.Scraper;
+using hfa.WebApi.Common;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -24,12 +26,16 @@ namespace Hfa.WebApi.Controllers
     public class PiconsController : BaseController
     {
         private IPiconsService _piconsService;
+        private IMediaScraper _mediaScraper;
+        GlobalOptions _globalOptions;
 
         public PiconsController(IPiconsService piconsService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
-            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IMediaScraper mediaScraper, IOptions<GlobalOptions> globalOptions)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _piconsService = piconsService;
+            _mediaScraper = mediaScraper;
+            _globalOptions = globalOptions.Value;
         }
 
         [HttpPost]
@@ -87,10 +93,22 @@ namespace Hfa.WebApi.Controllers
         {
             tvgmedias.AsParallel().WithCancellation(cancellationToken).ForAll(m =>
                 {
-                    var picons = _piconsService.MatchAsync(m.DisplayName, shouldMatchChannelNumber ? m.GetChannelNumber() : null, distance, cancellationToken).GetAwaiter().GetResult();
                     if (m.Tvg == null)
                         m.Tvg = new Tvg();
-                    m.Tvg.Logo = picons.FirstOrDefault()?.RawUrl;
+
+                    if (m.MediaType == MediaType.LiveTv || m.MediaType == MediaType.Radio)
+                    {
+                        var picons = _piconsService.MatchAsync(m.DisplayName, shouldMatchChannelNumber ? m.GetChannelNumber() : null, distance, cancellationToken).GetAwaiter().GetResult();
+                        m.Tvg.Logo = picons.FirstOrDefault()?.RawUrl;
+                    }
+                    else if (m.MediaType == MediaType.Video)
+                    {
+                        var matched = _mediaScraper.SearchAsync(m.DisplayName, _globalOptions.TmdbAPI, _globalOptions.TmdbPosterBaseUrl, cancellationToken).GetAwaiter().GetResult();
+                        if (matched != null)
+                        {
+                            m.Tvg.Logo = matched.FirstOrDefault().PosterPath;
+                        }
+                    }
                 });
 
             return Ok(tvgmedias);

@@ -16,12 +16,13 @@ namespace hfa.Synker.Service.Services.Elastic
     {
         public const string SITE_PACK_RETREIVE_COUNTRY_PIPELINE = "sitepack_retreive_country";
         public const string PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE = "picons_retreive_channel_number";
-
+        private const string STOP_WORDS_FILE_PATH = "synkerconfig/stopwords.txt";
+        private const string MAPPING_CHAR_FILTERS_FILE_PATH = "mapping_synker.txt";
         private ConnectionSettings _settings;
         private ElasticClient _client;
         private static object syncRoot = new Object();
         ILoggerFactory _loggerFactory;
-        static string[] stopWords = { "hd", "sd", "fhd", "tn:", "vip:", "vip", "ca:", "usa:", "ch:", "ar", "fr", "fr:", "ar:", "1080p", "720p", "(fr)", "(ar)", "+1", "+2", "+4", "+6", "+8", "arb", "vip", "it", "my" };
+        static string[] stopWords = { "tnt", "hd", "sd", "fhd", "tn:", "vip:", "vip", "ca:", "usa:", "ch:", "ar", "fr", "fr:", "ar:", "1080p", "720p", "(fr)", "(ar)", "+1", "+2", "+4", "+6", "+8", "arb", "vip", "it", "my" };
         private ElasticConfig _config;
 
         public ElasticConnectionClient(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory)
@@ -49,7 +50,7 @@ namespace hfa.Synker.Service.Services.Elastic
                 .InferMappingFor<tvProgramme>(m => m.IdProperty(p => p.Id).IndexName("xmltv-*"))
                 .InferMappingFor<MediaRef>(m => m.IndexName(_config.MediaRefIndex).IdProperty(p => p.Id))
                 .InferMappingFor<Picon>(m => m.IndexName(_config.PiconIndex).IdProperty(p => p.Id))
-                .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).TypeName("doc").IdProperty(p => p.id).Rename(x=>x.Update, "update_date"));
+                .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).TypeName("doc").IdProperty(p => p.id).Rename(x => x.Update, "update_date"));
 
             if (!Client.IndexExists(_config.DefaultIndex).Exists)
                 MappingPlaylistConfig();
@@ -134,23 +135,22 @@ namespace hfa.Synker.Service.Services.Elastic
                      .Setting("max_result_window", _config.MaxResultWindow)
                      .Analysis(a => a
                      .CharFilters(cf => cf
+                             .Mapping("mapping_picons_char_filter", x => new MappingCharFilter() { MappingsPath = MAPPING_CHAR_FILTERS_FILE_PATH })
                              .PatternReplace("picons_name_filter_regex_removeWhiteSpace", pat => pat.Pattern("(?i)^\\s+|\\s+$|\\s+(?=\\s)|\\bf?hd|\\bsd|\\bh265|\\bfull\\s?hd|\\btv|\\b\\d{2,3}0p").Replacement(string.Empty))
                              .PatternReplace("picons_name_filter_regex_quality", pat => pat.Pattern("(?i)\\bf?hd\\b|\\bsd\\b|(\\(|\\s)\\d{2,3}0p\\s?\\)?").Replacement(string.Empty))
                              .PatternReplace("picons_name_filter_regex_shift", pat => pat.Pattern("\\s\\+\\d").Replacement(string.Empty))
                              .PatternReplace("picons_name_filter_regex_replace_plus", pat => pat.Pattern("\\+").Replacement("plus"))
                          )
-                         .TokenFilters(t => t.EdgeNGram("autocomplete_filter", auf => auf.MinGram(2).MaxGram(15))
-                                             .Stop("channel_name_token_filter", ss => ss.StopWords(stopWords))
-                                             .WordDelimiter("piconWordDelimiter", wd => wd.CatenateAll(true).PreserveOriginal(false).CatenateWords(true).SplitOnCaseChange(false).SplitOnNumerics(false).GenerateWordParts(false)))
+                         .TokenFilters(t => t.WordDelimiter("piconWordDelimiter", wd => wd.CatenateAll(true).PreserveOriginal(false).CatenateWords(true).SplitOnCaseChange(false).SplitOnNumerics(false).GenerateWordParts(false)))
                          .Analyzers(an => an
                              .Custom("picons_name_analyzer", ca => ca
                                  .Tokenizer("keyword")
-                                 .CharFilters("picons_name_filter_regex_quality", "picons_name_filter_regex_shift", "picons_name_filter_regex_replace_plus")
-                                 .Filters("lowercase", "standard", "piconWordDelimiter", "channel_name_token_filter", "asciifolding")
+                                 .CharFilters("mapping_picons_char_filter", "picons_name_filter_regex_quality", "picons_name_filter_regex_shift", "picons_name_filter_regex_replace_plus")
+                                 .Filters("lowercase", "standard", "piconWordDelimiter", "asciifolding")
                              ).Custom("picons_search_name_analyzer", ca => ca
                                  .Tokenizer("keyword")
-                                 .CharFilters("picons_name_filter_regex_quality", "picons_name_filter_regex_shift", "picons_name_filter_regex_replace_plus")
-                                 .Filters("lowercase", "standard", "piconWordDelimiter", "channel_name_token_filter", "asciifolding")
+                                 .CharFilters("mapping_picons_char_filter", "picons_name_filter_regex_quality", "picons_name_filter_regex_shift", "picons_name_filter_regex_replace_plus")
+                                 .Filters("lowercase", "standard", "piconWordDelimiter", "asciifolding")
                              )
                              .Custom("mediaref_name_analyzer", ca => ca
                                  .Tokenizer("standard")
@@ -204,7 +204,7 @@ namespace hfa.Synker.Service.Services.Elastic
                                  })
                              ).PatternReplace("channel_name_filter_regex", pat => pat.Pattern("^(.+):(.+)$").Replacement("$2"))
                          )
-                         .TokenFilters(t => t.Stop("channel_name_token_filter", ss => ss.StopWords(stopWords)))
+                         .TokenFilters(t => t.Stop("channel_name_token_filter", ss => ss.StopWordsPath(STOP_WORDS_FILE_PATH)))
                          .Analyzers(an => an
                              .Custom("channel_name_analyzer", ca => ca
                                  .CharFilters("channel_name_filter", "drop_specChars", "channel_name_filter_regex")

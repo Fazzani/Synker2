@@ -227,6 +227,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.routeSub.unsubscribe();
     }
 
+    //#region media position AND Organization
     /**
      * Switch media position
      * @param {TvgMedia} x
@@ -262,7 +263,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
      * Reorgonize medias
      * @returns
      */
-    orgonizeMedias(): void {
+    organizeMedias(): void {
         this.commonService.displayLoader(true);
 
         let counter: number = 1;
@@ -281,6 +282,8 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     trackByPosition = (index, item) => +item.position;
+    //#endregion
+
 
     // #region dialogs
 

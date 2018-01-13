@@ -84,7 +84,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         /// <summary>
-        /// Get Messages by status
+        /// Get Messages by status for connected user
         /// </summary>
         /// <param name="messageStatus"></param>
         /// <returns></returns>
@@ -94,7 +94,7 @@ namespace Hfa.WebApi.Controllers
         {
             var response = _dbContext.Messages
                 .OrderByDescending(x => x.Id)
-                .Where(x => x.Status == messageStatus)
+                .Where(x => x.Status == messageStatus && UserId == x.UserId)
                 .GetPaged(page, pageSize);
 
             return Ok(response);
