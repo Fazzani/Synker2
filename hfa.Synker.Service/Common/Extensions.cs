@@ -126,7 +126,6 @@ namespace System
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
 
-
         /// <summary>
         /// Remove all whitespaces
         /// </summary>

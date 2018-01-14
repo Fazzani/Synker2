@@ -38,6 +38,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Scraper;
+using ZNetCS.AspNetCore.Authentication.Basic;
+using ZNetCS.AspNetCore.Authentication.Basic.Events;
+using Microsoft.AspNetCore.Authentication;
+using hfa.Synker.Service.Services.Xtream;
 
 namespace hfa.WebApi
 {
@@ -74,6 +78,7 @@ namespace hfa.WebApi
                .AddScoped<IPlaylistService, PlaylistService>()
                .AddScoped<IMediaRefService, MediaRefService>()
                .AddScoped<ISitePackService, SitePackService>()
+               .AddScoped<IXtreamService, XtreamService>()
                .AddScoped<IMediaScraper, MediaScraper>()
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
@@ -122,7 +127,7 @@ namespace hfa.WebApi
                 options.UseCaseSensitivePaths = true;
                 options.MaximumBodySize = 1024;
             });
-           
+
             //MVC
             services.AddMvc(config =>
             {
@@ -160,9 +165,9 @@ namespace hfa.WebApi
                     TermsOfService = "None",
                     Contact = new Contact { Name = "Synker", Email = "contact@synker.ovh", Url = "https://www.github.com/fazzani/synker2" },
                     License = new License { Name = "Use under MIT", Url = "" },
-                   
+
                 });
-                
+
                 c.DescribeAllEnumsAsStrings();
                 c.IgnoreObsoleteActions();
                 c.IgnoreObsoleteProperties();
@@ -220,7 +225,7 @@ namespace hfa.WebApi
             {
                 app.UseCors("CorsPolicy");
 
-                //  app.UseBasicAuthentication();
+                //app.UseBasicAuthentication();
 
                 #region WebSockets
 
@@ -253,7 +258,7 @@ namespace hfa.WebApi
 
                 app.UseMvc();
 
-             
+
             }
             catch (Exception ex)
             {
@@ -290,8 +295,30 @@ namespace hfa.WebApi
                 //jwtBearerOptions.BackchannelHttpHandler
                 jwtBearerOptions.RequireHttpsMetadata = true;
                 jwtBearerOptions.TokenValidationParameters = authService.Parameters;
-            }).AddBasicAuthentication<BasicAuth>();
+            }).AddBasicAuthentication(
+            options =>
+            {
+                options.Realm = "Synker";
+                options.Events = new BasicAuthenticationEvents
+                {
+                    OnValidatePrincipal = context =>
+                    {
+                        var basic = new BasicAuthenticationMiddleware();
+                        var principal = basic.Invoke(context.HttpContext, authService, sp.GetService<SynkerDbContext>(), sp.GetService<ILoggerFactory>());
+                        if (principal != null)
+                        {
+                            var ticket = new AuthenticationTicket(
+                                principal,
+                                new Microsoft.AspNetCore.Authentication.AuthenticationProperties(),
+                                BasicAuthenticationDefaults.AuthenticationScheme);
 
+                            return Task.FromResult(AuthenticateResult.Success(ticket));
+                        }
+
+                        return Task.FromResult(AuthenticateResult.Fail("Authentication failed."));
+                    }
+                };
+            });
             services.AddAuthorization(authorizationOptions =>
             {
                 authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme, "Basic").RequireAuthenticatedUser().Build();

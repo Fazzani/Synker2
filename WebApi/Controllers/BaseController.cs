@@ -17,6 +17,7 @@ using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 using hfa.WebApi.Models.Elastic;
+using System.Text;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -26,6 +27,9 @@ namespace Hfa.WebApi.Controllers
         protected readonly IElasticConnectionClient _elasticConnectionClient;
         protected readonly ElasticConfig _elasticConfig;
         readonly protected SynkerDbContext _dbContext;
+
+        protected Guid GetInternalPlaylistId(string id) => new Guid(Encoding.UTF8.DecodeBase64(id));
+
 
         public BaseController(IOptions<ElasticConfig> elasticConfig, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
             SynkerDbContext context)
