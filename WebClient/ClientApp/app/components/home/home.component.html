@@ -2,7 +2,7 @@
     <mat-tab-group color="warn">
         <mat-tab label="Playlists">
             <div fxLayout="row" fxLayoutWrap fxLayoutGap="2rem">
-                <mat-card fxFlex.gt-md="20" fxFlex.md="28" fxFlex.sm="40" fxFlex.xs="100" *ngFor="let playlist of playlists?.results" >
+                <mat-card *ngFor="let playlist of playlists?.results" fxFlex.gt-md="20" fxFlex.md="28" fxFlex.sm="40" fxFlex.xs="100">
                     <mat-card-header>
                         <mat-card-title>{{ playlist.freindlyname }}</mat-card-title>
                         <span class="mat-header-button-actions">
@@ -20,29 +20,13 @@
                             <p>{{playlist.updatedDate | date:'medium'}}</p>
                             <p>{{playlist.cron}}</p>
                         </div>
-                        <div *ngIf="showMoreInfo" class="panel-infos">
-                            <p>{{playlist.xtreamPlayerApi?.user_info.status }}</p>
-                            <p>{{playlist.xtreamPlayerApi?.user_info.isTrial }}</p>
-                            <p>{{playlist.xtreamPlayerApi?.user_info.active }}</p>
-                            <p>{{playlist.xtreamPlayerApi?.user_info.timezone }}</p>
-                            <p>{{playlist.xtreamPlayerApi?.user_info.createdDate | date:'medium'}}</p>
-                            <p>{{playlist.xtreamPlayerApi?.user_info.expirationDate | date:'medium'}}</p>
-                            <p>{{playlist.xtreamPlayerApi?.user_info.max_connections }}</p>
-                        </div>
-                        <div *ngIf="showMoreInfo" class="panel-infos">
-                            <p>{{playlist.xtreamPlayerApi?.server_info.url }}</p>
-                            <p>{{playlist.xtreamPlayerApi?.server_info.port }}</p>
-                            <p>{{playlist.xtreamPlayerApi?.server_info.rtmp_port }}</p>
-                            <p>{{playlist.xtreamPlayerApi?.server_info.timezone }}</p>
-                            <p>{{playlist.xtreamPlayerApi?.server_info.time_now | date:'medium'}}</p>
-                        </div>
                     </mat-card-content>
                     <mat-card-actions>
                         <a mat-button [routerLink]="['/playlist', playlist.publicId]" aria-label="detail">
                             Medias
                         </a>
                         <button mat-button (click)="share(playlist)">Share</button>
-                        <button mat-button (click)="showMoreInfo=!showMoreInfo" *ngIf="playlist.xtreamPlayerApi">Xtream Infos</button>
+                        <button mat-button (click)="openPlaylistInfosDialog(playlist)">Xtream Infos</button>
                     </mat-card-actions>
                 </mat-card>
             </div>

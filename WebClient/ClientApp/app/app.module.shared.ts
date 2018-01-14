@@ -51,6 +51,7 @@ import { PushNotificationsModule } from 'ng-push';
 import { RegisterComponent, RegisterDialog } from './components/dialogs/auth/RegisterDialog';
 import { LoginDialog } from './components/dialogs/auth/LoginDialog';
 import { XtreamService } from './services/xtream/xtream.service';
+import { PlaylistInfosDialog } from './components/dialogs/playlistInfos/playlist.infos.component';
 
 const appRoutes: Routes = [
     { path: 'home', component: HomeComponent, canActivate: [LoginRouteGuard] },
@@ -86,6 +87,7 @@ const appRoutes: Routes = [
         PlaylistAddDialog,
         PlaylistDiffDialog,
         SitePackModifyDialog,
+        PlaylistInfosDialog,
         GroupsDialog,
         MatchTvgDialog,
         SearchPipe,
@@ -106,7 +108,7 @@ const appRoutes: Routes = [
         RouterModule.forRoot(appRoutes, { enableTracing: true })
     ],
     entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, PlaylistBulkUpdate,
-        PlaylistTvgSitesDialog, PlaylistAddDialog, PlaylistUpdateDialog, PlaylistDiffDialog, SitePackModifyDialog, GroupsDialog, MatchTvgDialog],
+        PlaylistTvgSitesDialog, PlaylistAddDialog, PlaylistUpdateDialog, PlaylistDiffDialog, SitePackModifyDialog, GroupsDialog, MatchTvgDialog, PlaylistInfosDialog],
     providers: [
         CommonService,
         TvgMediaService,

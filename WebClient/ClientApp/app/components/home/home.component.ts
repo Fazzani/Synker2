@@ -8,6 +8,7 @@ import { ClipboardService } from 'ngx-clipboard';
 import { Observable } from 'rxjs/Observable';
 import { PlaylistAddDialog } from '../dialogs/playlistAddNew/playlist.add.component';
 import { XtreamService } from '../../services/xtream/xtream.service';
+import { PlaylistInfosDialog } from '../dialogs/playlistInfos/playlist.infos.component';
 
 @Component({
     selector: 'home',
@@ -16,9 +17,9 @@ import { XtreamService } from '../../services/xtream/xtream.service';
 export class HomeComponent implements OnInit, OnDestroy {
     playlists: PagedResult<PlaylistModel> = <PagedResult<PlaylistModel>>{ results: new Array<PlaylistModel>() };
     query: QueryListBaseModel;
-    showMoreInfo: boolean = false;
+
     constructor(private renderer: Renderer, private playlistService: PlaylistService, private commonService: CommonService, public dialog: MatDialog,
-        public snackBar: MatSnackBar, private clipboardService: ClipboardService, private xtreamService: XtreamService) { }
+        public snackBar: MatSnackBar, private clipboardService: ClipboardService) { }
 
     ngOnInit(): void {
 
@@ -26,18 +27,19 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.query.pageNumber = 0;
         this.query.pageSize = 20;
         this.playlistService.list(this.query).subscribe(x => {
-            x.results.forEach(p => {
-                this.xtreamService.getUserAndServerInfo(p.publicId)
-                    .subscribe(xtreamPlayerApi => {
-                        p.xtreamPlayerApi = xtreamPlayerApi;
-                        this.playlists.results.push(p);
-                    }, error => this.playlists.results.push(p));
-            });
+            this.playlists = x;
+        });
+    }
+
+    openPlaylistInfosDialog(playlist: PlaylistModel): void {
+        let dialogRef = this.dialog.open(PlaylistInfosDialog, {
+            width: '350px',
+            data: playlist
         });
     }
 
     share(playlist: PlaylistModel): void {
-
+           
     }
 
     copyPublicLink(link: string): void {
