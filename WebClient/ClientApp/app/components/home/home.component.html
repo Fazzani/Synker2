@@ -2,7 +2,7 @@
     <mat-tab-group color="warn">
         <mat-tab label="Playlists">
             <div fxLayout="row" fxLayoutWrap fxLayoutGap="2rem">
-                <mat-card *ngFor="let playlist of playlists?.results" fxFlex.gt-md="20" fxFlex.md="28" fxFlex.sm="40" fxFlex.xs="100">
+                <mat-card *ngFor="let playlist of playlists?.results" class="hoverable" fxFlex.gt-md="20" fxFlex.md="28" fxFlex.sm="40" fxFlex.xs="100">
                     <mat-card-header>
                         <mat-card-title>{{ playlist.freindlyname }}</mat-card-title>
                         <span class="mat-header-button-actions">
@@ -15,11 +15,11 @@
                         </span>
                     </mat-card-header>
                     <mat-card-content class="small-text" [routerLink]="['/playlist', playlist.publicId]">
-                        <div>
+                        <ng-container>
                             <p>{{playlist.createdDate | date:'medium'}}</p>
                             <p>{{playlist.updatedDate | date:'medium'}}</p>
                             <p>{{playlist.cron}}</p>
-                        </div>
+                        </ng-container>
                     </mat-card-content>
                     <mat-card-actions>
                         <a mat-button [routerLink]="['/playlist', playlist.publicId]" aria-label="detail">

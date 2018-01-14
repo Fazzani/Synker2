@@ -33,7 +33,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     openPlaylistInfosDialog(playlist: PlaylistModel): void {
         let dialogRef = this.dialog.open(PlaylistInfosDialog, {
-            width: '350px',
+            width: '400px',
             data: playlist
         });
     }

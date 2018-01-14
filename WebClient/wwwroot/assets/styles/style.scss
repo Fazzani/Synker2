@@ -297,11 +297,15 @@ mat-dialog-container {
         top: 15px;
     }
 
-    &:hover {
+    &.hoverable:hover {
         transition: ease-out opacity 0.7s, linear transform 0.2s;
         opacity: 1;
         cursor: pointer;
         transform: scale(1);
+    }
+
+    mat-card-content {
+        outline: none;
     }
 }
 
