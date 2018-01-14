@@ -1,4 +1,5 @@
 ﻿import { TvgMedia } from "./media.type";
+import { PlayerApi } from "./xtream.type";
 
 /**
  * Message Type
@@ -53,6 +54,7 @@ export class PlaylistModel {
     public synkLogos: boolean;
     public publicUrl: string;
     public publicId: string;
+    public xtreamPlayerApi: PlayerApi;
 }
 
 export class PlaylistPostModel {

@@ -69,11 +69,13 @@ namespace hfa.PlaylistBaseLibrary.Entities.XtreamCode
         public string Stream_type { get; set; }
         public string Type_name { get; set; }
         public string Stream_id { get; set; }
+        public int StreamId { get { return Convert.ToInt32(Stream_id); } }
         public string Stream_icon { get; set; }
         public string Epg_channel_id { get; set; }
         public string Added { get; set; }
         public string Category_name { get; set; }
         public string Category_id { get; set; }
+        public int CategoryId { get { return Convert.ToInt32(Category_id); } }
         public string Series_no { get; set; }
         public string Live { get; set; }
         public string Container_extension { get; set; }

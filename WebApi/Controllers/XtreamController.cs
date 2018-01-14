@@ -109,7 +109,7 @@ namespace hfa.WebApi.Controllers
             if (playlistEntity == null)
                 return NotFound(playlistEntity);
 
-            var cats = await _xtreamService.GetShortEpgForStreamAsync(playlistEntity.SynkConfig.Url,streamId, cancellationToken);
+            var cats = await _xtreamService.GetShortEpgForStreamAsync(playlistEntity.SynkConfig.Url, streamId, cancellationToken);
             return Ok(cats);
         }
 

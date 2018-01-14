@@ -47,6 +47,7 @@
     <None Remove="ClientApp\app\types\matchTvgPostModel.ts" />
     <None Remove="ClientApp\app\types\picon.type.ts" />
     <None Remove="ClientApp\app\types\xmltv.type.ts" />
+    <None Remove="ClientApp\app\types\xtream.type.ts" />
     <None Remove="ClientApp\app\variables.ts" />
   </ItemGroup>
 
@@ -83,6 +84,7 @@
     <TypeScriptCompile Include="ClientApp\app\types\elasticQuery.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\picon.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\xmltv.type.ts" />
+    <TypeScriptCompile Include="ClientApp\app\types\xtream.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\variables.ts" />
   </ItemGroup>
 

@@ -7,16 +7,18 @@ import { QueryListBaseModel, PagedResult } from '../../types/common.type';
 import { ClipboardService } from 'ngx-clipboard';
 import { Observable } from 'rxjs/Observable';
 import { PlaylistAddDialog } from '../dialogs/playlistAddNew/playlist.add.component';
+import { XtreamService } from '../../services/xtream/xtream.service';
 
 @Component({
     selector: 'home',
     templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit, OnDestroy {
-    playlists: PagedResult<PlaylistModel>;
+    playlists: PagedResult<PlaylistModel> = <PagedResult<PlaylistModel>>{ results: new Array<PlaylistModel>() };
     query: QueryListBaseModel;
+    showMoreInfo: boolean = false;
     constructor(private renderer: Renderer, private playlistService: PlaylistService, private commonService: CommonService, public dialog: MatDialog,
-        public snackBar: MatSnackBar, private clipboardService: ClipboardService) { }
+        public snackBar: MatSnackBar, private clipboardService: ClipboardService, private xtreamService: XtreamService) { }
 
     ngOnInit(): void {
 
@@ -24,15 +26,25 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.query.pageNumber = 0;
         this.query.pageSize = 20;
         this.playlistService.list(this.query).subscribe(x => {
-            this.playlists = x;
+            x.results.forEach(p => {
+                this.xtreamService.getUserAndServerInfo(p.publicId)
+                    .subscribe(xtreamPlayerApi => {
+                        p.xtreamPlayerApi = xtreamPlayerApi;
+                        this.playlists.results.push(p);
+                    }, error => this.playlists.results.push(p));
+            });
         });
+    }
+
+    share(playlist: PlaylistModel): void {
+
     }
 
     copyPublicLink(link: string): void {
         if (this.clipboardService.isSupported)
             this.clipboardService.copyFromContent(link, this.renderer);
     }
-   
+
     delete(playlist: PlaylistModel): void {
         const confirm = window.confirm(`Do you really want to delete this playlist ${playlist.freindlyname}?`);
 

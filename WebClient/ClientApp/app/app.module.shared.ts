@@ -50,6 +50,7 @@ import { ToastyModule } from 'ng2-toasty';
 import { PushNotificationsModule } from 'ng-push';
 import { RegisterComponent, RegisterDialog } from './components/dialogs/auth/RegisterDialog';
 import { LoginDialog } from './components/dialogs/auth/LoginDialog';
+import { XtreamService } from './services/xtream/xtream.service';
 
 const appRoutes: Routes = [
     { path: 'home', component: HomeComponent, canActivate: [LoginRouteGuard] },
@@ -117,6 +118,7 @@ const appRoutes: Routes = [
         MediaRefService,
         PlaylistService,
         PiconService,
+        XtreamService,
         SitePackService,
         EpgService,
         {
