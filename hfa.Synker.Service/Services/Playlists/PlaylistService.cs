@@ -13,6 +13,7 @@ using PlaylistManager.Entities;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -47,35 +48,40 @@ namespace hfa.Synker.Service.Services.Playlists
         /// <summary>
         /// Synk playlist and match epg, logos and groups
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="getPlaylist"></param>
+        /// <param name="provider"></param>
+        /// <param name="isXtreamPlaylist"></param>
         /// <param name="force"></param>
-        /// <param name="token"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<Playlist> SynkPlaylist(Func<Playlist> getPlaylist, FileProvider provider, bool force = false,
+        public async Task<Playlist> SynkPlaylist(Func<Playlist> getPlaylist, FileProvider provider, bool isXtreamPlaylist, bool force = false,
             CancellationToken cancellationToken = default)
         {
-            var pl = getPlaylist();
-            if (pl == null)
+            var playlistEntity = getPlaylist();
+            if (playlistEntity == null)
                 throw new ArgumentNullException($"Playlist not found");
-            if (!pl.IsSynchronizable)
+            if (!playlistEntity.IsSynchronizable)
                 throw new ApplicationException($"Playlist isn't synchronizable");
 
             using (var playlist = new Playlist<TvgMedia>(provider))
             {
                 var sourceList = await playlist.PullAsync(cancellationToken);
                 //Faire passer les handlers
-                var handler = FabricHandleMedias(_elasticConnectionClient, pl.SynkConfig);
+                sourceList = ExecuteHandlersAsync(sourceList, cancellationToken);
 
-                var newMedias = sourceList.AsParallel().Select(media =>
-                  {
-                      handler.HandleTvgMedia(media);
-                      return media;
-                  }).WithCancellation(cancellationToken);
+                if (sourceList.Any())
+                {
+                    playlistEntity.Medias = new JsonObject<List<TvgMedia>>(sourceList.Where(x => x.IsValid).ToList());
+                }
 
-                if (newMedias.Any())
-                    pl.Medias = new JsonObject<List<TvgMedia>>(newMedias.Where(x => x.IsValid).ToList());
+                playlistEntity.Tags.Object.Add("IsXtream", isXtreamPlaylist.ToString());
             }
-            return pl;
+
+            if (playlistEntity.CreatedDate == default)
+                await _dbcontext.Playlist.AddAsync(playlistEntity, cancellationToken);
+
+            var res = await _dbcontext.SaveChangesAsync(cancellationToken);
+            return playlistEntity;
         }
 
         /// <summary>
@@ -97,6 +103,7 @@ namespace hfa.Synker.Service.Services.Playlists
 
             return newMedias.ToList();
         }
+
 
         /// <summary>
         /// Genére un rapport avec les new medias et 
@@ -132,13 +139,13 @@ namespace hfa.Synker.Service.Services.Playlists
         {
             //TODO : Passer synkconfig dans _contextHandler ( no s'il est singleton )
 
-            //var cleanNameHandler = new TvgMediaCleanNameHandler(_contextHandler);
+            var cleanNameHandler = new TvgMediaCleanNameHandler(_contextHandler);
             var cultureHandler = new TvgMediaCultureMatcherHandler(_contextHandler);
             var shiftHandler = new TvgMediaShiftMatcherHandler(_contextHandler);
             //var groupHandler = new TvgMediaGroupMatcherHandler(_contextHandler);
 
             cultureHandler.SetSuccessor(shiftHandler);
-            //shiftHandler.SetSuccessor(groupHandler);
+            shiftHandler.SetSuccessor(cleanNameHandler);
             //if (elasticConnectionClient != default(IElasticConnectionClient))
             //{
             //    var epgHandler = new TvgMediaEpgMatcherNameHandler(_contextHandler, elasticConnectionClient, _elasticConfig);
@@ -147,5 +154,6 @@ namespace hfa.Synker.Service.Services.Playlists
             // epgHandler.SetSuccessor(cleanNameHandler);
             return cultureHandler;
         }
+
     }
 }

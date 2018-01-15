@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace hfa.Synker.Services.Dal
@@ -48,15 +49,20 @@ namespace hfa.Synker.Services.Dal
         public override int SaveChanges()
         {
             ChangeTracker.DetectChanges();
-
-            updateUpdatedProperty();
-
+            UpdateUpdatedProperty();
             return base.SaveChanges();
         }
 
-        private void updateUpdatedProperty()
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            foreach (var entry in ChangeTracker.Entries().Where(e => e.State == EntityState.Added || e.State == EntityState.Modified && e.Entity is EntityBase))
+            ChangeTracker.DetectChanges();
+            UpdateUpdatedProperty();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void UpdateUpdatedProperty()
+        {
+            foreach (var entry in ChangeTracker.Entries().Where(e => (e.State == EntityState.Added || e.State == EntityState.Modified) && e.Entity is EntityBase))
             {
                 var entity = entry.Entity as EntityBase;
                 entity.UpdatedDate = DateTime.UtcNow;

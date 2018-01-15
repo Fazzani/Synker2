@@ -3,12 +3,14 @@ using PlaylistManager.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace hfa.Synker.Service.Services.TvgMediaHandlers
 {
     public class TvgMediaCleanNameHandler : TvgMediaHandler
     {
-        public TvgMediaCleanNameHandler(IContextTvgMediaHandler contextTvgMediaHandler) : base(contextTvgMediaHandler)
+        public TvgMediaCleanNameHandler(IContextTvgMediaHandler contextTvgMediaHandler)
+            : base(contextTvgMediaHandler)
         {
 
         }
@@ -20,15 +22,19 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
         public override void HandleTvgMedia(TvgMedia tvgMedia)
         {
             if (_contextTvgMediaHandler is ContextTvgMediaHandler context)
-
-                if (context.MediaConfiguration != null)
+            {
+                if (context.FixChannelNames != null && context.FixChannelNames.Any())
                 {
-                    tvgMedia.DisplayName = tvgMedia.Name
-                    .ToLowerInvariant()
-                    .RemoveChars(context.MediaConfiguration.DisplayChannelNameCharsToRemove.ToArray())
-                    .RemoveStrings(context.MediaConfiguration.DisplayChannelNameStringsToRemove.ToArray())
-                    .RemoveDiacritics();
+                    context.FixChannelNames.AsParallel().OrderBy(x => x.Order).ForAll(pattern =>
+                      {
+                          var reg = new Regex(pattern.Pattern, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+                          if (reg.IsMatch(tvgMedia.Name))
+                          {
+                              tvgMedia.DisplayName = reg.Replace(tvgMedia.Name, pattern.ReplaceBy);
+                          }
+                      });
                 }
+            }
             if (_successor != null)
                 _successor.HandleTvgMedia(tvgMedia);
         }

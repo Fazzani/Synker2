@@ -50,7 +50,7 @@ namespace hfa.WebApi.Controllers
                     .Where(x => x.UserId == UserId && x.TreatedDate == null)
                     .OrderByDescending(x => x.Id)
                     .ToListAsync())
-                    .Select(x=>x.CommandText));
+                    .Select(x => x.CommandText));
         }
 
         [HttpGet("users/{userId}")]

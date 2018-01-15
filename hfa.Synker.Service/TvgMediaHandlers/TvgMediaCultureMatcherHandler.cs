@@ -27,7 +27,7 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
                 var lang = match.Groups["lang"].Value.Trim();
                 lang = FixLang(lang);
 
-                var culture = Common.TryGet(x =>
+                var (EnglishName, ThreeLetterISOLanguageName) = Common.TryGet(x =>
                 {
                     var cul = new CultureInfo(x);
                     if (cul != null && !cul.EnglishName.StartsWith("Unknown Language"))
@@ -36,10 +36,10 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
                 }, lang);
 
                 var regionInfo = Common.TryGet(x => new RegionInfo(x)?.EnglishName, lang);
-                if (culture.EnglishName != null && !string.IsNullOrEmpty(regionInfo))
+                if (EnglishName != null && !string.IsNullOrEmpty(regionInfo))
                 {
                     tvgMedia.Culture.Country = regionInfo;
-                    tvgMedia.Culture.Code = culture.EnglishName;
+                    tvgMedia.Culture.Code = EnglishName;
                 }
 
                 tvgMedia.Lang = tvgMedia.Culture.Country ?? tvgMedia.Culture.Code ?? regionInfo;

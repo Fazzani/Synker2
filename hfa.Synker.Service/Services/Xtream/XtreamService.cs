@@ -12,6 +12,8 @@ namespace hfa.Synker.Service.Services.Xtream
 {
     public class XtreamService : IXtreamService
     {
+        private const string XtreamUrlPattern = @"^(?<portocol>https?)://(?<host>.*):(?<port>\d{2,4})/get\.php\?username=(?<username>.*)&password=(?<password>\w+)";
+
         public async Task<PlayerApi> GetUserAndServerInfoAsync(string playlistUrl, CancellationToken cancellationToken) => 
             await GetFromApi<PlayerApi>(playlistUrl, XtreamApiEnum.Player_Api, cancellationToken);
 
@@ -50,7 +52,7 @@ namespace hfa.Synker.Service.Services.Xtream
 
         internal string GetApiUrl(string playlistUrl, XtreamApiEnum xtreamApiEnum, params string[] extraParams)
         {
-            var reg = new Regex(@"^(?<portocol>https?)://(?<host>.*):(?<port>\d{2,4})/get\.php\?username=(?<username>.*)&password=(?<password>\w+)", RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase).Match(playlistUrl);
+            var reg = new Regex(XtreamUrlPattern, RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase).Match(playlistUrl);
             if (reg.Success)
             {
                 switch (xtreamApiEnum)
@@ -82,6 +84,8 @@ namespace hfa.Synker.Service.Services.Xtream
                 throw new ApplicationException("Xtream playlist format not valid");
             }
         }
+
+        public bool IsXtreamPlaylist(string playlistUrl) => new Regex(XtreamUrlPattern, RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase).Match(playlistUrl).Success;
 
         internal enum XtreamApiEnum : byte
         {

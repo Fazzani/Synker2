@@ -16,5 +16,11 @@ namespace hfa.Synker.Service.Services.Xtream
         Task<PlayerApi> GetUserAndServerInfoAsync(string playlistUrl, CancellationToken cancellationToken);
         Task<List<Channels>> GetVodStreamsAsync(string playlistUrl, CancellationToken cancellationToken);
         Task<PlayerApi> GetXmltvAsync(string playlistUrl, CancellationToken cancellationToken);
+        /// <summary>
+        /// Is Xtream codes playlist
+        /// </summary>
+        /// <param name="playlistUrl"></param>
+        /// <returns></returns>
+        bool IsXtreamPlaylist(string playlistUrl);
     }
 }

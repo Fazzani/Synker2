@@ -39,6 +39,15 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
                 return _mediaConfig;
             }
         }
+
+        public IList<FixChannelName> FixChannelNames
+        {
+            get
+            {
+                return new List<FixChannelName> { new FixChannelName { Order = 0, Pattern = @"(.*)(?::|\||\])(.*)", ReplaceBy = "$2" } };
+            }
+        }
+
     }
 
     public class StartChannelsHeadLinePattern

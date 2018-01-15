@@ -42,7 +42,7 @@ namespace hfa.Synker.Service.Entities.Playlists
 
         public JsonObject<List<TvgMedia>> Medias { get; set; }
 
-        public JsonObject<string> Tags { get; set; }
+        public JsonObject<Dictionary<string,string>> Tags { get; set; }
 
         private List<String> _tvgSites { get; set; }
 

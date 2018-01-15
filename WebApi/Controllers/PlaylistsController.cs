@@ -6,6 +6,7 @@ using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Services.MediaRefs;
 using hfa.Synker.Service.Services.Playlists;
 using hfa.Synker.Service.Services.Scraper;
+using hfa.Synker.Service.Services.Xtream;
 using hfa.Synker.Services.Dal;
 using hfa.WebApi.Common;
 using hfa.WebApi.Common.Exceptions;
@@ -42,11 +43,12 @@ namespace Hfa.WebApi.Controllers
         IMemoryCache _memoryCache;
         private ISitePackService _sitePackService;
         private GlobalOptions _globalOptions;
+        private IXtreamService _xtreamService;
 
         private string UserPlaylistKey => $"{UserId}:{CacheKeys.PlaylistByUser}";
 
         public PlaylistsController(IMemoryCache memoryCache, IMediaScraper mediaScraper, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IOptions<GlobalOptions> globalOptions,
-            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IPlaylistService playlistService, ISitePackService sitePackService)
+            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IPlaylistService playlistService, ISitePackService sitePackService, IXtreamService xtreamService)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _playlistService = playlistService;
@@ -54,6 +56,7 @@ namespace Hfa.WebApi.Controllers
             _memoryCache = memoryCache;
             _sitePackService = sitePackService;
             _globalOptions = globalOptions.Value;
+            _xtreamService = xtreamService;
         }
 
         /// <summary>
@@ -219,12 +222,7 @@ namespace Hfa.WebApi.Controllers
                     SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
                 };
 
-                var pl = await _playlistService.SynkPlaylist(() => playlist, providerInstance, cancellationToken: cancellationToken);
-
-                if (playlist.UniqueId == default(Guid))
-                    await _dbContext.Playlist.AddAsync(pl);
-
-                var res = await _dbContext.SaveChangesAsync(cancellationToken);
+                var pl = await _playlistService.SynkPlaylist(() => playlist, providerInstance, _xtreamService.IsXtreamPlaylist(playlistPostModel.Url), cancellationToken: cancellationToken);
 
                 stopwatch.Stop();
                 _logger.LogInformation($"Elapsed time : {stopwatch.Elapsed.ToString("c")}");
@@ -279,37 +277,6 @@ namespace Hfa.WebApi.Controllers
                 throw new BusinessException($"Playlist url {playlistPostModel.Url} not reachable");
             }
         }
-
-        ///// <summary>
-        ///// Match playlist with media ref
-        ///// </summary>
-        ///// <param name="playlistPostModel"></param>
-        ///// <param name="cancellationToken"></param>
-        ///// <returns></returns>
-        //[HttpPost]
-        //[Route("match/{id}")]
-        //[ValidateModel]
-        //public IActionResult Match([FromRoute] string id, CancellationToken cancellationToken)
-        //{
-        //    var idGuid = GetInternalId(id);
-
-        //    var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
-        //    if (playlist == null)
-        //        return NotFound(playlist);
-
-        //    playlist.TvgMedias.Where(m => m.MediaType == MediaType.LiveTv).AsParallel().ForAll(media =>
-        //        {
-        //            var matched = _sitePackService.MatchMediaNameAndBySiteAsync(media.DisplayName,media.Tvg.TvgSource.Country, cancellationToken).GetAwaiter().GetResult();
-
-        //            if (matched != null)
-        //            {
-        //                media.Group = matched.Cultures.FirstOrDefault();
-        //                media.Tvg = matched.Tvg;
-        //            }
-        //        });
-
-        //    return Ok(PlaylistModel.ToModel(playlist, Url));
-        //}
 
         /// <summary>
         ///  Match playlist with media ref
@@ -620,8 +587,17 @@ namespace Hfa.WebApi.Controllers
                     playlistStream = await httpClient.GetStreamAsync(playlistUrl);
                 }
             }
+            var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
 
-            var pl = await SavePlaylist(playlistName, providerType, playlistStream, playlistUrl, cancellationToken);
+            var pl = await _playlistService.SynkPlaylist(() => new Playlist
+            {
+                UserId = UserId.Value,
+                Freindlyname = playlistName,
+                Status = PlaylistStatus.Enabled,
+                SynkConfig = null,
+                Tags = new JsonObject<Dictionary<string, string>>(new Dictionary<string, string>())
+            }, providerInstance, _xtreamService.IsXtreamPlaylist(playlistUrl), true, cancellationToken);
+
             ClearCache();
 
             var result = PlaylistModel.ToLightModel(pl, Url);
@@ -676,13 +652,12 @@ namespace Hfa.WebApi.Controllers
                     UserId = UserId.Value,
                     Freindlyname = playlistPostModel.Freindlyname,
                     Status = PlaylistStatus.Enabled,
-                    SynkConfig = new SynkConfig { Url = playlistPostModel.Url }
-                }, providerInstance, cancellationToken: cancellationToken);
-
-                await _dbContext.Playlist.AddAsync(pl);
-                var res = await _dbContext.SaveChangesAsync(cancellationToken);
+                    SynkConfig = new SynkConfig { Url = playlistPostModel.Url },
+                    Tags = new JsonObject<Dictionary<string, string>>(new Dictionary<string, string>())
+                }, providerInstance, _xtreamService.IsXtreamPlaylist(playlistPostModel.Url), cancellationToken: cancellationToken);
 
                 ClearCache();
+
                 stopwatch.Stop();
                 _logger.LogInformation($"Elapsed time : {stopwatch.Elapsed.ToString("c")}");
 
@@ -691,29 +666,6 @@ namespace Hfa.WebApi.Controllers
             }
         }
 
-        private async Task<Playlist> SavePlaylist(string playlistName, Type providerType, Stream playlistStream, string playlistUrl, CancellationToken cancellationToken)
-        {
-            var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
-
-            using (var playlist = new Playlist<TvgMedia>(providerInstance))
-            {
-                var sourceList = await playlist.PullAsync(cancellationToken);
-
-                var synkcfg = new SynkConfig { Url = playlistUrl };
-                var playlistEntity = new Playlist
-                {
-                    UserId = UserId.Value,
-                    Freindlyname = playlistName,
-                    Medias = new JsonObject<List<TvgMedia>>(sourceList),
-                    Status = PlaylistStatus.Enabled,
-                    SynkConfig = synkcfg
-                };
-                await _dbContext.Playlist.AddAsync(playlistEntity, cancellationToken);
-
-                var res = await _dbContext.SaveChangesAsync(cancellationToken);
-                return playlistEntity;
-            }
-        }
         #endregion
     }
 }
