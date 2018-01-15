@@ -26,7 +26,7 @@
                             Medias
                         </a>
                         <button mat-button (click)="share(playlist)">Share</button>
-                        <button mat-button (click)="openPlaylistInfosDialog(playlist)">Xtream Infos</button>
+                        <button mat-button *ngIf="playlist.isXtream" (click)="openPlaylistInfosDialog(playlist)">Xtream Infos</button>
                     </mat-card-actions>
                 </mat-card>
             </div>

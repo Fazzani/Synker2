@@ -127,6 +127,15 @@ namespace Hfa.WebApi.Controllers
             playlistEntity.SynkConfig.SynkGroup = playlist.SynkGroup;
             playlistEntity.SynkConfig.SynkLogos = playlist.SynkLogos;
             playlistEntity.Medias = JsonConvert.SerializeObject(playlist.TvgMedias);
+            if (playlist.Tags == null)
+            {
+                playlist.Tags = new Dictionary<string, string>
+                {
+                    { PlaylistTags.IsXtream, _xtreamService.IsXtreamPlaylist(playlist.Url).ToString() }
+                };
+                playlistEntity.Tags = JsonConvert.SerializeObject(playlist.Tags);
+            }
+
             var updatedCount = await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation($"Updated Count : {updatedCount}");
             return Ok(updatedCount);
@@ -150,6 +159,14 @@ namespace Hfa.WebApi.Controllers
             playlistEntity.SynkConfig.SynkEpg = playlist.SynkEpg;
             playlistEntity.SynkConfig.SynkGroup = playlist.SynkGroup;
             playlistEntity.SynkConfig.SynkLogos = playlist.SynkLogos;
+            if (playlist.Tags == null)
+            {
+                playlist.Tags = new Dictionary<string, string>
+                {
+                    { PlaylistTags.IsXtream, _xtreamService.IsXtreamPlaylist(playlist.Url).ToString() }
+                };
+                playlistEntity.Tags = JsonConvert.SerializeObject(playlist.Tags);
+            }
             await _dbContext.SaveChangesAsync();
             return Ok();
         }

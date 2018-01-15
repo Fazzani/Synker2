@@ -55,6 +55,7 @@ export class PlaylistModel {
     public publicUrl: string;
     public publicId: string;
     public xtreamPlayerApi: PlayerApi;
+    public isXtream: boolean;
 }
 
 export class PlaylistPostModel {

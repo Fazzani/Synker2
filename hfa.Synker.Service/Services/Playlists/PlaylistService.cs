@@ -74,7 +74,8 @@ namespace hfa.Synker.Service.Services.Playlists
                     playlistEntity.Medias = new JsonObject<List<TvgMedia>>(sourceList.Where(x => x.IsValid).ToList());
                 }
 
-                playlistEntity.Tags.Object.Add("IsXtream", isXtreamPlaylist.ToString());
+                playlistEntity.Tags.Object.Add(PlaylistTags.IsXtream, isXtreamPlaylist.ToString());
+                playlistEntity.Tags = JsonConvert.SerializeObject(playlistEntity.Tags.Object);
             }
 
             if (playlistEntity.CreatedDate == default)

@@ -19,6 +19,7 @@ namespace hfa.Synker.Service.Entities.Playlists
             SynkConfig = new SynkConfig();
             Favorite = false;
             _tvgSites = new List<string>();
+            Tags = new JsonObject<Dictionary<string, string>>();
         }
 
         [Required]
@@ -42,7 +43,7 @@ namespace hfa.Synker.Service.Entities.Playlists
 
         public JsonObject<List<TvgMedia>> Medias { get; set; }
 
-        public JsonObject<Dictionary<string,string>> Tags { get; set; }
+        public JsonObject<Dictionary<string, string>> Tags { get; set; }
 
         private List<String> _tvgSites { get; set; }
 
@@ -68,11 +69,26 @@ namespace hfa.Synker.Service.Entities.Playlists
         public override int GetHashCode() => (UserId ^ Id).GetHashCode();
 
         public override string ToString() => $"{Id} {Freindlyname} UserId : {UserId} Status : {Status} Count : {TvgMedias?.Count()}";
+
+        [NotMapped]
+        public bool IsXtream
+        {
+            get
+            {
+                return Tags.Object != null && Tags.Object.Any() && Tags.Object[PlaylistTags.IsXtream] == "True";
+            }
+        }
     }
 
     public enum PlaylistStatus : byte
     {
         Enabled = 0,
         Disabled = 1
+    }
+
+
+    public class PlaylistTags
+    {
+        public const string IsXtream = "IsXtream";
     }
 }

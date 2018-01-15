@@ -44,6 +44,8 @@ namespace hfa.WebApi.Models.Playlists
         public SynkGroupEnum SynkGroup { get; internal set; }
         public bool SynkLogos { get; internal set; }
         public List<string> TvgSites { get; set; }
+        public Dictionary<string, string> Tags { get; set; }
+
         public string PublicId
         {
             get
@@ -56,9 +58,11 @@ namespace hfa.WebApi.Models.Playlists
         {
             get
             {
-                return  _urlHelper?.Action("GetFile", "Playlists", new { Id =  PublicId }, _urlHelper.ActionContext.HttpContext.Request.Scheme);
+                return _urlHelper?.Action("GetFile", "Playlists", new { Id = PublicId }, _urlHelper.ActionContext.HttpContext.Request.Scheme);
             }
         }
+
+        public bool IsXtream { get; private set; }
 
         public static PlaylistModel ToModel(Playlist pl, IUrlHelper uriHelper) => new PlaylistModel(uriHelper)
         {
@@ -75,7 +79,9 @@ namespace hfa.WebApi.Models.Playlists
             SynkGroup = pl.SynkConfig.SynkGroup,
             SynkLogos = pl.SynkConfig.SynkLogos,
             Url = pl.SynkConfig.Url,
-            TvgSites = pl.TvgSites
+            TvgSites = pl.TvgSites,
+            IsXtream = pl.IsXtream,
+            Tags = pl.Tags?.Object
         };
 
         public static PlaylistModel ToLightModel(Playlist pl, IUrlHelper uriHelper) => new PlaylistModel(uriHelper)
@@ -89,7 +95,9 @@ namespace hfa.WebApi.Models.Playlists
             CreatedDate = pl.CreatedDate,
             UpdatedDate = pl.UpdatedDate,
             Cron = pl.SynkConfig?.Cron,
-            TvgSites = pl.TvgSites
+            TvgSites = pl.TvgSites,
+            IsXtream = pl.IsXtream,
+            Tags = pl.Tags?.Object
         };
     }
 }
