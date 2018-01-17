@@ -114,7 +114,7 @@ namespace hfa.Synker.Service.Services.Playlists
         /// <param name="force"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<(IEnumerable<TvgMedia> tvgMedia, IEnumerable<TvgMedia> removed)> DiffWithSource(Func<Playlist> getPlaylist, FileProvider provider, bool force = false,
+        public async Task<(IEnumerable<TvgMedia> tvgMedia, IEnumerable<TvgMedia> removed)> DiffWithSourceAsync(Func<Playlist> getPlaylist, FileProvider provider, bool force = false,
             CancellationToken cancellationToken = default)
         {
             var pl = getPlaylist();

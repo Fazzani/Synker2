@@ -20,6 +20,24 @@ namespace PlaylistManager.Entities
             Culture = new Culture();
         }
 
+        private string _streamId;
+        public string StreamId
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_streamId))
+                {
+                    var tab = Url.Split('/');
+                    if (tab.Length > 2)
+                        _streamId = tab[tab.Length - 1].Split('.')[0];
+                }
+                return _streamId;
+            }
+            set
+            {
+                _streamId = value;
+            }
+        }
         //public List<string> Urls { get; set; }
         public Culture Culture { get; set; }
 

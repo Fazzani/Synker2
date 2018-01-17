@@ -96,6 +96,7 @@ namespace hfa.PlaylistBaseLibrary.Providers
                         {
                             channel.Url = await stringReader.ReadLineAsync();
                         } while (string.IsNullOrWhiteSpace(channel.Url));
+                        channel.StreamId = channel.StreamId;
                         GetTvg(tab1, channel);
                         listChannels.Add(channel);
                     }

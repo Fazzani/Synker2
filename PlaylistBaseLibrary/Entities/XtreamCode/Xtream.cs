@@ -1,15 +1,26 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using PlaylistManager.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace hfa.PlaylistBaseLibrary.Entities.XtreamCode
 {
+
     public class XtreamPanel
     {
         public User_Info User_info { get; set; }
         public Server_Info Server_info { get; set; }
         public Categories Categories { get; set; }
         public Available_Channels Available_channels { get; set; }
+
+        public string GenerateUrlFrom(Channels channel, string protocol = "http", string outputFormat = "ts")
+        {
+            if (channel == null)
+                return string.Empty;
+
+            return $"{protocol}://{Server_info.Url}:{Server_info.Port}/{channel.Stream_type}/{User_info.Username}/{User_info.Password}/{channel.Stream_id}.{outputFormat}";
+        }
     }
 
     public class User_Info
@@ -78,11 +89,55 @@ namespace hfa.PlaylistBaseLibrary.Entities.XtreamCode
         public int CategoryId { get { return Convert.ToInt32(Category_id); } }
         public string Series_no { get; set; }
         public string Live { get; set; }
+
+        public MediaType MediaType
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Stream_type))
+                    return MediaType.LiveTv;
+                switch (Live)
+                {
+                    case "Live":
+                        return MediaType.LiveTv;
+                    case "Vod":
+                        return MediaType.Video;
+                    default:
+                        return MediaType.LiveTv;
+                }
+            }
+        }
+
         public string Container_extension { get; set; }
         public string Custom_sid { get; set; }
         public int Tv_archive { get; set; }
         public string Direct_source { get; set; }
         public int Tv_archive_duration { get; set; }
+
+        public static TvgMedia ToTvgMedia(Channels x, Func<Channels, string> getStreamUrl)
+            => new TvgMedia
+            {
+                Name = x.Name,
+                Url = getStreamUrl(x),
+                Position = x.Num,
+                MediaType = x.MediaType,
+                Group = x.Category_name,
+                Tvg = new Tvg { Logo = x.Stream_icon, Id = x.Epg_channel_id },
+                Tags = new List<string> { $"xtream_category_id:{x.Category_id}" }
+            };
+
+        public static string TvgMediaToChannelsJson(TvgMedia x)
+          => JsonConvert.SerializeObject(TvgMediaToChannels(x));
+
+        public static Channels TvgMediaToChannels(TvgMedia x)
+         => new Channels
+         {
+             Num = x.Position,
+             Name = x.Name,
+             Category_name = x.Group,
+             Stream_id = x.StreamId,
+             Stream_type = "live"
+         };
     }
 
     public class PlayerApi

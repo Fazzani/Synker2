@@ -285,7 +285,7 @@ namespace Hfa.WebApi.Controllers
                         SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
                     };
 
-                    var pl = await _playlistService.DiffWithSource(() => playlist, providerInstance, cancellationToken: cancellationToken);
+                    var pl = await _playlistService.DiffWithSourceAsync(() => playlist, providerInstance, cancellationToken: cancellationToken);
                     return Ok(pl);
                 }
             }
