@@ -261,6 +261,11 @@ namespace Hfa.WebApi.Controllers
         public async Task<IActionResult> DiffAsync([FromBody]PlaylistPostModel playlistPostModel, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
             CancellationToken cancellationToken)
         {
+
+            //TODO: Déduire le provider from playlist (isXtream => xtreamProvider, m3u ou tvlist)
+            // Load dynmaiquement all providers (singleton)
+
+
             var optionsProvider = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(playlistPostModel.Provider, StringComparison.InvariantCultureIgnoreCase));
             if (optionsProvider == null)
                 return BadRequest($"Not supported Provider : {playlistPostModel.Provider}");

@@ -45,53 +45,53 @@ namespace hfa.tvhLibrary.test
             Assert.Equal(player, $"http://{server}:{port}/{path_api}.php?username={username}&password={password}");
         }
 
-        [Fact(DisplayName = "diff playlist from Xtream provider")]
-        public async Task DiffWithSourceXtreamProviderTest()
-        {
-            var password = "password";
-            var username = "username";
-            var server = "test.tv";
-            var port = "8080";
-            const string addedMedia = "test7";
+        //[Fact(DisplayName = "diff playlist from Xtream provider")]
+        //public async Task DiffWithSourceXtreamProviderTest()
+        //{
+        //    var password = "password";
+        //    var username = "username";
+        //    var server = "test.tv";
+        //    var port = "8080";
+        //    const string addedMedia = "test7";
 
-            var service = new PlaylistService(null, null, null, _logger, null);
+        //    var service = new PlaylistService(null, null, null, _logger, null);
 
-            var medias = new List<TvgMedia> {
-                new TvgMedia { Name ="test1", Position= 1, Group="Group1", IsValid = true, MediaType = MediaType.LiveTv, Enabled = true, Url=$"http://{server}:{port}/live/{username}/{password}/1.ts" },
-                new TvgMedia { Name ="test2", Position= 2, Group="Group1", IsValid = true, MediaType = MediaType.LiveTv, Enabled = true, Url=$"http://{server}:{port}/live/{username}/{password}/2.ts" },
-                new TvgMedia { Name ="test3", Position= 3, Group="Group2", IsValid = true, MediaType = MediaType.LiveTv, Enabled = true, Url=$"http://{server}:{port}/live/{username}/{password}/3.ts" },
-                new TvgMedia { Name ="test4", Position= 4, Group="Group1", IsValid = true, MediaType = MediaType.LiveTv, Enabled = true, Url=$"http://{server}:{port}/live/{username}/{password}/4.ts" },
-                new TvgMedia { Name ="test5", Position= 5, Group="Group3", IsValid = true, MediaType = MediaType.LiveTv, Enabled = true, Url=$"http://{server}:{port}/live/{username}/{password}/5.ts" },
-            };
+        //    var medias = new List<TvgMedia> {
+        //        new TvgMedia { Name ="test1", Position= 1, Group="Group1", IsValid = true, MediaType = MediaType.LiveTv, Enabled = true, Url=$"http://{server}:{port}/live/{username}/{password}/1.ts" },
+        //        new TvgMedia { Name ="test2", Position= 2, Group="Group1", IsValid = true, MediaType = MediaType.LiveTv, Enabled = true, Url=$"http://{server}:{port}/live/{username}/{password}/2.ts" },
+        //        new TvgMedia { Name ="test3", Position= 3, Group="Group2", IsValid = true, MediaType = MediaType.LiveTv, Enabled = true, Url=$"http://{server}:{port}/live/{username}/{password}/3.ts" },
+        //        new TvgMedia { Name ="test4", Position= 4, Group="Group1", IsValid = true, MediaType = MediaType.LiveTv, Enabled = true, Url=$"http://{server}:{port}/live/{username}/{password}/4.ts" },
+        //        new TvgMedia { Name ="test5", Position= 5, Group="Group3", IsValid = true, MediaType = MediaType.LiveTv, Enabled = true, Url=$"http://{server}:{port}/live/{username}/{password}/5.ts" },
+        //    };
 
-            var pl = new Playlist
-            {
-                SynkConfig = new SynkConfig { Url = $"http://{server}:{port}/get.php" },
-                Medias = new JsonObject<List<TvgMedia>>(medias.Concat( new List<TvgMedia> {
-                    new TvgMedia { Name = "test6", Position = 6, Group = "Group3", IsValid = true, MediaType = MediaType.LiveTv, Enabled = true, Url = $"http://{server}:{port}/live/{username}/{password}/7.ts" }}
-                    ).ToList())
-            };
+        //    var pl = new Playlist
+        //    {
+        //        SynkConfig = new SynkConfig { Url = $"http://{server}:{port}/get.php" },
+        //        Medias = new JsonObject<List<TvgMedia>>(medias.Concat( new List<TvgMedia> {
+        //            new TvgMedia { Name = "test6", Position = 6, Group = "Group3", IsValid = true, MediaType = MediaType.LiveTv, Enabled = true, Url = $"http://{server}:{port}/live/{username}/{password}/7.ts" }}
+        //            ).ToList())
+        //    };
 
-            var panel = new XtreamPanel
-            {
-                User_info = new User_Info { Username = username, Password = password },
-                Server_info = new Server_Info { Url = server, Port = port },
-                Available_channels = new Available_Channels
-                {
-                    Channels = medias.Concat(new List<TvgMedia> {
-                    new TvgMedia { Name = addedMedia, Position = 7, Group = "Group2", IsValid = true, MediaType = MediaType.LiveTv, Enabled = true, Url = $"http://{server}:{port}/live/{username}/{password}/6.ts" }}
-                    ).Select(Channels.TvgMediaToChannels).ToList()
-                }
-            };
+        //    var panel = new XtreamPanel
+        //    {
+        //        User_info = new User_Info { Username = username, Password = password },
+        //        Server_info = new Server_Info { Url = server, Port = port },
+        //        Available_channels = new Available_Channels
+        //        {
+        //            Channels = medias.Concat(new List<TvgMedia> {
+        //            new TvgMedia { Name = addedMedia, Position = 7, Group = "Group2", IsValid = true, MediaType = MediaType.LiveTv, Enabled = true, Url = $"http://{server}:{port}/live/{username}/{password}/6.ts" }}
+        //            ).Select(Channels.TvgMediaToChannels).ToList()
+        //        }
+        //    };
 
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(panel))))
-            {
-                var res = await service.DiffWithSourceAsync(() => pl, new XtreamProvider(stream));
-                Assert.True(res.removed.Count() == 1);
-                Assert.True(res.tvgMedia.Count() == 1);
-                Assert.Equal(addedMedia, res.tvgMedia.FirstOrDefault().Name);
-            }
-        }
+        //    using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(panel))))
+        //    {
+        //        var res = await service.DiffWithSourceAsync(() => pl, new XtreamProvider(stream));
+        //        Assert.True(res.removed.Count() == 1);
+        //        Assert.True(res.tvgMedia.Count() == 1);
+        //        Assert.Equal(addedMedia, res.tvgMedia.FirstOrDefault().Name);
+        //    }
+        //}
 
     }
 }

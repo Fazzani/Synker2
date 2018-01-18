@@ -9,29 +9,56 @@ using System.Linq;
 using PlaylistBaseLibrary.Entities;
 using Newtonsoft.Json;
 using hfa.PlaylistBaseLibrary.Entities.XtreamCode;
+using System.Net.Http;
+using System.Text.RegularExpressions;
 
 namespace hfa.PlaylistBaseLibrary.Providers
 {
-    public class XtreamProvider : FileProvider, IMediaFormatter
+    public class XtreamProvider : ApiProvider, IMediaFormatter
     {
-        public XtreamProvider(Stream sr) : base(sr)
+        private const string XtreamUrlPattern = @"^(?<portocol>https?)://(?<host>.*):(?<port>\d{2,4})/get\.php\?username=(?<username>.*)&password=(?<password>\w+)";
+        XtreamPanel _panel;
+        public XtreamProvider(string url) : base(url)
         {
         }
 
         public override IEnumerable<TvgMedia> Pull()
         {
-            _sr.Seek(0, SeekOrigin.Begin);
-            var streamJson = new StreamReader(_sr, Encoding.UTF8, false, 4096, true).ReadToEnd();
-            var xtreamPanel = JsonConvert.DeserializeObject<XtreamPanel>(streamJson);
-            return xtreamPanel.Available_channels.Channels.Select(x => Channels.ToTvgMedia(x, y => xtreamPanel.GenerateUrlFrom(x)));
+            _panel = _panel ?? GetApiResultAsync(CancellationToken.None).GetAwaiter().GetResult();
+            return _panel.Available_Channels.Select(x => Channels.ToTvgMedia(x, y => _panel.GenerateUrlFrom(x)));
         }
 
         public override async Task<IEnumerable<TvgMedia>> PullAsync(CancellationToken cancellationToken)
         {
-            _sr.Seek(0, SeekOrigin.Begin);
-            var streamJson = await new StreamReader(_sr, Encoding.UTF8, false, 4096, true).ReadToEndAsync();
-            var xtreamPanel = JsonConvert.DeserializeObject<XtreamPanel>(streamJson);
-            return xtreamPanel.Available_channels.Channels.Select(x => Channels.ToTvgMedia(x, y => xtreamPanel.GenerateUrlFrom(x)));
+            _panel = _panel ?? await GetApiResultAsync(CancellationToken.None);
+            return _panel.Available_Channels.Select(x => Channels.ToTvgMedia(x, y => _panel.GenerateUrlFrom(x)));
+        }
+
+        private async Task<XtreamPanel> GetApiResultAsync(CancellationToken cancellationToken)
+        {
+            using (var client = new HttpClient())
+            {
+                var xtreamUrl = GetApiUrl(Url);
+                var json = await client.GetStringAsync(new Uri(xtreamUrl));
+                json = Regex.Replace(json, "\"\\d+\":{", "{", RegexOptions.Multiline);
+                json = json.Replace("\"available_channels\":{", "\"available_channels\":[");
+                json = json.Replace("}}}", "}]}");
+                cancellationToken.ThrowIfCancellationRequested();
+                return JsonConvert.DeserializeObject<XtreamPanel>(json);
+            }
+        }
+
+        internal string GetApiUrl(string playlistUrl)
+        {
+            var reg = new Regex(XtreamUrlPattern, RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase).Match(playlistUrl);
+            if (reg.Success)
+            {
+                return $"{reg.Groups["portocol"]}://{reg.Groups["host"]}:{reg.Groups["port"]}/panel_api.php?username={reg.Groups["username"]}&password={reg.Groups["password"]}";
+            }
+            else
+            {
+                throw new ApplicationException("Xtream playlist format not valid");
+            }
         }
 
         public override void Push(Playlist<TvgMedia> playlist)

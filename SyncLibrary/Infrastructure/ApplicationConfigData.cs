@@ -9,5 +9,12 @@
         public string TvhPassword { get; set; }
         public string ApiUserName { get; set; }
         public string ApiPassword { get; set; }
+
+        public ConnectionStrings ConnectionStrings { get; set; }
+    }
+
+    public class ConnectionStrings
+    {
+        public string PlDatabase { get; set; }
     }
 }

@@ -27,6 +27,11 @@ using hfa.Synker.Service.Services.TvgMediaHandlers;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.batch;
+using hfa.Synker.Service.Services.Playlists;
+using hfa.Synker.Services.Dal;
+using hfa.PlaylistBaseLibrary.Providers;
+using Newtonsoft.Json;
+using System.Text;
 
 [assembly: InternalsVisibleTo("hfa.synker.batch.test")]
 namespace SyncLibrary
@@ -34,7 +39,7 @@ namespace SyncLibrary
     internal class SynchElastic
     {
         static CancellationTokenSource ts = new CancellationTokenSource();
-        static IMessagesService _messagesService;
+        static IMessageService _messagesService;
         static IElasticConnectionClient _elasticClient;
         static ApplicationConfigData _config;
         private static IOptions<ElasticConfig> _elastiConfig;
@@ -48,11 +53,11 @@ namespace SyncLibrary
                 _config = Init.ServiceProvider.GetService<IOptions<ApplicationConfigData>>().Value;
                 _elastiConfig = Init.ServiceProvider.GetService<IOptions<ElasticConfig>>();
                 _elasticClient = Init.ServiceProvider.GetService<IElasticConnectionClient>();
-                _messagesService = Init.ServiceProvider.GetService<IMessagesService>();
+                _messagesService = Init.ServiceProvider.GetService<IMessageService>();
 
                 Logger(nameof(SynchElastic)).LogInformation("Init batch Synker...");
 
-                _messagesService.SendAsync(Message.PingMessage, _config.ApiUserName, _config.ApiPassword, ts.Token).GetAwaiter().GetResult();
+                // _messagesService.SendAsync(Message.PingMessage, _config.ApiUserName, _config.ApiPassword, ts.Token).GetAwaiter().GetResult();
 
                 ArgsParserAsync(args, _messagesService).GetAwaiter().GetResult();
             }
@@ -73,12 +78,13 @@ namespace SyncLibrary
         /// <param name="args"></param>
         /// <param name="messagesService"></param>
         /// <returns></returns>
-        public static async Task ArgsParserAsync(string[] args, IMessagesService messagesService)
+        public static async Task ArgsParserAsync(string[] args, IMessageService messagesService)
         {
             await Parser.Default
-                .ParseArguments<PurgeTempFilesVerb, SyncEpgElasticVerb, SyncMediasElasticVerb, SaveNewConfigVerb, PushXmltvVerb, SendMessageVerb, ScanPlaylistFileVerb>(args)
+                .ParseArguments<PurgeTempFilesVerb, DiffPlaylistVerb, SyncEpgElasticVerb, SyncMediasElasticVerb, SaveNewConfigVerb, PushXmltvVerb, SendMessageVerb, ScanPlaylistFileVerb>(args)
                 .MapResult(
                  (PurgeTempFilesVerb opts) => PurgeTempFilesVerb.MainPurgeAsync(opts),
+                  (DiffPlaylistVerb opts) => DiffPlaylistAsync(opts, _config, ts.Token),
                   (SyncEpgElasticVerb opts) => SyncEpgElasticAsync(opts, _elasticClient, _config, ts.Token),
                   (SyncMediasElasticVerb opts) => SyncMediasElasticAsync(opts, _elasticClient, _config, ts.Token),
                   (SaveNewConfigVerb opts) => SaveConfigAsync(opts, _config, ts.Token),
@@ -91,6 +97,23 @@ namespace SyncLibrary
         public static async Task ScanPlaylist(ScanPlaylistFileVerb options, CancellationToken token = default(CancellationToken))
         {
             await new ScanPlaylistService().ScanAsync(options, Logger(nameof(SynchElastic)), token);
+        }
+
+        public static async Task DiffPlaylistAsync(DiffPlaylistVerb options, ApplicationConfigData config, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var playlistService = Init.ServiceProvider.GetService<IPlaylistService>();
+            var _dbContext = Init.ServiceProvider.GetService<SynkerDbContext>();
+            foreach (var pl in _dbContext.Playlist.Where(x => x.Status == hfa.Synker.Service.Entities.Playlists.PlaylistStatus.Enabled))
+            {
+                if (pl.IsXtream)
+                {
+                    var res = await playlistService.DiffWithSourceAsync(() => pl, new XtreamProvider(pl.SynkConfig.Url), false, cancellationToken);
+                    if (res.removed.Any() || res.tvgMedia.Any())
+                    {
+                        //TODO :  send notif to user with result
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -272,7 +295,7 @@ namespace SyncLibrary
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static async Task<bool> PushXmltvAsync(PushXmltvVerb options, IMessagesService messagesService, HttpClient httpClient, ApplicationConfigData config, CancellationToken token = default(CancellationToken))
+        public static async Task<bool> PushXmltvAsync(PushXmltvVerb options, IMessageService messagesService, HttpClient httpClient, ApplicationConfigData config, CancellationToken token = default(CancellationToken))
         {
             await messagesService.SendAsync($"Pushing {options.FilePath}", MessageTypeEnum.START_PUSH_XMLTV, config.ApiUserName, config.ApiPassword, token);
             if (!File.Exists(options.FilePath))

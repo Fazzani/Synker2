@@ -2,7 +2,7 @@
   "profiles": {
     "SyncLibrary": {
       "commandName": "Project",
-      "commandLineArgs": "sm \"HELLO WORLD\" -t 10",
+      "commandLineArgs": "diff",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

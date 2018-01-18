@@ -9,15 +9,15 @@ using hfa.Synker.Services.Entities.Messages;
 
 namespace hfa.Synker.Services.Messages
 {
-    class MessagesService : IMessagesService
+    public class MessageService : IMessageService
     {
         private string _apiUrl;
         ILogger Logger;
 
-        public MessagesService(string apiUrl, ILoggerFactory loggerFactory)
+        public MessageService(string apiUrl, ILoggerFactory loggerFactory)
         {
             _apiUrl = apiUrl;
-            Logger = loggerFactory.CreateLogger(typeof(IMessagesService));
+            Logger = loggerFactory.CreateLogger(typeof(IMessageService));
         }
 
         /// <summary>

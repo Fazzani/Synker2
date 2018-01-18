@@ -54,7 +54,7 @@ namespace hfa.Synker.Service.Services.Playlists
         /// <param name="force"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<Playlist> SynkPlaylist(Func<Playlist> getPlaylist, FileProvider provider, bool isXtreamPlaylist, bool force = false,
+        public async Task<Playlist> SynkPlaylist(Func<Playlist> getPlaylist, PlaylistProvider<Playlist<TvgMedia>, TvgMedia> provider, bool isXtreamPlaylist, bool force = false,
             CancellationToken cancellationToken = default)
         {
             var playlistEntity = getPlaylist();
@@ -114,7 +114,7 @@ namespace hfa.Synker.Service.Services.Playlists
         /// <param name="force"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<(IEnumerable<TvgMedia> tvgMedia, IEnumerable<TvgMedia> removed)> DiffWithSourceAsync(Func<Playlist> getPlaylist, FileProvider provider, bool force = false,
+        public async Task<(IEnumerable<TvgMedia> tvgMedia, IEnumerable<TvgMedia> removed)> DiffWithSourceAsync(Func<Playlist> getPlaylist, PlaylistProvider<Playlist<TvgMedia>, TvgMedia> provider, bool force = false,
             CancellationToken cancellationToken = default)
         {
             var pl = getPlaylist();

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace hfa.Synker.Services.Messages
 {
-    public interface IMessagesService
+    public interface IMessageService
     {
         Task<HttpResponseMessage> PostAsync(object obj, string url, CancellationToken cancellationToken);
         Task SendAsync(Message message, CancellationToken cancellationToken);

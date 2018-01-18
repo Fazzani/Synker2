@@ -9,7 +9,7 @@ using hfa.Synker.Services.Messages;
 
 namespace hfa.synker.batch.MoqServices
 {
-    internal class MoqMessageService : IMessagesService
+    internal class MoqMessageService : IMessageService
     {
         public async Task<HttpResponseMessage> PostAsync(object obj, string url, CancellationToken cancellationToken)
         {

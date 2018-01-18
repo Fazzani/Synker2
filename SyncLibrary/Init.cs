@@ -1,8 +1,11 @@
 ﻿using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Services.Playlists;
 using hfa.Synker.Service.Services.TvgMediaHandlers;
+using hfa.Synker.Services.Dal;
 using hfa.Synker.Services.Messages;
 using Hfa.SyncLibrary.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -66,9 +69,11 @@ namespace Hfa.SyncLibrary
                 .AddOptions()
                 .Configure<ApplicationConfigData>(Configuration)
                 .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
-                .AddSingleton<IMessagesService, IMessagesService>()
+                .AddSingleton<IMessageService>(s=> new MessageService(Configuration.GetValue<string>("ApiUrlMessage"), loggerFactory))
+                .AddSingleton<IPlaylistService, PlaylistService>()
                 .AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                 .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
+                .AddDbContext<SynkerDbContext>(options => options.UseMySql(Configuration.GetConnectionString("PlDatabase")))
                 .BuildServiceProvider();
         }
 

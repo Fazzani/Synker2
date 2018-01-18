@@ -12,7 +12,7 @@ namespace hfa.Synker.Service.Services.Playlists
     public interface IPlaylistService
     {
         Task<IEnumerable<Playlist>> ListByUserAsync(int userId);
-        Task<Playlist> SynkPlaylist(Func<Playlist> getPlaylist, FileProvider provider, bool isXtreamPlaylist, bool force = false,
+        Task<Playlist> SynkPlaylist(Func<Playlist> getPlaylist, PlaylistProvider<Playlist<TvgMedia>, TvgMedia> provider, bool isXtreamPlaylist, bool force = false,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace hfa.Synker.Service.Services.Playlists
         /// <param name="force"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<(IEnumerable<TvgMedia> tvgMedia, IEnumerable<TvgMedia> removed)> DiffWithSourceAsync(Func<Playlist> getPlaylist, FileProvider provider, bool force = false,
+        Task<(IEnumerable<TvgMedia> tvgMedia, IEnumerable<TvgMedia> removed)> DiffWithSourceAsync(Func<Playlist> getPlaylist, PlaylistProvider<Playlist<TvgMedia>, TvgMedia> provider, bool force = false,
             CancellationToken cancellationToken = default);
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace hfa.PlaylistBaseLibrary.Entities.XtreamCode
         public User_Info User_info { get; set; }
         public Server_Info Server_info { get; set; }
         public Categories Categories { get; set; }
-        public Available_Channels Available_channels { get; set; }
+        public List<Channels> Available_Channels { get; set; }
 
         public string GenerateUrlFrom(Channels channel, string protocol = "http", string outputFormat = "ts")
         {
@@ -66,11 +66,6 @@ namespace hfa.PlaylistBaseLibrary.Entities.XtreamCode
         public int CategoryId { get { return Convert.ToInt32(Category_id); } }
         public string Category_name { get; set; }
         public int Parent_id { get; set; }
-    }
-
-    public class Available_Channels
-    {
-        public List<Channels> Channels { get; set; }
     }
 
     public class Channels
