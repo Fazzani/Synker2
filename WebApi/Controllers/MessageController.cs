@@ -94,10 +94,6 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         public IActionResult ListByStatus([FromBody]MessageQueryModel messageQuery)
         {
-            var messages = _dbContext.Messages
-                .OrderByDescending(x => x.Id)
-                .Where(x => messageQuery.MessageStatus.Any(m => x.Status == m) && UserId == x.UserId).ToList();
-
             var response = _dbContext.Messages
                 .OrderByDescending(x => x.Id)
                 .Where(x => messageQuery.MessageStatus.Any(m => x.Status == m) && UserId == x.UserId)
