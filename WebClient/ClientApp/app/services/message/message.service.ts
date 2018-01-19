@@ -24,6 +24,11 @@ export class MessageService extends BaseService {
             .catch(this.handleError);
     }
 
+    public update(message: Message): Observable<number> {
+        return this.http.put(`${this.FullBaseUrl}/${message.id}`, message)
+            .catch(this.handleError);
+    }
+
     public list(): Observable<PagedResult<Message>> {
         return this.http.get(this.url)
             .catch(this.handleError);

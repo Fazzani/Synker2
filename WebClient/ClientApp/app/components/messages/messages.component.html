@@ -1,27 +1,16 @@
-<div class="site-container" ng-reflect-class-base="site-container">
-    <div>
-        <mat-card *ngFor="let message of messages?.results" [ngClass]="{'unreaded': message.isUnreaded}">
-            <mat-card-header>
-                <mat-card-title>{{ message.timeStamp }} {{message.messageType}} isUnreaded {{message.isUnreaded}}</mat-card-title>
-                <!--<span class="mat-header-button-actions">
-                    <button mat-icon-button class="secondary-content" color="warn" (click)="delete(playlist)" i18n>
-                        <mat-icon class="md-24" aria-label="Delete Playlist">delete</mat-icon>
-                    </button>
-                    <a mat-icon-button class="secondary-content" [attr.href]="null" (click)="copyPublicLink(playlist.publicUrl)" ngxClipboard [cbContent]="playlist.publicUrl" i18n>
-                        <mat-icon class="md-24" aria-label="Copy url">content_copy</mat-icon>
-                    </a>
-                </span>-->
-            </mat-card-header>
-            <mat-card-content class="small-text">
-                <ng-container>
-                    <p>{{message | json}}</p>
-                    <p>{{message.timeStamp | date:'medium'}}</p>
-                    <p>{{message.content}}</p>
-                </ng-container>
-            </mat-card-content>
-            <mat-card-actions>
-                <button mat-button (click)="markAsRead(message)">Mark as read</button>
-            </mat-card-actions>
-        </mat-card>
-    </div>
-</div>s
+<div class="site-container " fxLayout="column" fxLayoutGap="20px">
+    <mat-card *ngFor="let message of messages?.results">
+        <mat-card-header>
+            <mat-card-title>{{ messageTypes[message.messageType] }}</mat-card-title>
+            <mat-card-subtitle>{{message.timeStamp | date:'medium'}}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <ng-container>
+                <p>{{message.content}}</p>
+            </ng-container>
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-button (click)="markAsRead(message)">Mark as read</button>
+        </mat-card-actions>
+    </mat-card>
+</div>

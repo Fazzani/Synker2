@@ -287,7 +287,6 @@ mat-dialog-container {
 }
 
 .mat-card {
-    margin: 2em auto;
     opacity: 0.7;
     transform: scale(0.95);
 
@@ -319,9 +318,13 @@ mat-dialog-container {
     padding: 5px 12px;
     margin-top: 5px;
 }
-
+messages {
+    .site-container{
+        margin-top:85px;
+    }
+}
 mat-card {
-    .unreaded {
-        color:red !important;
+    &.readed {
+        color: $primary-color-font-disabled !important;
     }
 }

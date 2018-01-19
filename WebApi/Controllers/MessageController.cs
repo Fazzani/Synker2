@@ -41,14 +41,33 @@ namespace Hfa.WebApi.Controllers
         /// <param name="message"></param>
         /// <returns></returns>
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Post([FromBody] Message message, CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var result = await _dbContext.Messages.AddAsync(message, cancellationToken);
             var response = await _dbContext.SaveChangesAsync(HttpContext.RequestAborted);
             return Ok(response);
+        }
+
+        /// <summary>
+        /// Update message
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="message"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPut("{id}")]
+        [ValidateModel]
+        public async Task<IActionResult> Put(int id, [FromBody] Message message, CancellationToken cancellationToken)
+        {
+            var messageEntity = _dbContext.Messages.FirstOrDefault(x => x.Id == id);
+            if (messageEntity == null)
+                return NotFound(messageEntity);
+
+            messageEntity.Status = message.Status;
+
+            var updatedCount = await _dbContext.SaveChangesAsync(cancellationToken);
+            return Ok(updatedCount);
         }
 
         /// <summary>

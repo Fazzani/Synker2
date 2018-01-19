@@ -14,7 +14,6 @@
         <mat-icon>message</mat-icon>
         <!--<span class="mderial-icons mdl-badge mdl-badge--overlap" matTooltip="You have {{messages?.rowCount}} messages !" [attr.data-badge]="messages?.rowCount">message</span>-->
     </a>
-
   
     <a href="#" class="dropdown-toggle" data-toggle="dropdown" *ngIf="(isAuthenticated | async)">
         <img [src]="(user | async)?.photo" class="profile-image img-circle">

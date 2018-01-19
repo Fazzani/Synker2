@@ -31,7 +31,6 @@ export class MessageQueryModel {
     public PageIndex: number;
 }
 
-
 export enum MessageTypeEnum {
     None = 0,
     Ping,
