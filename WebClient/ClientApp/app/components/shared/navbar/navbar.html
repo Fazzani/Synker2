@@ -9,7 +9,7 @@
         <a mat-button class="docs-button" routerLink="/sitepack">Sites Pack</a>
     </div>
     <span class="fill-remaining-space"></span>
-    <a mat-icon-button *ngIf="(isAuthenticated | async)" aria-hidden="true">
+    <a mat-icon-button *ngIf="(isAuthenticated | async)" aria-hidden="true" routerLink="/messages">
         <span class="notif-number">{{messages?.rowCount}}</span>
         <mat-icon>message</mat-icon>
         <!--<span class="mderial-icons mdl-badge mdl-badge--overlap" matTooltip="You have {{messages?.rowCount}} messages !" [attr.data-badge]="messages?.rowCount">message</span>-->

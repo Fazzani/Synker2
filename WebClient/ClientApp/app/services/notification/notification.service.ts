@@ -20,7 +20,7 @@ export class NotificationService extends BaseService {
             if (this.IsJsonString((<MessageEvent>response).data)) {
                 let data = JSON.parse((<MessageEvent>response).data);
                 return <Message>{
-                    author: <string>data.author,
+                    userName: <string>data.username,
                     content: <string>data.message
                 }
             }

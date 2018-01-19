@@ -7,9 +7,9 @@ export interface Message {
     content: string;
     type: string;
     timeStamp: Date;
-    status: MessageStatus
-    author: string,
-    objectContent:any
+    status: MessageStatus;
+    messageType: MessageTypeEnum;
+    userName: string;
 }
 /**
  * MessageStatus (0: None, 1: NotReaded, 2: Readed).
@@ -24,4 +24,20 @@ export class MessageQueryModel {
     public MessageStatus: MessageStatus[];
     public PageSize: number;
     public PageIndex: number;
+}
+
+
+export enum MessageTypeEnum {
+    None = 0,
+    Ping,
+    START_SYNC_MEDIAS,
+    END_SYNC_MEDIAS,
+    START_CREATE_CONFIG,
+    END_CREATE_CONFIG,
+    START_SYNC_EPG_CONFIG,
+    END_SYNC_EPG_CONFIG,
+    EXCEPTION,
+    START_PUSH_XMLTV,
+    END_PUSH_XMLTV,
+    DIFF_PLAYLIST
 }
