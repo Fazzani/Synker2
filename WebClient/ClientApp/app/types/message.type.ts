@@ -2,7 +2,8 @@
  * Message Type
  * @description Message type.
  */
-export interface Message {
+export class Message {
+    
     id: string;
     content: string;
     type: string;
@@ -10,6 +11,10 @@ export interface Message {
     status: MessageStatus;
     messageType: MessageTypeEnum;
     userName: string;
+
+    public get isUnreaded(): boolean {
+        return this.status < 2;
+    }
 }
 /**
  * MessageStatus (0: None, 1: NotReaded, 2: Readed).

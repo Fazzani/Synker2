@@ -319,3 +319,9 @@ mat-dialog-container {
     padding: 5px 12px;
     margin-top: 5px;
 }
+
+mat-card {
+    .unreaded {
+        color:red !important;
+    }
+}

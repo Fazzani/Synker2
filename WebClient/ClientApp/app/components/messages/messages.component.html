@@ -1,8 +1,8 @@
 <div class="site-container" ng-reflect-class-base="site-container">
     <div>
-        <mat-card *ngFor="let message of messages?.results">
+        <mat-card *ngFor="let message of messages?.results" [ngClass]="{'unreaded': message.isUnreaded}">
             <mat-card-header>
-                <mat-card-title>{{ message.timeStamp }} {{message.messageType}}</mat-card-title>
+                <mat-card-title>{{ message.timeStamp }} {{message.messageType}} isUnreaded {{message.isUnreaded}}</mat-card-title>
                 <!--<span class="mat-header-button-actions">
                     <button mat-icon-button class="secondary-content" color="warn" (click)="delete(playlist)" i18n>
                         <mat-icon class="md-24" aria-label="Delete Playlist">delete</mat-icon>
@@ -14,6 +14,7 @@
             </mat-card-header>
             <mat-card-content class="small-text">
                 <ng-container>
+                    <p>{{message | json}}</p>
                     <p>{{message.timeStamp | date:'medium'}}</p>
                     <p>{{message.content}}</p>
                 </ng-container>
@@ -23,4 +24,4 @@
             </mat-card-actions>
         </mat-card>
     </div>
-</div>
+</div>s
