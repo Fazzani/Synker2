@@ -124,12 +124,12 @@ namespace PlaylistManager.Entities
 
         public void Pull()
         {
-            _medias = _playlistProvider.Pull().ToList();
+            _medias = _playlistProvider.Pull()?.ToList();
         }
 
         public Task<List<TMedia>> PullAsync(CancellationToken token)
         {
-            return _playlistProvider.PullAsync(token).ContinueWith(x => _medias = x.Result.ToList());
+            return _playlistProvider.PullAsync(token).ContinueWith(x => _medias = x.Result?.ToList());
         }
 
         public void Push(Playlist<TMedia> playlist)

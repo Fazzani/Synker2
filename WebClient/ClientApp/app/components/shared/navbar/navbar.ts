@@ -13,7 +13,7 @@ import { first, take } from 'rxjs/operators';
 import { EqualValidator } from '../../../directives/equal-validator.directive';
 import { MessageService } from '../../../services/message/message.service';
 import { Subscription } from 'rxjs/Subscription';
-import { Message } from '../../../types/message.type';
+import { Message, MessageStatus } from '../../../types/message.type';
 import { PagedResult } from '../../../types/common.type';
 
 @Component({
@@ -37,7 +37,7 @@ export class NavBar implements OnInit, OnDestroy {
         this.userSubscription = this.user.subscribe(user => {
             if (user != undefined) {
                 console.log(`User ${user.firstName} is authenticated...`);
-                this.messageService.listByStatus(0, 0, 10).subscribe(msg => {
+                this.messageService.listByStatus([MessageStatus.None, MessageStatus.NotReaded], 0, 10).subscribe(msg => {
                     this.messages = msg;
                 });
             }

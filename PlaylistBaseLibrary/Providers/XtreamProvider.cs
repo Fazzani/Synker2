@@ -25,13 +25,17 @@ namespace hfa.PlaylistBaseLibrary.Providers
         public override IEnumerable<TvgMedia> Pull()
         {
             _panel = _panel ?? GetApiResultAsync(CancellationToken.None).GetAwaiter().GetResult();
-            return _panel.Available_Channels.Select(x => Channels.ToTvgMedia(x, y => _panel.GenerateUrlFrom(x)));
+            if (_panel.Available_Channels != null)
+                return _panel.Available_Channels.Select(x => Channels.ToTvgMedia(x, y => _panel.GenerateUrlFrom(x)));
+            return null;
         }
 
         public override async Task<IEnumerable<TvgMedia>> PullAsync(CancellationToken cancellationToken)
         {
             _panel = _panel ?? await GetApiResultAsync(CancellationToken.None);
-            return _panel.Available_Channels.Select(x => Channels.ToTvgMedia(x, y => _panel.GenerateUrlFrom(x)));
+            if (_panel.Available_Channels != null)
+                return _panel.Available_Channels.Select(x => Channels.ToTvgMedia(x, y => _panel.GenerateUrlFrom(x)));
+            return null;
         }
 
         private async Task<XtreamPanel> GetApiResultAsync(CancellationToken cancellationToken)

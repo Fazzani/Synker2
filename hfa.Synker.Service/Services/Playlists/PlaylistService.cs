@@ -118,6 +118,7 @@ namespace hfa.Synker.Service.Services.Playlists
             CancellationToken cancellationToken = default)
         {
             var pl = getPlaylist();
+
             if (pl == null)
                 throw new ArgumentNullException($"Playlist not found");
             if (!pl.IsSynchronizable)
@@ -126,6 +127,10 @@ namespace hfa.Synker.Service.Services.Playlists
             using (var playlist = new Playlist<TvgMedia>(provider))
             {
                 var sourceList = await playlist.PullAsync(cancellationToken);
+
+                if (sourceList == null)
+                    return (new List<TvgMedia>(), pl.TvgMedias);
+
                 return (sourceList.Where(s => pl.TvgMedias.All(t => t.Url != s.Url)), pl.TvgMedias.Where(s => sourceList.All(t => t.Url != s.Url)));
             }
         }

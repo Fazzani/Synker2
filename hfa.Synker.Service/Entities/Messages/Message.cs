@@ -14,7 +14,7 @@ namespace hfa.Synker.Services.Entities.Messages
             UserId = 3, //Batch
             Content = "Ping",
             MessageType = MessageTypeEnum.Ping,
-            Status = MessageStatus.None,
+            Status = MessageStatusEnum.None,
             TimeStamp = DateTime.Now
         };
 
@@ -23,7 +23,7 @@ namespace hfa.Synker.Services.Entities.Messages
         public string Content { get; set; }
         public DateTime TimeStamp { get; set; }
         public MessageTypeEnum MessageType { get; set; }
-        public MessageStatus Status { get; set; }
+        public MessageStatusEnum Status { get; set; }
 
         [ForeignKey(nameof(UserId))]
         public virtual User User { get; set; }
@@ -43,10 +43,11 @@ namespace hfa.Synker.Services.Entities.Messages
         END_SYNC_EPG_CONFIG,
         EXCEPTION,
         START_PUSH_XMLTV,
-        END_PUSH_XMLTV
+        END_PUSH_XMLTV,
+        DIFF_PLAYLIST
     }
 
-    public enum MessageStatus
+    public enum MessageStatusEnum : int
     {
         None = 0,
         NotReaded = 1,

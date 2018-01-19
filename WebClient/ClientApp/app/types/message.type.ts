@@ -20,4 +20,8 @@ export enum MessageStatus {
     NotReaded = 1,
     Readed = 2
 }
-
+export class MessageQueryModel {
+    public MessageStatus: MessageStatus[];
+    public PageSize: number;
+    public PageIndex: number;
+}

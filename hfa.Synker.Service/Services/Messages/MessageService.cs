@@ -73,7 +73,7 @@ namespace hfa.Synker.Services.Messages
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task SendAsync(string message, MessageTypeEnum messageTypeype, CancellationToken cancellationToken) =>
-             SendAsync(new Message { Content = message, MessageType = messageTypeype, Status = MessageStatus.NotReaded, TimeStamp = DateTime.Now }, cancellationToken);
+             SendAsync(new Message { Content = message, MessageType = messageTypeype, Status = MessageStatusEnum.NotReaded, TimeStamp = DateTime.Now }, cancellationToken);
 
         /// <summary>
         /// Send Message to api with auth
@@ -85,7 +85,7 @@ namespace hfa.Synker.Services.Messages
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public Task SendAsync(string message, MessageTypeEnum messageTypeype, string username, string password, CancellationToken cancellationToken) =>
-             SendAsync(new Message { Content = message, MessageType = messageTypeype, Status = MessageStatus.NotReaded, TimeStamp = DateTime.Now }, username, password, cancellationToken);
+             SendAsync(new Message { Content = message, MessageType = messageTypeype, Status = MessageStatusEnum.NotReaded, TimeStamp = DateTime.Now }, username, password, cancellationToken);
 
         /// <summary>
         /// Post

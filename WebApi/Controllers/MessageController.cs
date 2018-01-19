@@ -18,6 +18,7 @@ using hfa.Synker.Services.Entities.Messages;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
+using hfa.WebApi.Models.Messages;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -89,13 +90,18 @@ namespace Hfa.WebApi.Controllers
         /// <param name="messageStatus"></param>
         /// <returns></returns>
         [ValidateModel]
-        [HttpGet("status/{messageStatus:int}/{page:int?}/{pageSize:int?}")]
-        public IActionResult GetByStatus(MessageStatus messageStatus, int page = 0, int pageSize = 10)
+        [Route("search/status")]
+        [HttpPost]
+        public IActionResult ListByStatus([FromBody]MessageQueryModel messageQuery)
         {
+            var messages = _dbContext.Messages
+                .OrderByDescending(x => x.Id)
+                .Where(x => messageQuery.MessageStatus.Any(m => x.Status == m) && UserId == x.UserId).ToList();
+
             var response = _dbContext.Messages
                 .OrderByDescending(x => x.Id)
-                .Where(x => x.Status == messageStatus && UserId == x.UserId)
-                .GetPaged(page, pageSize);
+                .Where(x => messageQuery.MessageStatus.Any(m => x.Status == m) && UserId == x.UserId)
+                .GetPaged(messageQuery.PageIndex, messageQuery.PageSize);
 
             return Ok(response);
         }

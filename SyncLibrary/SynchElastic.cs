@@ -43,6 +43,7 @@ namespace SyncLibrary
         static IElasticConnectionClient _elasticClient;
         static ApplicationConfigData _config;
         private static IOptions<ElasticConfig> _elastiConfig;
+        private static ILogger _logger;
 
         public static void Main(string[] args)
         {
@@ -50,6 +51,7 @@ namespace SyncLibrary
 
             try
             {
+                _logger = Logger(nameof(SynchElastic));
                 _config = Init.ServiceProvider.GetService<IOptions<ApplicationConfigData>>().Value;
                 _elastiConfig = Init.ServiceProvider.GetService<IOptions<ElasticConfig>>();
                 _elasticClient = Init.ServiceProvider.GetService<IElasticConnectionClient>();
@@ -57,7 +59,7 @@ namespace SyncLibrary
 
                 Logger(nameof(SynchElastic)).LogInformation("Init batch Synker...");
 
-                // _messagesService.SendAsync(Message.PingMessage, _config.ApiUserName, _config.ApiPassword, ts.Token).GetAwaiter().GetResult();
+                _messagesService.SendAsync(Message.PingMessage, _config.ApiUserName, _config.ApiPassword, ts.Token).GetAwaiter().GetResult();
 
                 ArgsParserAsync(args, _messagesService).GetAwaiter().GetResult();
             }
@@ -103,6 +105,7 @@ namespace SyncLibrary
         {
             var playlistService = Init.ServiceProvider.GetService<IPlaylistService>();
             var _dbContext = Init.ServiceProvider.GetService<SynkerDbContext>();
+
             foreach (var pl in _dbContext.Playlist.Where(x => x.Status == hfa.Synker.Service.Entities.Playlists.PlaylistStatus.Enabled))
             {
                 if (pl.IsXtream)
@@ -111,6 +114,16 @@ namespace SyncLibrary
                     if (res.removed.Any() || res.tvgMedia.Any())
                     {
                         //TODO :  send notif to user with result
+                        _logger.LogInformation($"diff detected for the playlist {pl.Id} of user {pl.UserId} ");
+                        var message = new Message
+                        {
+                            Content = $"{res.tvgMedia.Count()} medias was added and {res.removed.Count()} wad medias removed for the playlist {pl.Freindlyname}",
+                            MessageType = MessageTypeEnum.DIFF_PLAYLIST,
+                            UserId = pl.UserId,
+                            TimeStamp = DateTime.Now,
+                            Status = MessageStatusEnum.NotReaded
+                        };
+                        await _messagesService.SendAsync(message, _config.ApiUserName, _config.ApiPassword, ts.Token);
                     }
                 }
             }
