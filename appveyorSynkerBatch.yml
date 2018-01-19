@@ -36,4 +36,8 @@ artifacts:
    type: zip
 on_finish :
   # any cleanup in here
-deploy: off
+deploy:
+  - provider: Environment
+    name: Synker.batch PROD
+    on:
+      branch: Develop
