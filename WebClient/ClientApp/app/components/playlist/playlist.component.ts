@@ -51,6 +51,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         { columnDef: 'displayName', header: 'DisplayName', cell: (row: TvgMedia) => `${row.displayName}`, showed: true, actionColumn: false },
         { columnDef: 'lang', header: 'Lang', cell: (row: TvgMedia) => `${row.lang}`, showed: true, actionColumn: false },
         { columnDef: 'group', header: 'Group', cell: (row: TvgMedia) => `${row.mediaGroup.name}`, showed: true, actionColumn: false },
+        { columnDef: 'groupdisabled', header: 'Group Disabled', cell: (row: TvgMedia) => `${row.mediaGroup.disabled}`, showed: true, actionColumn: false },
         { columnDef: 'tvg.name', header: 'Tvg name', cell: (row: TvgMedia) => `${row.tvg.name}`, showed: true, actionColumn: false },
         { columnDef: 'tvg.tvgIdentify', header: 'Tvg id', cell: (row: TvgMedia) => `${row.tvg.tvgIdentify}`, showed: true, actionColumn: false },
         { columnDef: 'actions', header: 'Actions', cell: (row: TvgMedia) => ``, showed: true, actionColumn: true }

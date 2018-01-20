@@ -507,15 +507,17 @@ namespace Hfa.WebApi.Controllers
             var idGuid = GetInternalPlaylistId(id);
 
             var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+
             if (playlist == null)
                 return NotFound(id);
 
             using (var ms = new MemoryStream())
             using (var sourceProvider = FileProvider.Create(provider, providersOptions.Value, ms))
             using (var pl = new Playlist<TvgMedia>(sourceProvider))
-            using (var sourcePl = new Playlist<TvgMedia>(playlist.TvgMedias.Where(x => x.Enabled)))
+            using (var sourcePl = new Playlist<TvgMedia>(playlist.TvgMedias.Where(x => x.Enabled && !x.MediaGroup.Disabled)))
             {
                 ms.Seek(0, SeekOrigin.Begin);
+
                 return await pl.PushAsync(sourcePl, cancellationToken).ContinueWith(t =>
                  {
                      return File(ms.ToArray(), "text/plain");

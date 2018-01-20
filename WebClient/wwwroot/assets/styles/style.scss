@@ -328,3 +328,13 @@ mat-card {
         color: $primary-color-font-disabled !important;
     }
 }
+.disabled {
+    color: $primary-color-font-disabled !important;
+}
+.mat-list-option {
+    .mat-list-text {
+        align-items: center;
+        flex-direction: row !important;
+        vertical-align:middle;
+    }
+}

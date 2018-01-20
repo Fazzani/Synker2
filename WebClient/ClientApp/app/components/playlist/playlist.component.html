@@ -59,11 +59,11 @@
                 <mat-icon class="mat-12" aria-label="Match tvg" matTooltip="Match tvg">settings_ethernet</mat-icon>
                 <span>Match tvg</span>
             </button>
-            <button mat-menu-item (click)="executeHandlers()" *ngIf="(atLeastOneSelected|async) > 0">
+            <button mat-menu-item (click)="executeHandlers()" *ngIf="(atLeastOneSelected | async) > 0">
                 <mat-icon class="mat-12" aria-label="Execute Handlers" matTooltip="Execute Handlers">pan_tool</mat-icon>
                 <span>Execute Handlers</span>
             </button>
-            <button mat-menu-item (click)="matchPicons()" *ngIf="(atLeastOneSelected|async) > 0">
+            <button mat-menu-item (click)="matchPicons()" *ngIf="(atLeastOneSelected | async) > 0">
                 <mat-icon class="mat-12" aria-label="Match picons" matTooltip="Match picons">format_paint</mat-icon>
                 <span>Match picons</span>
             </button>
