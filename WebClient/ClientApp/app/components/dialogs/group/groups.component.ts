@@ -34,7 +34,11 @@ export class GroupsDialog implements OnInit, OnDestroy {
     }
 
     toggleSelectionAll(selected: boolean): void {
-        this.groupMedias$.forEach(x => x.forEach(m => m.selected = selected));
+        //selected ? groups.selectAll() : groups.deselectAll();
+        this.groupMedias$.forEach(x => x.forEach(m => {
+            m.selected = selected;
+            m.medias.forEach(media => media.mediaGroup.disabled = !selected)
+        }));
     }
 
     filterByGroup = (group) => this.dialogRef.close(group);
