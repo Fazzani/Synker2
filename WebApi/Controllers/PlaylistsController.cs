@@ -82,6 +82,7 @@ namespace Hfa.WebApi.Controllers
                 _memoryCache.Set(UserPlaylistKey, list);
 
                 entry.SlidingExpiration = TimeSpan.FromHours(2);
+
                 return await Task.Run(() =>
                 {
                     var response = _dbContext.Playlist
@@ -105,7 +106,8 @@ namespace Hfa.WebApi.Controllers
             if (playlist == null)
                 return NotFound(id);
 
-            return light ? Ok(PlaylistModel.ToLightModel(playlist, Url)) : Ok(PlaylistModel.ToModel(playlist, Url));
+            var res = light ? Ok(PlaylistModel.ToLightModel(playlist, Url)) : Ok(PlaylistModel.ToModel(playlist, Url));
+            return res;
         }
 
         [HttpPut("{id}")]
@@ -121,7 +123,6 @@ namespace Hfa.WebApi.Controllers
             playlistEntity.Status = playlist.Status;
             playlistEntity.Freindlyname = playlist.Freindlyname;
             playlistEntity.TvgSites = playlist.TvgSites;
-            playlistEntity.SynkConfig.Cron = playlist.Cron;
             playlistEntity.SynkConfig.Url = playlist.Url;
             playlistEntity.SynkConfig.SynkEpg = playlist.SynkEpg;
             playlistEntity.SynkConfig.SynkGroup = playlist.SynkGroup;
@@ -154,7 +155,6 @@ namespace Hfa.WebApi.Controllers
             playlistEntity.Status = playlist.Status;
             playlistEntity.Freindlyname = playlist.Freindlyname;
             playlistEntity.TvgSites = playlist.TvgSites.Distinct().ToList();
-            playlistEntity.SynkConfig.Cron = playlist.Cron;
             playlistEntity.SynkConfig.Url = playlist.Url;
             playlistEntity.SynkConfig.SynkEpg = playlist.SynkEpg;
             playlistEntity.SynkConfig.SynkGroup = playlist.SynkGroup;
@@ -330,7 +330,7 @@ namespace Hfa.WebApi.Controllers
                    var matched = _sitePackService.MatchTermByDispaynamesAndFiltredBySiteNameAsync(media.DisplayName, media.Lang, playlistEntity.TvgSites, cancellationToken).GetAwaiter().GetResult();
                    if (matched != null)
                    {
-                       media.Group = matched.Country;
+                       media.MediaGroup = new hfa.PlaylistBaseLibrary.Entities.MediaGroup(matched.Country);
                        if (media.Tvg == null)
                        {
                            media.Tvg = new Tvg { Name = matched.Channel_name, TvgIdentify = matched.id, TvgSiteSource = matched.Site, Id = matched.Xmltv_id };

@@ -50,7 +50,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         { columnDef: 'name', header: 'Name', cell: (row: TvgMedia) => `${row.name}`, showed: true, actionColumn: false },
         { columnDef: 'displayName', header: 'DisplayName', cell: (row: TvgMedia) => `${row.displayName}`, showed: true, actionColumn: false },
         { columnDef: 'lang', header: 'Lang', cell: (row: TvgMedia) => `${row.lang}`, showed: true, actionColumn: false },
-        { columnDef: 'group', header: 'Group', cell: (row: TvgMedia) => `${row.group}`, showed: true, actionColumn: false },
+        { columnDef: 'group', header: 'Group', cell: (row: TvgMedia) => `${row.mediaGroup.name}`, showed: true, actionColumn: false },
         { columnDef: 'tvg.name', header: 'Tvg name', cell: (row: TvgMedia) => `${row.tvg.name}`, showed: true, actionColumn: false },
         { columnDef: 'tvg.tvgIdentify', header: 'Tvg id', cell: (row: TvgMedia) => `${row.tvg.tvgIdentify}`, showed: true, actionColumn: false },
         { columnDef: 'actions', header: 'Actions', cell: (row: TvgMedia) => ``, showed: true, actionColumn: true }
@@ -269,12 +269,12 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         let counter: number = 1;
         Observable
             .from(this.dataSource.data)
-            .groupBy(x => x.group)
+            .groupBy(x => x.mediaGroup.name)
             .mergeMap(x => x
                 .toArray()
                 .map(m => m.sort((a, b) => a.displayName === b.displayName ? 0 : a.displayName > b.displayName ? 1 : -1)))
             .flatMap(x => x)
-            .do(x => console.log(x.group))
+            .do(x => console.log(x.mediaGroup.name))
             .map((t, i) => {
                 t.position = counter++;
                 return t;
@@ -292,7 +292,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             width: '550px',
             data: [
                 this.dataSource.data.filter((v, i) => v.selected),
-                Observable.from(this.dataSource.data.filter(f => f.group != null).map(x => x.group)).distinct().toArray()]
+                Observable.from(this.dataSource.data.filter(f => f.mediaGroup.name != null).map(x => x.mediaGroup.name)).distinct().toArray()]
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -501,7 +501,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
      */
     groupMedias(): void {
         Observable.from(this.dataSource.data)
-            .groupBy(x => x.group)
+            .groupBy(x => x.mediaGroup.name)
             .mergeMap(group => group.toArray());
     }
 

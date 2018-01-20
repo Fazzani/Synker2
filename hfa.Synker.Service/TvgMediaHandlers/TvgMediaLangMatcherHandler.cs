@@ -29,7 +29,7 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
                 {
                     if (!string.IsNullOrEmpty(context.StartChannelsHeadLineLastMatched))
                     {
-                        tvgMedia.Group = context.StartChannelsHeadLineLastMatched;
+                        tvgMedia.MediaGroup = new PlaylistBaseLibrary.Entities.MediaGroup(context.StartChannelsHeadLineLastMatched);
                         tvgMedia.Tags.Add($"{{StartChannelsHeadLineLastMatched:{context.StartChannelsHeadLineLastMatched}}}");
                     }
                 }

@@ -16,7 +16,7 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
         private IElasticConnectionClient _elasticClient;
         private ElasticConfig _elasticConfig;
 
-        public TvgMediaEpgMatcherNameHandler(IContextTvgMediaHandler contextTvgMediaHandler, IElasticConnectionClient elasticClient, 
+        public TvgMediaEpgMatcherNameHandler(IContextTvgMediaHandler contextTvgMediaHandler, IElasticConnectionClient elasticClient,
             IOptions<ElasticConfig> elasticConfig) : base(contextTvgMediaHandler)
         {
             _elasticClient = elasticClient;
@@ -32,7 +32,7 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
             if (result.Documents.Any())
             {
                 tvgMedia.Tvg = result.Documents.FirstOrDefault().Tvg;
-                tvgMedia.Group = result.Documents.FirstOrDefault().Groups.FirstOrDefault();
+                tvgMedia.MediaGroup = new PlaylistBaseLibrary.Entities.MediaGroup(result.Documents.FirstOrDefault().Groups.FirstOrDefault());
                 tvgMedia.Lang = result.Documents.FirstOrDefault().Cultures.FirstOrDefault();
             }
             if (_successor != null)

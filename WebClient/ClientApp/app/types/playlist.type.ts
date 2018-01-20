@@ -17,13 +17,13 @@ export interface Playlist {
 }
 
 export class SynkConfig {
-    public cron: string;
     public synkLogos: boolean;
     public synkEpg: boolean;
     public synkGroup: SynkGroupEnum;
     public cleanName: boolean;
     public url: string;
     public provider: string;
+    public notifcationTypeInsertedMedia: NotificationTypeEnum;
 }
 export enum SynkGroupEnum {
     none = 0,
@@ -40,7 +40,6 @@ export enum PlaylistStatus {
 export class PlaylistModel {
     public userId: number;
     public freindlyname: string;
-    public cron: string;
     public status: PlaylistStatus;
     public tvgMedias: TvgMedia[];
     public tvgSites: string[];
@@ -56,11 +55,11 @@ export class PlaylistModel {
     public publicId: string;
     public xtreamPlayerApi: PlayerApi;
     public isXtream: boolean;
+    public notifcationTypeInsertedMedia: NotificationTypeEnum;
 }
 
 export class PlaylistPostModel {
     public freindlyname: string;
-    public cron: string;
     public status: PlaylistStatus;
     public url: string;
     public synkEpg: boolean;
@@ -68,6 +67,7 @@ export class PlaylistPostModel {
     public synkLogos: boolean;
     public provider: string;
     public publicId: string;
+    public notifcationTypeInsertedMedia: NotificationTypeEnum;
 }
 
 export enum Providers {
@@ -75,3 +75,9 @@ export enum Providers {
     tvlist
 }
 
+export enum NotificationTypeEnum {
+    pushBrowser = 1,
+    pushMobile = 2,
+    email = 4,
+    sms = 8
+}

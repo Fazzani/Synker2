@@ -15,7 +15,7 @@ namespace hfa.WebApi.Models.TvgMedias
             Id = hit.Id;
             DisplayName = hit.Source.DisplayName;
             Enabled = hit.Source.Enabled;
-            Group = hit.Source.Group;
+            MediaGroup =  hit.Source.MediaGroup;
             IsValid = hit.Source.IsValid;
             Lang = hit.Source.Lang;
             MediaType = hit.Source.MediaType;

@@ -116,7 +116,7 @@ namespace hfa.PlaylistBaseLibrary.Entities.XtreamCode
                 Url = getStreamUrl(x),
                 Position = x.Num,
                 MediaType = x.MediaType,
-                Group = x.Category_name,
+                MediaGroup = new MediaGroup(x.Category_name),
                 Tvg = new Tvg { Logo = x.Stream_icon, Id = x.Epg_channel_id },
                 Tags = new List<string> { $"xtream_category_id:{x.Category_id}" }
             };
@@ -129,7 +129,7 @@ namespace hfa.PlaylistBaseLibrary.Entities.XtreamCode
          {
              Num = x.Position,
              Name = x.Name,
-             Category_name = x.Group,
+             Category_name = x.MediaGroup?.Name,
              Stream_id = x.StreamId,
              Stream_type = "live"
          };

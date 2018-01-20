@@ -1,4 +1,5 @@
-﻿using PlaylistBaseLibrary.Entities;
+﻿using hfa.PlaylistBaseLibrary.Entities;
+using PlaylistBaseLibrary.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,6 +19,7 @@ namespace PlaylistManager.Entities
             MediaType = MediaType.LiveTv;
             Lang = "fr";
             IsValid = true;
+            MediaGroup = new MediaGroup();
         }
 
         public Media(string name, string url) : this()
@@ -94,14 +96,14 @@ namespace PlaylistManager.Entities
 
         public MediaType MediaType { get; set; }
 
-        public string Group { get; set; }
+        public MediaGroup MediaGroup { get; set; }
 
         public string GetTrimedDisplayName() => Regex.Replace(DisplayName, @"\s+", "");
 
         public int? GetChannelNumber() => GetChannelNumber(Name);
         public static int? GetChannelNumber(string mediaName)
         {
-            var match = Regex.Match(mediaName, @"\b(?:[^\+])(?<number>\d{1,2})\b", RegexOptions.IgnoreCase| RegexOptions.CultureInvariant);
+            var match = Regex.Match(mediaName, @"\b(?:[^\+])(?<number>\d{1,2})\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
             if (match.Success && match.Groups["number"].Success)
             {
                 return Convert.ToInt32(match.Groups["number"]?.Value);

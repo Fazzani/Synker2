@@ -218,7 +218,9 @@ export class MediaDataSource extends DataSource<TvgMedia> {
         this.isLoadingResults = true;
 
         //TODO: à virer et la remplacer par un decorator
-        let defaultObjectTvgMedia = <TvgMedia>{ position: 0, name: 'jj', group: 'sd', lang: 'sq' };
+        let defaultObjectTvgMedia = <TvgMedia>{
+            position: 0, name: 'jj', mediaGroup: { name: 'sd' }, lang: 'sq'
+        };
         let typeProp = typeof defaultObjectTvgMedia[this._sort.active];
 
         let sortField = this._sort.active;

@@ -28,7 +28,7 @@ export class GroupsDialog implements OnInit, OnDestroy {
      */
     getGroupMedias = () =>
         Observable.from(this.playlist.tvgMedias)
-            .groupBy(x => x.group).mergeMap(group => group
+            .groupBy(x => x.mediaGroup.name).mergeMap(group => group
                 .count()
                 .map(total => ({ group: group.key, count: total }))
             )

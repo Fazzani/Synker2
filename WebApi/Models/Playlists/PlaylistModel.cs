@@ -1,4 +1,5 @@
-﻿using hfa.Synker.Service.Entities.Playlists;
+﻿using hfa.PlaylistBaseLibrary.Entities;
+using hfa.Synker.Service.Entities.Playlists;
 using Hfa.WebApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using PlaylistManager.Entities;
@@ -46,6 +47,9 @@ namespace hfa.WebApi.Models.Playlists
         public List<string> TvgSites { get; set; }
         public Dictionary<string, string> Tags { get; set; }
 
+        public NotificationTypeEnum? NotifcationTypeInsertedMedia { get; set; }
+
+
         public string PublicId
         {
             get
@@ -66,7 +70,6 @@ namespace hfa.WebApi.Models.Playlists
 
         public static PlaylistModel ToModel(Playlist pl, IUrlHelper uriHelper) => new PlaylistModel(uriHelper)
         {
-            Cron = pl.SynkConfig?.Cron,
             Freindlyname = pl.Freindlyname,
             Status = pl.Status,
             TvgMedias = pl?.TvgMedias,
@@ -81,7 +84,8 @@ namespace hfa.WebApi.Models.Playlists
             Url = pl.SynkConfig.Url,
             TvgSites = pl.TvgSites,
             IsXtream = pl.IsXtream,
-            Tags = pl.Tags?.Object
+            Tags = pl.Tags?.Object,
+            NotifcationTypeInsertedMedia = pl.SynkConfig?.NotifcationTypeInsertedMedia
         };
 
         public static PlaylistModel ToLightModel(Playlist pl, IUrlHelper uriHelper) => new PlaylistModel(uriHelper)
@@ -94,10 +98,10 @@ namespace hfa.WebApi.Models.Playlists
             Status = pl.Status,
             CreatedDate = pl.CreatedDate,
             UpdatedDate = pl.UpdatedDate,
-            Cron = pl.SynkConfig?.Cron,
             TvgSites = pl.TvgSites,
             IsXtream = pl.IsXtream,
-            Tags = pl.Tags?.Object
+            Tags = pl.Tags?.Object,
+            NotifcationTypeInsertedMedia = pl.SynkConfig?.NotifcationTypeInsertedMedia
         };
     }
 }

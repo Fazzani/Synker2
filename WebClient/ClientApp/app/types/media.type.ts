@@ -10,7 +10,6 @@ export interface TvgMedia extends ISelectable {
     id: string;
     name: string;
     displayName: string;
-    group?: string;
     position: number;
     enabled: boolean;
     mediaType: MediaType;
@@ -20,6 +19,7 @@ export interface TvgMedia extends ISelectable {
     tvg?: Tvg;
     isValid: boolean;
     startLineHeader?: string;
+    mediaGroup: MediaGroup;
 }
 
 export enum MediaType {
@@ -53,4 +53,11 @@ export class Culture {
 
 export class TvgSource extends Culture {
     public site: string;
+}
+
+export class MediaGroup {
+    public name: string;
+    public disabled: boolean;
+    public position: number;
+    public matchingMediaPattern: string;
 }

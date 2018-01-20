@@ -75,7 +75,7 @@ export class PlaylistBulkUpdate implements OnInit, OnDestroy {
     onChangeGroup(g): void {
         this.group = g;
         console.log("Group was changed : ", g);
-        this.data.forEach(m => m.group = g);
+        this.data.forEach(m => m.mediaGroup.name = g);
     }
 
     ngOnInit(): void {
