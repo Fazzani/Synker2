@@ -21,8 +21,8 @@ matrix:
 install:
   - choco install googlechrome -y --ignore-checksums
   - ps: Install-Product node $Env:nodejs_version
-  - npm i -g npm@latest
-  - npm i -g webpack@latest
+  #- npm i -g npm@latest
+  #- npm i -g webpack@latest
   #- npm rebuild node-sass
 before_build:
   # Display .NET Core version
