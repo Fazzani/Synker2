@@ -11,7 +11,7 @@ export interface AuthResponse {
 * User entity
 * @description User entity
 */
-export interface User {
+export class User {
     id: number;
     gender: string;
     firstName: string;
@@ -19,6 +19,7 @@ export interface User {
     email: string;
     birthday: Date;
     photo: string;
+    roles: "Default" | "Guest" | "Administrator" = "Default";
 }
 
 export interface RegisterUser extends User, Login {

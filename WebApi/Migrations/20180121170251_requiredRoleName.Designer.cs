@@ -16,9 +16,10 @@ using System.Collections.Generic;
 namespace hfa.WebApi.Migrations
 {
     [DbContext(typeof(SynkerDbContext))]
-    partial class SynkerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180121170251_requiredRoleName")]
+    partial class requiredRoleName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -159,9 +160,13 @@ namespace hfa.WebApi.Migrations
 
                     b.Property<DateTime>("CreatedDate");
 
+                    b.Property<int>("Id");
+
                     b.Property<DateTime>("UpdatedDate");
 
                     b.HasKey("UserId", "RoleId");
+
+                    b.HasAlternateKey("Id");
 
                     b.HasIndex("RoleId");
 

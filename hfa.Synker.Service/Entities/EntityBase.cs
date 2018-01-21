@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 
 namespace hfa.Synker.Service.Entities
 {
-    public class EntityBase
+    public class EntityBase : EntityBaseAudit
     {
         [Key]
         public int Id { get; set; }
+      
+    }
 
+    public class EntityBaseAudit
+    {
         public DateTime UpdatedDate { get; set; }
         public DateTime CreatedDate { get; set; }
     }

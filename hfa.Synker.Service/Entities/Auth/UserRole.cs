@@ -4,7 +4,7 @@ using System.Text;
 
 namespace hfa.Synker.Service.Entities.Auth
 {
-    public class UserRole : EntityBase
+    public class UserRole : EntityBaseAudit
     {
         public int UserId { get; set; }
         public User User { get; set; }

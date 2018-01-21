@@ -13,6 +13,7 @@ namespace hfa.WebApi.Models.Auth
         {
             Roles = new List<Role>();
         }
+
         [MaxLength(64)]
         [Required]
         public string FirstName { get; set; }
@@ -30,10 +31,12 @@ namespace hfa.WebApi.Models.Auth
 
         public GenderTypeEnum Gender { get; set; } = GenderTypeEnum.Mr;
 
+        [Required]
         public List<Role> Roles { get; set; }
 
         [Required]
         public string Password { get; set; }
+
         [Required]
         public string UserName { get; set; }
 

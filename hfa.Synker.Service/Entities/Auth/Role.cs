@@ -10,6 +10,7 @@ namespace hfa.Synker.Service.Entities.Auth
        public const string DEFAULT_ROLE_NAME = "Default";
 
         [MaxLength(32)]
+        [Required]
         public string Name { get; set; } = DEFAULT_ROLE_NAME;
 
         public static Role CreateAdminRole() => new Role { Name = ADMIN_ROLE_NAME };
