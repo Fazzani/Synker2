@@ -35,7 +35,7 @@ export class MessageService extends BaseService {
     }
 
     public listByStatus(status: number[], page: number, pageSize: number): Observable<PagedResult<Message>> {
-        return this.http.post(`${this.FullBaseUrl}/search/status`, <MessageQueryModel>{ MessageStatus: status, PageIndex: page, PageSize: pageSize })
+        return this.http.post(`${this.FullBaseUrl}/search/status`, <MessageQueryModel>{ MessageStatus: status, pageNumber: page, pageSize: pageSize })
             .catch(this.handleError);
     }
 }

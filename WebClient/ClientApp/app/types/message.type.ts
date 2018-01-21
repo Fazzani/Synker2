@@ -1,4 +1,6 @@
-﻿/**
+﻿import { QueryListBaseModel } from "./common.type";
+
+/**
  * Message Type
  * @description Message type.
  */
@@ -25,10 +27,8 @@ export enum MessageStatus {
     NotReaded = 1,
     Readed = 2
 }
-export class MessageQueryModel {
+export class MessageQueryModel extends QueryListBaseModel{
     public MessageStatus: MessageStatus[];
-    public PageSize: number;
-    public PageIndex: number;
 }
 
 export enum MessageTypeEnum {

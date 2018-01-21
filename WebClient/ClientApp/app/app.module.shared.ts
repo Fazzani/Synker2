@@ -53,6 +53,8 @@ import { LoginDialog } from './components/dialogs/auth/LoginDialog';
 import { XtreamService } from './services/xtream/xtream.service';
 import { PlaylistInfosDialog } from './components/dialogs/playlistInfos/playlist.infos.component';
 import { MessagesComponent } from './components/messages/messages.component';
+import { UsersComponent } from './components/admin/users/users.component';
+import { UsersService } from './services/admin/users.service';
 
 const appRoutes: Routes = [
     { path: 'home', component: HomeComponent, canActivate: [LoginRouteGuard] },
@@ -62,6 +64,7 @@ const appRoutes: Routes = [
     { path: 'sitepack', component: SitePackComponent, canActivate: [LoginRouteGuard] },
     { path: 'playlist/:id', component: PlaylistComponent, canActivate: [LoginRouteGuard] },
     { path: 'messages', component: MessagesComponent, canActivate: [LoginRouteGuard] },
+    { path: 'users', component: UsersComponent, canActivate: [LoginRouteGuard] },
     { path: 'signin', component: DialogComponent },
     { path: 'register', component: RegisterComponent },
     { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -78,6 +81,7 @@ const appRoutes: Routes = [
         EpgComponent,
         XmltvComponent,
         MessagesComponent,
+        UsersComponent,
         TvgMediaModifyDialog,
         EpgModifyDialog,
         DialogComponent,
@@ -123,6 +127,7 @@ const appRoutes: Routes = [
         MediaRefService,
         PlaylistService,
         PiconService,
+        UsersService,
         XtreamService,
         SitePackService,
         EpgService,
