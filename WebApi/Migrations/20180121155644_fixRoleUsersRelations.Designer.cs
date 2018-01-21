@@ -16,9 +16,10 @@ using System.Collections.Generic;
 namespace hfa.WebApi.Migrations
 {
     [DbContext(typeof(SynkerDbContext))]
-    partial class SynkerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180121155644_fixRoleUsersRelations")]
+    partial class fixRoleUsersRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,9 +106,13 @@ namespace hfa.WebApi.Migrations
 
                     b.Property<DateTime>("UpdatedDate");
 
+                    b.Property<int?>("UserId");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Role");
                 });
 
             modelBuilder.Entity("hfa.Synker.Service.Entities.Auth.User", b =>
@@ -148,27 +153,6 @@ namespace hfa.WebApi.Migrations
                     b.HasIndex("FirstName", "LastName");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("hfa.Synker.Service.Entities.Auth.UserRole", b =>
-                {
-                    b.Property<int>("UserId");
-
-                    b.Property<int>("RoleId");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<int>("Id");
-
-                    b.Property<DateTime>("UpdatedDate");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasAlternateKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("UserRole");
                 });
 
             modelBuilder.Entity("hfa.Synker.Service.Entities.Playlists.Playlist", b =>
@@ -239,24 +223,18 @@ namespace hfa.WebApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("hfa.Synker.Service.Entities.Auth.Role", b =>
+                {
+                    b.HasOne("hfa.Synker.Service.Entities.Auth.User")
+                        .WithMany("Roles")
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("hfa.Synker.Service.Entities.Auth.User", b =>
                 {
                     b.HasOne("hfa.Synker.Service.Entities.Auth.ConnectionState", "ConnectionState")
                         .WithMany()
                         .HasForeignKey("ConnectionStateId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("hfa.Synker.Service.Entities.Auth.UserRole", b =>
-                {
-                    b.HasOne("hfa.Synker.Service.Entities.Auth.Role", "Role")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("hfa.Synker.Service.Entities.Auth.User", "User")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

@@ -41,7 +41,8 @@ namespace hfa.WebApi.Models.Auth
         {
             get
             {
-                var userEntity = new User { BirthDay = BirthDay, Email = Email, FirstName = FirstName, Gender = Gender, LastName = LastName, Photo = Photo, Roles = Roles };
+                var userEntity = new User { BirthDay = BirthDay, Email = Email, FirstName = FirstName, Gender = Gender, LastName = LastName, Photo = Photo };
+                userEntity.UserRoles = Roles.Select(x => new UserRole { User = userEntity, RoleId = x.Id }).ToList();
                 userEntity.ConnectionState = new ConnectionState { Password = Password, UserName = UserName };
                 return userEntity;
             }

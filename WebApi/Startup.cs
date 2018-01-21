@@ -260,8 +260,6 @@ namespace hfa.WebApi
                 app.UseStaticFiles();
 
                 app.UseMvc();
-
-
             }
             catch (Exception ex)
             {
@@ -312,7 +310,7 @@ namespace hfa.WebApi
                         {
                             var ticket = new AuthenticationTicket(
                                 principal,
-                                new Microsoft.AspNetCore.Authentication.AuthenticationProperties(),
+                                new AuthenticationProperties(),
                                 BasicAuthenticationDefaults.AuthenticationScheme);
 
                             return Task.FromResult(AuthenticateResult.Success(ticket));

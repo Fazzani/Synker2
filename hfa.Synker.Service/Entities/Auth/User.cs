@@ -10,11 +10,6 @@ namespace hfa.Synker.Service.Entities.Auth
 {
     public class User : EntityBase
     {
-        public User()
-        {
-            Roles = new List<Role>();
-            Commands = new List<Command>();
-        }
         [MaxLength(64)]
         [Required]
         public string FirstName { get; set; }
@@ -37,8 +32,8 @@ namespace hfa.Synker.Service.Entities.Auth
         [ForeignKey(nameof(ConnectionStateId))]
         public virtual ConnectionState ConnectionState { get; set; }
 
-        public virtual ICollection<Role> Roles { get; set; }
-        public virtual ICollection<Command> Commands { get; set; }
+        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public virtual ICollection<Command> Commands { get; set; } = new List<Command>();
         public virtual ICollection<Playlist> Playlists { get; set; }
         
         // public virtual JsonObject<List<string>> Tags { get; set; }

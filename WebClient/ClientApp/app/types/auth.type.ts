@@ -12,6 +12,7 @@ export interface AuthResponse {
 * @description User entity
 */
 export interface User {
+    id: number;
     gender: string;
     firstName: string;
     lastName: string;

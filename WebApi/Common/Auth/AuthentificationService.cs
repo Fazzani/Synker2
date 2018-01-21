@@ -184,42 +184,11 @@ namespace hfa.WebApi.Common.Auth
                 new Claim("id", user.Id.ToString(), ClaimValueTypes.Integer),
                 new Claim(JwtRegisteredClaimNames.Nbf, now.ToString())
                     };
-            if (user.Roles.Any())
-                claims.AddRange(user.Roles.Select(x => new Claim("role", x.Libelle)));
+            if (user.UserRoles.Any())
+                claims.AddRange(user.UserRoles.Select(x => new Claim("role", x.Role.Name)));
             return claims;
 
         }
-    }
-
-    /// <summary>
-    /// JWT Reponse
-    /// </summary>
-    public class JwtReponse
-    {
-        public JwtReponse(string accessToken)
-        {
-            AccessToken = accessToken;
-            RefreshToken = Guid.NewGuid().ToString().Replace("-", "");
-
-        }
-        public JwtReponse(string accessToken, string refreshToken) : this(accessToken)
-        {
-            RefreshToken = accessToken;
-        }
-
-        public JwtReponse(string accessToken, string refreshToken, DateTime expire) : this(accessToken, refreshToken)
-        {
-            Expire = expire;
-        }
-
-        public JwtReponse(string accessToken, DateTime expire) : this(accessToken)
-        {
-            Expire = expire;
-        }
-
-        public string AccessToken { get; private set; }
-        public string RefreshToken { get; set; }
-        public DateTime Expire { get; set; }
     }
 }
 

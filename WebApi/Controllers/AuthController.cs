@@ -43,7 +43,10 @@ namespace hfa.WebApi.Controllers
         public async Task<IActionResult> GetToken([FromBody] AuthModel model)
         {
             JwtReponse jwtReponse = null;
-            var user = _dbContext.Users.Include(x => x.ConnectionState).SingleOrDefault(it => it.ConnectionState.UserName == model.UserName);
+            var user = _dbContext.Users
+                .Include(x => x.ConnectionState)
+                .Include(x => x.UserRoles.Select(r=>r.Role))
+                .SingleOrDefault(it => it.ConnectionState.UserName == model.UserName);
 
             if (model.GrantType == GrantType.Password)
             {
@@ -120,11 +123,15 @@ namespace hfa.WebApi.Controllers
             if (!_dbContext.Users.Any(x => x.ConnectionState.UserName == user.UserName))
                 return BadRequest($"The user {user.UserName} is not exist");
 
-            var userEntity = _dbContext.Users.Include(x => x.ConnectionState).SingleOrDefault(it => it.ConnectionState.UserName == user.UserName);
+            var userEntity = _dbContext.Users
+                .Include(x => x.ConnectionState)
+                .SingleOrDefault(it => it.ConnectionState.UserName == user.UserName);
+
             if (user != null && _authentificationService.VerifyPassword(user.Password, userEntity.ConnectionState.Password))
             {
                 userEntity.ConnectionState.Password = user.NewPassword.HashPassword(_authentificationService.Salt);
             }
+
             _dbContext.Users.Update(userEntity);
 
             return Ok(await _dbContext.SaveChangesAsync());
