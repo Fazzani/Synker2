@@ -19,8 +19,10 @@ export class User {
     email: string;
     birthday: Date;
     photo: string;
-    roles: "Default" | "Guest" | "Administrator" = "Default";
+    roles: roles = "Default";
 }
+
+export type roles =  "Default" | "Guest" | "Administrator";
 
 export interface RegisterUser extends User, Login {
 

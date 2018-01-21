@@ -43,6 +43,8 @@ using ZNetCS.AspNetCore.Authentication.Basic.Events;
 using Microsoft.AspNetCore.Authentication;
 using hfa.Synker.Service.Services.Xtream;
 using hfa.Synker.Service.Services.Notification;
+using hfa.Synker.Service.Entities.Auth;
+using System.Security.Claims;
 
 namespace hfa.WebApi
 {
@@ -322,6 +324,9 @@ namespace hfa.WebApi
             });
             services.AddAuthorization(authorizationOptions =>
             {
+                authorizationOptions.AddPolicy(AuthorizePolicies.ADMIN, policyBuilder => policyBuilder.RequireClaim(ClaimTypes.Role, Role.ADMIN_ROLE_NAME));
+                authorizationOptions.AddPolicy(AuthorizePolicies.VIP, policyBuilder => policyBuilder.RequireClaim(AuthorizePolicies.VIP));
+
                 authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme, "Basic").RequireAuthenticatedUser().Build();
             });
         }

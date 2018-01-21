@@ -45,7 +45,8 @@ namespace hfa.WebApi.Controllers
             JwtReponse jwtReponse = null;
             var user = _dbContext.Users
                 .Include(x => x.ConnectionState)
-                .Include(x => x.UserRoles.Select(r=>r.Role))
+                .Include(x => x.UserRoles)
+                    .ThenInclude(r => r.Role)
                 .SingleOrDefault(it => it.ConnectionState.UserName == model.UserName);
 
             if (model.GrantType == GrantType.Password)

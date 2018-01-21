@@ -167,6 +167,7 @@ namespace hfa.WebApi.Common.Auth
         public List<Claim> GetClaims(User user)
         {
             var now = DateTime.UtcNow;
+
             var claims = new List<Claim> {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.ConnectionState.UserName),
@@ -180,14 +181,17 @@ namespace hfa.WebApi.Common.Auth
                 new Claim(JwtRegisteredClaimNames.Exp, Expiration.ToString(), ClaimValueTypes.DateTime),
                 new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(now).ToUniversalTime().ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
                 new Claim("photo", user.Photo, ClaimValueTypes.String),
-                new Claim("gender", user.Gender.ToString()),
+                new Claim(ClaimTypes.Gender, user.Gender.ToString()),
                 new Claim("id", user.Id.ToString(), ClaimValueTypes.Integer),
                 new Claim(JwtRegisteredClaimNames.Nbf, now.ToString())
                     };
-            if (user.UserRoles.Any())
-                claims.AddRange(user.UserRoles.Select(x => new Claim("role", x.Role.Name)));
-            return claims;
 
+            if (user.UserRoles.Any())
+            {
+                claims.AddRange(user.UserRoles.Select(x => new Claim(ClaimTypes.Role, x.Role.Name)));
+            }
+
+            return claims;
         }
     }
 }

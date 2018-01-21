@@ -7,6 +7,7 @@ using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Services.Dal;
+using hfa.WebApi.Common.Auth;
 using hfa.WebApi.Common.Filters;
 using Hfa.WebApi.Controllers;
 using Hfa.WebApi.Models;
@@ -37,7 +38,7 @@ namespace hfa.WebApi.Controllers
         [HttpPut]
         [Route("{id}")]
         [ValidateModel]
-        [Authorize(Roles = Role.ADMIN_ROLE_NAME)]
+        [Authorize(Policy = AuthorizePolicies.ADMIN)]
         public async Task<IActionResult> Put(int id, [FromBody] User userModel, CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users.FindAsync(id, cancellationToken);
@@ -75,7 +76,7 @@ namespace hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPut]
         [ValidateModel]
-        [Authorize(Roles = Role.ADMIN_ROLE_NAME)]
+        [Authorize(Policy = AuthorizePolicies.ADMIN)]
         public async Task<IActionResult> Put([FromBody] User userModel, CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users.FindAsync(UserId, cancellationToken);
@@ -100,10 +101,10 @@ namespace hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("{id}")]
-        [Authorize(Roles = Role.ADMIN_ROLE_NAME)]
+        [Authorize(Policy = AuthorizePolicies.ADMIN)]
         public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
         {
-            var user = await _dbContext.Users.FindAsync(UserId, cancellationToken);
+            var user = await _dbContext.Users.FindAsync(new object[] { UserId.Value }, cancellationToken);
             if (user == null)
                 return NotFound(id);
             return Ok(user);
@@ -115,7 +116,7 @@ namespace hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("search")]
-        [Authorize(Roles = Role.ADMIN_ROLE_NAME)]
+        [Authorize(Policy = AuthorizePolicies.ADMIN)]
         public IActionResult List([FromBody] QueryListBaseModel query)
         {
             if (!ModelState.IsValid)
