@@ -124,7 +124,7 @@ namespace hfa.WebApi.Controllers
 
             var response = _dbContext.Users
                 .OrderByDescending(x => x.Id)
-                .GetPaged(query.PageNumber, query.Skip);
+                .GetPaged(query.PageNumber, query.PageSize);
 
             return Ok(response);
         }

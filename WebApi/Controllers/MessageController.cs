@@ -98,7 +98,7 @@ namespace Hfa.WebApi.Controllers
 
             var response = _dbContext.Messages
                 .OrderByDescending(x => x.Id)
-                .GetPaged(query.PageNumber, query.Skip);
+                .GetPaged(query.PageNumber, query.PageSize);
 
             return Ok(response);
         }
