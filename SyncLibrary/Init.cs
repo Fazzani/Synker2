@@ -1,5 +1,6 @@
 ﻿using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Services.Notification;
 using hfa.Synker.Service.Services.Playlists;
 using hfa.Synker.Service.Services.TvgMediaHandlers;
 using hfa.Synker.Services.Dal;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PlaylistBaseLibrary.ChannelHandlers;
+using SyncLibrary;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +19,7 @@ using System.Linq;
 
 namespace Hfa.SyncLibrary
 {
-    public static class Init
+    public class Init
     {
         private const string DEV = "Development";
         internal static IConfiguration Configuration;
@@ -35,14 +37,13 @@ namespace Hfa.SyncLibrary
 
             Console.WriteLine("Environment: {0}", environment);
             // Set up configuration sources.
-            var builder = new ConfigurationBuilder()
+            IConfigurationBuilder builder = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(AppContext.BaseDirectory))
                 .AddJsonFile("appsettings.json", optional: true);
 
             if (IsDev(environment))
             {
-
-                builder
+                builder.AddUserSecrets<Init>()
                     .AddJsonFile(
                         Path.Combine(AppContext.BaseDirectory, string.Format("..{0}..{0}..{0}", Path.DirectorySeparatorChar), $"appsettings.{environment}.json"),
                         optional: true
@@ -69,7 +70,9 @@ namespace Hfa.SyncLibrary
                 .AddOptions()
                 .Configure<ApplicationConfigData>(Configuration)
                 .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
+                .Configure<MailOptions>(Configuration.GetSection(nameof(MailOptions)))
                 .AddSingleton<IMessageService>(s=> new MessageService(Configuration.GetValue<string>("ApiUrlMessage"), loggerFactory))
+                .AddSingleton<INotificationService, NotificationService>()
                 .AddSingleton<IPlaylistService, PlaylistService>()
                 .AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                 .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()

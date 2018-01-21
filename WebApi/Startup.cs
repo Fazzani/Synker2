@@ -42,6 +42,7 @@ using ZNetCS.AspNetCore.Authentication.Basic;
 using ZNetCS.AspNetCore.Authentication.Basic.Events;
 using Microsoft.AspNetCore.Authentication;
 using hfa.Synker.Service.Services.Xtream;
+using hfa.Synker.Service.Services.Notification;
 
 namespace hfa.WebApi
 {
@@ -80,7 +81,9 @@ namespace hfa.WebApi
                .AddScoped<ISitePackService, SitePackService>()
                .AddScoped<IXtreamService, XtreamService>()
                .AddScoped<IMediaScraper, MediaScraper>()
+               .AddScoped<INotificationService, NotificationService>()
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
+               .Configure<MailOptions>(Configuration.GetSection(nameof(MailOptions)))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))
                .Configure<GlobalOptions>(Configuration.GetSection(nameof(GlobalOptions)))

@@ -32,6 +32,9 @@ using hfa.Synker.Services.Dal;
 using hfa.PlaylistBaseLibrary.Providers;
 using Newtonsoft.Json;
 using System.Text;
+using hfa.Synker.Service.Services.Notification;
+using hfa.Synker.Service.Entities.Notifications;
+using Microsoft.EntityFrameworkCore;
 
 [assembly: InternalsVisibleTo("hfa.synker.batch.test")]
 namespace SyncLibrary
@@ -40,9 +43,11 @@ namespace SyncLibrary
     {
         static CancellationTokenSource ts = new CancellationTokenSource();
         static IMessageService _messagesService;
+        private static INotificationService _notificationService;
         static IElasticConnectionClient _elasticClient;
         static ApplicationConfigData _config;
         private static IOptions<ElasticConfig> _elastiConfig;
+        private static MailOptions _mailConfig;
         private static ILogger _logger;
 
         public static void Main(string[] args)
@@ -54,8 +59,10 @@ namespace SyncLibrary
                 _logger = Logger(nameof(SynchElastic));
                 _config = Init.ServiceProvider.GetService<IOptions<ApplicationConfigData>>().Value;
                 _elastiConfig = Init.ServiceProvider.GetService<IOptions<ElasticConfig>>();
+                _mailConfig = Init.ServiceProvider.GetService<IOptions<MailOptions>>().Value;
                 _elasticClient = Init.ServiceProvider.GetService<IElasticConnectionClient>();
                 _messagesService = Init.ServiceProvider.GetService<IMessageService>();
+                _notificationService = Init.ServiceProvider.GetService<INotificationService>();
 
                 Logger(nameof(SynchElastic)).LogInformation("Init batch Synker...");
 
@@ -106,7 +113,7 @@ namespace SyncLibrary
             var playlistService = Init.ServiceProvider.GetService<IPlaylistService>();
             var _dbContext = Init.ServiceProvider.GetService<SynkerDbContext>();
 
-            foreach (var pl in _dbContext.Playlist.Where(x => x.Status == hfa.Synker.Service.Entities.Playlists.PlaylistStatus.Enabled))
+            foreach (var pl in _dbContext.Playlist.Include(x => x.User).Where(x => x.Status == hfa.Synker.Service.Entities.Playlists.PlaylistStatus.Enabled))
             {
                 if (pl.IsXtream)
                 {
@@ -123,7 +130,19 @@ namespace SyncLibrary
                             TimeStamp = DateTime.Now,
                             Status = MessageStatusEnum.NotReaded
                         };
+
+                        //Add new message for user
                         await _messagesService.SendAsync(message, _config.ApiUserName, _config.ApiPassword, ts.Token);
+                        //Send Email Notification
+                        await _notificationService.SendMailAsync(new EmailNotification
+                        {
+                            Body = message.Content,
+                            FromDisplayName = "Synker Team",
+                            From = "synker-team@synker.ovh",
+                            Subject = "New Playlist changement detected",
+                            IsBodyHtml = true,
+                            To = pl.User.Email
+                        }, ts.Token);
                     }
                 }
             }

@@ -34,7 +34,9 @@ namespace hfa.WebApi.Common.Middlewares
                 await _next.Invoke(context);
                 return;
             }
+
             CancellationToken ct = context.RequestAborted;
+
             if (context.Request.Path == "/ws")
             {
                 var currentSocket = await context.WebSockets.AcceptWebSocketAsync();
