@@ -38,7 +38,7 @@ export class UsersComponent implements OnInit, OnDestroy {
         this.paginator.pageSizeOptions = [50, 100, 250, 1000];
         this.dataSource = new MatTableDataSource<User>([]);
 
-        this.query = <QueryListBaseModel>{ pageNumber: 0, pageSize: 10000000 };
+        this.query = <QueryListBaseModel>{ getAll: true };
 
         this.usersService.list(this.query).subscribe(res => {
             this.dataSource = new MatTableDataSource<User>(res.results);
@@ -49,6 +49,18 @@ export class UsersComponent implements OnInit, OnDestroy {
 
     reload(): void {
         this.ngOnInit();
+    }
+
+    delete(id: number): void {
+
+        let userIndex = this.dataSource.data.findIndex(x => x.id == id);
+        const confirm = window.confirm(`Do you really want to delete ${this.dataSource.data[userIndex].lastName}?`);
+
+        Observable
+            .of(id)
+            .filter(() => confirm)
+            .switchMap(x => this.usersService.delete(x.toString()))
+            .subscribe(res => this.snackBar.open("The user deleted successfully"));
     }
 
     ngOnDestroy() {

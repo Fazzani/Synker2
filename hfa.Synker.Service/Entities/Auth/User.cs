@@ -35,7 +35,17 @@ namespace hfa.Synker.Service.Entities.Auth
         public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
         public virtual ICollection<Command> Commands { get; set; } = new List<Command>();
         public virtual ICollection<Playlist> Playlists { get; set; }
-        
+
+        [NotMapped]
+        public IEnumerable<string> Roles
+        {
+            get
+            {
+                if (UserRoles != null && UserRoles.Any())
+                    return UserRoles.Select(x => x.Role.Name);
+                return null;
+            }
+        }
         // public virtual JsonObject<List<string>> Tags { get; set; }
     }
     public enum GenderTypeEnum : byte

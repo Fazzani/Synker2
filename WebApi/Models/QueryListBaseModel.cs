@@ -13,8 +13,11 @@ namespace Hfa.WebApi.Models
         public int PageSize { get; set; } = 25;
         public int Skip => PageNumber * PageSize;
 
+        public bool GetAll { get; set; } = false;
+
         public override string ToString() => $"{Skip}:{SearchDict}:{SortDict}";
         public override int GetHashCode() => Skip.GetHashCode() ^ SortDict?.GetHashCode() ?? 0 ^ SearchDict?.GetHashCode() ?? 0;
+
     }
 
     public enum SortDirectionEnum

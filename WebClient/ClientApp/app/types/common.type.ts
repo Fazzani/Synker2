@@ -3,6 +3,7 @@
     public sortDict: Map<SortDirectionEnum>;
     public pageNumber: number;
     public pageSize: number;
+    public getAll: boolean;
 }
 
 interface Map<T> {

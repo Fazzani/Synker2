@@ -98,7 +98,7 @@ namespace Hfa.WebApi.Controllers
 
             var response = _dbContext.Messages
                 .OrderByDescending(x => x.Id)
-                .GetPaged(query.PageNumber, query.PageSize);
+                .GetPaged(query.PageNumber, query.PageSize, query.GetAll);
 
             return Ok(response);
         }
@@ -119,6 +119,19 @@ namespace Hfa.WebApi.Controllers
                 .GetPaged(messageQuery.PageIndex, messageQuery.PageSize);
 
             return Ok(response);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+        {
+            var message = _dbContext.Messages.FirstOrDefault(x => x.Id == id);
+            if (message == null)
+                return NotFound(message);
+
+            _dbContext.Messages.Remove(message);
+
+            await _dbContext.SaveChangesAsync();
+            return NoContent();
         }
 
     }

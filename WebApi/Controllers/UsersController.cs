@@ -9,11 +9,13 @@ using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Services.Dal;
 using hfa.WebApi.Common.Auth;
 using hfa.WebApi.Common.Filters;
+using hfa.WebApi.Models.Admin;
 using Hfa.WebApi.Controllers;
 using Hfa.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -123,10 +125,27 @@ namespace hfa.WebApi.Controllers
                 return BadRequest(ModelState);
 
             var response = _dbContext.Users
+                .Include(x => x.UserRoles)
+                    .ThenInclude(r => r.Role)
                 .OrderByDescending(x => x.Id)
-                .GetPaged(query.PageNumber, query.PageSize);
+                .Select(x => new UserModel(x))
+                .GetPaged(query.PageNumber, query.PageSize, query.GetAll);
 
             return Ok(response);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Policy = AuthorizePolicies.ADMIN)]
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+        {
+            var user = _dbContext.Users.FirstOrDefault(x => x.Id == id);
+            if (user == null)
+                return NotFound(user);
+
+            _dbContext.Users.Remove(user);
+
+            await _dbContext.SaveChangesAsync();
+            return NoContent();
         }
     }
 }
