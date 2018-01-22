@@ -1,7 +1,7 @@
 <div class="site-container">
     <mat-tab-group color="warn">
         <mat-tab label="Playlists">
-            <div fxLayout="row" fxLayoutWrap fxLayoutGap="2rem">
+            <div fxLayout="row" fxLayoutWrap>
                 <mat-card *ngFor="let playlist of playlists?.results" class="hoverable" fxFlex.gt-md="20" fxFlex.md="28" fxFlex.sm="40" fxFlex.xs="100">
                     <mat-card-header>
                         <mat-card-title>{{ playlist.freindlyname }}</mat-card-title>

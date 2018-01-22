@@ -1,0 +1,22 @@
+﻿<mat-sidenav-container  style="margin-top:56px;height: 100%;">
+    <mat-sidenav #sidenav mode="push">
+        <mat-nav-list>
+            <a mat-list-item class="sidenav-link" [routerLink]="['./']" (click)="sidenav.toggle()">
+                <mat-icon mat-list-icon>dashboard</mat-icon>
+                <span class="title" mat-line>Dashboard</span>
+                <span mat-line class="secondary">Dashboard</span>
+            </a>
+            <a mat-list-item class="sidenav-link" [routerLink]="['./users']" (click)="sidenav.toggle()">
+                <mat-icon mat-list-icon>supervisor_account</mat-icon>
+                <span class="title" mat-line>Users</span>
+                <span mat-line class="secondary">Users manager</span>
+            </a>
+        </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <button mat-icon-button (click)="sidenav.toggle()" [hidden]="!sidenav.opened" style="float: left;">
+            <mat-icon aria-label="Menu" class="material-icons">menu</mat-icon>
+        </button>
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>

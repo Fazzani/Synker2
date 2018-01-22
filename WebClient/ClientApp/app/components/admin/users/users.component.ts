@@ -5,10 +5,12 @@ import { PagedResult, QueryListBaseModel } from '../../../types/common.type';
 import { User } from '../../../types/auth.type';
 import { UsersService } from '../../../services/admin/users.service';
 import { CommonService } from '../../../services/common/common.service';
+import { slideInDownAnimation } from '../../animations';
 
 @Component({
     selector: 'users',
-    templateUrl: './users.component.html'
+    templateUrl: './users.component.html',
+    animations: [slideInDownAnimation]
 })
 export class UsersComponent implements OnInit, OnDestroy {
     columns = [

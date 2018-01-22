@@ -29,6 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\app\app-routing.module.ts" />
+    <None Remove="ClientApp\app\components\admin\admin.component.ts" />
+    <None Remove="ClientApp\app\components\admin\dashboard\admin.dashboard.component.ts" />
+    <None Remove="ClientApp\app\components\animations.ts" />
     <None Remove="ClientApp\app\components\dialogs\auth\LoginDialog.ts" />
     <None Remove="ClientApp\app\components\dialogs\auth\RegisterDialog.ts" />
     <None Remove="ClientApp\app\components\dialogs\playlistBulkUpdate\playlistBulkUpdate.ts" />
@@ -59,6 +63,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\app\app-routing.module.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\admin\admin.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\admin\dashboard\admin.dashboard.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\animations.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\dialogs\auth\LoginDialog.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\dialogs\auth\RegisterDialog.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\dialogs\playlistBulkUpdate\playlistBulkUpdate.ts" />

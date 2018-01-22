@@ -55,21 +55,10 @@ import { PlaylistInfosDialog } from './components/dialogs/playlistInfos/playlist
 import { MessagesComponent } from './components/messages/messages.component';
 import { UsersComponent } from './components/admin/users/users.component';
 import { UsersService } from './services/admin/users.service';
+import { AppRoutingModule } from './app-routing.module';
+import { AdminComponent } from './components/admin/admin.component';
+import { AdminDashboardComponent } from './components/admin/dashboard/admin.dashboard.component';
 
-const appRoutes: Routes = [
-    { path: 'home', component: HomeComponent, canActivate: [LoginRouteGuard] },
-    { path: 'tvgmedia', component: MediaComponent, canActivate: [LoginRouteGuard] },
-    { path: 'epg', component: EpgComponent, canActivate: [LoginRouteGuard] },
-    { path: 'xmltv', component: XmltvComponent, canActivate: [LoginRouteGuard] },
-    { path: 'sitepack', component: SitePackComponent, canActivate: [LoginRouteGuard] },
-    { path: 'playlist/:id', component: PlaylistComponent, canActivate: [LoginRouteGuard] },
-    { path: 'messages', component: MessagesComponent, canActivate: [LoginRouteGuard] },
-    { path: 'users', component: UsersComponent, canActivate: [LoginRouteGuard] },
-    { path: 'signin', component: DialogComponent },
-    { path: 'register', component: RegisterComponent },
-    { path: '', redirectTo: '/home', pathMatch: 'full' },
-    { path: '**', redirectTo: '/home' }
-];
 
 @NgModule({
     declarations: [
@@ -81,6 +70,8 @@ const appRoutes: Routes = [
         EpgComponent,
         XmltvComponent,
         MessagesComponent,
+        AdminComponent,
+        AdminDashboardComponent,
         UsersComponent,
         TvgMediaModifyDialog,
         EpgModifyDialog,
@@ -112,7 +103,7 @@ const appRoutes: Routes = [
         NavBarModule,
         ReactiveFormsModule,
         ClipboardModule,
-        RouterModule.forRoot(appRoutes, { enableTracing: true })
+        AppRoutingModule
     ],
     entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, PlaylistBulkUpdate,
         PlaylistTvgSitesDialog, PlaylistAddDialog, PlaylistUpdateDialog, PlaylistDiffDialog, SitePackModifyDialog, GroupsDialog, MatchTvgDialog, PlaylistInfosDialog],

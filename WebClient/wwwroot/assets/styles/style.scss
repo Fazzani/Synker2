@@ -338,3 +338,23 @@ mat-card {
         vertical-align:middle;
     }
 }
+
+mat-sidenav {
+    width: 200px;
+}
+
+.toolbar-filler {
+    flex: 1 1 auto
+}
+
+.mat-drawer-container{
+    background-color:transparent !important;
+}
+
+.mat-drawer{
+    background-color:$primary-color-bg !important;
+}
+
+.mat-toolbar.mat-primary {
+    background-color: $primary-color-bg-dark !important;
+}
