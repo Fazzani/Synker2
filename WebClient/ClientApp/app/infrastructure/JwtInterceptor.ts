@@ -20,6 +20,7 @@ export class JwtInterceptor implements HttpInterceptor {
         this.commonService.displayLoader(true)
 
         return next.handle(request).do((event: HttpEvent<any>) => {
+
             console.log('IN JwtInterceptor', event);
             if (event instanceof HttpResponse) {
                 // do stuff with response if you want
@@ -29,7 +30,7 @@ export class JwtInterceptor implements HttpInterceptor {
             if (err instanceof HttpErrorResponse) {
                 let e = err as HttpErrorResponse;
                 if (e.status == 401)
-                    this.commonService.displayError(err.statusText, "User unauthorized");
+                    this.commonService.displayError(err.statusText, "Unauthorized User");
                 else
                     this.commonService.displayError(err.statusText, typeof err.error === "string" ? err.error : err.error.Message);
             }

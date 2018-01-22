@@ -38,24 +38,21 @@ export class AppComponent implements OnInit, OnDestroy {
 
         this.authService
             .isAuthenticated()
-            .debounceTime(6000)
             .distinctUntilChanged()
             .subscribe(isAuth => {
                 console.log(`----------- JwtInterceptor 401 isAuth = ${isAuth} current url ${this.router.routerState.snapshot.url} this.authService.redirectUrl: ${this.authService.redirectUrl}`);
-                if (!isAuth && (this.router.routerState.snapshot.url != variables.SIGN_IN_URL && this.router.routerState.snapshot.url != variables.REGISTER_URL)) {
+                if (!isAuth && this.router.routerState.snapshot.url != "" && (this.router.routerState.snapshot.url != variables.SIGN_IN_URL && this.router.routerState.snapshot.url != variables.REGISTER_URL)) {
                     this.authService.redirectUrl = this.router.routerState.snapshot.url == variables.SIGN_IN_URL ? "/home" : this.router.routerState.snapshot.url;
                     this.router.navigate(['signin']);
                 }
             });
 
-        setTimeout(_ => {
-            this.authService.authenticated.distinctUntilChanged().subscribe(isAuth => {
-                if (!isAuth && this.router.url != variables.SIGN_IN_URL && this.router.url != variables.REGISTER_URL) {
-                    this.authService.redirectUrl = this.router.routerState.snapshot.url;
-                    this.router.navigate(['signin']);
-                }
-            });
-        }, 1000);
+        this.authService.authenticated.distinctUntilChanged().subscribe(isAuth => {
+            if (!isAuth && this.router.url != variables.SIGN_IN_URL && this.router.url != variables.REGISTER_URL) {
+                this.authService.redirectUrl = this.router.routerState.snapshot.url;
+                this.router.navigate(['signin']);
+            }
+        });
 
         this.commonService.loaderStatus.distinctUntilChanged().debounceTime(2000).subscribe((val: boolean) => {
             console.log('new loader data : ', val);
