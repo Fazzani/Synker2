@@ -4,8 +4,7 @@
     </a>
     <!-- This fills the remaining space of the current row -->
     <div fxLayout="row" fxShow="false" fxShow.gt-sm>
-        <a mat-button class="docs-button" routerLink="/epg">EPG</a>
-        <a mat-button class="docs-button" routerLink="/xmltv">Xmltv</a>
+        <a mat-button class="docs-button" routerLink="/epg">Tv guide</a>
         <a mat-button class="docs-button" routerLink="/sitepack">Sites Pack</a>
         <a mat-button class="docs-button" routerLink="/admin">Admin</a>
     </div>
@@ -37,19 +36,18 @@
             <mat-icon>notifications_off</mat-icon>
             <span>Github</span>
         </a>
-
         <!-- Mobile actions Menu-->
         <button mat-menu-item routerLink="/epg" *ngIf="(isAuthenticated | async)" fxHide.gt-sm>
             <mat-icon>event</mat-icon>
-            <span>EPG</span>
-        </button>
-        <button mat-menu-item routerLink="/xmltv" *ngIf="(isAuthenticated | async)" fxHide.gt-sm>
-            <mat-icon>dns</mat-icon>
-            <span>Xmltv</span>
+            <span>Tv guide</span>
         </button>
         <button mat-menu-item routerLink="/sitepack" *ngIf="(isAuthenticated | async)" fxHide.gt-sm>
             <mat-icon>description</mat-icon>
             <span>Sites Pack</span>
+        </button>
+        <button mat-menu-item routerLink="/admin" *ngIf="(isAuthenticated | async)" fxHide.gt-sm>
+            <mat-icon>settings</mat-icon>
+            <span>Admin</span>
         </button>
         <!-- Logout -->
         <button mat-menu-item (click)="signout()" *ngIf="(isAuthenticated | async)">

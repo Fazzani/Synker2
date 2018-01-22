@@ -435,7 +435,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
                 if (index >= 0) {
                     this.playlistBS.value.tvgMedias[index] = x;
-                    console.log('executeHandlers media : ', x);
                 }
             });
             this.playlistBS.next(this.playlistBS.value);
@@ -453,11 +452,10 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     matchPicons(distance: number = 90, shouldMatchChannelNumber: boolean = true): void {
         this.piconService.match(this.dataSource.data.filter((v, i) => v.selected), distance, shouldMatchChannelNumber).subscribe(res => {
             res.forEach(x => {
-                var index = this.playlistBS.value.tvgMedias.findIndex(f => f.id == x.id);
+                var index = this.dataSource.data.findIndex(f => f.id == x.id);
 
                 if (index >= 0) {
                     this.playlistBS.value.tvgMedias[index] = x;
-                    console.log('match picons media : ', x);
                 }
             });
             this.playlistBS.next(this.playlistBS.value);
@@ -476,7 +474,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
                 if (index >= 0) {
                     this.playlistBS.value.tvgMedias[index] = x;
-                    console.log('match picons media : ', x);
                 }
             });
             this.playlistBS.next(this.playlistBS.value);
