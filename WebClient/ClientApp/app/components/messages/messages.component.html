@@ -1,3 +1,16 @@
-<div class="site-container">
-    
+<div class="site-container " fxLayout="column" fxLayoutGap="20px">
+    <mat-card *ngFor="let message of messages?.results">
+        <mat-card-header>
+            <mat-card-title>{{ messageTypes[message.messageType] }}</mat-card-title>
+            <mat-card-subtitle>{{message.timeStamp | date:'medium'}}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <ng-container>
+                <p>{{message.content}}</p>
+            </ng-container>
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-button (click)="markAsRead(message)">Mark as read</button>
+        </mat-card-actions>
+    </mat-card>
 </div>
