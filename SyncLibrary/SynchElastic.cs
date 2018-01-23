@@ -139,7 +139,7 @@ namespace SyncLibrary
                             Body = message.Content,
                             FromDisplayName = "Synker Team",
                             From = "synker-team@synker.ovh",
-                            Subject = "New Playlist changement detected",
+                            Subject = $"New Playlist changement detected for {pl.Freindlyname}",
                             IsBodyHtml = true,
                             To = pl.User.Email
                         }, ts.Token);

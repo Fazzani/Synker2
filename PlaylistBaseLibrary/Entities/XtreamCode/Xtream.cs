@@ -19,7 +19,7 @@ namespace hfa.PlaylistBaseLibrary.Entities.XtreamCode
             if (channel == null)
                 return string.Empty;
 
-            return $"{protocol}://{Server_info.Url}:{Server_info.Port}/{channel.Stream_type}/{User_info.Username}/{User_info.Password}/{channel.Stream_id}.{outputFormat}";
+            return $"{protocol}://{Server_info.Url}:{Server_info.Port}/live/{User_info.Username}/{User_info.Password}/{channel.Stream_id}.{outputFormat}";
         }
     }
 
