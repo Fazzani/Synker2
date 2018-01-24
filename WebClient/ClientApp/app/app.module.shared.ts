@@ -55,10 +55,11 @@ import { PlaylistInfosDialog } from './components/dialogs/playlistInfos/playlist
 import { MessagesComponent } from './components/messages/messages.component';
 import { UsersComponent } from './components/admin/users/users.component';
 import { UsersService } from './services/admin/users.service';
-import { AppRoutingModule } from './app-routing.module';
 import { AdminComponent } from './components/admin/admin.component';
 import { AdminDashboardComponent } from './components/admin/dashboard/admin.dashboard.component';
-
+import { UserComponent } from './components/user/user.component';
+import { AppRoutingModule } from './app.module.routing';
+import { LoaderComponent } from './components/shared/loader/loader.component';
 
 @NgModule({
     declarations: [
@@ -71,8 +72,10 @@ import { AdminDashboardComponent } from './components/admin/dashboard/admin.dash
         XmltvComponent,
         MessagesComponent,
         AdminComponent,
+        UserComponent,
         AdminDashboardComponent,
         UsersComponent,
+        LoaderComponent,
         TvgMediaModifyDialog,
         EpgModifyDialog,
         DialogComponent,

@@ -20,14 +20,22 @@ export class User {
     birthday: Date;
     photo: string;
     roles: roles = "Default";
+    connectionState: ConnectionState;
+    public static GENDERS = [
+        {
+            value: 0, viewValue: "Mr"
+        },
+        {
+            value: 1, viewValue: "Mrs"
+        }];
 }
 
 export type roles =  "Default" | "Guest" | "Administrator";
 
 export interface RegisterUser extends User, Login {
 
-    genders: any[];
 }
+
 /**
 * Login Model
 * 
@@ -48,4 +56,12 @@ export class AuthModel {
 export enum GrantType {
     password = 0,
     refreshToken
+}
+
+export class ConnectionState {
+    public id: number;
+    public userName: string;
+    public lastConnection: Date;
+    public disabled: boolean;
+    public approved: boolean;
 }

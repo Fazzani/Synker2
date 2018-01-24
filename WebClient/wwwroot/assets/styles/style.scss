@@ -61,8 +61,16 @@ img {
 .mat-table, .primary, .mat-stepper-horizontal, .mat-stepper-vertical {
     background: $primary-color-bg !important;
 }
-
+.mat-select {
+    margin-left: 32px;
+}
 .site-container {
+
+    color: white !important;
+    margin: 56px;
+    form{
+        margin-top:80px;
+    }
     .mat-table {
         margin-bottom: 56px;
     }
@@ -91,9 +99,7 @@ app-navbar {
     left: 0;
 }
 
-.site-container {
-    margin-top: 56px;
-}
+
 
 body {
     background-color: $primary-color-bg-dark;

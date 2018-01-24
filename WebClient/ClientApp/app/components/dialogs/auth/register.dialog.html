@@ -3,7 +3,7 @@
     <mat-dialog-content fxLayout="column">
         <div fxLayout="row">
             <mat-select placeholder="Gender..." [(ngModel)]="gender" name="gender">
-                <mat-option *ngFor="let gender of data.genders" [value]="gender.value">
+                <mat-option *ngFor="let gender of genders" [value]="gender.value">
                     {{ gender.viewValue }}
                 </mat-option>
             </mat-select>

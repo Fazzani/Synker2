@@ -2,7 +2,7 @@
 import { Inject, Component, OnInit } from "@angular/core";
 import { AuthService } from "../../../services/auth/auth.service";
 import { CommonService } from "../../../services/common/common.service";
-import { RegisterUser } from "../../../types/auth.type";
+import { RegisterUser, User } from "../../../types/auth.type";
 import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
@@ -12,9 +12,12 @@ import { ActivatedRoute, Router } from "@angular/router";
 export class RegisterDialog {
     photo: any;
 
-    constructor( @Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<RegisterDialog>, private authService: AuthService
+    constructor( @Inject(MAT_DIALOG_DATA) public data: RegisterUser, public dialogRef: MatDialogRef<RegisterDialog>, private authService: AuthService
         , private commonService: CommonService) {
     }
+
+
+    genders = User.GENDERS;
 
     register(registerUser: RegisterUser): void {
         if (registerUser != null)
@@ -40,7 +43,6 @@ export class RegisterDialog {
     }
 }
 
-
 @Component({
     selector: 'register-component',
     templateUrl: '../../shared/dialogs/dialog.component.html'
@@ -54,14 +56,6 @@ export class RegisterComponent implements OnInit {
         this.activatedRoute.queryParamMap.subscribe(params => {
 
             let data = <RegisterUser>{};
-
-            data.genders = [
-                {
-                    value: 0, viewValue: "Mr"
-                },
-                {
-                    value: 1, viewValue: "Mrs"
-                }];
 
             setTimeout(() => {
                 let dialogRef = this.dialog.open(RegisterDialog, <MatDialogConfig>{

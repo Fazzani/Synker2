@@ -13,7 +13,7 @@ import { RegisterComponent } from "./components/dialogs/auth/RegisterDialog";
 import { MediaComponent } from "./components/media/media.component";
 import { AdminComponent } from "./components/admin/admin.component";
 import { AdminDashboardComponent } from "./components/admin/dashboard/admin.dashboard.component";
-
+import { UserComponent } from "./components/user/user.component";
 
 const appRoutes: Routes = [
     { path: 'home', component: HomeComponent, canActivate: [LoginRouteGuard] },
@@ -23,6 +23,7 @@ const appRoutes: Routes = [
     { path: 'sitepack', component: SitePackComponent, canActivate: [LoginRouteGuard] },
     { path: 'playlist/:id', component: PlaylistComponent, canActivate: [LoginRouteGuard] },
     { path: 'messages', component: MessagesComponent, canActivate: [LoginRouteGuard] },
+    { path: 'me', component: UserComponent, canActivate: [LoginRouteGuard] },
     { path: 'signin', component: DialogComponent },
     { path: 'register', component: RegisterComponent },
     {

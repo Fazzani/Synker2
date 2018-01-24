@@ -43,7 +43,7 @@ namespace hfa.WebApi.Controllers
         [Authorize(Policy = AuthorizePolicies.ADMIN)]
         public async Task<IActionResult> Put(int id, [FromBody] User userModel, CancellationToken cancellationToken)
         {
-            var user = await _dbContext.Users.FindAsync(id, cancellationToken);
+            var user = await _dbContext.Users.FindAsync(new object[] { id }, cancellationToken: cancellationToken);
             if (user == null)
                 return NotFound(id);
 
@@ -66,8 +66,12 @@ namespace hfa.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> Me(CancellationToken cancellationToken)
         {
-            var user = await _dbContext.Users.FindAsync(UserId, cancellationToken);
-            return Ok(user);
+            var user = await _dbContext.Users
+                .Include(x => x.UserRoles)
+                    .ThenInclude(r => r.Role)
+                .Include(x => x.ConnectionState)
+                .FirstOrDefaultAsync(x => x.Id == UserId, cancellationToken);
+            return Ok(new UserModel(user));
         }
 
         /// <summary>
@@ -81,7 +85,7 @@ namespace hfa.WebApi.Controllers
         [Authorize(Policy = AuthorizePolicies.ADMIN)]
         public async Task<IActionResult> Put([FromBody] User userModel, CancellationToken cancellationToken)
         {
-            var user = await _dbContext.Users.FindAsync(UserId, cancellationToken);
+            var user = await _dbContext.Users.FindAsync(new object[] { UserId }, cancellationToken: cancellationToken);
             if (user == null)
                 return NotFound(UserId);
 
@@ -127,6 +131,7 @@ namespace hfa.WebApi.Controllers
             var response = _dbContext.Users
                 .Include(x => x.UserRoles)
                     .ThenInclude(r => r.Role)
+                .Include(x => x.ConnectionState)
                 .OrderByDescending(x => x.Id)
                 .Select(x => new UserModel(x))
                 .GetPaged(query.PageNumber, query.PageSize, query.GetAll);

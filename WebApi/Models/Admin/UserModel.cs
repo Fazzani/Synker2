@@ -26,6 +26,7 @@ namespace hfa.WebApi.Models.Admin
             BirthDay = user.BirthDay;
             Gender = user.Gender;
             Roles = user.Roles;
+            ConnectionState = user.ConnectionState;
         }
 
         public int Id { get; set; }
@@ -53,5 +54,6 @@ namespace hfa.WebApi.Models.Admin
 
         public DateTime UpdatedDate { get; set; }
         public DateTime CreatedDate { get; set; }
+
     }
 }
