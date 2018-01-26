@@ -21,6 +21,14 @@ before_build:
   - cmd: dotnet --version
   # Display minimal restore text
   - cmd: cd ./SyncLibrary
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
 build_script:
   - cmd: dotnet publish -c %CONFIGURATION% -r linux-x64 --verbosity m -o artifacts 
   - ls

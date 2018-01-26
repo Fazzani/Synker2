@@ -21,6 +21,14 @@ matrix:
 before_build:
   - cmd: dotnet --version
   - cmd: dotnet restore ./WebApi/hfa.WebApi.csproj --verbosity m
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
 build_script:
   - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj --verbosity m -o artifactsWebApi
 artifacts:

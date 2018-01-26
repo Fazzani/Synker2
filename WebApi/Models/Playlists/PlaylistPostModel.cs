@@ -11,6 +11,7 @@ namespace hfa.WebApi.Models.Playlists
     {
         [Required]
         public string Provider { get; set; }
+
         [Required]
         public string Url { get; set; }
 
@@ -25,7 +26,9 @@ namespace hfa.WebApi.Models.Playlists
         public PlaylistStatus Status { get; set; }
 
         public bool SynkEpg { get;  set; }
+
         public bool SynkLogos { get;  set; }
+
         public SynkGroupEnum SynkGroup { get;  set; }
 
         public bool Save { get; set; } = false;

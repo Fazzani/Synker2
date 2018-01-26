@@ -45,12 +45,16 @@ using hfa.Synker.Service.Services.Xtream;
 using hfa.Synker.Service.Services.Notification;
 using hfa.Synker.Service.Entities.Auth;
 using System.Security.Claims;
+using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace hfa.WebApi
 {
     public class Startup
     {
         internal static IConfiguration Configuration;
+
+        public static string AssemblyVersion = typeof(Startup).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
 
         public Startup(IHostingEnvironment env)
         {
@@ -166,7 +170,7 @@ namespace hfa.WebApi
                 {
                     Version = "v1",
                     Title = "Synker API",
-                    Description = "Synchronize playlists API",
+                    Description = $"Synchronize playlists API {AssemblyVersion}",
                     TermsOfService = "None",
                     Contact = new Contact { Name = "Synker", Email = "contact@synker.ovh", Url = "https://www.github.com/fazzani/synker2" },
                     License = new License { Name = "Use under MIT", Url = "" },

@@ -17,6 +17,7 @@ using Hfa.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -65,7 +66,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost("search")]
         [ValidateModel]
-        public async Task<IActionResult> List([FromBody] QueryListBaseModel query, CancellationToken cancellationToken, [FromQuery] bool light = true)
+        public async Task<IActionResult> ListAsync([FromBody] QueryListBaseModel query, CancellationToken cancellationToken, [FromQuery] bool light = true)
         {
             var plCacheKey = $"{UserPlaylistKey}_{query.GetHashCode()}_{light}";
             var playlists = await _memoryCache.GetOrCreateAsync(plCacheKey, async entry =>
@@ -99,10 +100,10 @@ namespace Hfa.WebApi.Controllers
 
         [HttpGet("{id}")]
         //[ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "id", "light" })]
-        public IActionResult Get(string id, CancellationToken cancellationToken, [FromQuery] bool light = true)
+        public async Task<IActionResult> GetAsync(string id, CancellationToken cancellationToken, [FromQuery] bool light = true)
         {
             var idGuid = GetInternalPlaylistId(id);
-            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+            var playlist = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.UniqueId == idGuid, cancellationToken);
             if (playlist == null)
                 return NotFound(id);
 
@@ -116,7 +117,7 @@ namespace Hfa.WebApi.Controllers
         {
             var idGuid = GetInternalPlaylistId(id);
 
-            var playlistEntity = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+            var playlistEntity = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.UniqueId == idGuid, cancellationToken);
             if (playlistEntity == null)
                 return NotFound(playlistEntity);
 
@@ -128,6 +129,7 @@ namespace Hfa.WebApi.Controllers
             playlistEntity.SynkConfig.SynkGroup = playlist.SynkGroup;
             playlistEntity.SynkConfig.SynkLogos = playlist.SynkLogos;
             playlistEntity.Medias = JsonConvert.SerializeObject(playlist.TvgMedias);
+
             if (playlist.Tags == null)
             {
                 playlist.Tags = new Dictionary<string, string>
@@ -212,7 +214,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("synk")]
         [ValidateModel]
-        public async Task<IActionResult> Synk(PlaylistPostModel playlistPostModel, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
+        public async Task<IActionResult> SynkAsync(PlaylistPostModel playlistPostModel, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
             CancellationToken cancellationToken)
         {
             //Vérifier si la playlist existe-elle avant 
@@ -310,7 +312,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("matchfiltred/{id}")]
         [ValidateModel]
-        public async Task<IActionResult> MatchFiltredByTvgSites([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> MatchFiltredByTvgSitesAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
         {
             var idGuid = GetInternalPlaylistId(id);
 
@@ -350,10 +352,6 @@ namespace Hfa.WebApi.Controllers
                    }
                });
 
-            //playlistEntity.UpdateContent(playlistEntity.TvgMedias);
-
-            //var res = await _dbContext.SaveChangesAsync(cancellationToken);
-            //_logger.LogInformation($"{nameof(MatchFiltredByTvgSites)} saved : {res}");
             return Ok(PlaylistModel.ToModel(playlistEntity, Url));
         }
 
@@ -366,7 +364,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("matchtvg/{id}")]
         [ValidateModel]
-        public async Task<IActionResult> MatchTvg([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> MatchTvgAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
         {
             var idGuid = GetInternalPlaylistId(id);
 
@@ -414,7 +412,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("matchvideos/{id}")]
         [ValidateModel]
-        public async Task<IActionResult> MatchVideosByPlaylist([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> MatchVideosByPlaylistAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
         {
             var idGuid = GetInternalPlaylistId(id);
 
@@ -454,7 +452,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("matchvideo/{name}")]
         [ValidateModel]
-        public async Task<IActionResult> MatchVideo([FromRoute] string name, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> MatchVideoAsync([FromRoute] string name, CancellationToken cancellationToken = default(CancellationToken))
         {
             var matched = await _mediaScraper.SearchAsync(name, _globalOptions.TmdbAPI, _globalOptions.TmdbPosterBaseUrl, cancellationToken);
 
