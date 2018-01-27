@@ -46,7 +46,7 @@ namespace Hfa.WebApi.Controllers
         private GlobalOptions _globalOptions;
         private IXtreamService _xtreamService;
 
-        private string UserPlaylistKey => $"{UserId}:{CacheKeys.PlaylistByUser}";
+        private string UserCachePlaylistKey => $"{UserId}:{CacheKeys.PlaylistByUser}";
 
         public PlaylistsController(IMemoryCache memoryCache, IMediaScraper mediaScraper, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IOptions<GlobalOptions> globalOptions,
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IPlaylistService playlistService, ISitePackService sitePackService, IXtreamService xtreamService)
@@ -68,19 +68,19 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         public async Task<IActionResult> ListAsync([FromBody] QueryListBaseModel query, CancellationToken cancellationToken, [FromQuery] bool light = true)
         {
-            var plCacheKey = $"{UserPlaylistKey}_{query.GetHashCode()}_{light}";
+            var plCacheKey = $"{UserCachePlaylistKey}_{query.GetHashCode()}_{light}";
             var playlists = await _memoryCache.GetOrCreateAsync(plCacheKey, async entry =>
             {
-                if (_memoryCache.TryGetValue(UserPlaylistKey, out List<string> list))
+                if (_memoryCache.TryGetValue(UserCachePlaylistKey, out List<string> list))
                 {
-                    list.Add(UserPlaylistKey);
+                    list.Add(UserCachePlaylistKey);
                 }
                 else
                 {
                     list = new List<string> { plCacheKey };
                 }
 
-                _memoryCache.Set(UserPlaylistKey, list);
+                _memoryCache.Set(UserCachePlaylistKey, list);
 
                 entry.SlidingExpiration = TimeSpan.FromHours(2);
 
@@ -303,7 +303,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         /// <summary>
-        ///  Match playlist with media ref
+        ///  Match tvg playlist by site packs defined on playlist
         /// </summary>
         /// <param name="id"></param>
         /// <param name="onlyNotMatched"></param>
@@ -316,7 +316,7 @@ namespace Hfa.WebApi.Controllers
         {
             var idGuid = GetInternalPlaylistId(id);
 
-            var playlistEntity = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+            var playlistEntity = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.UniqueId == idGuid, cancellationToken);
             if (playlistEntity == null)
                 return NotFound(playlistEntity);
 
@@ -368,7 +368,7 @@ namespace Hfa.WebApi.Controllers
         {
             var idGuid = GetInternalPlaylistId(id);
 
-            var playlistEntity = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+            var playlistEntity = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.UniqueId == idGuid, cancellationToken);
             if (playlistEntity == null)
                 return NotFound(playlistEntity);
 
@@ -416,7 +416,7 @@ namespace Hfa.WebApi.Controllers
         {
             var idGuid = GetInternalPlaylistId(id);
 
-            var playlistEntity = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+            var playlistEntity = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.UniqueId == idGuid, cancellationToken);
             if (playlistEntity == null)
                 return NotFound(playlistEntity);
 
@@ -628,13 +628,13 @@ namespace Hfa.WebApi.Controllers
 
         private void ClearCache()
         {
-            if (_memoryCache.TryGetValue(UserPlaylistKey, out List<string> list))
+            if (_memoryCache.TryGetValue(UserCachePlaylistKey, out List<string> list))
             {
                 foreach (var item in list)
                 {
                     _memoryCache.Remove(item);
                 }
-                list.Remove(UserPlaylistKey);
+                list.Remove(UserCachePlaylistKey);
             }
         }
 
