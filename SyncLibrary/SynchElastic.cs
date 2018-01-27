@@ -90,12 +90,11 @@ namespace SyncLibrary
         public static async Task ArgsParserAsync(string[] args, IMessageService messagesService)
         {
             await Parser.Default
-                .ParseArguments<PurgeTempFilesVerb, DiffPlaylistVerb, SyncEpgElasticVerb, SyncMediasElasticVerb, SaveNewConfigVerb, PushXmltvVerb, SendMessageVerb, ScanPlaylistFileVerb>(args)
+                .ParseArguments<PurgeTempFilesVerb, DiffPlaylistVerb, SyncEpgElasticVerb, SaveNewConfigVerb, PushXmltvVerb, SendMessageVerb, ScanPlaylistFileVerb>(args)
                 .MapResult(
                  (PurgeTempFilesVerb opts) => PurgeTempFilesVerb.MainPurgeAsync(opts),
                   (DiffPlaylistVerb opts) => DiffPlaylistAsync(opts, _config, ts.Token),
                   (SyncEpgElasticVerb opts) => SyncEpgElasticAsync(opts, _elasticClient, _config, ts.Token),
-                  (SyncMediasElasticVerb opts) => SyncMediasElasticAsync(opts, _elasticClient, _config, ts.Token),
                   (SaveNewConfigVerb opts) => SaveConfigAsync(opts, _config, ts.Token),
                   (PushXmltvVerb opts) => PushXmltvAsync(opts, messagesService, new HttpClient(), _config, ts.Token),
                   (SendMessageVerb opts) => SendMessageAsync(opts, _config, ts.Token),
@@ -146,84 +145,6 @@ namespace SyncLibrary
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Sync medias to elastic
-        /// </summary>
-        /// <param name="options"></param>
-        /// <param name="elasticClient">IElasticConnectionClient</param>
-        /// <param name="token">CancellationToken</param>
-        /// <returns></returns>
-        public static async Task SyncMediasElasticAsync(SyncMediasElasticVerb options, IElasticConnectionClient elasticClient,
-            ApplicationConfigData config, CancellationToken token = default(CancellationToken))
-        {
-            var res = await SynchronizableConfigManager.LoadEncryptedConfig(options.FilePath, options.CertificateName);
-
-            await _messagesService.SendAsync($"Start Sync Elastic By {options.FilePath} config", MessageTypeEnum.START_SYNC_MEDIAS,
-                 _config.ApiUserName, _config.ApiPassword, token);
-
-            if (res != null & res.Sources.Any())
-            {
-#if DEBUG
-                foreach (var source in res.Sources.Skip(1))
-#else
-                foreach (var source in res.Sources)
-#endif
-                {
-                    var provider = await ProviderFactory.Create(source);
-                    if (provider != null)
-                    {
-                        var newMedias = new List<TvgMedia>();
-                        using (var pl = new Playlist<TvgMedia>(provider))
-                        {
-                            var medias = (from c in pl select c).ToList();
-
-                            //Faire passer les handlers
-                            var handler = FabricHandleMedias(elasticClient);
-
-                            foreach (var media in medias)
-                            {
-                                handler.HandleTvgMedia(media);
-                                if (media.IsValid)
-                                {
-                                    Logger(nameof(SyncMediasElasticAsync)).LogInformation($"Treating media  => {media.Name} : {media.Url}");
-
-                                    var result = await elasticClient.Client
-                                        .SearchAsync<TvgMedia>(x => x.Index<TvgMedia>()
-                                            .Query(q => q.Term(m => m.Url, media.Url)), token);
-
-                                    if (result.Total < 1)
-                                    {
-                                        newMedias.Add(media);
-                                    }
-                                    else
-                                    {
-                                        if (options.Force && media != result.Documents.FirstOrDefault() || (media.Tvg?.Id != result.Documents.FirstOrDefault()?.Id))
-                                        {
-                                            //Modification
-                                            Logger(nameof(SyncMediasElasticAsync)).LogInformation($"Updating media {result.Documents.SingleOrDefault().Id} in Elastic");
-
-                                            var response = await elasticClient.Client.UpdateAsync<TvgMedia>(result.Documents.SingleOrDefault().Id,
-                                                m => m.Doc(new TvgMedia { Id = null, Name = media.Name, Lang = media.Lang }), token);
-                                            response.AssertElasticResponse();
-                                        }
-                                    }
-                                }
-                            }
-                            if (newMedias.Any())
-                            {
-                                //Push to Elastic
-                                var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(_elastiConfig.Value.DefaultIndex).CreateMany(newMedias,
-                                    (bd, q) => bd.Index(_elastiConfig.Value.DefaultIndex)), token);
-                                responseBulk.AssertElasticResponse();
-                            }
-                        }
-                    }
-                }
-            }
-            await _messagesService.SendAsync($"End Sync Elastic By {options.FilePath} config", MessageTypeEnum.END_SYNC_MEDIAS,
-                 _config.ApiUserName, _config.ApiPassword, token);
         }
 
         /// <summary>
