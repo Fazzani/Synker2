@@ -1,4 +1,5 @@
-﻿using hfa.PlaylistBaseLibrary.Providers;
+﻿using hfa.PlaylistBaseLibrary.Options;
+using hfa.PlaylistBaseLibrary.Providers;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Entities.Playlists;
 using hfa.Synker.Service.Services;
@@ -45,11 +46,13 @@ namespace Hfa.WebApi.Controllers
         private ISitePackService _sitePackService;
         private GlobalOptions _globalOptions;
         private IXtreamService _xtreamService;
+        private IProviderFactory _providerFactory;
 
         private string UserCachePlaylistKey => $"{UserId}:{CacheKeys.PlaylistByUser}";
 
         public PlaylistsController(IMemoryCache memoryCache, IMediaScraper mediaScraper, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IOptions<GlobalOptions> globalOptions,
-            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IPlaylistService playlistService, ISitePackService sitePackService, IXtreamService xtreamService)
+            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IPlaylistService playlistService, ISitePackService sitePackService, IXtreamService xtreamService,
+            IProviderFactory providerFactory)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _playlistService = playlistService;
@@ -58,6 +61,7 @@ namespace Hfa.WebApi.Controllers
             _sitePackService = sitePackService;
             _globalOptions = globalOptions.Value;
             _xtreamService = xtreamService;
+            _providerFactory = providerFactory;
         }
 
         /// <summary>
@@ -214,33 +218,30 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("synk")]
         [ValidateModel]
-        public async Task<IActionResult> SynkAsync(PlaylistPostModel playlistPostModel, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> SynkAsync(PlaylistPostModel playlistPostModel, CancellationToken cancellationToken)
         {
             //Vérifier si la playlist existe-elle avant 
             var stopwatch = Stopwatch.StartNew();
-            var optionsProvider = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(playlistPostModel.Provider, StringComparison.InvariantCultureIgnoreCase));
-            if (optionsProvider == null)
-                return BadRequest($"Not supported Provider : {playlistPostModel.Provider}");
-
-            var providerType = Type.GetType(optionsProvider.Type, false, true);
-            if (providerType == null)
-                return BadRequest($"Provider type not found : {playlistPostModel.Provider}");
-
-            //Download playlist from url
-            using (var httpClient = new HttpClient())
+            PlaylistProvider<Playlist<TvgMedia>, TvgMedia> providerInstance = null;
+            try
             {
-                var playlistStream = await httpClient.GetStreamAsync(playlistPostModel.Url);
-                var providerInstance = (PlaylistProvider<Playlist<TvgMedia>, TvgMedia>)Activator.CreateInstance(providerType, playlistStream);
+                providerInstance = _providerFactory.CreateInstance(playlistPostModel.Url, playlistPostModel.Provider);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
-                var playlist = _dbContext.Playlist.FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.Url) ?? new Playlist
-                {
-                    UserId = UserId.Value,
-                    Freindlyname = playlistPostModel.Freindlyname,
-                    Status = playlistPostModel.Status,
-                    SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
-                };
+            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.Url) ?? new Playlist
+            {
+                UserId = UserId.Value,
+                Freindlyname = playlistPostModel.Freindlyname,
+                Status = playlistPostModel.Status,
+                SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
+            };
 
+            using (providerInstance)
+            {
                 var pl = await _playlistService.SynkPlaylist(() => playlist, providerInstance, _xtreamService.IsXtreamPlaylist(playlistPostModel.Url), cancellationToken: cancellationToken);
 
                 stopwatch.Stop();
@@ -260,27 +261,24 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("diff")]
         [ValidateModel]
-        public async Task<IActionResult> DiffAsync([FromBody]PlaylistPostModel playlistPostModel, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> DiffAsync([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken)
         {
 
             //TODO: Déduire le provider from playlist (isXtream => xtreamProvider, m3u ou tvlist)
             // Load dynmaiquement all providers (singleton)
+            PlaylistProvider<Playlist<TvgMedia>, TvgMedia> providerInstance = null;
+            try
+            {
+                providerInstance = _providerFactory.CreateInstance(playlistPostModel.Url, playlistPostModel.Provider);
 
-
-            var optionsProvider = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(playlistPostModel.Provider, StringComparison.InvariantCultureIgnoreCase));
-            if (optionsProvider == null)
-                return BadRequest($"Not supported Provider : {playlistPostModel.Provider}");
-
-            var providerType = Type.GetType(optionsProvider.Type, false, true);
-            if (providerType == null)
-                return BadRequest($"Provider type not found : {playlistPostModel.Provider}");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
             try
             {
-                //Download playlist from url
-                var providerInstance = (PlaylistProvider<Playlist<TvgMedia>, TvgMedia>)Activator.CreateInstance(providerType, new Uri(playlistPostModel.Url));
-
                 var playlist = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.SynkConfig.Url == playlistPostModel.Url, cancellationToken) ?? new Playlist
                 {
                     UserId = UserId.Value,
@@ -289,8 +287,11 @@ namespace Hfa.WebApi.Controllers
                     SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
                 };
 
-                var pl = await _playlistService.DiffWithSourceAsync(() => playlist, providerInstance, cancellationToken: cancellationToken);
-                return Ok(pl);
+                using (providerInstance)
+                {
+                    var pl = await _playlistService.DiffWithSourceAsync(() => playlist, providerInstance, cancellationToken: cancellationToken);
+                    return Ok(pl);
+                }
             }
             catch (HttpRequestException)
             {
@@ -495,8 +496,7 @@ namespace Hfa.WebApi.Controllers
         [ResponseCache(CacheProfileName = "Long")]
         [AllowAnonymous]
         [HttpGet("files/{id:required}", Name = nameof(GetFile))]
-        public async Task<IActionResult> GetFile(string id, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
-          [FromQuery] string provider = "m3u", CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> GetFile(string id, [FromQuery] string provider = "m3u", CancellationToken cancellationToken = default(CancellationToken))
         {
             var idGuid = GetInternalPlaylistId(id);
 
@@ -505,7 +505,17 @@ namespace Hfa.WebApi.Controllers
             if (playlist == null)
                 return NotFound(id);
 
-            using (var sourceProvider = PlaylistProvider<Playlist<TvgMedia>, TvgMedia>.Create(provider, providersOptions.Value, playlist.SynkConfig.Uri))
+            PlaylistProvider<Playlist<TvgMedia>, TvgMedia> sourceProvider = null;
+            try
+            {
+                sourceProvider = _providerFactory.CreateInstance(playlist.SynkConfig.Uri, provider);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            using (sourceProvider)
             using (var pl = new Playlist<TvgMedia>(sourceProvider))
             using (var sourcePl = new Playlist<TvgMedia>(playlist.TvgMedias.Where(x => x.Enabled && !x.MediaGroup.Disabled)))
             {
@@ -530,8 +540,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("create/{provider}")]
         [AllowAnonymous]
-        public async Task<IActionResult> Import(string playlistName, string playlistUrl, string provider, IFormFile file, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> Import(string playlistName, string playlistUrl, string provider, IFormFile file, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(playlistName))
             {
@@ -542,15 +551,17 @@ namespace Hfa.WebApi.Controllers
             {
                 playlistName = file.FileName.Replace(Path.GetExtension(file.FileName), string.Empty); //TODO : catch all ArgumentException et les passer en BadRequest
             }
-            //Vérifier si la playlist existe-elle avant 
+            //Vérifier si la playlist existe bien avant 
 
-            var optionsProvider = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(provider, StringComparison.InvariantCultureIgnoreCase));
-            if (optionsProvider == null)
-                return BadRequest($"Not supported Provider : {provider}");
-
-            var providerType = Type.GetType(optionsProvider.Type, false, true);
-            if (providerType == null)
-                return BadRequest($"Provider type not found : {provider}");
+            PlaylistProvider<Playlist<TvgMedia>, TvgMedia> providerInstance = null;
+            try
+            {
+                providerInstance = _providerFactory.CreateInstance(playlistUrl, provider);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
             var playlistStream = file.OpenReadStream();
             if (string.IsNullOrEmpty(playlistUrl))
@@ -559,21 +570,22 @@ namespace Hfa.WebApi.Controllers
                 throw new ApplicationException("Import playlist from file not supported yet !!");
             }
 
-            var providerInstance = (PlaylistProvider<Playlist<TvgMedia>, TvgMedia>)Activator.CreateInstance(providerType, new Uri(playlistUrl));
-
-            var pl = await _playlistService.SynkPlaylist(() => new Playlist
+            using (providerInstance)
             {
-                UserId = UserId.Value,
-                Freindlyname = playlistName,
-                Status = PlaylistStatus.Enabled,
-                SynkConfig = null,
-                Tags = new JsonObject<Dictionary<string, string>>(new Dictionary<string, string>())
-            }, providerInstance, _xtreamService.IsXtreamPlaylist(playlistUrl), true, cancellationToken);
+                var pl = await _playlistService.SynkPlaylist(() => new Playlist
+                {
+                    UserId = UserId.Value,
+                    Freindlyname = playlistName,
+                    Status = PlaylistStatus.Enabled,
+                    SynkConfig = null,
+                    Tags = new JsonObject<Dictionary<string, string>>(new Dictionary<string, string>())
+                }, providerInstance, _xtreamService.IsXtreamPlaylist(playlistUrl), true, cancellationToken);
 
-            ClearCache();
+                ClearCache();
 
-            var result = PlaylistModel.ToLightModel(pl, Url);
-            return Created(result.PublicUrl, result);
+                var result = PlaylistModel.ToLightModel(pl, Url);
+                return Created(result.PublicUrl, result);
+            }
         }
 
         /// <summary>
@@ -586,37 +598,40 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("create")]
         [ValidateModel]
-        public async Task<IActionResult> ImportFromUrl([FromBody]PlaylistPostModel playlistPostModel, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> ImportFromUrl([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken)
         {
             //Vérifier si la playlist existe-elle avant 
             var stopwatch = Stopwatch.StartNew();
-            var optionsProvider = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(playlistPostModel.Provider, StringComparison.InvariantCultureIgnoreCase));
-            if (optionsProvider == null)
-                return BadRequest($"Not supported Provider : {playlistPostModel.Provider}");
 
-            var providerType = Type.GetType(optionsProvider.Type, false, true);
-            if (providerType == null)
-                return BadRequest($"Provider type not found : {playlistPostModel.Provider}");
-
-            //Download playlist from url
-            var providerInstance = (PlaylistProvider<Playlist<TvgMedia>, TvgMedia>)Activator.CreateInstance(providerType, new Uri(playlistPostModel.Url));
-            var pl = await _playlistService.SynkPlaylist(() => new Playlist
+            PlaylistProvider<Playlist<TvgMedia>, TvgMedia> providerInstance = null;
+            try
             {
-                UserId = UserId.Value,
-                Freindlyname = playlistPostModel.Freindlyname,
-                Status = PlaylistStatus.Enabled,
-                SynkConfig = new SynkConfig { Url = playlistPostModel.Url },
-                Tags = new JsonObject<Dictionary<string, string>>(new Dictionary<string, string>())
-            }, providerInstance, _xtreamService.IsXtreamPlaylist(playlistPostModel.Url), cancellationToken: cancellationToken);
+                providerInstance = _providerFactory.CreateInstance(playlistPostModel.Url, playlistPostModel.Provider);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
-            ClearCache();
+            using (providerInstance)
+            {
+                var pl = await _playlistService.SynkPlaylist(() => new Playlist
+                {
+                    UserId = UserId.Value,
+                    Freindlyname = playlistPostModel.Freindlyname,
+                    Status = PlaylistStatus.Enabled,
+                    SynkConfig = new SynkConfig { Url = playlistPostModel.Url },
+                    Tags = new JsonObject<Dictionary<string, string>>(new Dictionary<string, string>())
+                }, providerInstance, _xtreamService.IsXtreamPlaylist(playlistPostModel.Url), cancellationToken: cancellationToken);
 
-            stopwatch.Stop();
-            _logger.LogInformation($"Elapsed time : {stopwatch.Elapsed.ToString("c")}");
+                ClearCache();
 
-            var model = PlaylistModel.ToLightModel(pl, Url);
-            return Created(model.PublicUrl, model);
+                stopwatch.Stop();
+                _logger.LogInformation($"Elapsed time : {stopwatch.Elapsed.ToString("c")}");
+
+                var model = PlaylistModel.ToLightModel(pl, Url);
+                return Created(model.PublicUrl, model);
+            }
         }
 
         #endregion

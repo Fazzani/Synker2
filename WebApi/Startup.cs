@@ -47,6 +47,7 @@ using hfa.Synker.Service.Entities.Auth;
 using System.Security.Claims;
 using System.Runtime.InteropServices;
 using System.Reflection;
+using hfa.PlaylistBaseLibrary.Options;
 
 namespace hfa.WebApi
 {
@@ -79,6 +80,7 @@ namespace hfa.WebApi
                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                .AddSingleton<IPasteBinService, PasteBinService>()
                .AddSingleton<IAuthentificationService, AuthentificationService>()
+               .AddSingleton<IProviderFactory, ProviderFactory>()
                .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
                .AddScoped<IXmltvService, XmltvService>()
                .AddScoped<IPiconsService, PiconsService>()

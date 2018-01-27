@@ -85,8 +85,6 @@ namespace hfa.PlaylistBaseLibrary.Providers
             return IqRes;
         }
 
-
-
         #region Pushing medias into playlist
         /// <summary>
         /// Push medias to playlist
@@ -164,22 +162,5 @@ namespace hfa.PlaylistBaseLibrary.Providers
         }
     }
 
-    public class PlaylistProviderOption
-    {
-        public string Name { get; set; }
-        public string Type { get; set; }
-    }
-
-    public class InvalidFileProviderException : Exception
-    {
-        public InvalidFileProviderException(string message) : base(message)
-        {
-
-        }
-
-        public InvalidFileProviderException(string message, Exception innerException) : base(message, innerException)
-        {
-
-        }
-    }
+   
 }
