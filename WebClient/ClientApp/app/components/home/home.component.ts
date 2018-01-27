@@ -33,7 +33,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     openPlaylistInfosDialog(playlist: PlaylistModel): void {
         let dialogRef = this.dialog.open(PlaylistInfosDialog, {
-            width: '400px',
+            width: '500px',
             data: playlist
         });
     }
@@ -55,7 +55,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             .filter(() => confirm)
             .switchMap(x => this.playlistService.delete(x))
             .subscribe(res => {
-                this.snackBar.open("Playlist was deleted");
+                this.snackBar.open("Playlist deleted successfully");
                 this.ngOnInit();
             });
     }

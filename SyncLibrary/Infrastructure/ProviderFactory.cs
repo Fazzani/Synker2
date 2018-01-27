@@ -16,7 +16,7 @@ namespace SyncLibrary
         public static async Task<PlaylistProvider<Playlist<TvgMedia>, TvgMedia>> Create(ISynchronizableConfig synchronizableConfig)
         {
             if (synchronizableConfig is SynchronizableConfigFile && synchronizableConfig.SynchConfigType == SynchronizableConfigType.M3u)
-                return new M3uProvider(System.IO.File.OpenRead((synchronizableConfig as SynchronizableConfigFile).Path));
+                return new M3uProvider(new Uri((synchronizableConfig as SynchronizableConfigFile).Path));
             if (synchronizableConfig is SynchronizableConfigUri)
             {
                 var synConfig = synchronizableConfig as SynchronizableConfigUri;
@@ -25,9 +25,9 @@ namespace SyncLibrary
                     var fileName = $"{Path.GetRandomFileName()}.tmp";
                     await client.DownloadFileTaskAsync(synConfig.Uri, fileName);
                     if (synchronizableConfig.SynchConfigType == SynchronizableConfigType.M3u)
-                        return new M3uProvider(System.IO.File.OpenRead(fileName));
+                        return new M3uProvider(new Uri(fileName));
                     if (synchronizableConfig.SynchConfigType == SynchronizableConfigType.Tvlist)
-                        return new TvlistProvider(System.IO.File.OpenRead(fileName));
+                        return new TvlistProvider(new Uri(fileName));
                 }
             }
             return null;

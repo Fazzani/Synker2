@@ -39,6 +39,7 @@ import { SitePackService } from './services/sitepack/sitepack.service';
 import { SitePackComponent, SitePackModifyDialog } from './components/sitepack/sitepack.component';
 import { KeysPipe } from './pipes/enumKey.pipe';
 import { JwtInterceptor } from './infrastructure/JwtInterceptor';
+import { ToastModule } from 'ng2-toastr/ng2-toastr';
 import { PlaylistTvgSitesDialog } from './components/dialogs/playlistTvgSites/PlaylistTvgSitesDialog';
 import { PlaylistBulkUpdate } from './components/dialogs/playlistBulkUpdate/playlistBulkUpdate';
 import { PlaylistAddDialog } from './components/dialogs/playlistAddNew/playlist.add.component';
@@ -46,7 +47,6 @@ import { PlaylistDiffDialog } from './components/dialogs/playlistDiff/playlist.d
 import { PlaylistUpdateDialog } from './components/dialogs/playlistUpdate/playlist.update.dialog';
 import { GroupsDialog } from './components/dialogs/group/groups.component';
 import { MatchTvgDialog } from './components/dialogs/matchTvg/matchTvg.component';
-import { ToastyModule } from 'ng2-toasty';
 import { PushNotificationsModule } from 'ng-push';
 import { RegisterComponent, RegisterDialog } from './components/dialogs/auth/RegisterDialog';
 import { LoginDialog } from './components/dialogs/auth/LoginDialog';
@@ -98,7 +98,7 @@ import { LoaderComponent } from './components/shared/loader/loader.component';
         BrowserModule,
         BrowserAnimationsModule,
         PushNotificationsModule,
-        ToastyModule,
+        ToastModule.forRoot(),
         CommonModule,
         HttpClientModule,
         FormsModule,

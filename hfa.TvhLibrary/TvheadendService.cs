@@ -25,6 +25,8 @@ namespace TvheadendLibrary
         readonly private string _password;
         const string LOGO_EXTENTION_PATTERN = "*.png";
 
+        public override MemoryStream PlaylistStream => throw new NotImplementedException();
+
         /// <summary>
         /// ctor
         /// </summary>

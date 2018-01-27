@@ -12,7 +12,7 @@ namespace hfa.PlaylistBaseLibrary.Providers
 {
     public abstract class ApiProvider : PlaylistProvider<Playlist<TvgMedia>, TvgMedia>
     {
-        private bool _disposed = false;
+        private bool _disposed;
 
         public string Url { get; }
 
@@ -21,11 +21,6 @@ namespace hfa.PlaylistBaseLibrary.Providers
             Url = url;
         }
 
-        public override void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
         public override object _(Expression expression)
         {
             //if (!IsQueryOverDataSource(expression))
@@ -54,29 +49,21 @@ namespace hfa.PlaylistBaseLibrary.Providers
             return IqRes;
         }
 
-        /// <summary>
-        /// Get FileProvider instance from name (string)
-        /// ex: m3u, tvlist
-        /// </summary>
-        /// <param name="provider"></param>
-        /// <param name="providersOptions"></param>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        public static ApiProvider Create(string provider, List<PlaylistProviderOption> providersOptions, string url)
-        {
-            var sourceOption = providersOptions.FirstOrDefault(x => x.Name.Equals(provider, StringComparison.InvariantCultureIgnoreCase));
-            if (sourceOption == null)
-                throw new InvalidProviderException($"Source Provider not found : {provider}");
-
-            var targetProviderType = Type.GetType(sourceOption.Type, false, true);
-            if (targetProviderType == null)
-                throw new InvalidProviderException($"Target Provider not found : {sourceOption.Type}");
-
-            return (ApiProvider)Activator.CreateInstance(targetProviderType, url);
-        }
-
         protected virtual void Dispose(bool disposing)
         {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                }
+                _disposed = true;
+            }
+        }
+
+        public override void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 

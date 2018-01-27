@@ -30,6 +30,9 @@ namespace hfa.Synker.Service.Entities.Playlists
 
         public string Url { get; set; }
 
+        [NotMapped]
+        public Uri Uri { get { return new Uri(Url); } }
+
         public string Provider { get; set; } = "m3u";
 
         /// <summary>

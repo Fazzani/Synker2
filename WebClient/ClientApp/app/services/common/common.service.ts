@@ -1,7 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Exception } from '../../types/common.type';
-import { ToastOptions, ToastyService } from 'ng2-toasty';
+import { ToastOptions, ToastsManager } from 'ng2-toastr';
 
 @Injectable()
 export class CommonService {
@@ -12,24 +12,21 @@ export class CommonService {
     /**
      * @constructor
      */
-    constructor(private toastyService: ToastyService) { }
+    constructor(private toastyService: ToastsManager) { }
 
 
-    public toastOptions: ToastOptions = {
-    title: "My title",
-    msg: "The message",
-    showClose: true,
-    timeout: 4000,
-    theme: 'default'
+    public toastOptions: ToastOptions = <ToastOptions>{
+        enableHTML: true,
+        showCloseButton: true,
+        maxShown: 5,
+        toastLife: 40000
     };
 
     info(title: string, message: string): void {
-        this.toastOptions.title = title;
-        this.toastOptions.msg = message;
-        this.toastyService.info(this.toastOptions);
+        this.toastyService.info(message, title, this.toastOptions);
     }
 
-    displayError(title: string, message: string) :void {
+    displayError(title: string, message: string): void {
         this.error.next(<Exception>{ title: title, message: message });
     }
 

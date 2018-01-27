@@ -18,6 +18,9 @@ namespace hfa.PlaylistBaseLibrary.Providers
     {
         private const string XtreamUrlPattern = @"^(?<portocol>https?)://(?<host>.*):(?<port>\d{2,4})/get\.php\?username=(?<username>.*)&password=(?<password>\w+)";
         XtreamPanel _panel;
+
+        public override MemoryStream PlaylistStream => throw new NotImplementedException();
+
         public XtreamProvider(string url) : base(url)
         {
         }

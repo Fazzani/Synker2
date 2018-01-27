@@ -231,7 +231,7 @@ namespace Hfa.WebApi.Controllers
             using (var httpClient = new HttpClient())
             {
                 var playlistStream = await httpClient.GetStreamAsync(playlistPostModel.Url);
-                var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
+                var providerInstance = (PlaylistProvider<Playlist<TvgMedia>, TvgMedia>)Activator.CreateInstance(providerType, playlistStream);
 
                 var playlist = _dbContext.Playlist.FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.Url) ?? new Playlist
                 {
@@ -279,22 +279,18 @@ namespace Hfa.WebApi.Controllers
             try
             {
                 //Download playlist from url
-                using (var httpClient = new HttpClient())
+                var providerInstance = (PlaylistProvider<Playlist<TvgMedia>, TvgMedia>)Activator.CreateInstance(providerType, new Uri(playlistPostModel.Url));
+
+                var playlist = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.SynkConfig.Url == playlistPostModel.Url, cancellationToken) ?? new Playlist
                 {
-                    var playlistStream = await httpClient.GetStreamAsync(playlistPostModel.Url);
-                    var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
+                    UserId = UserId.Value,
+                    Freindlyname = playlistPostModel.Freindlyname,
+                    Status = playlistPostModel.Status,
+                    SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
+                };
 
-                    var playlist = _dbContext.Playlist.FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.Url) ?? new Playlist
-                    {
-                        UserId = UserId.Value,
-                        Freindlyname = playlistPostModel.Freindlyname,
-                        Status = playlistPostModel.Status,
-                        SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
-                    };
-
-                    var pl = await _playlistService.DiffWithSourceAsync(() => playlist, providerInstance, cancellationToken: cancellationToken);
-                    return Ok(pl);
-                }
+                var pl = await _playlistService.DiffWithSourceAsync(() => playlist, providerInstance, cancellationToken: cancellationToken);
+                return Ok(pl);
             }
             catch (HttpRequestException)
             {
@@ -504,63 +500,19 @@ namespace Hfa.WebApi.Controllers
         {
             var idGuid = GetInternalPlaylistId(id);
 
-            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+            var playlist = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.UniqueId == idGuid, cancellationToken);
 
             if (playlist == null)
                 return NotFound(id);
 
-            using (var ms = new MemoryStream())
-            using (var sourceProvider = FileProvider.Create(provider, providersOptions.Value, ms))
+            using (var sourceProvider = PlaylistProvider<Playlist<TvgMedia>, TvgMedia>.Create(provider, providersOptions.Value, playlist.SynkConfig.Uri))
             using (var pl = new Playlist<TvgMedia>(sourceProvider))
             using (var sourcePl = new Playlist<TvgMedia>(playlist.TvgMedias.Where(x => x.Enabled && !x.MediaGroup.Disabled)))
             {
-                ms.Seek(0, SeekOrigin.Begin);
-
                 return await pl.PushAsync(sourcePl, cancellationToken).ContinueWith(t =>
                  {
-                     return File(ms.ToArray(), "text/plain");
+                     return File(sourceProvider.PlaylistStream.ToArray(), "text/plain");
                  });
-            }
-        }
-
-        /// <summary>
-        /// Export from provider to another
-        /// </summary>
-        /// <param name="fromType"></param>
-        /// <param name="toType"></param>
-        /// <param name="file"></param>
-        /// <param name="providersOptions"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("export/{fromType}/{toType}")]
-        public async Task<IActionResult> Export(string fromType, string toType, IFormFile file, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions,
-            CancellationToken cancellationToken)
-        {
-            try
-            {
-                var sourceProvider = FileProvider.Create(fromType, providersOptions.Value, file.OpenReadStream());
-
-                using (var stream = new MemoryStream())
-                {
-                    var targetProvider = FileProvider.Create(toType, providersOptions.Value, stream);
-
-                    using (var sourcePlaylist = new Playlist<TvgMedia>(sourceProvider))
-                    {
-                        var sourceList = await sourcePlaylist.PullAsync(HttpContext.RequestAborted);
-                        using (var targetPlaylist = new Playlist<TvgMedia>(targetProvider))
-                        {
-                            await targetPlaylist.PushAsync(sourcePlaylist, HttpContext.RequestAborted);
-
-                            ClearCache();
-
-                            return File(stream.GetBuffer(), "text/plain", file.FileName);
-                        }
-                    }
-                }
-            }
-            catch (InvalidFileProviderException ifileEx)
-            {
-                return BadRequest(ifileEx.Message);
             }
         }
 
@@ -603,13 +555,11 @@ namespace Hfa.WebApi.Controllers
             var playlistStream = file.OpenReadStream();
             if (string.IsNullOrEmpty(playlistUrl))
             {
-                //Download playlist from url
-                using (var httpClient = new HttpClient())
-                {
-                    playlistStream = await httpClient.GetStreamAsync(playlistUrl);
-                }
+                //TODO : Save file and get Url
+                throw new ApplicationException("Import playlist from file not supported yet !!");
             }
-            var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
+
+            var providerInstance = (PlaylistProvider<Playlist<TvgMedia>, TvgMedia>)Activator.CreateInstance(providerType, new Uri(playlistUrl));
 
             var pl = await _playlistService.SynkPlaylist(() => new Playlist
             {
@@ -624,18 +574,6 @@ namespace Hfa.WebApi.Controllers
 
             var result = PlaylistModel.ToLightModel(pl, Url);
             return Created(result.PublicUrl, result);
-        }
-
-        private void ClearCache()
-        {
-            if (_memoryCache.TryGetValue(UserCachePlaylistKey, out List<string> list))
-            {
-                foreach (var item in list)
-                {
-                    _memoryCache.Remove(item);
-                }
-                list.Remove(UserCachePlaylistKey);
-            }
         }
 
         /// <summary>
@@ -662,32 +600,38 @@ namespace Hfa.WebApi.Controllers
                 return BadRequest($"Provider type not found : {playlistPostModel.Provider}");
 
             //Download playlist from url
-            using (var httpClient = new HttpClient())
+            var providerInstance = (PlaylistProvider<Playlist<TvgMedia>, TvgMedia>)Activator.CreateInstance(providerType, new Uri(playlistPostModel.Url));
+            var pl = await _playlistService.SynkPlaylist(() => new Playlist
             {
-                httpClient.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36");
-                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "text/plain");
-                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
-                var playlistStream = await httpClient.GetStreamAsync(playlistPostModel.Url);
-                var providerInstance = (FileProvider)Activator.CreateInstance(providerType, playlistStream);
-                var pl = await _playlistService.SynkPlaylist(() => new Playlist
-                {
-                    UserId = UserId.Value,
-                    Freindlyname = playlistPostModel.Freindlyname,
-                    Status = PlaylistStatus.Enabled,
-                    SynkConfig = new SynkConfig { Url = playlistPostModel.Url },
-                    Tags = new JsonObject<Dictionary<string, string>>(new Dictionary<string, string>())
-                }, providerInstance, _xtreamService.IsXtreamPlaylist(playlistPostModel.Url), cancellationToken: cancellationToken);
+                UserId = UserId.Value,
+                Freindlyname = playlistPostModel.Freindlyname,
+                Status = PlaylistStatus.Enabled,
+                SynkConfig = new SynkConfig { Url = playlistPostModel.Url },
+                Tags = new JsonObject<Dictionary<string, string>>(new Dictionary<string, string>())
+            }, providerInstance, _xtreamService.IsXtreamPlaylist(playlistPostModel.Url), cancellationToken: cancellationToken);
 
-                ClearCache();
+            ClearCache();
 
-                stopwatch.Stop();
-                _logger.LogInformation($"Elapsed time : {stopwatch.Elapsed.ToString("c")}");
+            stopwatch.Stop();
+            _logger.LogInformation($"Elapsed time : {stopwatch.Elapsed.ToString("c")}");
 
-                var model = PlaylistModel.ToLightModel(pl, Url);
-                return Created(model.PublicUrl, model);
-            }
+            var model = PlaylistModel.ToLightModel(pl, Url);
+            return Created(model.PublicUrl, model);
         }
 
         #endregion
+
+        private void ClearCache()
+        {
+            if (_memoryCache.TryGetValue(UserCachePlaylistKey, out List<string> list))
+            {
+                foreach (var item in list)
+                {
+                    _memoryCache.Remove(item);
+                }
+                list.Remove(UserCachePlaylistKey);
+            }
+        }
+
     }
 }

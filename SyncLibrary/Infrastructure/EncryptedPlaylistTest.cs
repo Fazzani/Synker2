@@ -24,8 +24,8 @@ namespace ConsoleAppTest
 
         static Playlist<TvgMedia> GetPlaylistCrypted(string filePath, bool forRead = true)
         {
-            CryptoStream crStream = GetStream(filePath, forRead);
-            return new Playlist<TvgMedia>(new M3uProvider(crStream)) { Name = "tv_channels_crypted", Id = 0 };
+            //CryptoStream crStream = GetStream(filePath, forRead);
+            return new Playlist<TvgMedia>(new M3uProvider(new Uri(filePath))) { Name = "tv_channels_crypted", Id = 0 };
         }
 
         private static CryptoStream GetStream(string filePath, bool forRead = true)

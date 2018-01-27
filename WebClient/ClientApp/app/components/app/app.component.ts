@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewContainerRef } from '@angular/core';
 import 'hammerjs';
 import './app.component.css'
 import { NotificationService } from '../../services/notification/notification.service';
@@ -7,12 +7,15 @@ import { CommonService } from '../../services/common/common.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { Exception } from '../../types/common.type';
-import { ToastyService } from 'ng2-toasty';
 import * as variables from "../../variables";
+import { ToastsManager } from 'ng2-toastr';
 
 @Component({
     selector: 'app',
-    templateUrl: './app.component.html'
+    templateUrl: './app.component.html',
+    styles: [
+        '~/node_modules/ng2-toastr/ng2-toastr.css'
+    ]
 })
 export class AppComponent implements OnInit, OnDestroy {
 
@@ -20,7 +23,9 @@ export class AppComponent implements OnInit, OnDestroy {
     objLoaderStatus: boolean;
 
     constructor(private notifService: NotificationService, public snackBar: MatSnackBar, private commonService: CommonService,
-        private authService: AuthService, private router: Router, private toastyService: ToastyService) {
+        private authService: AuthService, private router: Router, private toastyService: ToastsManager, vcr: ViewContainerRef) {
+
+        this.toastyService.setRootViewContainerRef(vcr);
 
         this.objLoaderStatus = false;
 
@@ -60,9 +65,7 @@ export class AppComponent implements OnInit, OnDestroy {
         });
 
         this.commonService.error.distinctUntilChanged().filter(err => err != null).subscribe((err: Exception) => {
-            this.commonService.toastOptions.msg = err.message;
-            this.commonService.toastOptions.title = err.title;
-            this.toastyService.error(this.commonService.toastOptions);
+            this.toastyService.error(err.message, err.title, this.commonService.toastOptions);
         });
     }
 
