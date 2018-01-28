@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     openPlaylistInfosDialog(playlist: PlaylistModel): void {
         let dialogRef = this.dialog.open(PlaylistInfosDialog, {
-            width: '700px',
+            width: '500px',
             data: playlist
         });
     }
@@ -66,7 +66,7 @@ export class HomeComponent implements OnInit, OnDestroy {
      */
     openDialogAddNewPlaylist(): void {
         let dialogRef = this.dialog.open(PlaylistAddDialog, {
-            width: '700px'
+            width: '500px'
         });
 
         dialogRef.afterClosed().subscribe(result => {
