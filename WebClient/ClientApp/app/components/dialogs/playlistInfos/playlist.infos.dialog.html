@@ -24,27 +24,27 @@
                             </mat-select>
                         </mat-form-field>
                         <mat-form-field>
-                            <mat-select placeholder="synkGroup" [(ngModel)]="playlist.synkGroup" name="synkGroup">
-                                <mat-option *ngFor="let synkGroup of synkGroupEnum" [value]="synkGroup">
-                                    {{synkGroup}}
+                            <mat-select placeholder="synkGroup" [(ngModel)]="playlist.synkGroup" name="synkGroup" [compareWith]="compareFn">
+                                <mat-option *ngFor="let synkGroup of SynkGroupEnumValues | keys" [value]="synkGroup.value">
+                                    {{synkGroup.key}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
                         <mat-form-field>
-                            <mat-select placeholder="Status" [(ngModel)]="playlist.status" name="status">
-                                <mat-option *ngFor="let status of statusEnum" [value]="status">
-                                    {{status}}
+                            <mat-select placeholder="Status" [(ngModel)]="playlist.status" name="status" [compareWith]="compareFn">
+                                <mat-option *ngFor="let status of PlaylistStatusVaLues | keys" [value]="status.value">
+                                    {{status.key}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
                         <mat-form-field>
-                            <input matInput [(ngModel)]="playlist.ImportProvider" readonly name="ImportProvider">
+                            <input matInput [(ngModel)]="playlist.importProvider" readonly name="ImportProvider" placeholder="Import provider...">
                         </mat-form-field>
                         <mat-form-field>
-                            <input matInput [(ngModel)]="playlist.createdDate" placeholder="Created date" readonly name="createdDate">
+                            <input matInput [(ngModel)]="playlist.createdDate" placeholder="Created date..." readonly name="createdDate">
                         </mat-form-field>
                         <mat-form-field>
-                            <input matInput [(ngModel)]="playlist.updatedDate" placeholder="Updated date" readonly name="updatedDate">
+                            <input matInput [(ngModel)]="playlist.updatedDate" placeholder="Updated date..." readonly name="updatedDate">
                         </mat-form-field>
                         <mat-checkbox [(ngModel)]="playlist.synkEpg" name="synkEpg">Synchronize EPG</mat-checkbox>
                         <mat-checkbox [(ngModel)]="playlist.synkLogos" name="synkLogos">Synchronize picons</mat-checkbox>

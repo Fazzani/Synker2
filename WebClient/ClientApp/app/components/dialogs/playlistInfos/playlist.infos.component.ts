@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
 import { PlaylistService } from '../../../services/playlists/playlist.service';
-import { PlaylistModel, PlaylistPostModel, Providers } from '../../../types/playlist.type';
+import { PlaylistModel, PlaylistPostModel, Providers, PlaylistStatus, SynkGroupEnum } from '../../../types/playlist.type';
 import { TvgMedia } from '../../../types/media.type';
 import { CommonService } from '../../../services/common/common.service';
 import { XtreamService } from '../../../services/xtream/xtream.service';
@@ -16,8 +16,15 @@ import { XtreamService } from '../../../services/xtream/xtream.service';
 })
 export class PlaylistInfosDialog implements OnInit, OnDestroy {
     providersEnum: string[] = PlaylistModel.PROVIDERS;
-    statusEnum: string[] = PlaylistModel.STATUS;
-    synkGroupEnum: string[] = PlaylistModel.SYNKGROUP;
+
+    PlaylistStatusVaLues = PlaylistStatus;
+    SynkGroupEnumValues = SynkGroupEnum;
+
+    compareFn: ((f1: any, f2: any) => boolean) | null = this.compareByValue;
+
+    compareByValue(f1: any, f2: any) {
+        return f1 != null && f2 != null && f1 == f2;
+    }
 
     constructor(
         public dialogRef: MatDialogRef<PlaylistInfosDialog>, private playlistService: PlaylistService, private commonService: CommonService,

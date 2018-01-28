@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject, Renderer }
 import { PlaylistService } from '../../services/playlists/playlist.service';
 import { CommonService } from '../../services/common/common.service';
 import { MatDialog, MatSnackBar } from '@angular/material';
-import { PlaylistModel } from '../../types/playlist.type';
+import { PlaylistModel, SynkGroupEnum, PlaylistStatus } from '../../types/playlist.type';
 import { QueryListBaseModel, PagedResult } from '../../types/common.type';
 import { ClipboardService } from 'ngx-clipboard';
 import { Observable } from 'rxjs/Observable';
@@ -19,11 +19,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     playlists: PagedResult<PlaylistModel> = <PagedResult<PlaylistModel>>{ results: new Array<PlaylistModel>() };
     query: QueryListBaseModel;
 
+   
+    
     constructor(private renderer: Renderer, private playlistService: PlaylistService, private commonService: CommonService, public dialog: MatDialog,
         public snackBar: MatSnackBar, private clipboardService: ClipboardService) { }
 
     ngOnInit(): void {
-
         this.query = new QueryListBaseModel();
         this.query.pageNumber = 0;
         this.query.pageSize = 20;
@@ -33,8 +34,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     openPlaylistInfosDialog(playlist: PlaylistModel): void {
+
         let dialogRef = this.dialog.open(PlaylistInfosDialog, {
-            width: '500px',
+            width: '700px',
             data: playlist
         });
     }
@@ -66,7 +68,7 @@ export class HomeComponent implements OnInit, OnDestroy {
      */
     openDialogAddNewPlaylist(): void {
         let dialogRef = this.dialog.open(PlaylistAddDialog, {
-            width: '500px'
+            width: '700px'
         });
 
         dialogRef.afterClosed().subscribe(result => {
