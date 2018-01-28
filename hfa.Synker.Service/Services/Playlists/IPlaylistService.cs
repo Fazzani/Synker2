@@ -23,8 +23,8 @@ namespace hfa.Synker.Service.Services.Playlists
         /// <param name="force"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<(IEnumerable<TvgMedia> tvgMedia, IEnumerable<TvgMedia> removed)> DiffWithSourceAsync(Func<Playlist> getPlaylist, PlaylistProvider<Playlist<TvgMedia>, TvgMedia> provider, bool force = false,
-            CancellationToken cancellationToken = default);
+        Task<(IEnumerable<TvgMedia> tvgMedia, IEnumerable<TvgMedia> removed)> DiffWithSourceAsync(Func<Playlist> getPlaylist, PlaylistProvider<Playlist<TvgMedia>,
+            TvgMedia> provider, bool force = false, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Execute Handlers on Tvgmedias list

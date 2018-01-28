@@ -142,6 +142,14 @@ namespace Hfa.WebApi.Controllers
                 };
                 playlistEntity.Tags = JsonConvert.SerializeObject(playlist.Tags);
             }
+            else
+            {
+                //todo: à virer tout le bloc else
+                if (playlistEntity.ImportProviderTag == null && playlist.Tags.TryAdd(PlaylistTags.ImportProvider, "m3u"))
+                {
+                    playlistEntity.Tags = JsonConvert.SerializeObject(playlist.Tags);
+                }
+            }
 
             var updatedCount = await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation($"Updated Count : {updatedCount}");
@@ -165,6 +173,7 @@ namespace Hfa.WebApi.Controllers
             playlistEntity.SynkConfig.SynkEpg = playlist.SynkEpg;
             playlistEntity.SynkConfig.SynkGroup = playlist.SynkGroup;
             playlistEntity.SynkConfig.SynkLogos = playlist.SynkLogos;
+
             if (playlist.Tags == null)
             {
                 playlist.Tags = new Dictionary<string, string>
@@ -173,7 +182,17 @@ namespace Hfa.WebApi.Controllers
                 };
                 playlistEntity.Tags = JsonConvert.SerializeObject(playlist.Tags);
             }
+            else
+            {
+                //todo: à virer tout le bloc else
+                if (playlistEntity.ImportProviderTag == null && playlist.Tags.TryAdd(PlaylistTags.ImportProvider, "m3u"))
+                {
+                    playlistEntity.Tags = JsonConvert.SerializeObject(playlist.Tags);
+                }
+            }
+
             await _dbContext.SaveChangesAsync();
+            ClearCache();
             return Ok();
         }
 
@@ -263,14 +282,12 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         public async Task<IActionResult> DiffAsync([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken)
         {
-
             //TODO: Déduire le provider from playlist (isXtream => xtreamProvider, m3u ou tvlist)
             // Load dynmaiquement all providers (singleton)
             PlaylistProvider<Playlist<TvgMedia>, TvgMedia> providerInstance = null;
             try
             {
                 providerInstance = _providerFactory.CreateInstance(playlistPostModel.Url, playlistPostModel.Provider);
-
             }
             catch (Exception ex)
             {
@@ -578,7 +595,7 @@ namespace Hfa.WebApi.Controllers
                     Freindlyname = playlistName,
                     Status = PlaylistStatus.Enabled,
                     SynkConfig = null,
-                    Tags = new JsonObject<Dictionary<string, string>>(new Dictionary<string, string>())
+                    Tags = new JsonObject<Dictionary<string, string>>(new Dictionary<string, string> { { PlaylistTags.ImportProvider, provider } })
                 }, providerInstance, _xtreamService.IsXtreamPlaylist(playlistUrl), true, cancellationToken);
 
                 ClearCache();
@@ -621,7 +638,7 @@ namespace Hfa.WebApi.Controllers
                     Freindlyname = playlistPostModel.Freindlyname,
                     Status = PlaylistStatus.Enabled,
                     SynkConfig = new SynkConfig { Url = playlistPostModel.Url },
-                    Tags = new JsonObject<Dictionary<string, string>>(new Dictionary<string, string>())
+                    Tags = new JsonObject<Dictionary<string, string>>(new Dictionary<string, string> { { PlaylistTags.ImportProvider, playlistPostModel.Provider } })
                 }, providerInstance, _xtreamService.IsXtreamPlaylist(playlistPostModel.Url), cancellationToken: cancellationToken);
 
                 ClearCache();

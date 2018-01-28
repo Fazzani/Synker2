@@ -16,7 +16,6 @@ export class RegisterDialog {
         , private commonService: CommonService) {
     }
 
-
     genders = User.GENDERS;
 
     register(registerUser: RegisterUser): void {

@@ -40,15 +40,14 @@ namespace hfa.WebApi.Models.Playlists
         public DateTime CreatedDate { get; private set; }
         public DateTime UpdatedDate { get; private set; }
         public int Id { get; private set; }
-        public Guid UniqueId { get; private set; }
-        public bool SynkEpg { get; internal set; }
-        public SynkGroupEnum SynkGroup { get; internal set; }
-        public bool SynkLogos { get; internal set; }
+        public Guid UniqueId { get; set; }
+        public bool SynkEpg { get; set; }
+        public SynkGroupEnum SynkGroup { get; set; }
+        public bool SynkLogos { get; set; }
         public List<string> TvgSites { get; set; }
         public Dictionary<string, string> Tags { get; set; }
 
         public NotificationTypeEnum? NotifcationTypeInsertedMedia { get; set; }
-
 
         public string PublicId
         {
@@ -67,6 +66,7 @@ namespace hfa.WebApi.Models.Playlists
         }
 
         public bool IsXtream { get; private set; }
+        public string ImportProvider { get; private set; }
 
         public static PlaylistModel ToModel(Playlist pl, IUrlHelper uriHelper) => new PlaylistModel(uriHelper)
         {
@@ -83,7 +83,8 @@ namespace hfa.WebApi.Models.Playlists
             SynkLogos = pl.SynkConfig.SynkLogos,
             Url = pl.SynkConfig.Url,
             TvgSites = pl.TvgSites,
-            IsXtream = pl.IsXtream,
+            IsXtream = pl.IsXtreamTag,
+            ImportProvider = pl.ImportProviderTag,
             Tags = pl.Tags?.Object,
             NotifcationTypeInsertedMedia = pl.SynkConfig?.NotifcationTypeInsertedMedia
         };
@@ -98,8 +99,12 @@ namespace hfa.WebApi.Models.Playlists
             Status = pl.Status,
             CreatedDate = pl.CreatedDate,
             UpdatedDate = pl.UpdatedDate,
+            SynkEpg = pl.SynkConfig.SynkEpg,
+            SynkGroup = pl.SynkConfig.SynkGroup,
+            SynkLogos = pl.SynkConfig.SynkLogos,
             TvgSites = pl.TvgSites,
-            IsXtream = pl.IsXtream,
+            IsXtream = pl.IsXtreamTag,
+            ImportProvider = pl.ImportProviderTag,
             Tags = pl.Tags?.Object,
             NotifcationTypeInsertedMedia = pl.SynkConfig?.NotifcationTypeInsertedMedia
         };

@@ -26,6 +26,10 @@ export class CommonService {
         this.toastyService.info(message, title, this.toastOptions);
     }
 
+    success(title: string, message: string): void {
+        this.toastyService.success(message, title, this.toastOptions);
+    }
+
     displayError(title: string, message: string): void {
         this.error.next(<Exception>{ title: title, message: message });
     }

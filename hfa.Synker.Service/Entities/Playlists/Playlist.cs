@@ -66,18 +66,33 @@ namespace hfa.Synker.Service.Entities.Playlists
         [NotMapped]
         public bool IsSynchronizable => SynkConfig != null && !string.IsNullOrEmpty(SynkConfig.Url);
 
-        public override int GetHashCode() => (UserId ^ Id).GetHashCode();
-
-        public override string ToString() => $"{Id} {Freindlyname} UserId : {UserId} Status : {Status} Count : {TvgMedias?.Count()}";
 
         [NotMapped]
-        public bool IsXtream
+        public bool IsXtreamTag
         {
             get
             {
                 return Tags.Object != null && Tags.Object.Any() && Tags.Object[PlaylistTags.IsXtream] == "True";
             }
         }
+
+        /// <summary>
+        /// The import provider
+        /// </summary>
+        [NotMapped]
+        public string ImportProviderTag
+        {
+            get
+            {
+                Tags.Object.TryGetValue(PlaylistTags.ImportProvider, out string result);
+                return result;
+            }
+        }
+
+        public override int GetHashCode() => (UserId ^ Id).GetHashCode();
+
+        public override string ToString() => $"{Id} {Freindlyname} UserId : {UserId} Status : {Status} Count : {TvgMedias?.Count()}";
+
     }
 
     public enum PlaylistStatus : byte
@@ -90,5 +105,7 @@ namespace hfa.Synker.Service.Entities.Playlists
     public class PlaylistTags
     {
         public const string IsXtream = "IsXtream";
+        public const string ImportProvider = "Import_provider";
+
     }
 }

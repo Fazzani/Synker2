@@ -32,9 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
         notifService.messages.subscribe(
             m => {
                 console.log('new message ', m);
-                this.snackBar.open(m.content, null, {
-                    duration: 3000,
-                })
+                this.commonService.info(`New message ${m.messageType}`, m.content);
             },
             error => console.warn(error));
     }

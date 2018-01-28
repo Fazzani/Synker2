@@ -2,6 +2,58 @@
     <mat-tab-group class="tab-group">
         <mat-tab>
             <ng-template mat-tab-label>
+                Playlist informations
+            </ng-template>
+            <div class="tab-content">
+                <div class="addnewplaylist">
+                    <form>
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="playlist.freindlyname" placeholder="Name..." name="freindlyname" required maxlength="100">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="playlist.url" placeholder="Url Source..." name="url" required>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="playlist.cultures" placeholder="Cultures..." name="cultures">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-select placeholder="Providers" [(ngModel)]="playlist.importProvider" name="provider">
+                                <mat-option *ngFor="let provider of providersEnum" [value]="provider">
+                                    {{provider}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-select placeholder="synkGroup" [(ngModel)]="playlist.synkGroup" name="synkGroup">
+                                <mat-option *ngFor="let synkGroup of synkGroupEnum" [value]="synkGroup">
+                                    {{synkGroup}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-select placeholder="Status" [(ngModel)]="playlist.status" name="status">
+                                <mat-option *ngFor="let status of statusEnum" [value]="status">
+                                    {{status}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="playlist.ImportProvider" readonly name="ImportProvider">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="playlist.createdDate" placeholder="Created date" readonly name="createdDate">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="playlist.updatedDate" placeholder="Updated date" readonly name="updatedDate">
+                        </mat-form-field>
+                        <mat-checkbox [(ngModel)]="playlist.synkEpg" name="synkEpg">Synchronize EPG</mat-checkbox>
+                        <mat-checkbox [(ngModel)]="playlist.synkLogos" name="synkLogos">Synchronize picons</mat-checkbox>
+                    </form>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab *ngIf="playlist.isXtream">
+            <ng-template mat-tab-label>
                 User informations
             </ng-template>
             <div class="tab-content">
@@ -33,7 +85,7 @@
                 </mat-list>
             </div>
         </mat-tab>
-        <mat-tab>
+        <mat-tab *ngIf="playlist.isXtream">
             <ng-template mat-tab-label>
                 Server informations
             </ng-template>
@@ -60,5 +112,6 @@
     </mat-tab-group>
     <mat-action-row>
         <button mat-raised-button (click)="dialogRef.close()">Close</button>
+        <button mat-raised-button (click)="save()">Save</button>
     </mat-action-row>
 </div>

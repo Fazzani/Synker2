@@ -114,7 +114,7 @@ namespace SyncLibrary
 
             foreach (var pl in _dbContext.Playlist.Include(x => x.User).Where(x => x.Status == hfa.Synker.Service.Entities.Playlists.PlaylistStatus.Enabled))
             {
-                if (pl.IsXtream)
+                if (pl.IsXtreamTag)
                 {
                     var res = await playlistService.DiffWithSourceAsync(() => pl, new XtreamProvider(pl.SynkConfig.Url), false, cancellationToken);
                     if (res.removed.Any() || res.tvgMedia.Any())
@@ -123,7 +123,7 @@ namespace SyncLibrary
                         _logger.LogInformation($"diff detected for the playlist {pl.Id} of user {pl.UserId} ");
                         var message = new Message
                         {
-                            Content = $"{res.tvgMedia.Count()} medias was added and {res.removed.Count()} wad medias removed for the playlist {pl.Freindlyname}",
+                            Content = $"{res.tvgMedia.Count()} medias was added and {res.removed.Count()} medias was removed from the playlist {pl.Freindlyname}",
                             MessageType = MessageTypeEnum.DIFF_PLAYLIST,
                             UserId = pl.UserId,
                             TimeStamp = DateTime.Now,

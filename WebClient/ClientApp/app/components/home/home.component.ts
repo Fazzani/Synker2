@@ -9,6 +9,7 @@ import { Observable } from 'rxjs/Observable';
 import { PlaylistAddDialog } from '../dialogs/playlistAddNew/playlist.add.component';
 import { XtreamService } from '../../services/xtream/xtream.service';
 import { PlaylistInfosDialog } from '../dialogs/playlistInfos/playlist.infos.component';
+import { PlaylistUpdateDialog } from '../dialogs/playlistUpdate/playlist.update.dialog';
 
 @Component({
     selector: 'home',
@@ -33,7 +34,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     openPlaylistInfosDialog(playlist: PlaylistModel): void {
         let dialogRef = this.dialog.open(PlaylistInfosDialog, {
-            width: '500px',
+            width: '700px',
             data: playlist
         });
     }
@@ -60,15 +61,19 @@ export class HomeComponent implements OnInit, OnDestroy {
             });
     }
 
+    /**
+     * open Create new playlist dialog
+     */
     openDialogAddNewPlaylist(): void {
         let dialogRef = this.dialog.open(PlaylistAddDialog, {
-            width: '550px'
+            width: '700px'
         });
 
         dialogRef.afterClosed().subscribe(result => {
             this.ngOnInit();
         });
     }
+
     ngOnDestroy() {
         this.clipboardService.destroy();
     }

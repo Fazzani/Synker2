@@ -37,7 +37,21 @@ export enum PlaylistStatus {
     disabled = 1
 }
 
+export enum Providers {
+    m3u,
+    tvlist,
+    xtream
+}
+
+export enum NotificationTypeEnum {
+    pushBrowser = 1,
+    pushMobile = 2,
+    email = 4,
+    sms = 8
+}
 export class PlaylistModel {
+    public id: number;
+    public uniqueId: string;
     public userId: number;
     public freindlyname: string;
     public status: PlaylistStatus;
@@ -46,8 +60,6 @@ export class PlaylistModel {
     public url: string;
     public createdDate: Date;
     public updatedDate: Date;
-    public id: number;
-    public uniqueId: string;
     public synkEpg: boolean;
     public synkGroup: SynkGroupEnum;
     public synkLogos: boolean;
@@ -55,7 +67,13 @@ export class PlaylistModel {
     public publicId: string;
     public xtreamPlayerApi: PlayerApi;
     public isXtream: boolean;
+    public importProvider: string;
     public notifcationTypeInsertedMedia: NotificationTypeEnum;
+    public tags: any;
+    public static PROVIDERS: string[] = Object.keys(Providers).slice(Object.keys(Providers).length / 2);;
+    public static STATUS: string[] = Object.keys(PlaylistStatus).slice(Object.keys(PlaylistStatus).length / 2);;
+    public static SYNKGROUP: string[] = Object.keys(SynkGroupEnum).slice(Object.keys(SynkGroupEnum).length / 2);;
+
 }
 
 export class PlaylistPostModel {
@@ -70,14 +88,3 @@ export class PlaylistPostModel {
     public notifcationTypeInsertedMedia: NotificationTypeEnum;
 }
 
-export enum Providers {
-    m3u,
-    tvlist
-}
-
-export enum NotificationTypeEnum {
-    pushBrowser = 1,
-    pushMobile = 2,
-    email = 4,
-    sms = 8
-}

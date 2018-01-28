@@ -11,6 +11,8 @@ namespace hfa.PlaylistBaseLibrary.Providers
 {
     public class ProviderFactory : IProviderFactory
     {
+        //TODO : mettre les instances d'un ConcurrentDictionary
+
         private List<PlaylistProviderOption> _providersOptions;
 
         public ProviderFactory(IOptions<List<PlaylistProviderOption>> options)
@@ -34,7 +36,6 @@ namespace hfa.PlaylistBaseLibrary.Providers
 
         public PlaylistProvider<Playlist<TvgMedia>, TvgMedia> CreateInstance(Uri playlistUrl, string provider = "m3u")
         {
-
             var optionsProvider = _providersOptions.FirstOrDefault(x => x.Name.Equals(provider, StringComparison.InvariantCultureIgnoreCase));
             if (optionsProvider == null)
                 throw new NotSupportedProviderException($"Not supported Provider : {provider}");
