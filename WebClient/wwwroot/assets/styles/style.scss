@@ -358,3 +358,8 @@ mat-sidenav {
     background-color: $primary-color-bg-dark !important;
 }
 
+.tab-content {
+    overflow: auto;
+    max-height: 700px;
+    min-height: 100px;
+}
