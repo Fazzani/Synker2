@@ -19,7 +19,7 @@ export class CommonService {
         enableHTML: true,
         showCloseButton: true,
         maxShown: 5,
-        toastLife: 40000
+        toastLife: 4000
     };
 
     info(title: string, message: string): void {
