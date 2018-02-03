@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>hfa.Brokers.Messages</AssemblyName>
+    <RootNamespace>hfa.Brokers.Messages</RootNamespace>
+  </PropertyGroup>
+
+</Project>

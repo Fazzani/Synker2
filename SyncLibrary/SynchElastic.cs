@@ -33,8 +33,8 @@ using hfa.PlaylistBaseLibrary.Providers;
 using Newtonsoft.Json;
 using System.Text;
 using hfa.Synker.Service.Services.Notification;
-using hfa.Synker.Service.Entities.Notifications;
 using Microsoft.EntityFrameworkCore;
+using hfa.Brokers.Messages.Emailing;
 
 [assembly: InternalsVisibleTo("hfa.synker.batch.test")]
 namespace SyncLibrary
@@ -47,7 +47,6 @@ namespace SyncLibrary
         static IElasticConnectionClient _elasticClient;
         static ApplicationConfigData _config;
         private static IOptions<ElasticConfig> _elastiConfig;
-        private static MailOptions _mailConfig;
         private static ILogger _logger;
 
         public static void Main(string[] args)
@@ -59,7 +58,6 @@ namespace SyncLibrary
                 _logger = Logger(nameof(SynchElastic));
                 _config = Init.ServiceProvider.GetService<IOptions<ApplicationConfigData>>().Value;
                 _elastiConfig = Init.ServiceProvider.GetService<IOptions<ElasticConfig>>();
-                _mailConfig = Init.ServiceProvider.GetService<IOptions<MailOptions>>().Value;
                 _elasticClient = Init.ServiceProvider.GetService<IElasticConnectionClient>();
                 _messagesService = Init.ServiceProvider.GetService<IMessageService>();
                 _notificationService = Init.ServiceProvider.GetService<INotificationService>();

@@ -129,7 +129,7 @@ namespace hfa.Synker.Service.Services.Playlists
                 var sourceList = await playlist.PullAsync(cancellationToken);
 
                 if (sourceList == null)
-                    return (new List<TvgMedia>(), pl.TvgMedias);
+                    return (new List<TvgMedia>(), pl.TvgMedias?? new List<TvgMedia>());
 
                 return (sourceList.Where(s => pl.TvgMedias.All(t => t.Url != s.Url)), pl.TvgMedias.Where(s => sourceList.All(t => t.Url != s.Url)));
             }

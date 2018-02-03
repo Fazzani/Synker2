@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 using System.Web;
 
 
-namespace hfa.Synker.Service.Services.Notification
+namespace hfa.Notification.Brokers.Emailing
 {
     public class Sendpulse : ISendpulse
     {

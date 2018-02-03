@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace hfa.Synker.Service.Services.Notification
+namespace hfa.Notification.Brokers.Emailing
 {
     public interface ISendpulse
     {

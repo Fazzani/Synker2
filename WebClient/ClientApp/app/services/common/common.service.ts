@@ -14,7 +14,6 @@ export class CommonService {
      */
     constructor(private toastyService: ToastsManager) { }
 
-
     public toastOptions: ToastOptions = <ToastOptions>{
         enableHTML: true,
         showCloseButton: true,

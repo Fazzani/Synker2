@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace hfa.Synker.Service.Services.Notification
+namespace hfa.Notification.Brokers.Emailing
 {
     public interface INotificationService
     {

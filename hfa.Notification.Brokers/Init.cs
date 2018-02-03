@@ -1,18 +1,9 @@
-﻿using hfa.Brokers.Messages.Configuration;
-using hfa.Synker.Service.Elastic;
-using hfa.Synker.Service.Services.Elastic;
-using hfa.Synker.Service.Services.Notification;
-using hfa.Synker.Service.Services.Playlists;
-using hfa.Synker.Service.Services.TvgMediaHandlers;
-using hfa.Synker.Services.Dal;
-using hfa.Synker.Services.Messages;
-using Hfa.SyncLibrary.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+﻿using hfa.Brokers.Messages;
+using hfa.Brokers.Messages.Configuration;
+using hfa.Notification.Brokers.Emailing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using PlaylistBaseLibrary.ChannelHandlers;
-using SyncLibrary;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -69,15 +60,9 @@ namespace Hfa.SyncLibrary
                 .AddSingleton(loggerFactory)
                 .AddLogging()
                 .AddOptions()
-                .Configure<ApplicationConfigData>(Configuration)
-                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
+                .Configure<MailOptions>(Configuration.GetSection(nameof(MailOptions)))
                 .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
-                .AddSingleton<IMessageService>(s=> new MessageService(Configuration.GetValue<string>("ApiUrlMessage"), loggerFactory))
                 .AddSingleton<INotificationService, NotificationService>()
-                .AddSingleton<IPlaylistService, PlaylistService>()
-                .AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
-                .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
-                .AddDbContext<SynkerDbContext>(options => options.UseMySql(Configuration.GetConnectionString("PlDatabase")))
                 .BuildServiceProvider();
         }
 

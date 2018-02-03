@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2006
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hfa.PlaylistBaseLibrary", "PlaylistBaseLibrary\hfa.PlaylistBaseLibrary.csproj", "{9CBAF850-159C-4861-9E3D-64F6C8668820}"
 EndProject
@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.travis.yml = .travis.yml
 		appveyorPlaylistLibrary.yml = appveyorPlaylistLibrary.yml
 		appveyorSynkerBatch.yml = appveyorSynkerBatch.yml
+		appveyorSynkerBrokerBatch.yml = appveyorSynkerBrokerBatch.yml
 		appveyorWebApi.yml = appveyorWebApi.yml
 		appveyorWebClient.yml = appveyorWebClient.yml
 		..\..\..\Desktop\build.ps1 = ..\..\..\Desktop\build.ps1
@@ -42,7 +43,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hfa.synker.batch.test", "hf
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{7E298705-9F1B-429B-865B-F63F679C6501}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hfa.Synker.Service", "hfa.Synker.Service\hfa.Synker.Service.csproj", "{ECB3EA08-11A5-42BE-A45E-03C60D055F7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hfa.Synker.Service", "hfa.Synker.Service\hfa.Synker.Service.csproj", "{ECB3EA08-11A5-42BE-A45E-03C60D055F7B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Brokers", "Brokers", "{42F7C76E-C6FB-4371-B9B7-1563CF758D1E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hfa.Notification.Brokers", "hfa.Notification.Brokers\hfa.Notification.Brokers.csproj", "{2C522F7C-DA7E-4CD3-8D79-A73AD9CBF079}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hfa.Brokers.Messages", "hfa.Notification.DTo\hfa.Brokers.Messages.csproj", "{EB123EA0-1535-49C5-89B0-1C50C157F980}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,6 +89,14 @@ Global
 		{ECB3EA08-11A5-42BE-A45E-03C60D055F7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECB3EA08-11A5-42BE-A45E-03C60D055F7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECB3EA08-11A5-42BE-A45E-03C60D055F7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C522F7C-DA7E-4CD3-8D79-A73AD9CBF079}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C522F7C-DA7E-4CD3-8D79-A73AD9CBF079}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C522F7C-DA7E-4CD3-8D79-A73AD9CBF079}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C522F7C-DA7E-4CD3-8D79-A73AD9CBF079}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB123EA0-1535-49C5-89B0-1C50C157F980}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB123EA0-1535-49C5-89B0-1C50C157F980}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB123EA0-1535-49C5-89B0-1C50C157F980}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB123EA0-1535-49C5-89B0-1C50C157F980}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,6 +110,8 @@ Global
 		{8F50C674-2455-422D-BF5B-3ACCD23F72D8} = {78EF6AEE-E1A5-4928-87A8-2E5A3BCAC604}
 		{CFC79F77-DC24-4525-89CA-F20E0B7D7299} = {78EF6AEE-E1A5-4928-87A8-2E5A3BCAC604}
 		{ECB3EA08-11A5-42BE-A45E-03C60D055F7B} = {7E298705-9F1B-429B-865B-F63F679C6501}
+		{2C522F7C-DA7E-4CD3-8D79-A73AD9CBF079} = {42F7C76E-C6FB-4371-B9B7-1563CF758D1E}
+		{EB123EA0-1535-49C5-89B0-1C50C157F980} = {42F7C76E-C6FB-4371-B9B7-1563CF758D1E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {731E8F56-7BA7-4652-A0AE-758D20E2DE9F}

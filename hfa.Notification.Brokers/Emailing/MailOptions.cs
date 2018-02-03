@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace hfa.Synker.Service.Services.Notification
+namespace hfa.Notification.Brokers.Emailing
 {
     public class MailOptions
     {

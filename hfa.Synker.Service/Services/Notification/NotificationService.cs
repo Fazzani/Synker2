@@ -1,5 +1,9 @@
-﻿using hfa.Synker.Service.Entities.Notifications;
+﻿using hfa.Brokers.Messages.Configuration;
+using hfa.Brokers.Messages.Emailing;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -12,11 +16,20 @@ namespace hfa.Synker.Service.Services.Notification
 {
     public class NotificationService : INotificationService
     {
-        private MailOptions _options;
+        private IConnectionFactory _connectionFactory;
+        private ILogger _logger;
+        const string MailQueueName = "synker.mail.queue";
 
-        public NotificationService(IOptions<MailOptions> options)
+        public NotificationService(IOptions<RabbitMQConfiguration> rabbitmqOptions, ILoggerFactory loggerFactory)
         {
-            _options = options.Value;
+            _connectionFactory = new ConnectionFactory()
+            {
+                HostName = rabbitmqOptions.Value.Hostname,
+                Port = rabbitmqOptions.Value.Port,
+                UserName = rabbitmqOptions.Value.Username,
+                Password = rabbitmqOptions.Value.Password
+            };
+            _logger = loggerFactory.CreateLogger(typeof(INotificationService));
         }
 
         /// <summary>
@@ -27,26 +40,26 @@ namespace hfa.Synker.Service.Services.Notification
         /// <returns></returns>
         public async Task SendMailAsync(EmailNotification emailNotification, CancellationToken cancellationToken)
         {
-            using (var client = new SmtpClient(_options.SmtpServer, _options.SmtpPort)
+            using (var connection = _connectionFactory.CreateConnection())
             {
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(_options.Username, _options.Password)
-            })
-            {
-
-                MailMessage mailMessage = new MailMessage
+                using (var channel = connection.CreateModel())
                 {
-                    From = new MailAddress(emailNotification.From, emailNotification.FromDisplayName)
-                };
+                    channel.QueueDeclare(queue: MailQueueName,
+                                 durable: false,
+                                 exclusive: false,
+                                 autoDelete: false,
+                                 arguments: null);
 
-                mailMessage.To.Add(emailNotification.To);
-                mailMessage.Body = emailNotification.Body;
-                mailMessage.Subject = emailNotification.Subject;
-                mailMessage.IsBodyHtml = emailNotification.IsBodyHtml;
+                    String jsonified = JsonConvert.SerializeObject(emailNotification);
+                    byte[] customerBuffer = Encoding.UTF8.GetBytes(jsonified);
 
-                cancellationToken.ThrowIfCancellationRequested();
+                    channel.BasicPublish(exchange: "",
+                                         routingKey: MailQueueName,
+                                         basicProperties: null,
+                                         body: customerBuffer);
 
-                await client.SendMailAsync(mailMessage);
+                    _logger.LogInformation($" [x] Sent {emailNotification.Subject}");
+                }
             }
         }
 

@@ -48,6 +48,7 @@ using System.Security.Claims;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using hfa.PlaylistBaseLibrary.Options;
+using hfa.Brokers.Messages.Configuration;
 
 namespace hfa.WebApi
 {
@@ -90,8 +91,8 @@ namespace hfa.WebApi
                .AddScoped<IXtreamService, XtreamService>()
                .AddScoped<IMediaScraper, MediaScraper>()
                .AddScoped<INotificationService, NotificationService>()
+               .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
-               .Configure<MailOptions>(Configuration.GetSection(nameof(MailOptions)))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))
                .Configure<GlobalOptions>(Configuration.GetSection(nameof(GlobalOptions)))
