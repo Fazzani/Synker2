@@ -20,16 +20,16 @@ environment:
   matrix:
    - version: 1.9
      variant: windowsservercore-ltsc2016
-   - version: 1.9
-     variant: nanoserver-sac2016
-   - version: 1.8
-     variant: windowsservercore-ltsc2016
-   - version: 1.8
-     variant: nanoserver-sac2016
-   - version: 1.10-rc
-     variant: windowsservercore-ltsc2016
-   - version: 1.10-rc
-     variant: nanoserver-sac2016
+  #- version: 1.9
+  #  variant: nanoserver-sac2016
+  #- version: 1.8
+  #  variant: windowsservercore-ltsc2016
+  #- version: 1.8
+  #  variant: nanoserver-sac2016
+  #- version: 1.10-rc
+  #  variant: windowsservercore-ltsc2016
+  #- version: 1.10-rc
+  #  variant: nanoserver-sac2016
 matrix:
   fast_finish: true
 install:
@@ -43,7 +43,7 @@ before_build:
   # Display minimal restore text
   - cmd: cd ./hfa.Notification.Brokers
 build_script:
-  - cmd: appveyor-retry docker build --label broker -t %dockerImage% -t synker/broker:latest %buildDirectory%
+  - cmd: appveyor-retry docker build --label --pull -t %dockerImage% -t synker/broker:latest %buildDirectory%
 after_build:
   - ps: docker images
 test_script:
