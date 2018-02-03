@@ -29,6 +29,7 @@ namespace hfa.Notification.Brokers
             _notifService = Init.ServiceProvider.GetService<INotificationService>();
 
             _logger.LogInformation("starting consumption");
+
             var factory = new ConnectionFactory()
             {
                 HostName = _rabbitConfig.Value.Hostname,
@@ -39,19 +40,20 @@ namespace hfa.Notification.Brokers
 
             using (var connection = factory.CreateConnection())
             {
-                using (var channel = connection.CreateModel())
+                using (var mailChannel = connection.CreateModel())
                 {
-                    channel.QueueDeclare(queue: MailQueueName,
+                    mailChannel.QueueDeclare(queue: MailQueueName,
                                             durable: false,
                                             exclusive: false,
                                             autoDelete: false,
                                             arguments: null);
 
-                    channel.CallbackException += Channel_CallbackException;
-                    var consumer = new EventingBasicConsumer(channel);
+                    mailChannel.CallbackException += Channel_CallbackException;
+                    var mailConsumer = new EventingBasicConsumer(mailChannel);
 
-                    consumer.Received += (model, ea) =>
+                    mailConsumer.Received += (model, ea) =>
                     {
+                        _logger.LogInformation($"New Mail poped from the queue {MailQueueName}");
                         var body = ea.Body;
                         var message = Encoding.UTF8.GetString(body);
                         var mail = JsonConvert.DeserializeObject<EmailNotification>(message);
@@ -59,9 +61,9 @@ namespace hfa.Notification.Brokers
                         _logger.LogInformation($"Mail from {mail.From} to {mail.To}");
                     };
 
-                    channel.BasicConsume(queue: MailQueueName,
+                    mailChannel.BasicConsume(queue: MailQueueName,
                                             autoAck: true,
-                                            consumer: consumer);
+                                            consumer: mailConsumer);
 
                     do
                     {
