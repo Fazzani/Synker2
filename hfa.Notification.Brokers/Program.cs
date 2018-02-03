@@ -64,7 +64,7 @@ namespace hfa.Notification.Brokers
 
                     do
                     {
-                        Thread.Sleep(200);
+                        Thread.Sleep(1000);
                     } while (true);
 
                 }
