@@ -1,4 +1,4 @@
-version: '1.0.{build}'
+version: 1.0.{build}.{branch}
 image: Visual Studio 2017
 configuration: Release
 branches:
@@ -21,16 +21,20 @@ matrix:
   fast_finish: true
 install:
   - docker version
+  - ps: |
+      [Environment]::SetEnvironmentVariable('dockerImage', ('synker/broker:{0}' -f $env:version), [EnvironmentVariableTarget]::Process);
+      [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/windows/{1}' -f $env:version, $env:variant), [EnvironmentVariableTarget]::Process);
+
 before_build:
   - cmd: dotnet --version
   # Display minimal restore text
   - cmd: cd ./hfa.Notification.Brokers
 build_script:
-  - docker build -t synker/broker:$(appveyor_build_version) . --label broker
-
+  - cmd: appveyor-retry build --label broker -t %dockerImage% -t synker/broker:latest %buildDirectory%
+after_build:
+  - ps: docker images
 test_script:
-  - docker run synker/broker:$(appveyor_build_version)
-
+  - ps: docker run --rm $env:dockerImage
 deploy_script:
   - docker login -u="$env:DOCKER_USER" -p="$env:DOCKER_PASS"
-  - docker push synker/broker:$(appveyor_build_version)
+  - docker push $env:dockerImage
