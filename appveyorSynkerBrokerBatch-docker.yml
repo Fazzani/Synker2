@@ -17,19 +17,19 @@ environment:
     secure: i+Ljj6w996DAKfO+/Ozx9A==
   DOCKER_PASS:
     secure: BuN69UCJqbD6NYTCuYTdHw==
-   matrix:
-    - version: 1.9
-      variant: windowsservercore-ltsc2016
-    - version: 1.9
-      variant: nanoserver-sac2016
-    - version: 1.8
-      variant: windowsservercore-ltsc2016
-    - version: 1.8
-      variant: nanoserver-sac2016
-    - version: 1.10-rc
-      variant: windowsservercore-ltsc2016
-    - version: 1.10-rc
-      variant: nanoserver-sac2016
+  matrix:
+   - version: 1.9
+     variant: windowsservercore-ltsc2016
+   - version: 1.9
+     variant: nanoserver-sac2016
+   - version: 1.8
+     variant: windowsservercore-ltsc2016
+   - version: 1.8
+     variant: nanoserver-sac2016
+   - version: 1.10-rc
+     variant: windowsservercore-ltsc2016
+   - version: 1.10-rc
+     variant: nanoserver-sac2016
 matrix:
   fast_finish: true
 install:
