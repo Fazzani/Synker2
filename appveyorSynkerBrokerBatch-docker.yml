@@ -1,0 +1,36 @@
+version: '1.0.{build}'
+image: Visual Studio 2017
+configuration: Release
+branches:
+  only:
+  - master
+  - Develop
+only_commits:
+  message: /buildbrokerdocker:|builddocker:/
+init:
+  # Good practise, because Windows line endings are different from Unix/Linux ones
+  - cmd: git config --global core.autocrlf true
+# environment variables
+environment:
+  ASPNETCORE_ENVIRONMENT: 'Production'
+  DOCKER_USER:
+    secure: i+Ljj6w996DAKfO+/Ozx9A==
+  DOCKER_PASS:
+    secure: BuN69UCJqbD6NYTCuYTdHw==
+matrix:
+  fast_finish: true
+install:
+  - docker version
+before_build:
+  - cmd: dotnet --version
+  # Display minimal restore text
+  - cmd: cd ./hfa.Notification.Brokers
+build_script:
+  - docker build -t synker/broker:$(appveyor_build_version) . --label broker
+
+test_script:
+  - docker run synker/broker:$(appveyor_build_version)
+
+deploy_script:
+  - docker login -u="$env:DOCKER_USER" -p="$env:DOCKER_PASS"
+  - docker push synker/broker:$(appveyor_build_version)
