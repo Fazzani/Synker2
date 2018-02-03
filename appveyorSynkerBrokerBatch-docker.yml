@@ -39,6 +39,7 @@ install:
       [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/windows/{1}' -f $env:version, $env:variant), [EnvironmentVariableTarget]::Process);
 
 before_build:
+  - echo $dockerImage:$buildDirectory
   - cmd: dotnet --version
   # Display minimal restore text
   - cmd: cd ./hfa.Notification.Brokers
