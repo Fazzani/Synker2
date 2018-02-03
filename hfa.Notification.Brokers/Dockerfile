@@ -1,6 +1,6 @@
 ﻿FROM microsoft/dotnet:2.0-sdk AS build-env
-COPY ../ /app
-WORKDIR /app/hfa.Notification.Brokers
+COPY . /app
+WORKDIR /app
 
 RUN ls
 
@@ -13,10 +13,9 @@ RUN ls
 # Copy everything else and build
 COPY . .
 RUN dotnet publish -c Release -o out
-RUN ls
 
 # Build runtime image
 FROM microsoft/dotnet:2.0-runtime 
-WORKDIR /app/hfa.Notification.Brokers
-COPY --from=build-env /app/hfa.Notification.Brokers/out .
+WORKDIR /app
+COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "hfa.Notification.Brokers.dll"]
