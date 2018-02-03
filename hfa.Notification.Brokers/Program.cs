@@ -60,8 +60,6 @@ namespace hfa.Notification.Brokers
                                             autoAck: true,
                                             consumer: consumer);
 
-                    Console.WriteLine("Done.");
-                    Console.ReadLine();
                 }
             }
 
