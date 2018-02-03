@@ -4,8 +4,18 @@ using System.Text;
 
 namespace hfa.Brokers.Messages.Emailing
 {
-    public class EmailNotification
+    public class EmailNotification : NotificationContext
     {
+        public EmailNotification():base()
+        {
+
+        }
+
+        public EmailNotification(string userId) : base(userId)
+        {
+
+        }
+
         public string FromDisplayName { get; set; }
         public string From { get; set; }
         public string To { get; set; }

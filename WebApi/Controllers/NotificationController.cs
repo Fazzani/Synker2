@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using hfa.Brokers.Messages.Emailing;
@@ -52,7 +53,9 @@ namespace hfa.WebApi.Controllers
                     Subject = notification.Subject,
                     To = notification.To,
                     FromDisplayName = notification.FromDisplayName,
-                    IsBodyHtml = notification.IsBodyHtml
+                    IsBodyHtml = notification.IsBodyHtml,
+                    AppId = Assembly.GetExecutingAssembly().FullName,
+                    UserId = UserId.Value.ToString()
                 }, cancellationToken);
             }
 

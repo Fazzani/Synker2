@@ -18,7 +18,8 @@ namespace hfa.Synker.Service.Services.Notification
     {
         private IConnectionFactory _connectionFactory;
         private ILogger _logger;
-        const string MailQueueName = "synker.mail.queue";
+        const string MailExchangeName = "synker.mail.queue";
+        private const string MailRoutingKey = "synker.mail.*";
 
         public NotificationService(IOptions<RabbitMQConfiguration> rabbitmqOptions, ILoggerFactory loggerFactory)
         {
@@ -44,17 +45,22 @@ namespace hfa.Synker.Service.Services.Notification
             {
                 using (var channel = connection.CreateModel())
                 {
-                    channel.QueueDeclare(queue: MailQueueName,
-                                 durable: false,
-                                 exclusive: false,
-                                 autoDelete: false,
-                                 arguments: null);
-
-                    String jsonified = JsonConvert.SerializeObject(emailNotification);
+                    var jsonified = JsonConvert.SerializeObject(emailNotification);
                     byte[] customerBuffer = Encoding.UTF8.GetBytes(jsonified);
 
-                    channel.BasicPublish(exchange: "",
-                                         routingKey: MailQueueName,
+                    IBasicProperties props = channel.CreateBasicProperties();
+                    props.ContentType = "application/json";
+                    props.DeliveryMode = 2;
+                    props.AppId = emailNotification.AppId;
+                    props.UserId = emailNotification.UserId;
+                    props.Timestamp = new AmqpTimestamp(DateTime.UtcNow.ToUnixTimestamp());
+
+                    channel.ExchangeDeclare(MailExchangeName, ExchangeType.Direct);
+                    channel.QueueDeclare(MailExchangeName, false, false, false, null);
+                    channel.QueueBind(MailExchangeName, MailExchangeName, MailRoutingKey, null);
+
+                    channel.BasicPublish(exchange: MailExchangeName,
+                                         routingKey: MailRoutingKey,
                                          basicProperties: null,
                                          body: customerBuffer);
 

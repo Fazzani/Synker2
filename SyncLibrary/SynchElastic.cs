@@ -35,6 +35,7 @@ using System.Text;
 using hfa.Synker.Service.Services.Notification;
 using Microsoft.EntityFrameworkCore;
 using hfa.Brokers.Messages.Emailing;
+using System.Reflection;
 
 [assembly: InternalsVisibleTo("hfa.synker.batch.test")]
 namespace SyncLibrary
@@ -131,7 +132,7 @@ namespace SyncLibrary
                         //Add new message for user
                         await _messagesService.SendAsync(message, _config.ApiUserName, _config.ApiPassword, ts.Token);
                         //Send Email Notification
-                        await _notificationService.SendMailAsync(new EmailNotification
+                        await _notificationService.SendMailAsync(new EmailNotification("synker.batch")
                         {
                             Body = message.Content,
                             FromDisplayName = "Synker Team",

@@ -47,6 +47,7 @@ namespace hfa.Notification.Brokers
                                             autoDelete: false,
                                             arguments: null);
 
+                    channel.CallbackException += Channel_CallbackException;
                     var consumer = new EventingBasicConsumer(channel);
 
                     consumer.Received += (model, ea) =>
@@ -69,8 +70,11 @@ namespace hfa.Notification.Brokers
 
                 }
             }
+        }
 
-            
+        private static void Channel_CallbackException(object sender, CallbackExceptionEventArgs e)
+        {
+            _logger.LogError(e.Exception, e.Exception.Message);
         }
     }
 }
