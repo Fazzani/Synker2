@@ -30,7 +30,7 @@ before_build:
   # Display minimal restore text
   - cmd: cd ./hfa.Notification.Brokers
 build_script:
-  - cmd: appveyor-retry build --label broker -t %dockerImage% -t synker/broker:latest %buildDirectory%
+  - cmd: appveyor-retry docker build --label broker -t %dockerImage% -t synker/broker:latest %buildDirectory%
 after_build:
   - ps: docker images
 test_script:
