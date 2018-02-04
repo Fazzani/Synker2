@@ -5,7 +5,7 @@ WORKDIR /app
 RUN ls
 
 # Copy csproj and restore as distinct layers
-COPY *.csproj ./
+COPY ./hfa.Notification.Brokers/*.csproj ./
 RUN ls
 RUN dotnet restore
 RUN ls
