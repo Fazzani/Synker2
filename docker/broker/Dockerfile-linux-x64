@@ -1,5 +1,6 @@
-﻿FROM microsoft/dotnet:2.0-sdk AS build-env
-ARG arch=x64
+﻿ARG arch=x64
+FROM microsoft/dotnet:2.0-sdk AS build-env
+ARG arch
 WORKDIR /app
 
 # Copy csproj and restore as distinct layers
