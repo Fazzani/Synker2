@@ -1,7 +1,7 @@
 ﻿ARG arch=x64
 FROM microsoft/dotnet:2.0-sdk AS build-env
 ARG arch
-RUN echo $arch
+RUN echo $env:arch
 WORKDIR /app
 
 LABEL system.dist="win" system.arch="x64" multi.name="Synker notification broker"
@@ -12,7 +12,7 @@ RUN dotnet restore
 
 # Copy everything else and build
 COPY . .
-RUN dotnet publish ./hfa.Notification.Brokers/hfa.Notification.Brokers.csproj -r win-${arch:x64} -c Release -o /out/
+RUN dotnet publish ./hfa.Notification.Brokers/hfa.Notification.Brokers.csproj -r win-$env:arch -c Release -o /out/
 # Build runtime image
 FROM microsoft/dotnet 
 WORKDIR /app
