@@ -5,4 +5,6 @@
 - Notification app service based on RabbitMQ
 
 ### Various
-[Create Deamon app and service](http://pmcgrath.net/running-a-simple-dotnet-core-linux-daemon)
+- [Create Deamon app and service](http://pmcgrath.net/running-a-simple-dotnet-core-linux-daemon)
+
+- [DockerFile to build multiple project dotnet core](http://www.ben-morris.com/using-docker-to-build-and-deploy-net-core-console-applications/)
