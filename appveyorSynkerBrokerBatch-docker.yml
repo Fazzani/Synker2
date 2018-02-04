@@ -33,7 +33,7 @@ install:
       [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/windows/{1}' -f $env:version, $env:arch), [EnvironmentVariableTarget]::Process);
 before_build:
   - cmd: echo %dockerImage%:%buildDirectory%
-  - ps: mkdir $buildDirectory
+  - ps: mkdir $env:buildDirectory
   - cmd: echo %version%-%arch%
   - cmd: dotnet --version
 build_script:
