@@ -18,8 +18,10 @@ environment:
   DOCKER_PASS:
     secure: t3JDT7lkxppxrNp9sRp2Cw==
   matrix:
-   - version: 1.9
-     variant: windowsservercore-ltsc2016
+   - version: win
+     arch: x64
+   - version: linux
+     arch: x64
   #- version: 1.10-rc
   #  variant: nanoserver-sac2016
 matrix:
