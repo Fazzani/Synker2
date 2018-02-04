@@ -6,7 +6,7 @@ branches:
   - master
   - Develop
 only_commits:
-  message: /buildbrokerdocker:|builddocker:/
+  message: /buildbrokerdocker:|builddocker:|bd:/
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
@@ -18,10 +18,8 @@ environment:
   DOCKER_PASS:
     secure: t3JDT7lkxppxrNp9sRp2Cw==
   matrix:
-   - version: win
-     arch: x64
-   - version: linux
-     arch: x64
+   - version: 1.9
+     variant: windowsservercore-ltsc2016
   #- version: 1.10-rc
   #  variant: nanoserver-sac2016
 matrix:
@@ -30,21 +28,17 @@ install:
   - docker version
   - ps: |
       [Environment]::SetEnvironmentVariable('dockerImage', ('synker/broker:{0}' -f $env:version), [EnvironmentVariableTarget]::Process);
-      [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/windows/{1}' -f $env:version, $env:arch), [EnvironmentVariableTarget]::Process);
+      [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/windows/{1}' -f $env:version, $env:variant), [EnvironmentVariableTarget]::Process);
+
 before_build:
-  - cmd: echo %dockerImage%:%buildDirectory%
-  - ps: mkdir $env:buildDirectory
-  - cmd: echo %version%-%arch%
+  - echo $dockerImage:$buildDirectory
   - cmd: dotnet --version
-  - cmd: cp ./docker/broker/Dockerfile-%version%-%arch% %buildDirectory%
-  - ls -la
 build_script:
-  - cmd: appveyor-retry docker build -f %buildDirectory%/Dockerfile-%version%-%arch% -t %dockerImage% -t synker/broker:latest %buildDirectory%
+  - cmd: appveyor-retry docker build -f Dockerfile-%version%-%arch% -t %dockerImage% -t synker/broker:latest .
 after_build:
   - ps: docker images
 #test_script:
 #  - ps: docker run --rm $env:dockerImage
 deploy_script:
   - docker login -u="%DOCKER_USER%" -p="%DOCKER_PASS%
-  - docker push %dockerImage%  
-  - docker push synker/broker:latest
+  - docker push %dockerImage%
