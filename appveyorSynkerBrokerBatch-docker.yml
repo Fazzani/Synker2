@@ -27,7 +27,7 @@ matrix:
 install:
   - docker version
   - ps: |
-      [Environment]::SetEnvironmentVariable('dockerImage', ('synker/broker:{0}-{1}' -f $env:version -f $env:arch), [EnvironmentVariableTarget]::Process);
+      [Environment]::SetEnvironmentVariable('dockerImage', ('synker/broker:{0}-{1}' -f $env:version,$env:arch), [EnvironmentVariableTarget]::Process);
 
 before_build:
   - echo %dockerImage%
