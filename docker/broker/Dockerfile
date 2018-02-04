@@ -1,19 +1,22 @@
 ﻿FROM microsoft/dotnet:2.0-sdk AS build-env
-RUN ls
-WORKDIR ./hfa.Notification.Brokers/
+WORKDIR /app
 
 RUN ls
 
-RUN dotnet restore
+# Copy csproj and restore as distinct layers
+COPY ./hfa.Notification.Brokers/*.csproj ./
+RUN ls
+RUN dotnet restore 
 RUN ls
 
-RUN dotnet publish -c Release -o out
+# Copy everything else and build
+COPY . .
+RUN ls
+RUN dotnet publish ./hfa.Notification.Brokers/hfa.Notification.Brokers.csproj -c Release -o out
 RUN ls
 
-COPY ./hfa.Notification.Brokers/out /app
 # Build runtime image
 FROM microsoft/dotnet:2.0-runtime 
 WORKDIR /app
-RUN ls
-COPY --from=build-env ./hfa.Notification.Brokers/out .
+COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "hfa.Notification.Brokers.dll"]
