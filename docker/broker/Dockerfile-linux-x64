@@ -1,5 +1,6 @@
 ﻿ARG arch=x64
 FROM microsoft/dotnet:2.0-sdk AS build-env
+MAINTAINER  synker-team@synker.ovh
 ARG arch
 WORKDIR /app
 
