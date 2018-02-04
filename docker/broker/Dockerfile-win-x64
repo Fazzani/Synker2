@@ -1,5 +1,6 @@
 ﻿FROM microsoft/dotnet:2.0-sdk AS build-env
 ARG arch=x64
+RUN echo $arch
 WORKDIR /app
 
 LABEL system.dist="win" system.arch="x64" multi.name="Synker notification broker"

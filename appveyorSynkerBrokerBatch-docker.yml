@@ -33,6 +33,7 @@ before_build:
   - echo %dockerImage%
   - cmd: dotnet --version
   - ls -la
+  - ps: echo $env:arch
 build_script:
   - ps: appveyor-retry docker build -f ./docker/broker/Dockerfile-$env:version-$env:arch -t $env:dockerImage --build-arg arch=$env:arch -t synker/broker:latest .
 after_build:
