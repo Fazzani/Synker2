@@ -16,41 +16,41 @@ namespace Hfa.SyncLibrary
         private const string DEV = "Development";
         internal static IConfiguration Configuration;
         internal static ServiceProvider ServiceProvider;
+        internal static string Enviroment = DEV;
 
-
-        static bool IsDev(string env) => env.Equals(DEV);
+       public static bool IsDev(string env) => env.Equals(DEV);
 
         static Init()
         {
-            string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? DEV;
+            Enviroment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? DEV;
 
             //if (String.IsNullOrWhiteSpace(environment))
             //    throw new ArgumentNullException("Environment not found in ASPNETCORE_ENVIRONMENT");
 
-            Console.WriteLine("Environment: {0}", environment);
+            Console.WriteLine("Environment: {0}", Enviroment);
             // Set up configuration sources.
             IConfigurationBuilder builder = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(AppContext.BaseDirectory))
                 .AddJsonFile("appsettings.json", optional: true);
 
-            if (IsDev(environment))
+            if (IsDev(Enviroment))
             {
                 builder.AddUserSecrets<Init>()
                     .AddJsonFile(
-                        Path.Combine(AppContext.BaseDirectory, string.Format("..{0}..{0}..{0}", Path.DirectorySeparatorChar), $"appsettings.{environment}.json"),
+                        Path.Combine(AppContext.BaseDirectory, string.Format("..{0}..{0}..{0}", Path.DirectorySeparatorChar), $"appsettings.{Enviroment}.json"),
                         optional: true
                     );
             }
             else
             {
-                builder.AddJsonFile($"appsettings.{environment}.json", optional: false);
+                builder.AddJsonFile($"appsettings.{Enviroment}.json", optional: false);
             }
 
             Configuration = builder.Build();
 
             //Config Logger
             var loggerFactory = new LoggerFactory().AddConsole();
-            if (IsDev(environment))
+            if (IsDev(Enviroment))
                 loggerFactory.AddDebug();
             else
                 loggerFactory.AddFile(Configuration.GetSection("Logging"));

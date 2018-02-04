@@ -11,19 +11,30 @@ using System.Text;
 using hfa.Notification.Brokers.Emailing;
 using System.Threading;
 using Microsoft.Extensions.Logging;
+using System.Runtime.Loader;
 
 namespace hfa.Notification.Brokers
 {
     public class Program
     {
-        private const string MailQueueName = "synker.mail.queue";
+        private static string MailQueueName = Init.IsDev(Init.Enviroment) ? "synker.dev.mail.queue" : "synker.mail.queue";
         private static ILogger _logger;
         private static IOptions<RabbitMQConfiguration> _rabbitConfig;
         private static INotificationService _notifService;
 
-        static void Main(string[] args)
+        public static ManualResetEvent _Shutdown = new ManualResetEvent(false);
+        public static ManualResetEventSlim _Complete = new ManualResetEventSlim();
+
+        static int Main(string[] args)
         {
             Init.Build();
+
+            var ended = new ManualResetEventSlim();
+            var starting = new ManualResetEventSlim();
+
+            // Capture SIGTERM  
+            AssemblyLoadContext.Default.Unloading += Default_Unloading;
+
             _logger = Common.Logger(nameof(Program));
             _rabbitConfig = Init.ServiceProvider.GetService<IOptions<RabbitMQConfiguration>>();
             _notifService = Init.ServiceProvider.GetService<INotificationService>();
@@ -38,45 +49,72 @@ namespace hfa.Notification.Brokers
                 Password = _rabbitConfig.Value.Password
             };
 
-            using (var connection = factory.CreateConnection())
+            try
             {
-                using (var mailChannel = connection.CreateModel())
+                using (var connection = factory.CreateConnection())
                 {
-                    mailChannel.QueueDeclare(queue: MailQueueName,
-                                            durable: false,
-                                            exclusive: false,
-                                            autoDelete: false,
-                                            arguments: null);
-
-                    mailChannel.CallbackException += Channel_CallbackException;
-                    var mailConsumer = new EventingBasicConsumer(mailChannel);
-
-                    mailConsumer.Received += (model, ea) =>
+                    using (var mailChannel = connection.CreateModel())
                     {
-                        _logger.LogInformation($"New Mail poped from the queue {MailQueueName}");
-                        var body = ea.Body;
-                        var message = Encoding.UTF8.GetString(body);
-                        var mail = JsonConvert.DeserializeObject<EmailNotification>(message);
-                        _notifService.SendMailAsync(mail, CancellationToken.None).GetAwaiter().GetResult();
-                        _logger.LogInformation($"Mail from {mail.From} to {mail.To}");
-                    };
+                        mailChannel.QueueDeclare(queue: MailQueueName,
+                                                durable: false,
+                                                exclusive: false,
+                                                autoDelete: false,
+                                                arguments: null);
 
-                    mailChannel.BasicConsume(queue: MailQueueName,
-                                            autoAck: true,
-                                            consumer: mailConsumer);
+                        mailChannel.CallbackException += Channel_CallbackException;
+                        var mailConsumer = new EventingBasicConsumer(mailChannel);
 
-                    do
-                    {
-                        Thread.Sleep(1000);
-                    } while (true);
+                        mailConsumer.Received += (model, ea) =>
+                        {
+                            try
+                            {
+                                _logger.LogInformation($"New Mail poped from the queue {MailQueueName}");
+                                var body = ea.Body;
+                                var message = Encoding.UTF8.GetString(body);
+                                var mail = JsonConvert.DeserializeObject<EmailNotification>(message);
+                                _notifService.SendMailAsync(mail, CancellationToken.None).GetAwaiter().GetResult();
+                                _logger.LogInformation($"Mail from {mail.From} to {mail.To}");
+                            }
+                            catch (Exception e)
+                            {
+                                _logger.LogError(e, e.Message);
+                                mailChannel.BasicReject(ea.DeliveryTag, true);
+                            }
+                        };
 
+                        mailChannel.BasicConsume(queue: MailQueueName,
+                                                autoAck: false,
+                                                consumer: mailConsumer);
+
+                        while (!_Shutdown.WaitOne())
+                        {
+                            Thread.Sleep(1000);
+                        }
+
+                    }
                 }
             }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+            }
+
+            Console.Write("Exiting...");
+            _Complete.Set();
+
+            return 0;
         }
 
         private static void Channel_CallbackException(object sender, CallbackExceptionEventArgs e)
         {
             _logger.LogError(e.Exception, e.Exception.Message);
+        }
+
+        private static void Default_Unloading(AssemblyLoadContext obj)
+        {
+            _logger.LogInformation($"Shutting down in response to SIGTERM.");
+            _Shutdown.Set();
+            _Complete.Wait();
         }
     }
 }

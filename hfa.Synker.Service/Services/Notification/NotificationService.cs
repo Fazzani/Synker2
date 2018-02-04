@@ -18,9 +18,13 @@ namespace hfa.Synker.Service.Services.Notification
     {
         private IConnectionFactory _connectionFactory;
         private ILogger _logger;
+#if DEBUG
+        const string MailExchangeName = "synker.dev.mail.queue";
+        private const string MailRoutingKey = "synker.dev.mail.*";
+#else
         const string MailExchangeName = "synker.mail.queue";
         private const string MailRoutingKey = "synker.mail.*";
-
+#endif
         public NotificationService(IOptions<RabbitMQConfiguration> rabbitmqOptions, ILoggerFactory loggerFactory)
         {
             _connectionFactory = new ConnectionFactory()
