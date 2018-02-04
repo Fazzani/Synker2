@@ -34,7 +34,7 @@ before_build:
   - cmd: dotnet --version
   - ls -la
 build_script:
-  - cmd: appveyor-retry docker build -f ./docker/broker/Dockerfile-%dockerImage% -t %dockerImage% -t synker/broker:latest .
+  - ps: appveyor-retry docker build -f ./docker/broker/Dockerfile-$env:dockerImage -t $env:dockerImage -t synker/broker:latest .
 after_build:
   - ps: docker images
 test_script:
