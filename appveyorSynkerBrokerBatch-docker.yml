@@ -36,6 +36,7 @@ before_build:
   - ps: mkdir $env:buildDirectory
   - cmd: echo %version%-%arch%
   - cmd: dotnet --version
+  - cmd: cp ./docker/broker/Dockerfile-%version%-%arch% %buildDirectory%
 build_script:
   - cmd: appveyor-retry docker build -f ./docker/broker/Dockerfile-%version%-%arch% -t %dockerImage% -t synker/broker:latest %buildDirectory%
 after_build:
