@@ -27,14 +27,14 @@ matrix:
 install:
   - docker version
   - ps: |
-      [Environment]::SetEnvironmentVariable('dockerImage', ('synker/broker:{0}' -f $env:version), [EnvironmentVariableTarget]::Process);
+      [Environment]::SetEnvironmentVariable('dockerImage', ('synker/broker:{0}-{1}' -f $env:version -f $env:arch), [EnvironmentVariableTarget]::Process);
 
 before_build:
-  - echo %dockerImage%:%$buildDirectory%
+  - echo %dockerImage%
   - cmd: dotnet --version
   - ls -la
 build_script:
-  - cmd: appveyor-retry docker build -f ./docker/broker/Dockerfile-%version%-%arch% -t %dockerImage% -t synker/broker:latest .
+  - cmd: appveyor-retry docker build -f ./docker/broker/Dockerfile-%dockerImage% -t %dockerImage% -t synker/broker:latest .
 after_build:
   - ps: docker images
 test_script:
