@@ -41,4 +41,4 @@ after_build:
 #  - ps: docker run --rm $env:dockerImage
 deploy_script:
   - docker login -u="%DOCKER_USER%" -p="%DOCKER_PASS%
-  - docker push $env:dockerImage
+  - docker push %dockerImage%
