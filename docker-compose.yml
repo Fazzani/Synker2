@@ -36,6 +36,8 @@ services:
 
   hfa.notification.brokers:
     image: hfa.notification.brokers
+    depends_on:
+      - haproxy
     build:
       context: .
       dockerfile: hfa.Notification.Brokers/Dockerfile

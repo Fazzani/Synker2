@@ -3,8 +3,6 @@ version: '3'
 services:
   
   hfa.notification.brokers:
-    depends_on:
-      - haproxy
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - USER_SECRETS_ID=f934f0be-ac10-4dd6-b82f-d7aecb08f04b
