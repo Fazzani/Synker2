@@ -31,13 +31,12 @@ install:
   - ps: |
       [Environment]::SetEnvironmentVariable('dockerImage', ('synker/broker:{0}' -f $env:version), [EnvironmentVariableTarget]::Process);
       [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/windows/{1}' -f $env:version, $env:arch), [EnvironmentVariableTarget]::Process);
-
+  - cmd: mkdir %buildDirectory%
 before_build:
   - cmd: echo %dockerImage%:%buildDirectory%
   - cmd: echo %version%-%arch%
   - cmd: dotnet --version
 build_script:
-  - cmd: mkdir %buildDirectory%
   - cmd: appveyor-retry docker build -f ./docker/broker/Dockerfile-%version%-%arch% -t %dockerImage% -t synker/broker:latest %buildDirectory%
 after_build:
   - ps: docker images
