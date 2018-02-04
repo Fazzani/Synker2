@@ -18,8 +18,10 @@ environment:
   DOCKER_PASS:
     secure: t3JDT7lkxppxrNp9sRp2Cw==
   matrix:
-   - version: 1.9
-     variant: windowsservercore-ltsc2016
+   - version: win
+     arch: x64
+   - version: linux
+     arch: x64
   #- version: 1.10-rc
   #  variant: nanoserver-sac2016
 matrix:
@@ -28,17 +30,19 @@ install:
   - docker version
   - ps: |
       [Environment]::SetEnvironmentVariable('dockerImage', ('synker/broker:{0}' -f $env:version), [EnvironmentVariableTarget]::Process);
-      [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/windows/{1}' -f $env:version, $env:variant), [EnvironmentVariableTarget]::Process);
+      [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/windows/{1}' -f $env:version, $env:arch), [EnvironmentVariableTarget]::Process);
 
 before_build:
-  - echo $dockerImage:$buildDirectory
+  - cmd: echo %dockerImage%:%buildDirectory%
+  - cmd: echo %version%:%arch%
   - cmd: dotnet --version
 build_script:
-  - cmd: appveyor-retry docker build -f ./docker/broker/Dockerfile -t %dockerImage% -t synker/broker:latest .
+  - cmd: appveyor-retry docker build -f ./docker/broker/Dockerfile -t %dockerImage% -t synker/broker:latest --runtime %version%-%arch% %buildDirectory%
 after_build:
   - ps: docker images
 #test_script:
 #  - ps: docker run --rm $env:dockerImage
 deploy_script:
   - docker login -u="%DOCKER_USER%" -p="%DOCKER_PASS%
-  - docker push %dockerImage%
+  - docker push %dockerImage%  
+  - docker push synker/broker:latest
