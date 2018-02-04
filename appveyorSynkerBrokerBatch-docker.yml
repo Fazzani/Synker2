@@ -37,6 +37,7 @@ before_build:
   - cmd: echo %version%-%arch%
   - cmd: dotnet --version
   - cmd: cp ./docker/broker/Dockerfile-%version%-%arch% %buildDirectory%
+  - ls -la
 build_script:
   - cmd: appveyor-retry docker build -f ./docker/broker/Dockerfile-%version%-%arch% -t %dockerImage% -t synker/broker:latest %buildDirectory%
 after_build:
