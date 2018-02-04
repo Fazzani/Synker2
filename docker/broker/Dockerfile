@@ -1,5 +1,4 @@
 ﻿FROM microsoft/dotnet:2.0-sdk AS build-env
-COPY . /app
 WORKDIR /app
 
 RUN ls
