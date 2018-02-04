@@ -34,10 +34,10 @@ install:
 
 before_build:
   - cmd: echo %dockerImage%:%buildDirectory%
-  - cmd: echo %version%:%arch%
+  - cmd: echo %version%-%arch%
   - cmd: dotnet --version
 build_script:
-  - cmd: appveyor-retry docker build -f ./docker/broker/Dockerfile -t %dockerImage% -t synker/broker:latest --runtime %version%-%arch% %buildDirectory%
+  - cmd: appveyor-retry docker build -f ./docker/broker/Dockerfile-%version%-%arch% -t %dockerImage% -t synker/broker:latest %buildDirectory%
 after_build:
   - ps: docker images
 #test_script:

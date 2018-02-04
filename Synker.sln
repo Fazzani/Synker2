@@ -65,6 +65,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "broker", "broker", "{513D1E
 	ProjectSection(SolutionItems) = preProject
 		docker\broker\.dockerignore = docker\broker\.dockerignore
 		docker\broker\Dockerfile = docker\broker\Dockerfile
+		docker\broker\Dockerfile-linux-x64 = docker\broker\Dockerfile-linux-x64
+		docker\broker\Dockerfile-win-x64 = docker\broker\Dockerfile-win-x64
 	EndProjectSection
 EndProject
 Global
