@@ -8,7 +8,7 @@ RUN dotnet restore
 
 # Copy everything else and build
 COPY . .
-RUN dotnet publish ./hfa.Notification.Brokers/hfa.Notification.Brokers.csproj --runtime linux-$arch -c Release -o /out/
+RUN dotnet publish ./hfa.Notification.Brokers/hfa.Notification.Brokers.csproj -r linux-${arch:x64} -c Release -o /out/
 # Build runtime image
 FROM microsoft/dotnet:2.0-runtime 
 WORKDIR /app
