@@ -41,10 +41,8 @@ install:
 before_build:
   - echo $dockerImage:$buildDirectory
   - cmd: dotnet --version
-  # Display minimal restore text
-  - cmd: cd ./hfa.Notification.Brokers
 build_script:
-  - cmd: appveyor-retry docker build --pull -t %dockerImage% -t synker/broker:latest .
+  - cmd: appveyor-retry docker build -f ./docker/broker/Dockerfile -t %dockerImage% -t synker/broker:latest .
 after_build:
   - ps: docker images
 test_script:

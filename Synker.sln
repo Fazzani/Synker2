@@ -59,6 +59,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LinuxServices", "LinuxServi
 		synkerwebclient.service = synkerwebclient.service
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{11B3F39A-BBAB-47A8-90CE-D77FDE41DBB8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "broker", "broker", "{513D1E1F-4646-4CD0-ABFB-0DE1E37B1178}"
+	ProjectSection(SolutionItems) = preProject
+		docker\broker\.dockerignore = docker\broker\.dockerignore
+		docker\broker\Dockerfile = docker\broker\Dockerfile
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -121,6 +129,8 @@ Global
 		{2C522F7C-DA7E-4CD3-8D79-A73AD9CBF079} = {42F7C76E-C6FB-4371-B9B7-1563CF758D1E}
 		{EB123EA0-1535-49C5-89B0-1C50C157F980} = {42F7C76E-C6FB-4371-B9B7-1563CF758D1E}
 		{FA7DD37A-BBCC-407F-A1DF-526228D078B7} = {D0361037-C221-43C9-A5D4-4AAD00EFFE3E}
+		{11B3F39A-BBAB-47A8-90CE-D77FDE41DBB8} = {D0361037-C221-43C9-A5D4-4AAD00EFFE3E}
+		{513D1E1F-4646-4CD0-ABFB-0DE1E37B1178} = {11B3F39A-BBAB-47A8-90CE-D77FDE41DBB8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {731E8F56-7BA7-4652-A0AE-758D20E2DE9F}
