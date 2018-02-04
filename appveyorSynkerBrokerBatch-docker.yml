@@ -39,7 +39,7 @@ before_build:
   - cmd: cp ./docker/broker/Dockerfile-%version%-%arch% %buildDirectory%
   - ls -la
 build_script:
-  - cmd: appveyor-retry docker build -f ./docker/broker/Dockerfile-%version%-%arch% -t %dockerImage% -t synker/broker:latest %buildDirectory%
+  - cmd: appveyor-retry docker build -f %buildDirectory%/Dockerfile-%version%-%arch% -t %dockerImage% -t synker/broker:latest %buildDirectory%
 after_build:
   - ps: docker images
 #test_script:
