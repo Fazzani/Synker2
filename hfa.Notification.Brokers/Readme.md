@@ -1,5 +1,6 @@
 ﻿[![Build status](https://ci.appveyor.com/api/projects/status/jskpfdwhep4s3b4r?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2-0j10q)
-
+[![](https://images.microbadger.com/badges/version/synker/broker.svg)](https://microbadger.com/images/synker/broker "Get your own version badge on microbadger.com")
+[![](https://images.microbadger.com/badges/image/synker/broker.svg)](https://microbadger.com/images/synker/broker "Get your own image badge on microbadger.com")
 ## Context
 
 - Notification app service based on RabbitMQ
