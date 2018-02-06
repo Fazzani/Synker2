@@ -28,7 +28,7 @@
 
 - Test Persistence 
 - Header Message
-- Ack AND Nack senaris
+- Ack AND Nack scenarios
 
 ## Various
 - [Create Deamon app and service](http://pmcgrath.net/running-a-simple-dotnet-core-linux-daemon)
