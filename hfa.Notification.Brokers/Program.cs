@@ -73,6 +73,9 @@ namespace hfa.Notification.Brokers
                                 var message = Encoding.UTF8.GetString(body);
                                 var mail = JsonConvert.DeserializeObject<EmailNotification>(message);
                                 _notifService.SendMailAsync(mail, CancellationToken.None).GetAwaiter().GetResult();
+                                //ack message
+                                mailChannel.BasicAck(ea.DeliveryTag, true);
+
                                 _logger.LogInformation($"Mail from {mail.From} to {mail.To}");
                             }
                             catch (Exception e)
