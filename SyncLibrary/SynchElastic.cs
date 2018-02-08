@@ -122,7 +122,7 @@ namespace SyncLibrary
                         _logger.LogInformation($"diff detected for the playlist {pl.Id} of user {pl.UserId} ");
                         var message = new Message
                         {
-                            Content = $"<h1>{res.tvgMedia.Count()} medias was added and {res.removed.Count()} medias was removed from the playlist {pl.Freindlyname}</h1><ul>{string.Join("</li><li>", res.tvgMedia)}</ul><ul>{string.Join("</li><li>", res.removed)}</ul>",
+                            Content = $"<h1>{res.tvgMedia.Count()} medias was added and {res.removed.Count()} medias was removed from the playlist {pl.Freindlyname}</h1><ul>{string.Join("</li><li> + ", res.tvgMedia)}</ul><ul>{string.Join("</li><li> - ", res.removed)}</ul>",
                             MessageType = MessageTypeEnum.DIFF_PLAYLIST,
                             UserId = pl.UserId,
                             TimeStamp = DateTime.Now,
