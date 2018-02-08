@@ -1,6 +1,7 @@
 ﻿ARG arch=x64
 FROM microsoft/dotnet:2.0-sdk AS build-env
-MAINTAINER  synker-team@synker.ovh
+LABEL maintainer="synker-team@synker.ovh" \
+      description="Notification broker service for Synker suite application"
 ARG arch
 RUN echo $env:arch
 WORKDIR /app

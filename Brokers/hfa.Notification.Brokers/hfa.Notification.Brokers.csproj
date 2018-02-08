@@ -80,7 +80,6 @@
     <PackageReference Include="RabbitMQ.Client" Version="5.0.1" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\hfa.Notification.DTo\hfa.Brokers.Messages.csproj" />
   </ItemGroup>

@@ -1,6 +1,7 @@
 FROM microsoft/aspnetcore:2.0 AS base
+LABEL maintainer="synker-team@synker.ovh" \
+      description="Notification broker service for Synker suite application"
 WORKDIR /app
-EXPOSE 80
 
 FROM microsoft/aspnetcore-build:2.0 AS build
 WORKDIR /src
@@ -19,3 +20,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "hfa.Notification.Brokers.dll"]
+#CMD ["v"] # TODO Add verbosity for example

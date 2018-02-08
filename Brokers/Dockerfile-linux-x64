@@ -1,4 +1,8 @@
-﻿FROM microsoft/dotnet:2.0-sdk AS build-env
+﻿ARG arch=x64
+FROM microsoft/dotnet:2.0-sdk AS build-env
+LABEL maintainer="synker-team@synker.ovh" \
+      description="Notification broker service for Synker suite application"
+ARG arch
 WORKDIR /app
 
 # Copy csproj and restore as distinct layers
@@ -7,7 +11,7 @@ RUN dotnet restore
 
 # Copy everything else and build
 COPY . .
-RUN dotnet publish ./hfa.Notification.Brokers/hfa.Notification.Brokers.csproj -c Release -o /out/
+RUN dotnet publish ./hfa.Notification.Brokers/hfa.Notification.Brokers.csproj -r linux-$env:arch -c Release -o /out/
 # Build runtime image
 FROM microsoft/dotnet:2.0-runtime 
 WORKDIR /app

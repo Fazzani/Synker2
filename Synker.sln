@@ -48,33 +48,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Brokers", "Brokers", "{42F7
 	ProjectSection(SolutionItems) = preProject
 		appveyorSynkerBrokerBatch-docker.yml = appveyorSynkerBrokerBatch-docker.yml
 		appveyorSynkerBrokerBatch.yml = appveyorSynkerBrokerBatch.yml
-		cluster-entrypoint.sh = cluster-entrypoint.sh
-		Dockerfile = Dockerfile
-		haproxy.cfg = haproxy.cfg
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hfa.Notification.Brokers", "hfa.Notification.Brokers\hfa.Notification.Brokers.csproj", "{2C522F7C-DA7E-4CD3-8D79-A73AD9CBF079}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hfa.Brokers.Messages", "hfa.Notification.DTo\hfa.Brokers.Messages.csproj", "{EB123EA0-1535-49C5-89B0-1C50C157F980}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LinuxServices", "LinuxServices", "{FA7DD37A-BBCC-407F-A1DF-526228D078B7}"
 	ProjectSection(SolutionItems) = preProject
-		synkerbroker.service = synkerbroker.service
 		synkerwebapi.service = synkerwebapi.service
 		synkerwebclient.service = synkerwebclient.service
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{11B3F39A-BBAB-47A8-90CE-D77FDE41DBB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hfa.Notification.Brokers", "Brokers\hfa.Notification.Brokers\hfa.Notification.Brokers.csproj", "{EA4F33D3-5583-405B-9959-FD6E649CDB4E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "broker", "broker", "{513D1E1F-4646-4CD0-ABFB-0DE1E37B1178}"
-	ProjectSection(SolutionItems) = preProject
-		docker\broker\.dockerignore = docker\broker\.dockerignore
-		docker\broker\Dockerfile = docker\broker\Dockerfile
-		docker\broker\Dockerfile-linux-x64 = docker\broker\Dockerfile-linux-x64
-		docker\broker\Dockerfile-win-x64 = docker\broker\Dockerfile-win-x64
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hfa.Brokers.Messages", "Brokers\hfa.Notification.DTo\hfa.Brokers.Messages.csproj", "{CE34A1EA-6A7E-4F11-99B0-2B9F2D7069C6}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{C548BD23-EEAC-4EE6-A3DE-6A8E6C1970BF}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "Brokers\docker-compose.dcproj", "{C548BD23-EEAC-4EE6-A3DE-6A8E6C1970BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -114,14 +100,14 @@ Global
 		{ECB3EA08-11A5-42BE-A45E-03C60D055F7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECB3EA08-11A5-42BE-A45E-03C60D055F7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECB3EA08-11A5-42BE-A45E-03C60D055F7B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2C522F7C-DA7E-4CD3-8D79-A73AD9CBF079}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2C522F7C-DA7E-4CD3-8D79-A73AD9CBF079}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2C522F7C-DA7E-4CD3-8D79-A73AD9CBF079}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2C522F7C-DA7E-4CD3-8D79-A73AD9CBF079}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EB123EA0-1535-49C5-89B0-1C50C157F980}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB123EA0-1535-49C5-89B0-1C50C157F980}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB123EA0-1535-49C5-89B0-1C50C157F980}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB123EA0-1535-49C5-89B0-1C50C157F980}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA4F33D3-5583-405B-9959-FD6E649CDB4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA4F33D3-5583-405B-9959-FD6E649CDB4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA4F33D3-5583-405B-9959-FD6E649CDB4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA4F33D3-5583-405B-9959-FD6E649CDB4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE34A1EA-6A7E-4F11-99B0-2B9F2D7069C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE34A1EA-6A7E-4F11-99B0-2B9F2D7069C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE34A1EA-6A7E-4F11-99B0-2B9F2D7069C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE34A1EA-6A7E-4F11-99B0-2B9F2D7069C6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C548BD23-EEAC-4EE6-A3DE-6A8E6C1970BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C548BD23-EEAC-4EE6-A3DE-6A8E6C1970BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C548BD23-EEAC-4EE6-A3DE-6A8E6C1970BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -139,11 +125,9 @@ Global
 		{8F50C674-2455-422D-BF5B-3ACCD23F72D8} = {78EF6AEE-E1A5-4928-87A8-2E5A3BCAC604}
 		{CFC79F77-DC24-4525-89CA-F20E0B7D7299} = {78EF6AEE-E1A5-4928-87A8-2E5A3BCAC604}
 		{ECB3EA08-11A5-42BE-A45E-03C60D055F7B} = {7E298705-9F1B-429B-865B-F63F679C6501}
-		{2C522F7C-DA7E-4CD3-8D79-A73AD9CBF079} = {42F7C76E-C6FB-4371-B9B7-1563CF758D1E}
-		{EB123EA0-1535-49C5-89B0-1C50C157F980} = {42F7C76E-C6FB-4371-B9B7-1563CF758D1E}
 		{FA7DD37A-BBCC-407F-A1DF-526228D078B7} = {D0361037-C221-43C9-A5D4-4AAD00EFFE3E}
-		{11B3F39A-BBAB-47A8-90CE-D77FDE41DBB8} = {D0361037-C221-43C9-A5D4-4AAD00EFFE3E}
-		{513D1E1F-4646-4CD0-ABFB-0DE1E37B1178} = {11B3F39A-BBAB-47A8-90CE-D77FDE41DBB8}
+		{EA4F33D3-5583-405B-9959-FD6E649CDB4E} = {42F7C76E-C6FB-4371-B9B7-1563CF758D1E}
+		{CE34A1EA-6A7E-4F11-99B0-2B9F2D7069C6} = {42F7C76E-C6FB-4371-B9B7-1563CF758D1E}
 		{C548BD23-EEAC-4EE6-A3DE-6A8E6C1970BF} = {42F7C76E-C6FB-4371-B9B7-1563CF758D1E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

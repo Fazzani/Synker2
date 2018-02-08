@@ -38,7 +38,7 @@
     </AssemblyAttribute>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\hfa.Notification.DTo\hfa.Brokers.Messages.csproj" />
+    <ProjectReference Include="..\Brokers\hfa.Notification.DTo\hfa.Brokers.Messages.csproj" />
     <ProjectReference Include="..\PlaylistBaseLibrary\hfa.PlaylistBaseLibrary.csproj" />
   </ItemGroup>
 

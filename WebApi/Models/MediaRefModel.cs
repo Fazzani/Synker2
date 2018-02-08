@@ -10,7 +10,7 @@ namespace hfa.WebApi.Models
 {
     public class MediaRefModel : MediaRef, IModel<MediaRef, MediaRefModel>
     {
-        public string Id { get; set; }
+        public new string Id { get; set; }
         public MediaRefModel ToModel(IHit<MediaRef> hit)
         {
             Id = hit.Id;

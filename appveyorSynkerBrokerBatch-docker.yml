@@ -35,7 +35,7 @@ before_build:
   - ls -la
   - ps: echo $env:arch
 build_script:
-  - ps: appveyor-retry docker build --no-cache=true --build-arg arch=$env:arch -f ./docker/broker/Dockerfile-$env:version-$env:arch -t $env:dockerImage -t synker/broker:latest .
+  - ps: appveyor-retry docker build --build-arg arch=$env:arch -f ./docker/broker/Dockerfile-$env:version-$env:arch -t $env:dockerImage -t synker/broker:latest .
 after_build:
   - ps: docker images
 #test_script:
