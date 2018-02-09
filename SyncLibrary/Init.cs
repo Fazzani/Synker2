@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PlaylistBaseLibrary.ChannelHandlers;
+using RazorLight;
 using SyncLibrary;
 using System;
 using System.Collections.Generic;
@@ -26,12 +27,20 @@ namespace Hfa.SyncLibrary
         internal static IConfiguration Configuration;
         internal static ServiceProvider ServiceProvider;
 
+        public static RazorLightEngine Engine { get; }
 
         static bool IsDev(string env) => env.Equals(DEV);
 
         static Init()
         {
             string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? DEV;
+
+            string templatePath = $@"{Directory.GetCurrentDirectory()}\EmailTemplates";
+
+            Engine = new RazorLightEngineBuilder()
+                   .UseFilesystemProject(templatePath)
+                   .UseMemoryCachingProvider()
+                   .Build();
 
             //if (String.IsNullOrWhiteSpace(environment))
             //    throw new ArgumentNullException("Environment not found in ASPNETCORE_ENVIRONMENT");

@@ -18,6 +18,9 @@ namespace hfa.Synker.Service.Entities.Auth
         [Required]
         public string LastName { get; set; }
 
+        [NotMapped]
+        public string DisplayName { get { return $"{FirstName} {LastName}"; } }
+
         [Required]
         public string Email { get; set; }
 

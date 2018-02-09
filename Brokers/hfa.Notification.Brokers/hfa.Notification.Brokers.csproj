@@ -16,48 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="EmailTemplates\comment_notification.html" />
-    <None Remove="EmailTemplates\invoice.html" />
-    <None Remove="EmailTemplates\password_reset.html" />
-    <None Remove="EmailTemplates\password_reset_help.html" />
-    <None Remove="EmailTemplates\receipt.html" />
-    <None Remove="EmailTemplates\trial_expired.html" />
-    <None Remove="EmailTemplates\trial_expiring.html" />
-    <None Remove="EmailTemplates\user_invitation.html" />
-    <None Remove="EmailTemplates\welcome.html" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="EmailTemplates\comment_notification.html">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="EmailTemplates\invoice.html">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="EmailTemplates\password_reset.html">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="EmailTemplates\password_reset_help.html">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="EmailTemplates\receipt.html">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="EmailTemplates\trial_expired.html">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="EmailTemplates\trial_expiring.html">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="EmailTemplates\user_invitation.html">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="EmailTemplates\welcome.html">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
   </ItemGroup>
@@ -78,6 +36,7 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="RabbitMQ.Client" Version="5.0.1" />
+    <PackageReference Include="RazorLight" Version="2.0.0-beta1" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.0" />
   </ItemGroup>
   <ItemGroup>

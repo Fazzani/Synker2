@@ -36,6 +36,7 @@ using hfa.Synker.Service.Services.Notification;
 using Microsoft.EntityFrameworkCore;
 using hfa.Brokers.Messages.Emailing;
 using System.Reflection;
+using hfa.Synker.batch.EmailModels;
 
 [assembly: InternalsVisibleTo("hfa.synker.batch.test")]
 namespace SyncLibrary
@@ -119,7 +120,8 @@ namespace SyncLibrary
                     if (res.removed.Any() || res.tvgMedia.Any())
                     {
                         //TODO :  send notif to user with result
-                        _logger.LogInformation($"diff detected for the playlist {pl.Id} of user {pl.UserId} ");
+                        _logger.LogInformation($"Diff detected for the playlist {pl.Id} of user {pl.UserId}");
+
                         var message = new Message
                         {
                             Content = $"<h1>{res.tvgMedia.Count()} medias was added and {res.removed.Count()} medias was removed from the playlist {pl.Freindlyname}</h1><h3>Added medias</h3><ul>{string.Join("</li><li>", res.tvgMedia)}<h3>Removed medias</h3></ul><ul>{string.Join("</li><li>", res.removed)}</ul>",
@@ -132,9 +134,20 @@ namespace SyncLibrary
                         //Add new message for user
                         await _messagesService.SendAsync(message, _config.ApiUserName, _config.ApiPassword, ts.Token);
                         //Send Email Notification
+                        string result = await Init.Engine.CompileRenderAsync("diff_playlist.cshtml", new DiffEmailViewModel
+                        {
+                            PlaylistName = pl.Freindlyname,
+                            AddedMedias = res.tvgMedia,
+                            RemovedMedias = res.removed,
+                            UserName = pl.User.DisplayName,
+                            TimeStamp = DateTime.Now,
+                            CompanyName = "Synker",
+                            ExternalUrl="http://synker.ovh",
+                            ProductName = "Synker Iptv"
+                        });
                         await _notificationService.SendMailAsync(new EmailNotification("synker.batch")
                         {
-                            Body = message.Content,
+                            Body = result,
                             FromDisplayName = "Synker Team",
                             From = "synker-team@synker.ovh",
                             Subject = $"New Playlist changement detected for {pl.Freindlyname}",
