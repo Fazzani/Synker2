@@ -33,7 +33,7 @@ build_script:
   - cmd: dotnet publish -c %CONFIGURATION% -r linux-x64 --verbosity m -o artifacts 
   - ls
 artifacts:
- - path: .\hfa.Notification.Brokers\artifacts
+ - path: .\Brokers\hfa.Notification.Brokers\artifacts
    name: SynkerBroker
    type: zip
 on_finish :
