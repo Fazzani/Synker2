@@ -20,7 +20,7 @@ before_build:
   - echo Display .NET Core version
   - cmd: dotnet --version
   # Display minimal restore text
-  - cmd: cd ./hfa.Notification.Brokers
+  - cmd: cd ./Brokers/hfa.Notification.Brokers
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
