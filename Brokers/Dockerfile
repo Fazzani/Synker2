@@ -1,13 +1,18 @@
 FROM microsoft/aspnetcore:2.0 AS base
 LABEL maintainer="synker-team@synker.ovh" \
       description="Notification broker service for Synker suite application"
-WORKDIR /app
 
 RUN apt-get update -y
-# Create Group and user // addgroup 
+# Create Group and user
 RUN groupadd -r synker && useradd --no-log-init -r -g synker synker
 USER synker:synker
 # add permissions for user and group
+
+#Expose Smtp and POP ports for mailing
+EXPOSE 110:110
+EXPOSE 587:587
+
+WORKDIR /home/synker
 
 FROM microsoft/aspnetcore-build:2.0 AS build
 WORKDIR /src
@@ -20,11 +25,11 @@ WORKDIR /src/hfa.Notification.Brokers
 RUN dotnet build -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish -c Release -o /app
+RUN dotnet publish -c Release -o /home/synker
 
 FROM base AS final
-WORKDIR /app
-COPY --from=publish /app .
+WORKDIR /home/synker
+COPY --from=publish /home/synker .
 Run ls -la
 ENTRYPOINT ["dotnet", "hfa.Notification.Brokers.dll"]
 #CMD ["v"] # TODO Add verbosity for example

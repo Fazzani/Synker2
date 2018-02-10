@@ -17,9 +17,9 @@ docker build  -t synker/broker .
 ```
 
 ``` SHELL
-docker run -v "$(pwd)/appsettings.Prod.json":/app/appsettings.json \
+docker run -v "$(pwd)/appsettings.Prod.json":/home/synker/appsettings.json \
  -e "ASPNETCORE_ENVIRONMENT=Prod" \
- -v $(pwd):/app/Logs \
+ -v $(pwd):/home/synker/Logs \
  -itd --rm --name broker synker/broker:latest
 ```
 
