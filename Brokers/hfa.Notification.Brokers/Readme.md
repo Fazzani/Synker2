@@ -20,7 +20,7 @@ docker build  -t synker/broker .
 docker run -v "$(pwd)/hfa.Notification.Brokers/appsettings.Prod.json":/app/appsettings.json \
  -e "ASPNETCORE_ENVIRONMENT=Prod" \
  -v $(pwd):/app/Logs \
- -itd --rm --name broker broker:latest
+ -itd --rm --name broker synker/broker:latest
 ```
 
 ``` SHELL

@@ -35,10 +35,8 @@ namespace Hfa.SyncLibrary
         {
             string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? DEV;
 
-            string templatePath = $@"{Directory.GetCurrentDirectory()}\EmailTemplates";
-
             Engine = new RazorLightEngineBuilder()
-                   .UseFilesystemProject(templatePath)
+                   .UseFilesystemProject(Path.Combine(AppContext.BaseDirectory, "EmailTemplates"))
                    .UseMemoryCachingProvider()
                    .Build();
 
