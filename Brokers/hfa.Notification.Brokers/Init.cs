@@ -43,7 +43,7 @@ namespace Hfa.SyncLibrary
             }
             else
             {
-                builder.AddJsonFile($"appsettings.{Enviroment}.json", optional: false);
+                builder.AddJsonFile($"appsettings.{Enviroment}.json", optional: true);
             }
 
             Configuration = builder.Build();
