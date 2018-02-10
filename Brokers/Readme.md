@@ -39,15 +39,16 @@ docker exec -it broker ls -l /app
 - Routing by header
 
 ### DOCKER
-- [ ] **Redis** for caching
+- [ ] CI/CD appveyor config
 - [ ] Creating **Linux service** into the Dockerfile AND run it
-- [ ] Creating **user/group** for service
-- [ ] Creating an **ENTRYPOINT/CMD** for Dockerfile service
+- [ ] Creating an **ENTRYPOINT/CMD** for Dockerfile service (display version for example)
 - [ ] Docker-compose for the **DEV env** and another for **Prod**
 - [ ] **Rex-ray** storage driver test
 - [ ] Clusturing the **application Stack** and scale application test
-- [ ] Resoudre le pb des **appsettings** by env
 - [ ] Log stdout / stderr
+- [ ] **Redis** for caching
+- [x] Creating **user/group** for service
+- [x] Resoudre le pb des **appsettings** by env
 
 ### RabbitMQ
 
