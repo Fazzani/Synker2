@@ -1,4 +1,5 @@
 ﻿using hfa.Brokers.Messages.Emailing;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,13 @@ namespace hfa.Notification.Brokers.Emailing
 {
     public class NotificationService : INotificationService
     {
-        private MailOptions _options;
+        private ILogger _logger;
+        private MailOptions _mailOptions;
 
-        public NotificationService(IOptions<MailOptions> options)
+        public NotificationService(IOptions<MailOptions> options, ILoggerFactory loggerFactory)
         {
-            _options = options.Value;
+            _logger = loggerFactory.CreateLogger(nameof(NotificationService));
+            _mailOptions = options.Value;
         }
 
         /// <summary>
@@ -27,10 +30,12 @@ namespace hfa.Notification.Brokers.Emailing
         /// <returns></returns>
         public async Task SendMailAsync(EmailNotification emailNotification, CancellationToken cancellationToken)
         {
-            using (var client = new SmtpClient(_options.SmtpServer, _options.SmtpPort)
+            _logger.LogInformation(_mailOptions.ToString());
+
+            using (var client = new SmtpClient(_mailOptions.SmtpServer, _mailOptions.SmtpPort)
             {
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(_options.Username, _options.Password)
+                Credentials = new NetworkCredential(_mailOptions.Username, _mailOptions.Password)
             })
             {
 

@@ -275,3 +275,4 @@ __pycache__/
 log/
 /Brokers/image_history
 /Brokers/hfa.Notification.Brokers/appsettings.Prod.json
+/Brokers/appsettings.Prod.json

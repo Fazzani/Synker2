@@ -1,8 +1,10 @@
 ﻿using hfa.Brokers.Messages;
 using hfa.Brokers.Messages.Configuration;
+using hfa.Notification.Brokers;
 using hfa.Notification.Brokers.Emailing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -60,6 +62,7 @@ namespace Hfa.SyncLibrary
                 .AddSingleton(loggerFactory)
                 .AddLogging()
                 .AddOptions()
+                .Replace(ServiceDescriptor.Singleton(typeof(ILogger<>), typeof(TimedLogger<>)))
                 .Configure<MailOptions>(Configuration.GetSection(nameof(MailOptions)))
                 .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
                 .AddSingleton<INotificationService, NotificationService>()

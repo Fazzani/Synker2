@@ -12,5 +12,7 @@ namespace hfa.Notification.Brokers.Emailing
         public int PopPort { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+
+        public override string ToString() => $"Smtp => {SmtpServer}:{SmtpPort} Pop => {PopServer}:{PopPort}";
     }
 }
