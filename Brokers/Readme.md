@@ -12,7 +12,7 @@
 
 ### Command to launch broker container 
 
-```
+``` SHELL
 docker build  -t synker/broker .
 ```
 
@@ -29,7 +29,7 @@ docker exec -it broker ls -l /app
 
 **Remove all containers**
 
-```
+``` SHELL
  docker rm $(docker ps -a -q)
 ```
 
