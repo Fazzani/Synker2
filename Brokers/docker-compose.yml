@@ -41,4 +41,4 @@ services:
       - haproxy
     build:
       context: .
-      dockerfile: hfa.Notification.Brokers/Dockerfile
+      dockerfile: Dockerfile

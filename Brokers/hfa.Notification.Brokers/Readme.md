@@ -23,6 +23,7 @@
 - **Rex-ray** storage driver test
 - Clusturing the **application Stack** and scale application test
 - Resoudre le pb des **appsettings** by env
+- Log stdout / stderr
 
 ### RabbitMQ
 
