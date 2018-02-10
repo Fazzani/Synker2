@@ -3,6 +3,10 @@ LABEL maintainer="synker-team@synker.ovh" \
       description="Notification broker service for Synker suite application"
 WORKDIR /app
 
+# apt-get update -y
+# TODO Create Group and user // addgroup 
+# add permissions for user and group
+
 FROM microsoft/aspnetcore-build:2.0 AS build
 WORKDIR /src
 COPY *.sln ./
