@@ -3,7 +3,21 @@ sudo: required
 mono: none
 dotnet: 2.1.4
 dist: trusty
-before_install:
-  - chmod +x build.sh
+environment:
+  matrix:
+    - CLI_VERSION: Latest
+os:  
+  - linux
+#  - osx
+branches:  
+  only:
+    - master
+    - Develop
+services:
+  - docker
+install:
+  - dotnet restore
 script:
- - ./build.sh --quiet verify
+  - dotnet build
+  - dotnet test hfa.synker.batch.test/hfa.synker.batch.test.csproj
+  - dotnet test hfa.tvhLibrary.test/hfa.tvhLibrary.test.csproj
