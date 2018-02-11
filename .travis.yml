@@ -9,6 +9,7 @@ env:
   matrix:
     - DOCKER_BUILD=true
     - DOCKER_BUILD=false
+    - arch=x64
 os:  
   - linux
 #  - osx
