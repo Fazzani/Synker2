@@ -4,7 +4,6 @@ LABEL maintainer="synker-team@synker.ovh" \
       description="Notification broker service for Synker suite application" \
       system.dist="win" system.arch="$env" multi.name="Synker notification broker"
 
-RUN apt-get update -y
 # Create Group and user
 #RUN groupadd -r synker && useradd --no-log-init -r -g synker synker
 RUN NET USER synker /add
