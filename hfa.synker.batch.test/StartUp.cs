@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Text;
 
@@ -13,7 +14,7 @@ namespace hfa.synker.batch.test
         static StartUp()
         {
             WebHostBuilder = new WebHostBuilder()
-                .UseContentRoot(@"..\..\..\..\WebApi\")
+                .UseContentRoot(Path.Combine(string.Format("..{0}..{0}..{0}..{0}", Path.DirectorySeparatorChar), "WebApi"))
                 .UseEnvironment("Development")
                 .UseStartup<Startup>();
 
