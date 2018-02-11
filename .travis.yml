@@ -30,5 +30,5 @@ notifications: # set notification options
   email:
     recipients:
       - tunisienheni@gmail.com
-    on_success: [change]
-    on_failure: [change]
+    on_success: always
+    on_failure: change
