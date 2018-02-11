@@ -15,9 +15,7 @@ branches:
     - Develop
 services:
   - docker
-install:
-  - dotnet restore
+before_install:
+  - chmod +x build.sh
 script:
-  - dotnet build
-  - dotnet test hfa.synker.batch.test/hfa.synker.batch.test.csproj
-  - dotnet test hfa.tvhLibrary.test/hfa.tvhLibrary.test.csproj
+ - ./build.sh --quiet verify
