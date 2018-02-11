@@ -6,8 +6,11 @@ LABEL maintainer="synker-team@synker.ovh" \
 
 RUN apt-get update -y
 # Create Group and user
-RUN groupadd -r synker && useradd --no-log-init -r -g synker synker
-USER synker:synker
+#RUN groupadd -r synker && useradd --no-log-init -r -g synker synker
+RUN NET USER synker /add
+RUN	NET LOCALGROUP Administrators /add synker
+USER synker
+RUN whoami
 # add permissions for user and group
 
 #Expose Smtp and POP ports for mailing
