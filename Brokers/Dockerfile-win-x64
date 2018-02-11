@@ -11,7 +11,6 @@ RUN net localgroup synkerGroup /add
 RUN net localgroup synkerGroup synker /add
 RUN net localgroup synkerGroup
 USER synker:synkerGroup
-RUN whoami
 
 #Expose Smtp and POP ports for mailing
 EXPOSE 110:110
