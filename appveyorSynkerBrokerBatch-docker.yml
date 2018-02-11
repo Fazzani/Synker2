@@ -20,8 +20,6 @@ environment:
   matrix:
    - version: win
      arch: x64
-   - version: linux
-     arch: x64
 matrix:
   fast_finish: true
 install:
