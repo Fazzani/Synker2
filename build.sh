@@ -4,7 +4,7 @@ set -evuxo
 
 artifactsFolder="./artifacts"
 
-if [ $DOCKER_BUILD="true" ]
+if [ $DOCKER_BUILD="true" ]; then
   echo "Is Docker build";
 fi
 
