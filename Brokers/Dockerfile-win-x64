@@ -19,7 +19,10 @@ EXPOSE 587:587
 
 WORKDIR /home/synker
 
+ARG arch=x64
 FROM microsoft/aspnetcore-build:2.0 AS build
+ARG arch
+RUN echo $env:arch
 WORKDIR /src
 COPY *.sln ./
 RUN ls
@@ -30,7 +33,10 @@ COPY . .
 WORKDIR /src/Brokers/hfa.Notification.Brokers
 RUN dotnet build -c Release -o /app -r win-$env:arch
 
+ARG arch=x64
 FROM build AS publish
+ARG arch
+RUN echo $env:arch
 RUN dotnet publish -c Release -o /home/synker -r win-$env:arch
 
 FROM base AS final
