@@ -3,10 +3,11 @@ FROM microsoft/aspnetcore:2.0 AS base
 LABEL maintainer="synker-team@synker.ovh" \
       description="Notification broker service for Synker suite application" \
       system.dist="win" system.arch="$env" multi.name="Synker notification broker"
-
-# Step 4: Create user
+ARG arch
+RUN echo $env:arch
+# Step 6: Create user
 RUN net user /add synker /fullname:"Synker Iptv"
-# Step 5: Create Group
+# Step 7: Create Group
 RUN net localgroup synkerGroup /add
 RUN net localgroup synkerGroup synker /add
 RUN net localgroup synkerGroup
