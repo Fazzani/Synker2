@@ -1,19 +1,37 @@
 ﻿ARG arch=x64
-FROM microsoft/dotnet:2.0-sdk AS build-env
+FROM microsoft/aspnetcore:2.0 AS base
 LABEL maintainer="synker-team@synker.ovh" \
-      description="Notification broker service for Synker suite application"
-ARG arch
-WORKDIR /app
+      description="Notification broker service for Synker suite application" \
+      system.dist="linux" system.arch="$env" multi.name="Synker notification broker"
 
-# Copy csproj and restore as distinct layers
-COPY ./hfa.Notification.Brokers/*.csproj .
-RUN dotnet restore 
+RUN apt-get update -y
+# Create Group and user
+RUN groupadd -r synker && useradd --no-log-init -r -g synker synker
+USER synker:synker
+# add permissions for user and group
 
-# Copy everything else and build
+#Expose Smtp and POP ports for mailing
+EXPOSE 110:110
+EXPOSE 587:587
+
+WORKDIR /home/synker
+
+FROM microsoft/aspnetcore-build:2.0 AS build
+WORKDIR /src
+COPY *.sln ./
+COPY hfa.Notification.Brokers/hfa.Notification.Brokers.csproj hfa.Notification.Brokers/
+COPY hfa.Notification.DTo/hfa.Brokers.Messages.csproj hfa.Notification.DTo/
+RUN dotnet restore
 COPY . .
-RUN dotnet publish ./hfa.Notification.Brokers/hfa.Notification.Brokers.csproj -r linux-$env:arch -c Release -o /out/
-# Build runtime image
-FROM microsoft/dotnet:2.0-runtime 
-WORKDIR /app
-COPY --from=build-env /out .
+WORKDIR /src/hfa.Notification.Brokers
+RUN dotnet build -c Release -o /app -r linux-$env:arch
+
+FROM build AS publish
+RUN dotnet publish -c Release -o /home/synker -r linux-$env:arch
+
+FROM base AS final
+WORKDIR /home/synker
+COPY --from=publish /home/synker .
+Run ls -la
 ENTRYPOINT ["dotnet", "hfa.Notification.Brokers.dll"]
+#CMD ["v"] # TODO Add verbosity for example
