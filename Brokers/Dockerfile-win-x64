@@ -5,10 +5,10 @@ LABEL maintainer="synker-team@synker.ovh" \
       system.dist="win" system.arch="$env" multi.name="Synker notification broker"
 
 # Create Group and user
-#RUN groupadd -r synker && useradd --no-log-init -r -g synker synker
-RUN NET USER synker /add
-RUN	NET LOCALGROUP Administrators /add synker
-USER synker
+RUN groupadd -r synker && useradd --no-log-init -r -g synker synker
+#RUN NET USER synker /add
+#RUN	NET LOCALGROUP Administrators /add synker
+USER synker:synker
 RUN whoami
 # add permissions for user and group
 
