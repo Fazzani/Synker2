@@ -61,3 +61,7 @@ docker exec -it broker ls -l /app
 - [Create Deamon app and service](http://pmcgrath.net/running-a-simple-dotnet-core-linux-daemon)
 
 - [DockerFile to build multiple project dotnet core](http://www.ben-morris.com/using-docker-to-build-and-deploy-net-core-console-applications/)
+- [HashiCorp Vault](https://www.vaultproject.io/intro/getting-started/install.html)
+- Azure Vault
+- [Store configuration data using Docker Configs](https://docs.docker.com/engine/swarm/configs/)
+- [DockerFile Dotnet Core Console Application](http://www.ben-morris.com/using-docker-to-build-and-deploy-net-core-console-applications/)
