@@ -3,9 +3,12 @@ sudo: required
 mono: none
 dotnet: 2.1.4
 dist: trusty
-environment:
-  matrix:
+env:
+  global:
     - CLI_VERSION: Latest
+  matrix:
+    - DOCKER_BUILD=true
+    - DOCKER_BUILD=false
 os:  
   - linux
 #  - osx
@@ -18,4 +21,14 @@ services:
 before_install:
   - chmod +x build.sh
 script:
- - ./build.sh --quiet verify
+ - ./build.sh $DOCKER_BUILD --quiet verify
+cache:
+  directories:
+    - node_modules
+    - "~/.local/share/NuGet/Cache"
+notifications: # set notification options
+  email:
+    recipients:
+      - tunisienheni@gmail.com
+    on_success: [change]
+    on_failure: [change]

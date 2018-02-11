@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
-set -euxo
+set -evuxo
 
 artifactsFolder="./artifacts"
+
+if [ $DOCKER_BUILD="true" ]
+  echo "Is Docker build";
+fi
 
 if [ -d $artifactsFolder ]; then  
   rm -R $artifactsFolder
@@ -18,3 +22,5 @@ echo "Running Tests"
 
 dotnet test hfa.synker.batch.test/hfa.synker.batch.test.csproj
 dotnet test hfa.tvhLibrary.test/hfa.tvhLibrary.test.csproj
+
+exit 0
