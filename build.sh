@@ -32,7 +32,7 @@ dotnet build -c Release -o ./artifacts
 
 echo "Running Tests"
 
-dotnet test hfa.synker.batch.test/hfa.synker.batch.test.csproj
+#dotnet test hfa.synker.batch.test/hfa.synker.batch.test.csproj
 dotnet test hfa.tvhLibrary.test/hfa.tvhLibrary.test.csproj
 
 exit 0

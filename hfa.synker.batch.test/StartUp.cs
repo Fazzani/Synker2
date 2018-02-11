@@ -19,12 +19,12 @@ namespace hfa.synker.batch.test
                 .UseStartup<Startup>();
 
             _testServer = new TestServer(WebHostBuilder);
-
         }
+
         private static object _lockObject = new object();
         private static TestServer _testServer;
-
         public static IWebHostBuilder WebHostBuilder { get; }
+
         private static TestServer TestServer
         {
             get
@@ -37,6 +37,7 @@ namespace hfa.synker.batch.test
                 }
             }
         }
+
         public static HttpClient Client => TestServer.CreateClient();
     }
 }
