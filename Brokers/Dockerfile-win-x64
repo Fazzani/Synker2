@@ -42,6 +42,6 @@ RUN dotnet publish -c Release -o /home/synker -r win-$env:arch
 FROM base AS final
 WORKDIR /home/synker
 COPY --from=publish /home/synker .
-Run ls -la
+Run ls
 ENTRYPOINT ["dotnet", "hfa.Notification.Brokers.dll"]
 #CMD ["v"] # TODO Add verbosity for example
