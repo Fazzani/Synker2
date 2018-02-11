@@ -21,7 +21,7 @@ WORKDIR /home/synker
 FROM microsoft/aspnetcore-build:2.0 AS build
 WORKDIR /src
 COPY *.sln ./
-RUN ls -l
+RUN ls
 COPY ./hfa.Notification.Brokers/hfa.Notification.Brokers.csproj hfa.Notification.Brokers/
 COPY ./hfa.Notification.DTo/hfa.Brokers.Messages.csproj hfa.Notification.DTo/
 RUN dotnet restore
