@@ -2,11 +2,6 @@
 
 set -evuxo
 
-artifactsFolder="./artifacts"
-
-if [ -d $artifactsFolder ]; then  
-  rm -R $artifactsFolder
-fi
 
 dockerImageBase="synker/broker"
 dockerImage=$dockerImageBase:$TRAVIS_BUILD_NUMBER-$arch
@@ -20,6 +15,12 @@ if [ $DOCKER_BUILD="true" ]; then
   docker login -u=$DOCKER_USER -p=$DOCKER_PASS
   docker push $dockerImage
   exit 0
+fi
+
+artifactsFolder="./artifacts"
+
+if [ -d $artifactsFolder ]; then  
+  rm -R $artifactsFolder
 fi
 
 cd WebClient
