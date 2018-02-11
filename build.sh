@@ -7,7 +7,7 @@ dockerImageBase="synker/broker"
 dockerImage=$dockerImageBase:linux-$arch
 echo $dockerImage
 
-if [ $DOCKER_BUILD="true" ]; then
+if [ "$DOCKER_BUILD"=true ]; then
   echo "Is Docker build";
   cd Brokers/
   docker build --build-arg arch=$arch -t $dockerImage -t $dockerImageBase:latest .
