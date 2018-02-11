@@ -4,7 +4,7 @@ set -evuxo
 
 
 dockerImageBase="synker/broker"
-dockerImage=$dockerImageBase:$TRAVIS_BUILD_NUMBER-$arch
+dockerImage=$dockerImageBase:linux-$arch
 echo $dockerImage
 
 if [ $DOCKER_BUILD="true" ]; then
