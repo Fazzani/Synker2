@@ -1,0 +1,8 @@
+﻿# comment
+*/temp*
+*/*/temp*
+temp?
+bin\
+obj\
+*/*/obj/
+*/*/bin/

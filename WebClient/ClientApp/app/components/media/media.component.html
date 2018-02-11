@@ -1,59 +1,59 @@
 ﻿<div class="site-container">
-    <md-toolbar color="custom">
-        <md-form-field floatPlaceholder="never">
-            <input mdInput #filter placeholder="Filter medias...">
-        </md-form-field>
+    <mat-toolbar color="custom">
+        <mat-form-field floatPlaceholder="never">
+            <input matInput #filter placeholder="Filter medias...">
+        </mat-form-field>
         <span class="spacer"></span>
-        <a md-icon-button>
-            <md-icon class="md-24" aria-label="Example icon-button with a heart icon">favorite</md-icon>
+        <a mat-icon-button>
+            <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">favorite</mat-icon>
         </a>
-        <a md-icon-button>
-            <md-icon class="md-24" aria-label="Example icon-button with a heart icon">delete</md-icon>
+        <a mat-icon-button>
+            <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">delete</mat-icon>
         </a>
-    </md-toolbar>
+    </mat-toolbar>
     <div class="example-loading-shade" *ngIf="dataSource.isLoadingResults">
-        <md-spinner *ngIf="dataSource.isLoadingResults"></md-spinner>
+        <mat-spinner *ngIf="dataSource.isLoadingResults"></mat-spinner>
     </div>
-    <md-table #table [dataSource]="dataSource" mdSort mdSortActive="position" mdSortDisableClear mdSortDirection="asc">
+    <mat-table #table [dataSource]="dataSource" matSort matSortActive="position" matSortDisableClear matSortDirection="asc">
         <!-- position Column -->
-        <ng-container mdColumnDef="position">
-            <md-header-cell *mdHeaderCellDef md-sort-header disableClear="true"> Position </md-header-cell>
-            <md-cell *mdCellDef="let row"> {{row.position}} </md-cell>
+        <ng-container matColumnDef="position">
+            <mat-header-cell *matHeaderCellDef mat-sort-header disableClear="true"> Position </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.position}} </mat-cell>
         </ng-container>
 
         <!-- name Column -->
-        <ng-container mdColumnDef="name">
-            <md-header-cell *mdHeaderCellDef md-sort-header> Name </md-header-cell>
-            <md-cell *mdCellDef="let row"> {{row.name}} </md-cell>
+        <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
         </ng-container>
 
         <!-- group Column -->
-        <ng-container mdColumnDef="group">
-            <md-header-cell *mdHeaderCellDef md-sort-header> Group </md-header-cell>
-            <md-cell *mdCellDef="let row"> {{row.group}} </md-cell>
+        <ng-container matColumnDef="group">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Group </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.group}} </mat-cell>
         </ng-container>
         <!-- Lang Column -->
-        <ng-container mdColumnDef="lang">
-            <md-header-cell *mdHeaderCellDef md-sort-header> Lang </md-header-cell>
-            <md-cell *mdCellDef="let row"> {{row.lang}} </md-cell>
+        <ng-container matColumnDef="lang">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Lang </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.lang}} </mat-cell>
         </ng-container>
-        <ng-container mdColumnDef="actions">
-            <md-header-cell *mdHeaderCellDef> Actions </md-header-cell>
-            <md-cell *mdCellDef="let row">
-                <button md-icon-button color="warn" (click)="openDialog(row)">
-                    <md-icon class="md-24" aria-label="Edit">edit</md-icon>
+        <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <button mat-icon-button color="warn" (click)="openDialog(row)">
+                    <mat-icon class="mat-24" aria-label="Edit">edit</mat-icon>
                   </button>
-                <button md-icon-button color="primary" (click)="update(row)">
-                    <md-icon class="md-24" aria-label="">favorite</md-icon>
+                <button mat-icon-button color="primary" (click)="update(row)">
+                    <mat-icon class="mat-24" aria-label="">favorite</mat-icon>
                   </button>
-                <button md-icon-button color="accent" (click)="update(row)">
-                    <md-icon class="md-24" aria-label="">favorite</md-icon>
+                <button mat-icon-button color="accent" (click)="update(row)">
+                    <mat-icon class="mat-24" aria-label="">favorite</mat-icon>
                   </button>
-            </md-cell>
+            </mat-cell>
         </ng-container>
-        <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
-        <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
-    </md-table>
-    <md-paginator #paginator [length]="dataSource.total" [pageIndex]="paginator.pageIndex" [pageSize]="paginator.pageSize" [pageSizeOptions]="paginator.pageSizeOptions">
-    </md-paginator>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator [length]="dataSource.total" [pageIndex]="paginator.pageIndex" [pageSize]="paginator.pageSize" [pageSizeOptions]="paginator.pageSizeOptions">
+    </mat-paginator>
 </div>

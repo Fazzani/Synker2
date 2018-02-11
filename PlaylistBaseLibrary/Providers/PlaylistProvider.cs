@@ -1,7 +1,11 @@
-﻿using PlaylistBaseLibrary.Providers.Linq;
+﻿using hfa.PlaylistBaseLibrary.Exceptions;
+using hfa.PlaylistBaseLibrary.Options;
+using PlaylistBaseLibrary.Providers.Linq;
 using PlaylistManager.Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +16,9 @@ namespace hfa.PlaylistBaseLibrary.Providers
           where TPlaylist : Playlist<TMedia>
         where TMedia : Media
     {
+
+        public abstract MemoryStream PlaylistStream { get; }
+        
         public abstract void Dispose();
 
         public abstract IEnumerable<TMedia> Pull();
@@ -25,5 +32,7 @@ namespace hfa.PlaylistBaseLibrary.Providers
         public abstract TPlaylist Sync(TPlaylist playlist);
 
         public abstract Task<TPlaylist> SyncAsync(TPlaylist playlist, CancellationToken token);
+
+       
     }
 }

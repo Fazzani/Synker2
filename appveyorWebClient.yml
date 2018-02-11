@@ -1,0 +1,55 @@
+version: '1.0.{build}'
+image: Visual Studio 2017
+configuration: Release
+branches:
+  only:
+  - master
+  - Develop
+only_commits:
+  message: /buildclient:|build:/
+init:
+  # Good practise, because Windows line endings are different from Unix/Linux ones
+  - cmd: git config --global core.autocrlf true
+  - cmd: pwd
+clone_depth: 10
+# environment variables
+environment:
+  nodejs_version: '8'
+  ASPNETCORE_ENVIRONMENT: 'Production'
+matrix:
+  fast_finish: true
+install:
+  - choco install googlechrome -y --ignore-checksums
+  - ps: Install-Product node $Env:nodejs_version
+  #- npm i -g npm@latest
+  #- npm i -g webpack@latest
+  #- npm rebuild node-sass
+before_build:
+  # Display .NET Core version
+  - cmd: dotnet --version
+  # Display minimal restore text
+  - cmd: dotnet restore ./WebClient/hfa.WebClient.csproj --verbosity m
+build_script:
+  - cmd: cd ./WebClient/ 
+  #- cmd: npm i --force && npm run configure
+  #- cmd: npm i
+  - cmd: dotnet publish -c Release --verbosity m -o artifactsWebClient
+artifacts:
+ - path: .\WebClient\artifactsWebClient
+   name: WebClient
+   type: WebDeployPackage
+test_script:
+  # restore packages for our unit tests
+  - cmd: dotnet restore ../hfa.tvhLibrary.test/hfa.tvhLibrary.test.csproj --verbosity m
+  - cmd: dotnet restore ../hfa.synker.batch.test/hfa.synker.batch.test.csproj --verbosity m
+  # run the unit tests (requires changing into the test directory)
+  - cmd: cd ../hfa.tvhLibrary.test/
+  - cmd: dotnet xunit -appveyor -notrait "Category=Integration"
+  - cmd: cd ../hfa.synker.batch.test/
+  - cmd: dotnet xunit -appveyor -notrait "Category=Integration"
+  - cmd: cd ../WebClient && npm run test:ci
+deploy:
+  - provider: Environment
+    name: Synker WebClient Prod
+    on:
+      branch: Develop

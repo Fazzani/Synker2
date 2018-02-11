@@ -13,8 +13,11 @@ using System.Reflection;
 using hfa.SyncLibrary.Global;
 using hfa.WebApi.Common;
 using Microsoft.Extensions.Options;
-using hfa.WebApi.Dal;
-using hfa.WebApi.Models;
+using hfa.Synker.Services.Dal;
+using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Elastic;
+using hfa.WebApi.Models.Elastic;
+using System.Text;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -22,30 +25,60 @@ namespace Hfa.WebApi.Controllers
     {
         protected readonly ILogger _logger;
         protected readonly IElasticConnectionClient _elasticConnectionClient;
-        protected CancellationTokenSource cancelToken;
-        IOptions<ApplicationConfigData> _config;
+        protected readonly ElasticConfig _elasticConfig;
         readonly protected SynkerDbContext _dbContext;
 
-        public BaseController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+        protected Guid GetInternalPlaylistId(string id) => new Guid(Encoding.UTF8.DecodeBase64(id));
+
+
+        public BaseController(IOptions<ElasticConfig> elasticConfig, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
+            SynkerDbContext context)
         {
             _logger = loggerFactory.CreateLogger("BaseController");
             _elasticConnectionClient = elasticConnectionClient;
-            cancelToken = new CancellationTokenSource();
-            _config = config;
-            this._dbContext = context;
+            _elasticConfig = elasticConfig.Value;
+            _dbContext = context;
         }
 
-        internal protected async Task<IActionResult> SearchAsync<T>([FromBody] string query) where T : class
+        internal virtual protected async Task<IActionResult> SearchAsync<T, T2>([FromBody] string query, CancellationToken cancellationToken)
+            where T : class where T2 : class, IModel<T, T2>, new()
         {
-            var response = await _elasticConnectionClient.Client.LowLevel.SearchAsync<SearchResponse<T>>(_config.Value.DefaultIndex, typeof(T).Name.ToLowerInvariant(), query);
-
-            cancelToken.Token.ThrowIfCancellationRequested();
+            var response = await _elasticConnectionClient.Client.LowLevel
+                .SearchAsync<SearchResponse<T>>(_elasticConfig.DefaultIndex, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
 
             if (!response.SuccessOrKnownError)
                 return BadRequest(response.DebugInformation);
 
             response.Body.AssertElasticResponse();
-            return new OkObjectResult(response.Body.GetResultListModel());
+            return new OkObjectResult(response.Body.GetResultListModel<T, T2>());
+        }
+
+        internal virtual protected async Task<IActionResult> SearchAsync<T, T2>([FromBody] string query, string indexName, CancellationToken cancellationToken)
+             where T : class where T2 : class, IModel<T, T2>, new()
+        {
+            var response = await _elasticConnectionClient.Client.LowLevel
+                .SearchAsync<SearchResponse<T>>(indexName, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
+
+            if (!response.SuccessOrKnownError)
+                return BadRequest(response.DebugInformation);
+
+            response.Body.AssertElasticResponse();
+            return new OkObjectResult(response.Body.GetResultListModel<T, T2>());
+        }
+
+        internal virtual protected async Task<IActionResult> SearchQueryStringAsync<T, T2>([FromBody] SimpleQueryElastic simpleQueryElastic, CancellationToken cancellationToken)
+             where T : class where T2 : class, IModel<T, T2>, new()
+        {
+            var response = await _elasticConnectionClient.Client.SearchAsync<T>(s => s
+            .Index(simpleQueryElastic.IndexName)
+            .From(simpleQueryElastic.From)
+            .Size(simpleQueryElastic.Size)
+            .Query(q => new QueryStringQuery { Query = simpleQueryElastic.Query, AllFields = false, AnalyzeWildcard = true }));
+
+            if (!response.IsValid)
+                return BadRequest(response.DebugInformation);
+
+            return new OkObjectResult(response.GetResultListModel<T, T2>());
         }
 
         protected static IPromise<IList<ISort>> GetSortDescriptor<T>(SortDescriptor<T> me, Dictionary<string, SortDirectionEnum> dictionary) where T : class
@@ -61,7 +94,6 @@ namespace Hfa.WebApi.Controllers
                     var suffixMethod = typeof(SuffixExtensions).GetMethod("Suffix", BindingFlags.Public | BindingFlags.Static);
                     var callmethod = Expression.Call(suffixMethod, fieldNameExp, Expression.Constant(Constants.ELK_KEYWORD_SUFFIX));
                     var lambda = Expression.Lambda(callmethod, Expression.Parameter(typeof(T)));
-
 
                     if (item.Value == SortDirectionEnum.Asc)
                     {
@@ -88,6 +120,7 @@ namespace Hfa.WebApi.Controllers
             public T Value { get; }
         }
 
+        protected int? UserId => Convert.ToInt32(User.FindFirst("id")?.Value);
     }
 
     public class Constants

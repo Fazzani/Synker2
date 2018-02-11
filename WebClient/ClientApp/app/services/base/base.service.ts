@@ -3,14 +3,34 @@ import { HttpClient } from '@angular/common/http';
 
 // All the RxJS stuff we need
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
+import { map, catchError } from 'rxjs/operators';
+import { ElasticResponse, SimpleQueryElastic } from "../../types/elasticQuery.type";
+import * as variables from '../../variables';
 
 @Injectable()
 export class BaseService {
-  //  static URL_API_BASE: string = 'http://localhost:56800/api/v1/';
 
-    constructor(protected http: HttpClient) { }
+    protected FullBaseUrl: string = `${variables.BASE_API_URL}${this.BaseUrl}`;
+
+    constructor(protected http: HttpClient, protected BaseUrl: string) { }
+
+    search<T>(query: SimpleQueryElastic): Observable<ElasticResponse<T>> {
+        return this.http.post(`${this.FullBaseUrl}/_searchstring`, query).map((res : ElasticResponse<T>) => {
+            return res;
+        }).catch(this.handleError);
+    }
+
+    simpleSearch<T>(query: string, indexName: string): Observable<ElasticResponse<T>> {
+        return this.http.post(`${this.FullBaseUrl}/_searchstring`, <SimpleQueryElastic>{ From: 0, Size: 30, IndexName: indexName, Query: query }).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
+
+    delete(id: string): Observable<number> {
+        return this.http.delete(`${this.FullBaseUrl}/${id}`).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
 
     protected handleError(error: Response | any) {
         let errorMessage: string;
@@ -29,4 +49,17 @@ export class BaseService {
         return res.json() || [];
     }
 
+    /**
+     * Is Json 
+     * @param {string} str
+     * @returns
+     */
+    protected IsJsonString(str: string): boolean {
+        try {
+            JSON.parse(str);
+        } catch (e) {
+            return false;
+        }
+        return true;
+    }
 }

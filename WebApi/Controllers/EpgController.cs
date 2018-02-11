@@ -10,7 +10,12 @@ using hfa.SyncLibrary.Global;
 using hfa.WebApi.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using hfa.WebApi.Dal;
+using hfa.WebApi.Common.Filters;
+using System.Threading;
+using hfa.Synker.Services.Dal;
+using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Elastic;
+using hfa.WebApi.Models.Xmltv;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,7 +26,8 @@ namespace Hfa.WebApi.Controllers
     [Route("api/v1/[controller]")]
     public class EpgController : BaseController
     {
-        public EpgController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+        public EpgController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 
+            SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
 
@@ -31,16 +37,14 @@ namespace Hfa.WebApi.Controllers
         [Route("_search")]
         public async Task<IActionResult> Search([FromBody] dynamic request)
         {
-            return await SearchAsync<tvChannel>(request.ToString());
+            return await SearchAsync<tvChannel, TvChannelModel>(request.ToString(), HttpContext.RequestAborted);
         }
 
         [HttpPost]
+        [ValidateModel]
         [Route("search")]
-        public async Task<IActionResult> SearchAsync([FromBody] QueryListBaseModel query)
+        public async Task<IActionResult> SearchAsync([FromBody] QueryListBaseModel query, CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var response = await _elasticConnectionClient.Client.SearchAsync<tvChannel>(rq => rq
                 .Size(query.PageSize)
                 .From(query.Skip)
@@ -48,36 +52,30 @@ namespace Hfa.WebApi.Controllers
                 .Query(q => q.Match(m => m.Field(ff => ff.displayname)
                                           .Query(query.SearchDict.LastOrDefault().Value)))
 
-            , cancelToken.Token);
-
-            cancelToken.Token.ThrowIfCancellationRequested();
+            , cancellationToken);
 
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);
             //response.AssertElasticResponse();
-            return new OkObjectResult(response.GetResultListModel());
+            return new OkObjectResult(response.GetResultListModel<tvChannel, TvChannelModel>());
         }
 
+        [ValidateModel]
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var response = await _elasticConnectionClient.Client.SearchAsync<tvChannel>(rq => rq
                 .From(0)
                 .Size(1)
                 .Index<tvChannel>()
                 .Query(q => q.Ids(ids => ids.Name(nameof(id)).Values(id)))
-            , cancelToken.Token);
-
-            cancelToken.Token.ThrowIfCancellationRequested();
+            , cancellationToken);
 
             response.AssertElasticResponse();
             if (response.Documents.FirstOrDefault() == null)
                 return NotFound();
 
-            return new OkObjectResult(response.GetResultListModel());
+            return new OkObjectResult(response.GetResultListModel<tvChannel, TvChannelModel>());
         }
     }
 }

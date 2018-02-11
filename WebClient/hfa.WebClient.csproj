@@ -29,34 +29,70 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\app\app.module.routing.ts" />
+    <None Remove="ClientApp\app\components\admin\admin.component.ts" />
+    <None Remove="ClientApp\app\components\admin\dashboard\admin.dashboard.component.ts" />
+    <None Remove="ClientApp\app\components\animations.ts" />
+    <None Remove="ClientApp\app\components\dialogs\auth\LoginDialog.ts" />
+    <None Remove="ClientApp\app\components\dialogs\auth\RegisterDialog.ts" />
+    <None Remove="ClientApp\app\components\dialogs\playlistBulkUpdate\playlistBulkUpdate.ts" />
+    <None Remove="ClientApp\app\components\dialogs\playlistTvgSites\PlaylistTvgSitesDialog.ts" />
+    <None Remove="ClientApp\app\components\playlist\playlist.update.dialog.ts" />
     <None Remove="ClientApp\app\infrastructure\DefaultHttpInterceptor.ts" />
+    <None Remove="ClientApp\app\infrastructure\JwtInterceptor.ts" />
+    <None Remove="ClientApp\app\pipes\enumKey.pipe.ts" />
     <None Remove="ClientApp\app\services\auth\auth.service.ts" />
     <None Remove="ClientApp\app\services\auth\loginRouteGuard.service.ts" />
     <None Remove="ClientApp\app\services\common\common.service.spec.ts" />
     <None Remove="ClientApp\app\services\common\common.service.ts" />
+    <None Remove="ClientApp\app\services\notification\notification.service.ts" />
+    <None Remove="ClientApp\app\types\auth.type.ts" />
     <None Remove="ClientApp\app\types\elasticQuery.type.ts" />
+    <None Remove="ClientApp\app\types\matchTvgPostModel.ts" />
+    <None Remove="ClientApp\app\types\picon.type.ts" />
+    <None Remove="ClientApp\app\types\xmltv.type.ts" />
+    <None Remove="ClientApp\app\types\xtream.type.ts" />
     <None Remove="ClientApp\app\variables.ts" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp\app\pipes\" />
     <Folder Include="ClientApp\app\directives\" />
+    <Folder Include="ClientApp\app\services\xmltv\" />
     <Folder Include="wwwroot\assets\images\" />
     <Folder Include="wwwroot\dist\" />
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\app\app.module.routing.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\admin\admin.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\admin\dashboard\admin.dashboard.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\animations.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\dialogs\auth\LoginDialog.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\dialogs\auth\RegisterDialog.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\dialogs\playlistBulkUpdate\playlistBulkUpdate.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\dialogs\playlistTvgSites\PlaylistTvgSitesDialog.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\dialogs\playlistUpdate\playlist.update.dialog.ts" />
     <TypeScriptCompile Include="ClientApp\app\infrastructure\DefaultHttpInterceptor.ts" />
+    <TypeScriptCompile Include="ClientApp\app\infrastructure\JwtInterceptor.ts" />
+    <TypeScriptCompile Include="ClientApp\app\pipes\enumKey.pipe.ts" />
+    <TypeScriptCompile Include="ClientApp\app\pipes\search.pipe.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\auth\auth.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\auth\auth.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\auth\loginRouteGuard.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\base\base.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\common\common.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\common\common.service.ts" />
+    <TypeScriptCompile Include="ClientApp\app\services\notification\notification.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\tvgmedia\tvgmedia.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\epg\epg.service.spec.ts" />
-    <TypeScriptCompile Include="ClientApp\app\types\elasticQuery.type.ts" />
+    <TypeScriptCompile Include="ClientApp\app\types\common.type.ts" />
+    <TypeScriptCompile Include="ClientApp\app\types\matchTvgPostModel.ts" />
+    <TypeScriptCompile Include="ClientApp\app\types\media.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\types\auth.type.ts" />
+    <TypeScriptCompile Include="ClientApp\app\types\elasticQuery.type.ts" />
+    <TypeScriptCompile Include="ClientApp\app\types\picon.type.ts" />
+    <TypeScriptCompile Include="ClientApp\app\types\xmltv.type.ts" />
+    <TypeScriptCompile Include="ClientApp\app\types\xtream.type.ts" />
     <TypeScriptCompile Include="ClientApp\app\variables.ts" />
   </ItemGroup>
 
@@ -82,7 +118,10 @@
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-    <Exec Command="npm install" />
+    <Exec Command="npm i npm@latest -g" />
+    <Exec Command="npm i webpack@latest -g" />
+    <Exec Command="npm i" />
+    <Exec Command="npm -v" />
     <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.vendor.js --env.prod" />
     <Exec Command="node node_modules/webpack/bin/webpack.js --env.prod" />
 

@@ -1,21 +1,10 @@
 ﻿@import '~@angular/material/prebuilt-themes/purple-green.css';
-@import 'variables';
-
-/* .navbar {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
-      align-items: center;
-      padding: 8px 16px;
-  } */
+@import '../../../node_modules/ng2-toastr/ng2-toastr.css';
+@import '_variables';
 
 .docs-button {
-    &[md-button],
-    &[md-raised-button] {
+    &[mat-button],
+    &[mat-raised-button] {
         text-transform: uppercase;
     }
 }
@@ -47,13 +36,17 @@ img {
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
     -ms-interpolation-mode: nearest-neighbor;
+
     &.logo-medium {
         max-height: 80px;
     }
+
     &.logo-grid {
         width: 33% !important;
-        height: 38px;
+        height: 33px;
+        max-width: 100px !important;
     }
+
     &.logo-small {
         max-height: 30px;
     }
@@ -66,22 +59,20 @@ img {
     }
 }
 
-.mat-table {
+.mat-table, .primary, .mat-stepper-horizontal, .mat-stepper-vertical {
     background: $primary-color-bg !important;
 }
 
 .site-container {
+
+    color: white !important;
+    margin: 56px;
+    form{
+        margin-top:80px;
+    }
     .mat-table {
         margin-bottom: 56px;
     }
-}
-
-.mat-paginator {
-    box-shadow: #121315 -1px -2px 10px 0px;
-    position: fixed;
-    bottom: 0px;
-    width: 100%;
-    background: $primary-color-bg-dark !important;
 }
 
 .example-loading-shade {
@@ -107,9 +98,7 @@ app-navbar {
     left: 0;
 }
 
-.site-container {
-    margin-top: 56px;
-}
+
 
 body {
     background-color: $primary-color-bg-dark;
@@ -131,4 +120,246 @@ body {
 .mat-expansion-panel,
 .mat-select-panel-done-animating {
     background: $primary-color-bg !important;
+}
+
+.active[role="row"] {
+    background-color: $primary-color-font;
+    color: $primary-color-bg-dark !important;
+    transition: ease-in all 0.3s;
+
+    .mat-cell {
+        color: inherit !important;
+    }
+}
+
+.disabled[role="row"] {
+    color: $primary-color-font-disabled;
+    transition: ease-in color 0.3s;
+
+    .mat-cell {
+        color: inherit !important;
+    }
+}
+
+.full-width {
+    width: 95%;
+}
+
+.mat-dialog-container {
+    max-width: 80vw !important;
+    display: flex !important;
+    flex-direction: column;
+}
+
+.mat-chip:not(.mat-basic-chip) {
+    background-color: $primary-color-bg-accent !important;
+    color: $primary-color-font-dark
+}
+
+
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.mat-option-text {
+    img {
+        max-width: 80px;
+        vertical-align: middle;
+    }
+}
+
+.global-fab-button {
+    color: aliceblue !important;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+mat-dialog-container {
+    .addnewplaylist, .mat-dialog-container {
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mat-dialog-content {
+            overflow: auto !important;
+        }
+
+        height: inherit;
+    }
+
+    .action-row-bottom {
+        align-self: flex-end;
+    }
+
+    .mat-card-content {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+    }
+}
+
+.mat-snack-bar-container {
+    background-color: $primary-color-font;
+}
+
+.mat-cell {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.footer {
+    box-shadow: #121315 -1px -2px 10px 0px;
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    background: $primary-color-bg-dark !important;
+    justify-content: flex-end;
+
+    .page-select {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        color: $primary-color-font;
+
+        .label {
+            margin: 0 4px;
+            width: 100%;
+        }
+
+        .mat-form-field {
+            flex-grow: initial;
+        }
+    }
+}
+
+.mat-paginator {
+    background-color: transparent !important;
+    display: flex;
+}
+
+.mat-checkbox, mat-slide-toggle {
+    display: inline-block;
+    margin-left: 32px;
+    flex: auto;
+    min-width: 0;
+    width: 180px;
+}
+
+.mat-grid-tile {
+    .mat-figure {
+        justify-content: flex-start !important;
+        color: $primary-color-font;
+
+        &:hover {
+            background-color: aquamarine;
+            color: $primary-color-bg-dark !important;
+            transition: ease .5s background-color;
+        }
+
+        .group-name, a {
+            padding-left: 5px;
+            color: inherit;
+        }
+    }
+}
+
+.fill-remaining-space {
+    /*This fills the remaining space, by using flexbox.  
+  Every toolbar row uses a flexbox row layout. */
+    flex: 1 1 auto;
+}
+
+.mat-paginator-container {
+    flex-wrap: nowrap;
+}
+
+.mat-card {
+    opacity: 0.7;
+    transform: scale(0.95);
+
+    .mat-header-button-actions {
+        position: absolute;
+        right: 5px;
+        top: 15px;
+    }
+
+    &.hoverable:hover {
+        transition: ease-out opacity 0.7s, linear transform 0.2s;
+        opacity: 1;
+        cursor: pointer;
+        transform: scale(1);
+    }
+
+    mat-card-content {
+        outline: none;
+    }
+}
+
+.small-text {
+    font-size: 10px;
+    color: aliceblue;
+}
+
+.panel-infos {
+    border: thin solid #ff0000;
+    padding: 5px 12px;
+    margin-top: 5px;
+}
+messages {
+    .site-container{
+        margin-top:85px;
+    }
+}
+mat-card {
+    &.readed {
+        color: $primary-color-font-disabled !important;
+    }
+}
+.disabled {
+    color: $primary-color-font-disabled !important;
+}
+.mat-list-option {
+    .mat-list-text {
+        align-items: center;
+        flex-direction: row !important;
+        vertical-align:middle;
+    }
+}
+
+mat-sidenav {
+    width: 200px;
+}
+
+.toolbar-filler {
+    flex: 1 1 auto
+}
+
+.mat-drawer-container{
+    background-color:transparent !important;
+}
+
+.mat-drawer{
+    background-color:$primary-color-bg !important;
+}
+
+.mat-toolbar.mat-primary {
+    background-color: $primary-color-bg-dark !important;
+}
+
+.tab-content {
+    overflow: auto;
+    max-height: 700px;
+    min-height: 100px;
 }

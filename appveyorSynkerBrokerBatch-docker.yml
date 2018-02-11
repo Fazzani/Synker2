@@ -1,0 +1,43 @@
+version: 1.0.{build}.{branch}
+image: Visual Studio 2017
+configuration: Release
+branches:
+  only:
+  - master
+  - Develop
+only_commits:
+  message: /buildbrokerdocker:|builddocker:|bd:/
+init:
+  # Good practise, because Windows line endings are different from Unix/Linux ones
+  - cmd: git config --global core.autocrlf true
+# environment variables
+environment:
+  ASPNETCORE_ENVIRONMENT: 'Production'
+  DOCKER_USER:
+    secure: i+Ljj6w996DAKfO+/Ozx9A==
+  DOCKER_PASS:
+    secure: t3JDT7lkxppxrNp9sRp2Cw==
+  matrix:
+   - version: win
+     arch: x64
+matrix:
+  fast_finish: true
+install:
+  - docker version
+  - ps: |
+      [Environment]::SetEnvironmentVariable('dockerImage', ('synker/broker:{0}-{1}' -f $env:version,$env:arch), [EnvironmentVariableTarget]::Process);
+
+before_build:
+  - echo %dockerImage%
+  - cmd: dotnet --version
+  - ls -la
+  - ps: echo $env:arch
+build_script:
+  - ps: appveyor-retry docker build --build-arg arch=$env:arch -f ./Brokers/Dockerfile-$env:version-$env:arch -t $env:dockerImage -t synker/broker:latest .
+after_build:
+  - ps: docker images
+#test_script:
+#  - ps: docker run --rm $env:dockerImage
+deploy_script:
+  - docker login -u="%DOCKER_USER%" -p="%DOCKER_PASS%
+  - docker push %dockerImage%

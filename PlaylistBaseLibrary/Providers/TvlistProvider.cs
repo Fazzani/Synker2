@@ -15,15 +15,13 @@ namespace hfa.PlaylistBaseLibrary.Providers
     {
         private const int BufferSize = 4096;
 
-        public TvlistProvider(Stream sr) : base(sr)
+        public TvlistProvider(Uri uri) : base(uri)
         {
         }
        
-        public override IEnumerable<TvgMedia> Pull()
+        protected sealed override IEnumerable<TvgMedia> PullMediasFromProvider(StreamReader streamReader)
         {
             var listChannels = new List<TvgMedia>();
-            using (var streamReader = new StreamReader(_sr, Encoding.UTF8, false, BufferSize, true))
-            {
                 var position = 1;
                 var line = string.Empty;
                 while ((line = streamReader.ReadLine()) != null)
@@ -33,14 +31,12 @@ namespace hfa.PlaylistBaseLibrary.Providers
 
                     position = FillTvgMedia(listChannels, line, position);
                 }
-            }
             return new Playlist<TvgMedia>(listChannels);
         }
 
-        public override async Task<IEnumerable<TvgMedia>> PullAsync(CancellationToken cancellationToken)
+        protected sealed override async Task<IEnumerable<TvgMedia>> PullMediasFromProviderAsync(StreamReader streamReader, CancellationToken cancellationToken)
         {
             var listChannels = new List<TvgMedia>();
-            using (var streamReader = new StreamReader(_sr, Encoding.UTF8, false, BufferSize, true))
             using (var stringReader = new StringReader(await streamReader.ReadToEndAsync()))
             {
                 var line = string.Empty;
@@ -54,7 +50,6 @@ namespace hfa.PlaylistBaseLibrary.Providers
                     position = FillTvgMedia(listChannels, line, position);
                 }
             }
-            _sr.Seek(0, SeekOrigin.Begin);
             return new Playlist<TvgMedia>(listChannels);
         }
 
@@ -75,32 +70,18 @@ namespace hfa.PlaylistBaseLibrary.Providers
             return position;
         }
 
-        public override void Push(Playlist<TvgMedia> playlist)
+        protected sealed override string GetDataToPushed(Playlist<TvgMedia> playlist)
         {
-            if (playlist == null)
-                throw new ArgumentNullException(nameof(playlist));
             var sb = new StringBuilder();
-            var list = playlist.Where(x => x.Enabled).AsParallel().Select(x => sb.Append(x.Format(this))).ToList();
+            var list = playlist.ToList().Select(x => sb.Append(x.Format(this))).ToList();
             if (list.Any())
-                using (var sw = new StreamWriter(_sr, Encoding.UTF8, BufferSize, true))
-                {
-                    sw.Write(sb.ToString());
-                }
+                return sb.ToString();
+            return string.Empty;
         }
 
-        public override async Task PushAsync(Playlist<TvgMedia> playlist, CancellationToken token)
+        protected sealed override async Task<string> GetDataToPushedAsync(Playlist<TvgMedia> playlist, CancellationToken token)
         {
-            if (playlist == null)
-                throw new ArgumentNullException(nameof(playlist));
-
-            var sb = new StringBuilder();
-            var list = playlist.Where(x => x.Enabled).Select(x => sb.Append(x.Format(this))).ToList();
-            if (list.Any())
-                using (var sw = new StreamWriter(_sr, Encoding.UTF8, BufferSize, true))
-                {
-                    await sw.WriteAsync(sb.ToString());
-                }
-            //return null;
+            return await Task.Run(() => GetDataToPushed(playlist));
         }
 
         public override Playlist<TvgMedia> Sync(Playlist<TvgMedia> playlist)

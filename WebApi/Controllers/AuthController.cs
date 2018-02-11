@@ -5,13 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using hfa.WebApi.Common.Auth;
 using Microsoft.AspNetCore.Authorization;
-using hfa.WebApi.Dal.Entities;
 using Hfa.WebApi.Controllers;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using hfa.WebApi.Common;
-using hfa.WebApi.Dal;
-using hfa.WebApi.Models;
+using hfa.WebApi.Common.Filters;
+using Microsoft.EntityFrameworkCore;
+using hfa.WebApi.Models.Auth;
+using hfa.Synker.Services.Dal;
+using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Elastic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,47 +25,68 @@ namespace hfa.WebApi.Controllers
     {
         private IAuthentificationService _authentificationService;
 
-        public AuthController(IAuthentificationService authentificationService, IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+        public AuthController(IAuthentificationService authentificationService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
+            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _authentificationService = authentificationService;
         }
 
+        [HttpGet("me")]
+        [Authorize]
+        public IActionResult Get() => Content($"Hello {User.Identity.Name}");
+
         [Route("token")]
         [AllowAnonymous]
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> GetToken([FromBody] AuthModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             JwtReponse jwtReponse = null;
+            var user = _dbContext.Users
+                .Include(x => x.ConnectionState)
+                .Include(x => x.UserRoles)
+                    .ThenInclude(r => r.Role)
+                .SingleOrDefault(it => it.ConnectionState.UserName == model.UserName);
 
             if (model.GrantType == GrantType.Password)
             {
-                jwtReponse = _authentificationService.Authenticate(model.UserName, model.Password);
+                if (user != null && _authentificationService.VerifyPassword(model.Password, user.ConnectionState.Password))
+                {
+                    jwtReponse = _authentificationService.GenerateToken(user);
+                }
             }
             else
             {
-                jwtReponse = _authentificationService.Authenticate(model.RefreshToken);
+                jwtReponse = _authentificationService.Authenticate(model.RefreshToken, user);
             }
 
             if (jwtReponse == null)
                 return new UnauthorizedResult();
+
+            user.ConnectionState.LastConnection = DateTime.UtcNow;
 
             await _dbContext.SaveChangesAsync();
             return Ok(jwtReponse);
         }
 
         [Route("revoketoken")]
-        [Authorize]
+        [AllowAnonymous]
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> RevokeToken([FromBody] TokenModel tokenModel)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var user = _dbContext
+               .Users
+               .Include(x => x.ConnectionState)
+               .SingleOrDefault(it => it.ConnectionState.AccessToken == tokenModel.Token || it.ConnectionState.RefreshToken == tokenModel.Token);
 
-            _authentificationService.RevokeToken(tokenModel.Token);
+            if (user != null && _authentificationService.ValidateToken(user.ConnectionState.AccessToken))
+            {
+                user.ConnectionState.RefreshToken = null;
+                user.ConnectionState.AccessToken = null;
+            }
+
             await _dbContext.SaveChangesAsync();
             return Ok();
         }
@@ -75,11 +99,9 @@ namespace hfa.WebApi.Controllers
         [Route("register")]
         [AllowAnonymous]
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Register([FromBody] RegisterModel user)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             if (_dbContext.Users.Any(x => x.Email == user.Email) || _dbContext.Users.Any(x => x.ConnectionState.UserName == user.UserName))
                 return BadRequest($"The user {user.UserName} is already exist");
 
@@ -96,15 +118,22 @@ namespace hfa.WebApi.Controllers
         /// <returns></returns>
         [Route("reset")]
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Reset([FromBody] ResetModel user)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             if (!_dbContext.Users.Any(x => x.ConnectionState.UserName == user.UserName))
                 return BadRequest($"The user {user.UserName} is not exist");
 
-            var userEntity = _authentificationService.ResetPassword(user.UserName, user.Password, user.NewPassword);
+            var userEntity = _dbContext.Users
+                .Include(x => x.ConnectionState)
+                .SingleOrDefault(it => it.ConnectionState.UserName == user.UserName);
+
+            if (user != null && _authentificationService.VerifyPassword(user.Password, userEntity.ConnectionState.Password))
+            {
+                userEntity.ConnectionState.Password = user.NewPassword.HashPassword(_authentificationService.Salt);
+            }
+
+            _dbContext.Users.Update(userEntity);
 
             return Ok(await _dbContext.SaveChangesAsync());
         }

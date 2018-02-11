@@ -16,7 +16,7 @@ export default createServerRenderer(params => {
     return platformDynamicServer(providers).bootstrapModule(AppModule).then(moduleRef => {
         const appRef = moduleRef.injector.get(ApplicationRef);
         const state = moduleRef.injector.get(PlatformState);
-        const zone = moduleRef.injector.get(NgZone);
+        const zone = moduleRef.injector.get <NgZone>(NgZone);
 
         return new Promise<RenderResult>((resolve, reject) => {
             zone.onError.subscribe(errorInfo => reject(errorInfo));

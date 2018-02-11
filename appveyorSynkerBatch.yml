@@ -1,0 +1,51 @@
+version: '1.0.{build}'
+image: Visual Studio 2017
+configuration: Release
+branches:
+  only:
+  - master
+  - Develop
+only_commits:
+  message: /buildbatch:|build:/
+init:
+  # Good practise, because Windows line endings are different from Unix/Linux ones
+  - cmd: git config --global core.autocrlf true
+# environment variables
+environment:
+  ASPNETCORE_ENVIRONMENT: 'Production'
+matrix:
+  fast_finish: true
+before_build:
+  - echo ------------ Publish Sync batch version %APPVEYOR_BUILD_NUMBER% ----------
+  - echo Display .NET Core version
+  - cmd: dotnet --version
+  # Display minimal restore text
+  - cmd: cd ./SyncLibrary
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
+build_script:
+  - cmd: dotnet publish -c %CONFIGURATION% -r linux-x64 --verbosity m -o artifacts 
+  - ls
+test_script:
+  - echo restore packages for our unit tests
+  - cmd: cd ../hfa.synker.batch.test/
+  - cmd: dotnet restore ./hfa.synker.batch.test.csproj --verbosity m
+  - echo run the unit tests (requires changing into the test directory)
+  - cmd: dotnet xunit -appveyor -notrait "Category=Integration"
+artifacts:
+ - path: .\SyncLibrary\artifacts
+   name: SynkerBatch
+   type: zip
+on_finish :
+  # any cleanup in here
+deploy:
+  - provider: Environment
+    name: Synker.batch PROD
+    on:
+      branch: Develop

@@ -1,0 +1,101 @@
+﻿@model hfa.Synker.batch.EmailModels.DiffEmailViewModel
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Welcome to Synker iptv, @Model.UserName!</title>
+</head>
+<body>
+    <style type="text/css">
+        body {
+            width: 100% !important;
+            height: 100%;
+            margin: 0;
+            line-height: 1.4;
+            background-color: #0a1d2b;
+            color: #79ffd2;
+            -webkit-text-size-adjust: none;
+        }
+
+        @@media only screen and (max-width: 600px) {
+            .email-body_inner {
+                width: 100% !important;
+            }
+
+            .email-footer {
+                width: 100% !important;
+            }
+        }
+
+        @@media only screen and (max-width: 500px) {
+            .button {
+                width: 100% !important;
+            }
+        }
+    </style>
+    <span class="preheader" style="box-sizing: border-box; display: none !important; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 1px; line-height: 1px; max-height: 0; max-width: 0; mso-hide: all; opacity: 0; overflow: hidden; visibility: hidden;">Thanks for trying out [Product Name]. We’ve pulled together some information and resources to help you get started.</span>
+    <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; margin: 0; padding: 0; width: 100%;"
+           bgcolor="#0a1d2b">
+        <tr>
+            <td align="center" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; word-break: break-word;">
+                <table class="email-content" width="100%" cellpadding="0" cellspacing="0" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; margin: 0; padding: 0; width: 100%;">
+                    <tr>
+                        <td class="email-masthead" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; padding: 25px 0; word-break: break-word;"
+                            align="center">
+                            <a href="https://synker.ovh" class="email-masthead_name" style="box-sizing: border-box; color: #bbbfc3; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; text-shadow: 0 1px 0 white;">
+                                @Model.PlaylistName
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="email-body" width="100%" cellpadding="0" cellspacing="0" style="-premailer-cellpadding: 0; -premailer-cellspacing: 0; border-bottom-color: #312e2e; border-bottom-style: solid; border-bottom-width: 1px; border-top-color: #312e2e; border-top-style: solid; border-top-width: 1px; box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; margin: 0; padding: 0; width: 100%; word-break: break-word;"
+                            bgcolor="#101323">
+                            <table class="email-body_inner" align="center" width="570" cellpadding="0" cellspacing="0" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; margin: 0 auto; padding: 0; width: 570px;"
+                                   bgcolor="#101323">
+
+                                @foreach (var media in Model.AddedMedias)
+                                {
+                                    <tr>
+                                        <td>New</td>
+                                        <td>@media.DisplayName</td>
+                                    </tr>
+                                }
+                                @foreach (var media in Model.RemovedMedias)
+                                {
+                                    <tr>
+                                        <td>Removed</td>
+                                        <td>@media.DisplayName</td>
+                                    </tr>
+                                }
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; word-break: break-word;">
+                            <table class="email-footer" align="center" width="570" cellpadding="0" cellspacing="0" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; margin: 0 auto; padding: 0; text-align: center; width: 570px;">
+                                <tr>
+                                    <td class="content-cell" align="center" style="box-sizing: border-box; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; padding: 35px; word-break: break-word;">
+                                        <p class="sub align-center" style="box-sizing: border-box; color: #AEAEAE; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 12px; line-height: 1.5em; margin-top: 0;"
+                                           align="center">© 2018 [@Model.ProductName]. All rights reserved.</p>
+                                        <p class="sub align-center" style="box-sizing: border-box; color: #AEAEAE; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 12px; line-height: 1.5em; margin-top: 0;"
+                                           align="center">
+                                            [@Model.CompanyName, LLC]
+                                            <br />2 Passage Paillé.
+                                            <br />92110 Clichy
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

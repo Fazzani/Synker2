@@ -1,23 +1,23 @@
 ﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BaseService } from '../base/base.service';
-import { tvChannel, ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
+import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
+import { tvChannel } from "../../types/xmltv.type";
 
 // All the RxJS stuff we need
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
+import { map, catchError } from 'rxjs/operators';
 import * as variables from '../../variables';
 
 @Injectable()
 export class EpgService extends BaseService {
 
     constructor(protected http: HttpClient) {
-        super(http);
+        super(http,'epg');
     }
 
     get(id: string): Observable<ElasticResponse<tvChannel>> {
-        return this.http.get(variables.BASE_API_URL + 'epg/' + id).map(this.parseData)
+        return this.http.get(variables.BASE_API_URL + `${this.BaseUrl}/${id}`).map(this.parseData)
             .catch(this.handleError);
     }
 

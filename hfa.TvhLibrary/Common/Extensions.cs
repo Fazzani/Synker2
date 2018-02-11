@@ -10,24 +10,6 @@ namespace System
 {
     public static class Extensions
     {
-        public static void ErrorConsole(this string text, params string[] args)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(text.Replace("{", "-").Replace("}", "-"), args);
-        }
-
-        public static void InfoConsole(this string text, params string[] args)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(text.Replace("{", "-").Replace("}", "-"), args);
-        }
-
-        public static void WarningConsole(this string text, params string[] args)
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(text.Replace("{", "-").Replace("}", "-"), args);
-        }
-
         /// <summary>
         /// Converts a given DateTime into a Unix timestamp
         /// </summary>

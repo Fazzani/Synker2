@@ -1,0 +1,1 @@
+﻿[![Build status](https://ci.appveyor.com/api/projects/status/hq9ef5slgcd60jdv?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2-xbcyy)

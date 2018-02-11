@@ -3,20 +3,34 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>f934f0be-ac10-4dd6-b82f-d7aecb08f04b</UserSecretsId>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.*</FileVersion>
+    <Version>1.0.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="log\**" />
+    <Content Remove="log\**" />
+    <EmbeddedResource Remove="log\**" />
+    <None Remove="log\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNet.Core.Webhooks" Version="1.0.0-beta00019" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.WebSockets" Version="2.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" />
     <!--<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="2.0.0" />-->
-    <PackageReference Include="NEST" Version="5.5.0" />
+    <PackageReference Include="NEST" Version="5.6.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="1.0.0" />
+    <PackageReference Include="Pastebin.API.CSharp" Version="1.0.7" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.1" />
+    <PackageReference Include="SSH.NET" Version="2016.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.0" />
+    <PackageReference Include="ZNetCS.AspNetCore.Authentication.Basic" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
@@ -25,8 +39,16 @@
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\hfa.Synker.Service\hfa.Synker.Service.csproj" />
     <ProjectReference Include="..\PlaylistBaseLibrary\hfa.PlaylistBaseLibrary.csproj" />
     <ProjectReference Include="..\SyncLibrary\hfa.Synker.batch.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <None Update="certs\rsa-private-key.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="certs\rsa-public-key.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

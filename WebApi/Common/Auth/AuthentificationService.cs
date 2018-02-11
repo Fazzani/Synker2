@@ -1,120 +1,150 @@
-﻿using hfa.WebApi.Dal;
-using hfa.WebApi.Dal.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+
 
 namespace hfa.WebApi.Common.Auth
 {
+    using hfa.Synker.Service.Entities.Auth;
+    using NETCore.Encrypt.Extensions.Internal;
     public class AuthentificationService : IAuthentificationService
     {
-        private SynkerDbContext _synkerDbContext;
-        private IOptions<SecurityOptions> _securityOptions;
+        private SecurityOptions _securityOptions;
         public TimeSpan ValidFor { get; }
         public DateTime IssuedAt => DateTime.UtcNow;
         public DateTime Expiration => IssuedAt.Add(ValidFor);
-        public string Salt { get { return _securityOptions.Value.Salt; } }
+        public string Salt { get { return _securityOptions.Salt; } }
+        private SecurityKey _issuerSigningKey;
+        private SigningCredentials _signingCredentials;
+        private JwtHeader _jwtHeader;
 
-        public AuthentificationService(SynkerDbContext synkerDbContext, IOptions<SecurityOptions> securityOptions)
+        public TokenValidationParameters Parameters { get; private set; }
+
+        public AuthentificationService(IOptions<SecurityOptions> securityOptions)
         {
-            _synkerDbContext = synkerDbContext;
-            _securityOptions = securityOptions;
-            ValidFor = TimeSpan.FromMinutes(_securityOptions.Value.TokenLifetimeInMinutes);
+            _securityOptions = securityOptions.Value;
+            ValidFor = TimeSpan.FromMinutes(_securityOptions.TokenLifetimeInMinutes);
+
+            if (_securityOptions.UseRsa)
+            {
+                InitializeRsa();
+            }
+            else
+            {
+                InitializeHmac();
+            }
+
+            InitializeJwtParameters();
+        }
+
+        private void InitializeRsa()
+        {
+            using (var publicRsa = RSA.Create())
+            {
+                var publicKeyXml = File.ReadAllText(_securityOptions.RsaPublicKeyXML);
+                publicRsa.FromXmlString(publicKeyXml, true);
+                _issuerSigningKey = new RsaSecurityKey(publicRsa);
+            }
+            if (string.IsNullOrWhiteSpace(_securityOptions.RsaPrivateKeyXML))
+            {
+                return;
+            }
+            using (RSA privateRsa = RSA.Create())
+            {
+                var privateKeyXml = File.ReadAllText(_securityOptions.RsaPrivateKeyXML);
+                privateRsa.FromXmlString(privateKeyXml, true);
+                var privateKey = new RsaSecurityKey(privateRsa);
+                _signingCredentials = new SigningCredentials(privateKey, SecurityAlgorithms.RsaSha256);
+            }
+        }
+
+        private void InitializeHmac()
+        {
+            _issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_securityOptions.HmacSecretKey));
+            _signingCredentials = new SigningCredentials(_issuerSigningKey, SecurityAlgorithms.HmacSha256);
+        }
+
+        private void InitializeJwtParameters()
+        {
+            _jwtHeader = new JwtHeader(_signingCredentials);
+            Parameters = new TokenValidationParameters
+            {
+                IssuerSigningKey = _issuerSigningKey,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _securityOptions.Issuer,
+                ValidateIssuer = true,
+                ValidAudience = _securityOptions.Audience,
+                ValidateAudience = true,
+
+                // Validate the token expiry
+                ValidateLifetime = true,
+                // If you want to allow a certain amount of clock drift, set that here:
+                ClockSkew = TimeSpan.Zero,
+                RequireExpirationTime = true,
+                SaveSigninToken = true,
+                RequireSignedTokens = true
+            };
         }
 
         /// <summary>
-        /// Authenticate user with credentials
+        /// Verify Salt password
         /// </summary>
-        /// <param name="username">Username</param>
-        /// <param name="password">Password</param>
-        /// <returns>JWT Token</returns>
-        public User ResetPassword(string username, string password, string newPassword)
-        {
-            var user = _synkerDbContext.Users.Include(x => x.ConnectionState).SingleOrDefault(it => it.ConnectionState.UserName == username);
-            if (user != null && password.VerifyPassword(user.ConnectionState.Password, _securityOptions.Value.Salt))
-            {
-                user.ConnectionState.Password = newPassword.HashPassword(_securityOptions.Value.Salt);
-            }
-            _synkerDbContext.Users.Update(user);
-            return user;
-        }
-
-        /// <summary>
-        /// Authenticate user with credentials
-        /// </summary>
-        /// <param name="username">Username</param>
-        /// <param name="password">Password</param>
-        /// <returns>JWT Token</returns>
-        public JwtReponse Authenticate(string username, string password)
-        {
-            var user = _synkerDbContext.Users.Include(x => x.ConnectionState).SingleOrDefault(it => it.ConnectionState.UserName == username);
-            if (user != null && password.VerifyPassword(user.ConnectionState.Password, _securityOptions.Value.Salt))
-            {
-                return GenerateToken(user);
-            }
-            return null;
-        }
+        /// <param name="password"></param>
+        /// <param name="password64"></param>
+        /// <returns></returns>
+        public bool VerifyPassword(string password, string password64) => password.VerifyPassword(password64, _securityOptions.Salt);
 
         /// <summary>
         /// Authenticate by refresh token
         /// </summary>
         /// <param name="refreshToken"></param>
         /// <returns></returns>
-        public JwtReponse Authenticate(string refreshToken)
+        public JwtReponse Authenticate(string refreshToken, User user)
         {
-            var user = _synkerDbContext
-                .Users
-                .Include(x => x.ConnectionState)
-                .SingleOrDefault(it => it.ConnectionState.RefreshToken == refreshToken);
-
             var jwtHandler = new JwtSecurityTokenHandler();
 
-            if (user != null && ValidateToken(user.ConnectionState.AccessToken))
+            try
             {
-                user.ConnectionState.RefreshToken = refreshToken;
-                return GenerateToken(user);
+                if (user != null && ValidateToken(user.ConnectionState.AccessToken))
+                {
+                    user.ConnectionState.RefreshToken = refreshToken;
+                    return GenerateToken(user);
+                }
             }
+            catch (SecurityTokenExpiredException)
+            {
+                //Token expired do try to refresh it
+                if (ValidateToken(refreshToken))
+                    return GenerateToken(user);
+            }
+
             return null;
         }
 
-        /// <summary>
-        /// Revoke by  refreshtoken or accessToken
-        /// </summary>
-        /// <param name="AccessToken"></param>
-        /// <returns></returns>
-        public void RevokeToken(string accessTokenOrRefreshToken)
-        {
-            var user = _synkerDbContext
-                .Users
-                .Include(x => x.ConnectionState)
-                .SingleOrDefault(it => it.ConnectionState.AccessToken == accessTokenOrRefreshToken || it.ConnectionState.RefreshToken == accessTokenOrRefreshToken);
-
-            if (user != null && ValidateToken(user.ConnectionState.AccessToken))
-            {
-                user.ConnectionState.RefreshToken = null;
-                user.ConnectionState.AccessToken = null;
-            }
-        }
-
-        private JwtReponse GenerateToken(Dal.Entities.User user)
+        public JwtReponse GenerateToken(User user)
         {
             var claims = GetClaims(user);
 
             var jwt = new JwtSecurityToken(
-                issuer: _securityOptions.Value.Issuer,
-                audience: _securityOptions.Value.Audience,
+
+                issuer: _securityOptions.Issuer,
+                audience: _securityOptions.Audience,
                 claims: claims,
                 expires: Expiration,
-                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_securityOptions.Value.SymmetricSecurityKey)), SecurityAlgorithms.HmacSha256)
+                signingCredentials: _signingCredentials
             );
             user.ConnectionState.AccessToken = new JwtSecurityTokenHandler().WriteToken(jwt);
+            user.ConnectionState.LastConnection = DateTime.UtcNow;
             var jwtResponse = new JwtReponse(user.ConnectionState.AccessToken);
             user.ConnectionState.RefreshToken = jwtResponse.RefreshToken;
             return jwtResponse;
@@ -127,68 +157,42 @@ namespace hfa.WebApi.Common.Auth
             if (jwtHandler.CanReadToken(accessToken))
             {
                 var jwtToken = jwtHandler.ReadJwtToken(accessToken);
-                var validationParameters = new TokenValidationParameters
-                {
-                    IssuerSigningKeys = new List<SecurityKey>() { new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_securityOptions.Value.SymmetricSecurityKey)) },
-                    ValidAudience = _securityOptions.Value.Audience,
-                    ValidIssuer = _securityOptions.Value.Issuer,
-                    ValidateLifetime = true,
-                    ValidateAudience = true,
-                    ValidateIssuer = true,
-                    ValidateIssuerSigningKey = true
-                };
 
-                try
-                {
-                    var principal = jwtHandler.ValidateToken(accessToken, validationParameters, out SecurityToken securityToken);
-                    return securityToken != null;
-                }
-                catch (SecurityTokenException)
-                {
-                    return false;
-                }
+                var principal = jwtHandler.ValidateToken(accessToken, Parameters, out SecurityToken securityToken);
+                return securityToken != null;
             }
             return false;
         }
 
-        private List<Claim> GetClaims(Dal.Entities.User user)
+        public List<Claim> GetClaims(User user)
         {
+            var now = DateTime.UtcNow;
+
             var claims = new List<Claim> {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.ConnectionState.UserName),
-                new Claim(JwtRegisteredClaimNames.AuthTime, DateTime.Now.ToString()),
-                new Claim(JwtRegisteredClaimNames.Aud, _securityOptions.Value.Audience),
-                new Claim(JwtRegisteredClaimNames.Birthdate, user.BirthDay.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, user.ConnectionState.UserName),
+                new Claim(JwtRegisteredClaimNames.AuthTime, now.ToString(), ClaimValueTypes.DateTime),
+                new Claim(JwtRegisteredClaimNames.Aud, _securityOptions.Audience),
+                new Claim(JwtRegisteredClaimNames.Birthdate, user.BirthDay.ToString(), ClaimValueTypes.DateTime),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName),
                 new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
-                new Claim(JwtRegisteredClaimNames.Exp, Expiration.ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, IssuedAt.ToString()),
-                new Claim("photo", user.Photo),
-                new Claim("gender", user.Gender.ToString()),
-                new Claim(JwtRegisteredClaimNames.Nbf, DateTime.UtcNow.ToString())
+                new Claim(JwtRegisteredClaimNames.Exp, Expiration.ToString(), ClaimValueTypes.DateTime),
+                new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(now).ToUniversalTime().ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
+                new Claim("photo", user.Photo, ClaimValueTypes.String),
+                new Claim(ClaimTypes.Gender, user.Gender.ToString()),
+                new Claim("id", user.Id.ToString(), ClaimValueTypes.Integer),
+                new Claim(JwtRegisteredClaimNames.Nbf, now.ToString())
                     };
-            if (user.Roles.Any())
-                claims.AddRange(user.Roles.Select(x => new Claim("role", x.Libelle)));
+
+            if (user.UserRoles.Any())
+            {
+                claims.AddRange(user.UserRoles.Select(x => new Claim(ClaimTypes.Role, x.Role.Name)));
+            }
+
             return claims;
-            
         }
-    }
-    public class JwtReponse
-    {
-        public JwtReponse(string accessToken)
-        {
-            this.AccessToken = accessToken;
-            RefreshToken = Guid.NewGuid().ToString().Replace("-", "");
-
-        }
-        public JwtReponse(string accessToken, string refreshToken)
-        {
-            this.AccessToken = accessToken;
-            RefreshToken = Guid.NewGuid().ToString().Replace("-", "");
-        }
-
-        public string AccessToken { get; private set; }
-        public string RefreshToken { get; set; }
     }
 }
+

@@ -1,12 +1,10 @@
-﻿using hfa.SyncLibrary.Common;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Nest;
 using PlaylistBaseLibrary.ChannelHandlers;
 using PlaylistBaseLibrary.Entities;
 using PlaylistManager.Entities;
 using SyncLibrary.Configuration;
 using hfa.SyncLibrary.Global;
-using SyncLibrary.TvgMediaHandlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,21 +15,41 @@ using System.Xml.Serialization;
 using Hfa.SyncLibrary;
 using Hfa.SyncLibrary.Verbs;
 using CommandLine;
-using Hfa.SyncLibrary.Messages;
 using Microsoft.Extensions.Logging;
 using static hfa.SyncLibrary.Global.Common;
 using Microsoft.Extensions.Options;
 using Hfa.SyncLibrary.Infrastructure;
 using System.IO;
+using System.Runtime.CompilerServices;
+using hfa.Synker.Services.Entities.Messages;
+using hfa.Synker.Services.Messages;
+using hfa.Synker.Service.Services.TvgMediaHandlers;
+using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Elastic;
+using hfa.Synker.batch;
+using hfa.Synker.Service.Services.Playlists;
+using hfa.Synker.Services.Dal;
+using hfa.PlaylistBaseLibrary.Providers;
+using Newtonsoft.Json;
+using System.Text;
+using hfa.Synker.Service.Services.Notification;
+using Microsoft.EntityFrameworkCore;
+using hfa.Brokers.Messages.Emailing;
+using System.Reflection;
+using hfa.Synker.batch.EmailModels;
 
+[assembly: InternalsVisibleTo("hfa.synker.batch.test")]
 namespace SyncLibrary
 {
-    class SynchElastic
+    internal class SynchElastic
     {
         static CancellationTokenSource ts = new CancellationTokenSource();
-        static IMessagesService _messagesService;
+        static IMessageService _messagesService;
+        private static INotificationService _notificationService;
         static IElasticConnectionClient _elasticClient;
-        static IOptions<ApplicationConfigData> _config;
+        static ApplicationConfigData _config;
+        private static IOptions<ElasticConfig> _elastiConfig;
+        private static ILogger _logger;
 
         public static void Main(string[] args)
         {
@@ -39,25 +57,27 @@ namespace SyncLibrary
 
             try
             {
-                _config = Init.ServiceProvider.GetService<IOptions<ApplicationConfigData>>();
+                _logger = Logger(nameof(SynchElastic));
+                _config = Init.ServiceProvider.GetService<IOptions<ApplicationConfigData>>().Value;
+                _elastiConfig = Init.ServiceProvider.GetService<IOptions<ElasticConfig>>();
                 _elasticClient = Init.ServiceProvider.GetService<IElasticConnectionClient>();
-                _messagesService = Init.ServiceProvider.GetService<IMessagesService>();
+                _messagesService = Init.ServiceProvider.GetService<IMessageService>();
+                _notificationService = Init.ServiceProvider.GetService<INotificationService>();
 
-                Logger(nameof(SynchElastic)).LogInformation("Init Synker...");
+                Logger(nameof(SynchElastic)).LogInformation("Init batch Synker...");
 
-                _messagesService.SendAsync(Message.PingMessage, ts.Token).GetAwaiter().GetResult();
+                _messagesService.SendAsync(Message.PingMessage, _config.ApiUserName, _config.ApiPassword, ts.Token).GetAwaiter().GetResult();
 
-                ArgsParser(args).GetAwaiter().GetResult();
+                ArgsParserAsync(args, _messagesService).GetAwaiter().GetResult();
             }
             catch (OperationCanceledException ex)
             {
-                Logger(nameof(SynchElastic)).LogCritical(ex, "Canceled operation");
+                Logger(nameof(SynchElastic)).LogCritical(ex, "Operation was Canceled");
             }
             catch (Exception e)
             {
-                _messagesService.SendAsync(e.Message, MessageTypeEnum.EXCEPTION, ts.Token).GetAwaiter().GetResult();
                 Logger(nameof(SynchElastic)).LogCritical(e, e.Message);
-                throw;
+                _messagesService.SendAsync(e.Message, MessageTypeEnum.EXCEPTION, _config.ApiUserName, _config.ApiPassword, ts.Token).GetAwaiter().GetResult();
             }
         }
 
@@ -65,90 +85,78 @@ namespace SyncLibrary
         /// Args Parser
         /// </summary>
         /// <param name="args"></param>
+        /// <param name="messagesService"></param>
         /// <returns></returns>
-        public static async Task ArgsParser(string[] args)
+        public static async Task ArgsParserAsync(string[] args, IMessageService messagesService)
         {
-            await Parser.Default.ParseArguments<PurgeTempFilesVerb, SyncEpgElasticVerb, SyncMediasElasticVerb, SaveNewConfigVerb>(args).MapResult(
+            await Parser.Default
+                .ParseArguments<PurgeTempFilesVerb, DiffPlaylistVerb, SyncEpgElasticVerb, SaveNewConfigVerb, PushXmltvVerb, SendMessageVerb, ScanPlaylistFileVerb>(args)
+                .MapResult(
                  (PurgeTempFilesVerb opts) => PurgeTempFilesVerb.MainPurgeAsync(opts),
+                  (DiffPlaylistVerb opts) => DiffPlaylistAsync(opts, _config, ts.Token),
                   (SyncEpgElasticVerb opts) => SyncEpgElasticAsync(opts, _elasticClient, _config, ts.Token),
-                  (SyncMediasElasticVerb opts) => SyncMediasElasticAsync(opts, _elasticClient, _config, ts.Token),
-                  (SaveNewConfigVerb opts) => SaveConfigAsync(opts, ts.Token),
+                  (SaveNewConfigVerb opts) => SaveConfigAsync(opts, _config, ts.Token),
+                  (PushXmltvVerb opts) => PushXmltvAsync(opts, messagesService, new HttpClient(), _config, ts.Token),
+                  (SendMessageVerb opts) => SendMessageAsync(opts, _config, ts.Token),
+                  (ScanPlaylistFileVerb opts) => ScanPlaylist(opts, ts.Token),
                  errs => throw new AggregateException(errs.Select(e => new Exception(e.Tag.ToString()))));
         }
 
-        /// <summary>
-        /// Sync medias to elastic
-        /// </summary>
-        /// <param name="options"></param>
-        /// <param name="elasticClient"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        public static async Task SyncMediasElasticAsync(SyncMediasElasticVerb options, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken token)
+        public static async Task ScanPlaylist(ScanPlaylistFileVerb options, CancellationToken token = default(CancellationToken))
         {
-            var res = await SynchronizableConfigManager.LoadEncryptedConfig(options.FilePath, options.CertificateName);
+            await new ScanPlaylistService().ScanAsync(options, Logger(nameof(SynchElastic)), token);
+        }
 
-            await _messagesService.SendAsync($"Start Sync Elastic By {options.FilePath} config", MessageTypeEnum.START_SYNC_MEDIAS, token);
+        public static async Task DiffPlaylistAsync(DiffPlaylistVerb options, ApplicationConfigData config, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var playlistService = Init.ServiceProvider.GetService<IPlaylistService>();
+            var _dbContext = Init.ServiceProvider.GetService<SynkerDbContext>();
 
-            if (res != null & res.Sources.Any())
+            foreach (var pl in _dbContext.Playlist.Include(x => x.User).Where(x => x.Status == hfa.Synker.Service.Entities.Playlists.PlaylistStatus.Enabled))
             {
-#if DEBUG
-                foreach (var source in res.Sources.Skip(1))
-#else
-                foreach (var source in res.Sources)
-#endif
+                if (pl.IsXtreamTag)
                 {
-                    var provider = await ProviderFactory.Create(source);
-                    if (provider != null)
+                    var res = await playlistService.DiffWithSourceAsync(() => pl, new XtreamProvider(pl.SynkConfig.Url), false, cancellationToken);
+                    if (res.removed.Any() || res.tvgMedia.Any())
                     {
-                        var newMedias = new List<TvgMedia>();
-                        using (var pl = new Playlist<TvgMedia>(provider))
+                        //TODO :  send notif to user with result
+                        _logger.LogInformation($"Diff detected for the playlist {pl.Id} of user {pl.UserId}");
+
+                        var message = new Message
                         {
-                            var medias = (from c in pl select c).ToList();
+                            Content = $"<h1>{res.tvgMedia.Count()} medias was added and {res.removed.Count()} medias was removed from the playlist {pl.Freindlyname}</h1><h3>Added medias</h3><ul>{string.Join("</li><li>", res.tvgMedia)}<h3>Removed medias</h3></ul><ul>{string.Join("</li><li>", res.removed)}</ul>",
+                            MessageType = MessageTypeEnum.DIFF_PLAYLIST,
+                            UserId = pl.UserId,
+                            TimeStamp = DateTime.Now,
+                            Status = MessageStatusEnum.NotReaded
+                        };
 
-                            //Faire passer les handlers
-                            var handler = FabricHandleMedias(elasticClient);
-
-                            foreach (var media in medias)
-                            {
-                                handler.HandleTvgMedia(media);
-                                if (media.IsValid)
-                                {
-                                    Logger(nameof(SyncMediasElasticAsync)).LogInformation($"Treating media  => {media.Name} : {media.Url}");
-
-                                    var result = await elasticClient.Client
-                                        .SearchAsync<TvgMedia>(x => x.Index<TvgMedia>()
-                                            .Query(q => q.Term(m => m.Url, media.Url)), token);
-
-                                    if (result.Total < 1)
-                                    {
-                                        newMedias.Add(media);
-                                    }
-                                    else
-                                    {
-                                        if (options.Force && media != result.Documents.FirstOrDefault() || (media.Tvg?.Id != result.Documents.FirstOrDefault()?.Id))
-                                        {
-                                            //Modification
-                                            Logger(nameof(SyncMediasElasticAsync)).LogInformation($"Updating media {result.Documents.SingleOrDefault().Id} in Elastic");
-
-                                            var response = await elasticClient.Client.UpdateAsync<TvgMedia>(result.Documents.SingleOrDefault().Id,
-                                                m => m.Doc(new TvgMedia { Id = null, Name = media.Name, Lang = media.Lang }), token);
-                                            response.AssertElasticResponse();
-                                        }
-                                    }
-                                }
-                            }
-                            if (newMedias.Any())
-                            {
-                                //Push to Elastic
-                                var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(config.Value.DefaultIndex).CreateMany(newMedias,
-                                    (bd, q) => bd.Index(config.Value.DefaultIndex)), token);
-                                responseBulk.AssertElasticResponse();
-                            }
-                        }
+                        //Add new message for user
+                        await _messagesService.SendAsync(message, _config.ApiUserName, _config.ApiPassword, ts.Token);
+                        //Send Email Notification
+                        string result = await Init.Engine.CompileRenderAsync("diff_playlist.cshtml", new DiffEmailViewModel
+                        {
+                            PlaylistName = pl.Freindlyname,
+                            AddedMedias = res.tvgMedia,
+                            RemovedMedias = res.removed,
+                            UserName = pl.User.DisplayName,
+                            TimeStamp = DateTime.Now,
+                            CompanyName = "Synker",
+                            ExternalUrl="http://synker.ovh",
+                            ProductName = "Synker Iptv"
+                        });
+                        await _notificationService.SendMailAsync(new EmailNotification("synker.batch")
+                        {
+                            Body = result,
+                            FromDisplayName = "Synker Team",
+                            From = "synker-team@synker.ovh",
+                            Subject = $"New Playlist changement detected for {pl.Freindlyname}",
+                            IsBodyHtml = true,
+                            To = pl.User.Email
+                        }, ts.Token);
                     }
                 }
             }
-            await _messagesService.SendAsync($"End Sync Elastic By {options.FilePath} config", MessageTypeEnum.END_SYNC_MEDIAS, token);
         }
 
         /// <summary>
@@ -159,10 +167,11 @@ namespace SyncLibrary
         /// <param name="config"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public static async Task SyncEpgElasticAsync(SyncEpgElasticVerb options, IElasticConnectionClient elasticClient, IOptions<ApplicationConfigData> config, CancellationToken token)
+        public static async Task SyncEpgElasticAsync(SyncEpgElasticVerb options, IElasticConnectionClient elasticClient, ApplicationConfigData config, CancellationToken token = default(CancellationToken))
         {
             Stream response = null;
-            await _messagesService.SendAsync($"Start Sync Xmltv file {options.FilePath} to Elastic", MessageTypeEnum.START_SYNC_EPG_CONFIG, token);
+            await _messagesService.SendAsync($"Start Sync Xmltv file {options.FilePath} to Elastic", MessageTypeEnum.START_SYNC_EPG_CONFIG,
+                config.ApiUserName, config.ApiPassword, token);
             try
             {
                 if (!File.Exists(options.FilePath))
@@ -180,7 +189,8 @@ namespace SyncLibrary
                 var tvModel = (tv)ser.Deserialize(response);
 
                 //Sync Elastic
-                var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(config.Value.DefaultIndex).CreateMany(tvModel.channel, (bd, q) => bd.Index(config.Value.DefaultIndex)), token);
+                var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(_elastiConfig.Value.DefaultIndex)
+                .CreateMany(tvModel.channel, (bd, q) => bd.Index(_elastiConfig.Value.DefaultIndex)), token);
                 responseBulk.AssertElasticResponse();
             }
             catch (Exception ex)
@@ -192,7 +202,27 @@ namespace SyncLibrary
                 response?.Close();
                 response?.Dispose();
             }
-            await _messagesService.SendAsync($"END Sync Xmltv file {options.FilePath} to Elastic", MessageTypeEnum.END_SYNC_EPG_CONFIG, token);
+            await _messagesService.SendAsync($"END Sync Xmltv file {options.FilePath} to Elastic", MessageTypeEnum.END_SYNC_EPG_CONFIG,
+                config.ApiUserName, config.ApiPassword, token);
+        }
+
+        /// <summary>
+        /// Send new message to synker API
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public static async Task SendMessageAsync(SendMessageVerb options, ApplicationConfigData config, CancellationToken token = default(CancellationToken))
+        {
+            await _messagesService.SendAsync(new Message
+            {
+                //Author = options?.Author,
+                Content = options.Message,
+                MessageType = (MessageTypeEnum)Enum.Parse(typeof(MessageTypeEnum), options.MessageType.ToString())
+            },
+            config.ApiUserName,
+            config.ApiPassword,
+            token);
         }
 
         /// <summary>
@@ -200,9 +230,9 @@ namespace SyncLibrary
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static async Task SaveConfigAsync(SaveNewConfigVerb options, CancellationToken token)
+        public static async Task SaveConfigAsync(SaveNewConfigVerb options, ApplicationConfigData config, CancellationToken token = default(CancellationToken))
         {
-            await _messagesService.SendAsync($"Start save new config {options.FilePath}", MessageTypeEnum.END_CREATE_CONFIG, token);
+            await _messagesService.SendAsync($"Start save new config {options.FilePath}", MessageTypeEnum.START_CREATE_CONFIG, token);
             //await SynchronizableConfigManager.SaveAndEncrypt(new ConfigSync
             //{
             //    Sources = new List<ISynchronizableConfig>
@@ -226,17 +256,47 @@ namespace SyncLibrary
         }
 
         /// <summary>
+        /// Push xmltv file to the api
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public static async Task<bool> PushXmltvAsync(PushXmltvVerb options, IMessageService messagesService, HttpClient httpClient, ApplicationConfigData config, CancellationToken token = default(CancellationToken))
+        {
+            await messagesService.SendAsync($"Pushing {options.FilePath}", MessageTypeEnum.START_PUSH_XMLTV, config.ApiUserName, config.ApiPassword, token);
+            if (!File.Exists(options.FilePath))
+            {
+                await messagesService.SendAsync($"File not Exist {options.FilePath}", MessageTypeEnum.START_PUSH_XMLTV, token);
+                return false;
+            }
+
+            var fileContent = await File.ReadAllTextAsync(options.FilePath);
+            using (var sr = new StringReader(fileContent))
+            {
+                var xs = new XmlSerializer(typeof(tv));
+                using (httpClient)
+                {
+                    var httpResponseMessage = await httpClient.PostAsync(new Uri(options.ApiUrl), new JsonContent(xs.Deserialize(sr)), token);
+                    await messagesService.SendAsync($"END save new config {options.FilePath} with httpResponseMessage : {httpResponseMessage.ReasonPhrase} ",
+                        MessageTypeEnum.END_PUSH_XMLTV, config.ApiUserName, config.ApiPassword, token);
+                    return httpResponseMessage.IsSuccessStatusCode;
+                }
+            }
+        }
+
+        /// <summary>
         /// Fabriquer les medias handlers (clean names, match epg, etc ...)
         /// </summary>
         private static TvgMediaHandler FabricHandleMedias(IElasticConnectionClient elasticConnectionClient)
         {
             var contextHandler = Init.ServiceProvider.GetService<IContextTvgMediaHandler>();
             var cleanNameHandler = new TvgMediaCleanNameHandler(contextHandler);
+            var shiftHandler = new TvgMediaShiftMatcherHandler(contextHandler);
             var groupHandler = new TvgMediaGroupMatcherHandler(contextHandler);
-            var epgHandler = new TvgMediaEpgMatcherNameHandler(contextHandler, elasticConnectionClient);
-            var langHandler = new TvgMediaLangMatcherHandler(contextHandler);
+            var epgHandler = new TvgMediaEpgMatcherNameHandler(contextHandler, elasticConnectionClient, _elastiConfig);
+            var langHandler = new TvgMediaShiftMatcherHandler(contextHandler);
 
-            langHandler.SetSuccessor(groupHandler);
+            langHandler.SetSuccessor(shiftHandler);
+            shiftHandler.SetSuccessor(groupHandler);
             groupHandler.SetSuccessor(epgHandler);
             epgHandler.SetSuccessor(cleanNameHandler);
             return langHandler;

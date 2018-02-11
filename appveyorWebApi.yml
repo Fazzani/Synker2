@@ -1,0 +1,42 @@
+version: '1.0.{build}'
+image: Visual Studio 2017
+configuration: Release
+branches:
+  only:
+  - master
+  - Develop
+only_commits:
+  message: /buildapi:|build:/
+init:
+  # Good practise, because Windows line endings are different from Unix/Linux ones
+  - cmd: git config --global core.autocrlf true
+  - cmd: pwd
+clone_depth: 10
+# environment variables
+environment:
+  nodejs_version: '8'
+  ASPNETCORE_ENVIRONMENT: 'Production'
+matrix:
+  fast_finish: true
+before_build:
+  - cmd: dotnet --version
+  - cmd: dotnet restore ./WebApi/hfa.WebApi.csproj --verbosity m
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
+build_script:
+  - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj --verbosity m -o artifactsWebApi
+artifacts:
+ - path: .\WebApi\artifactsWebApi
+   name: WebApi
+   type: WebDeployPackage
+deploy:
+  - provider: Environment
+    name: Synker Api Prod
+    on:
+      branch: Develop

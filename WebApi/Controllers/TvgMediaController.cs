@@ -8,74 +8,65 @@ using Hfa.WebApi.Common;
 using System.Threading;
 using Hfa.WebApi.Models;
 using hfa.SyncLibrary.Global;
-using Nest;
-using Hfa.WebApi.Common.ActionsFilters;
-using Elasticsearch.Net;
-using Microsoft.AspNetCore.Cors;
 using hfa.WebApi.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.IO;
-using System.Text;
-using PlaylistBaseLibrary.Providers;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net;
-using hfa.WebApi.Dal;
-using System.Reflection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
-using hfa.PlaylistBaseLibrary.Providers;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using hfa.WebApi.Common.Filters;
+using hfa.Synker.Services.Dal;
+using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Elastic;
+using hfa.WebApi.Models.TvgMedias;
+using hfa.Synker.Service.Services;
+using hfa.WebApi.Models;
 
 namespace Hfa.WebApi.Controllers
 {
     //[ApiVersion("1.0")]
     [Route("api/v1/[controller]")]
+    [Authorize]
     public class TvgMediaController : BaseController
     {
-        public TvgMediaController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+        private ISitePackService _sitePackService;
+
+        public TvgMediaController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
+            SynkerDbContext context, ISitePackService sitePackService)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
-
+            _sitePackService = sitePackService;
         }
 
         [HttpPost]
         [Route("_search")]
-        public async Task<IActionResult> SearchAsync([FromBody]dynamic request)
+        public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
         {
-            return await SearchAsync<TvgMedia>(request.ToString());
+            return await SearchAsync<TvgMedia, TvgMediaModel>(request.ToString(), cancellationToken);
         }
 
         // [ElasticResult]
         [HttpPost]
+        [ValidateModel]
         [Route("search")]
-        public async Task<IActionResult> SearchAsync([FromBody] QueryListBaseModel query)
+        public async Task<IActionResult> SearchAsync([FromBody] QueryListBaseModel query, CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var response = await _elasticConnectionClient.Client.SearchAsync<TvgMedia>(rq => rq
                 .Size(query.PageSize)
                 .From(query.Skip)
                 .Sort(x => GetSortDescriptor(x, query.SortDict))
-
                 .Query(q => q.Match(m => m.Field(ff => ff.Name)
-                                          .Query(query.SearchDict.LastOrDefault().Value)))
+                             .Query(query.SearchDict.LastOrDefault().Value)))
 
-            , cancelToken.Token);
-
-            cancelToken.Token.ThrowIfCancellationRequested();
+            , cancellationToken);
 
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);
             //response.AssertElasticResponse();
-            return new OkObjectResult(response.GetResultListModel());
+            return new OkObjectResult(response.GetResultListModel<TvgMedia, TvgMediaModel>());
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -85,31 +76,41 @@ namespace Hfa.WebApi.Controllers
                 .Size(1)
                 .Index<TvgMedia>()
                 .Query(q => q.Ids(ids => ids.Name(nameof(id)).Values(id)))
-            , cancelToken.Token);
-
-            cancelToken.Token.ThrowIfCancellationRequested();
+            , cancellationToken);
 
             response.AssertElasticResponse();
             if (response.Documents.FirstOrDefault() == null)
                 return NotFound();
 
-            return new OkObjectResult(response.GetResultListModel());
+            return new OkObjectResult(response.GetResultListModel<TvgMedia, TvgMediaModel>());
+        }
+
+        /// <summary>
+        ///  Match playlist tvg (site pack directement)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("matchtvg")]
+        [ValidateModel]
+        public async Task<IActionResult> MatchTvg([FromBody] MatchTvgPostModel matchTvgPostModel, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var sitePack = await _sitePackService.MatchTvgAsync(matchTvgPostModel.MediaName, matchTvgPostModel.Country, matchTvgPostModel.TvgSites, matchTvgPostModel.MinScore, cancellationToken);
+            return Ok(sitePack);
         }
 
         [HttpPost]
+        [ValidateModel]
         public IActionResult Post([FromBody]TvgMedia value)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
             return Ok();
         }
 
         [HttpPut("{id}")]
+        [ValidateModel]
         public IActionResult Put(int id, [FromBody]TvgMedia value)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             return Ok();
         }
 
@@ -119,82 +120,5 @@ namespace Hfa.WebApi.Controllers
         {
             return NoContent();
         }
-
-        /// <summary>
-        /// Download medias list from elastic
-        /// </summary>
-        /// <param name="filename">Output filename</param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("download/{filename}")]
-        public async Task<FileContentResult> Download(string filename)
-        {
-            var response = await _elasticConnectionClient.Client.SearchAsync<TvgMedia>(rq => rq
-               .From(0)
-               .Size(10000)
-               .Index<TvgMedia>()
-           , cancelToken.Token);
-
-            cancelToken.Token.ThrowIfCancellationRequested();
-
-            response.AssertElasticResponse();
-
-            using (var ms = new MemoryStream())
-            {
-                var provider = new M3uProvider(ms);
-                await provider.PushAsync(new Playlist<TvgMedia>(response.Documents), cancelToken.Token);
-                return File(ms.GetBuffer(), "application/octet-stream", filename);
-            }
-        }
-
-        /// <summary>
-        /// Export from provider to another
-        /// </summary>
-        /// <param name="fromType"></param>
-        /// <param name="toType"></param>
-        /// <param name="file"></param>
-        /// <param name="providersOptions"></param>
-        /// <returns></returns>
-#if DEBUG
-        [AllowAnonymous]
-#endif
-        [HttpPost]
-        [Route("export/{fromType}/{toType}")]
-        public async Task<IActionResult> Export(string fromType, string toType, IFormFile file, [FromServices] IOptions<List<PlaylistProviderOption>> providersOptions)
-        {
-            var sourceOption = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(fromType, StringComparison.InvariantCultureIgnoreCase));
-            if (sourceOption == null)
-                return BadRequest($"Source Provider not found : {fromType}");
-
-            var sourceProviderType = Type.GetType(sourceOption.Type, false, true);
-            if (sourceProviderType == null)
-                return BadRequest($"Source Provider not found : {fromType}");
-
-            var targtOption = providersOptions.Value.FirstOrDefault(x => x.Name.Equals(toType, StringComparison.InvariantCultureIgnoreCase));
-            if (targtOption == null)
-                return BadRequest($"Source Provider not found : {toType}");
-
-            var targetProviderType = Type.GetType(targtOption.Type, false, true);
-            if (targetProviderType == null)
-                return BadRequest($"Target Provider not found : {toType}");
-
-            var sourceProvider = (FileProvider)Activator.CreateInstance(sourceProviderType, file.OpenReadStream());
-
-            using (var stream = new MemoryStream())
-            {
-                var targetProvider = (FileProvider)Activator.CreateInstance(targetProviderType, stream);
-
-                using (var sourcePlaylist = new Playlist<TvgMedia>(sourceProvider))
-                {
-                    var sourceList = await sourcePlaylist.PullAsync(cancelToken.Token);
-                    using (var targetPlaylist = new Playlist<TvgMedia>(targetProvider))
-                    {
-                        await targetPlaylist.PushAsync(sourcePlaylist, cancelToken.Token);
-                        return File(stream.GetBuffer(), "application/octet-stream", file.FileName);
-                    }
-                }
-            }
-        }
-
     }
 }

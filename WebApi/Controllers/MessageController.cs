@@ -7,14 +7,18 @@ using PlaylistBaseLibrary.Entities;
 using Hfa.WebApi.Common;
 using Hfa.WebApi.Models;
 using hfa.SyncLibrary.Global;
-using Hfa.SyncLibrary.Messages;
 using Nest;
 using hfa.WebApi.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using hfa.WebApi.Dal;
-using hfa.WebApi.Dal.Entities;
 using Microsoft.AspNetCore.Authorization;
+using hfa.WebApi.Common.Filters;
+using System.Threading;
+using hfa.Synker.Services.Entities.Messages;
+using hfa.Synker.Services.Dal;
+using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Elastic;
+using hfa.WebApi.Models.Messages;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,7 +29,7 @@ namespace Hfa.WebApi.Controllers
     public class MessageController : BaseController
     {
         const string MessageIndex = "messages";
-        public MessageController(IOptions<ApplicationConfigData> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+        public MessageController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
 
@@ -37,14 +41,33 @@ namespace Hfa.WebApi.Controllers
         /// <param name="message"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Message message)
+        [ValidateModel]
+        public async Task<IActionResult> Post([FromBody] Message message, CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            var result = await _dbContext.Messages.AddAsync(message, cancelToken.Token);
-            var response = await _dbContext.SaveChangesAsync();
-
+            var result = await _dbContext.Messages.AddAsync(message, cancellationToken);
+            var response = await _dbContext.SaveChangesAsync(HttpContext.RequestAborted);
             return Ok(response);
+        }
+
+        /// <summary>
+        /// Update message
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="message"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPut("{id}")]
+        [ValidateModel]
+        public async Task<IActionResult> Put(int id, [FromBody] Message message, CancellationToken cancellationToken)
+        {
+            var messageEntity = _dbContext.Messages.FirstOrDefault(x => x.Id == id);
+            if (messageEntity == null)
+                return NotFound(messageEntity);
+
+            messageEntity.Status = message.Status;
+
+            var updatedCount = await _dbContext.SaveChangesAsync(cancellationToken);
+            return Ok(updatedCount);
         }
 
         /// <summary>
@@ -53,9 +76,9 @@ namespace Hfa.WebApi.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
         {
-            var response = await _dbContext.Messages.FindAsync(id);
+            var response = await _dbContext.Messages.FindAsync(id, cancellationToken);
             if (response == null)
                 return NotFound(id);
 
@@ -75,34 +98,40 @@ namespace Hfa.WebApi.Controllers
 
             var response = _dbContext.Messages
                 .OrderByDescending(x => x.Id)
-                .GetPaged(query.PageNumber, query.Skip);
+                .GetPaged(query.PageNumber, query.PageSize, query.GetAll);
 
             return Ok(response);
         }
 
         /// <summary>
-        /// Get Messages by status
+        /// Get Messages by status for connected user
         /// </summary>
         /// <param name="messageStatus"></param>
         /// <returns></returns>
-        [HttpGet("status/{messageStatus:int}/{page:int?}/{pageSize:int?}")]
-        public IActionResult GetByStatus(MessageStatus messageStatus, int page = 0, int pageSize = 10)
+        [ValidateModel]
+        [Route("search/status")]
+        [HttpPost]
+        public IActionResult ListByStatus([FromBody]MessageQueryModel messageQuery)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var response = _dbContext.Messages
                 .OrderByDescending(x => x.Id)
-                .Where(x => x.Status == messageStatus)
-                .GetPaged(page, pageSize);
+                .Where(x => messageQuery.MessageStatus.Any(m => x.Status == m) && UserId == x.UserId)
+                .GetPaged(messageQuery.PageIndex, messageQuery.PageSize);
 
             return Ok(response);
         }
 
-        [HttpPost("test"), AllowAnonymous]
-        public ActionResult Test()
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            return Ok("Yesss");
+            var message = _dbContext.Messages.FirstOrDefault(x => x.Id == id);
+            if (message == null)
+                return NotFound(message);
+
+            _dbContext.Messages.Remove(message);
+
+            await _dbContext.SaveChangesAsync();
+            return NoContent();
         }
 
     }

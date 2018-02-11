@@ -85,6 +85,7 @@ import { PortalModule } from '@angular/cdk/portal';
         OverlayModule,
         PlatformModule,
         PortalModule,
+        FlexLayoutModule
     ]
 })
 export class AppModuleMaterialModule {

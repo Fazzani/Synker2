@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Globalization;
+using System.Xml.Serialization;
 
 namespace PlaylistBaseLibrary.Entities
 {
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
+    [XmlTypeAttribute(AnonymousType = true)]
+    [XmlRootAttribute(Namespace = "", IsNullable = false)]
     public partial class tv
     {
         public tv()
@@ -22,7 +23,7 @@ namespace PlaylistBaseLibrary.Entities
         private List<tvProgramme> programmeField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("channel")]
+        [XmlElementAttribute("channel")]
         public List<tvChannel> channel
         {
             get
@@ -36,7 +37,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("programme")]
+        [XmlElementAttribute("programme")]
         public List<tvProgramme> programme
         {
             get
@@ -61,8 +62,8 @@ namespace PlaylistBaseLibrary.Entities
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class tvChannel
+    [XmlTypeAttribute(AnonymousType = true)]
+    public partial class tvChannel : IEqualityComparer<tvChannel>
     {
 
         public tvChannel()
@@ -76,7 +77,7 @@ namespace PlaylistBaseLibrary.Entities
         private string idField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("display-name")]
+        [XmlElementAttribute("display-name")]
         public List<string> displayname
         {
             get
@@ -90,7 +91,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute()]
+        [XmlElementAttribute()]
         public tvChannelIcon icon
         {
             get
@@ -104,7 +105,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string id
         {
             get
@@ -122,17 +123,21 @@ namespace PlaylistBaseLibrary.Entities
         {
             return $"{string.Join(", ", displayname)}";
         }
+
+        public bool Equals(tvChannel x, tvChannel y) => x.id == y.id;
+
+        public int GetHashCode(tvChannel obj) => obj.id.GetHashCode();
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public partial class tvChannelIcon
     {
 
         private string srcField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string src
         {
             get
@@ -147,17 +152,80 @@ namespace PlaylistBaseLibrary.Entities
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class tvProgramme
+    [XmlTypeAttribute(AnonymousType = true)]
+    public partial class tvProgramme : IEqualityComparer<tvProgramme>
     {
 
         public override string ToString()
         {
             return $"{channelField} : {DefaultTitle} => {start} : {stop} ";
         }
+
+        public bool Equals(tvProgramme x, tvProgramme y)
+        {
+            if (object.ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            // If one object null the return false
+            if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
+            {
+                return false;
+            }
+
+            return x.Id == y.Id;
+        }
+
+        public int GetHashCode(tvProgramme obj)
+        {
+            if (object.ReferenceEquals(obj, null))
+            {
+                return 0;
+            }
+
+            int referencehHash =
+                obj.Id == null ? 0 : obj.Id.GetHashCode();
+
+            return referencehHash;
+        }
+
+        public static bool operator ==(tvProgramme x, tvProgramme y)
+        {
+            // If reference same object including null then return true
+            if (object.ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            // If one object null the return false
+            if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
+            {
+                return false;
+            }
+
+            // Compare object property values
+            return x.Id == y.Id;
+        }
+
+        public static bool operator !=(tvProgramme x, tvProgramme y) => !(x == y);
+
+        public override bool Equals(object obj)
+        {
+            // If comparing to null return false
+            if (object.ReferenceEquals(obj, null))
+            {
+                return false;
+            }
+            if (obj is tvProgramme prog)
+                return Equals(this, prog);
+            return false;
+        }
+
         public string DefaultTitle { get { return titleField.FirstOrDefault().Value; } }
 
         private const string formatDateTime = "yyyyMMddHHmmss zzz";
+
         private List<tvProgrammeTitle> titleField;
 
         private List<tvProgrammeDesc> descField;
@@ -194,8 +262,14 @@ namespace PlaylistBaseLibrary.Entities
 
         private string channelField;
 
+        [XmlIgnore]
+        public string Id
+        {
+            get { return $"{channel}-{StartTime.ToString(formatDateTime)}"; }
+        }
+
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("title")]
+        [XmlElementAttribute("title")]
         public List<tvProgrammeTitle> title
         {
             get
@@ -209,7 +283,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("desc")]
+        [XmlElementAttribute("desc")]
         public List<tvProgrammeDesc> desc
         {
             get
@@ -249,7 +323,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("category")]
+        [XmlElementAttribute("category")]
         public List<tvProgrammeCategory> category
         {
             get
@@ -315,7 +389,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("previously-shown")]
+        [XmlElementAttribute("previously-shown")]
         public object previouslyshown
         {
             get
@@ -341,7 +415,7 @@ namespace PlaylistBaseLibrary.Entities
             }
         }
 
-        [System.Xml.Serialization.XmlElementAttribute("episode-num")]
+        [XmlElementAttribute("episode-num")]
         public List<string> tvProgrammeepisodeNum
         {
             get; set;
@@ -361,7 +435,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("star-rating")]
+        [XmlElementAttribute("star-rating")]
         public tvProgrammeStarrating starrating
         {
             get
@@ -388,7 +462,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string start
         {
             get
@@ -405,7 +479,7 @@ namespace PlaylistBaseLibrary.Entities
         public DateTime EndTime => DateTime.ParseExact(stop, formatDateTime, CultureInfo.CurrentCulture);
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string stop
         {
             get
@@ -419,7 +493,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string showview
         {
             get
@@ -433,7 +507,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string channel
         {
             get
@@ -448,7 +522,7 @@ namespace PlaylistBaseLibrary.Entities
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public partial class tvProgrammeTitle
     {
 
@@ -457,7 +531,7 @@ namespace PlaylistBaseLibrary.Entities
         private string valueField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string lang
         {
             get
@@ -471,7 +545,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
+        [XmlTextAttribute()]
         public string Value
         {
             get
@@ -486,7 +560,7 @@ namespace PlaylistBaseLibrary.Entities
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public partial class tvProgrammeDesc
     {
 
@@ -495,7 +569,7 @@ namespace PlaylistBaseLibrary.Entities
         private string valueField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string lang
         {
             get
@@ -509,7 +583,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
+        [XmlTextAttribute()]
         public string Value
         {
             get
@@ -524,7 +598,7 @@ namespace PlaylistBaseLibrary.Entities
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public partial class tvProgrammeCredits
     {
         private List<string> directorField;
@@ -554,7 +628,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("actor")]
+        [XmlElementAttribute("actor")]
         public List<string> actor
         {
             get
@@ -582,7 +656,7 @@ namespace PlaylistBaseLibrary.Entities
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public partial class tvProgrammeCategory
     {
 
@@ -591,7 +665,7 @@ namespace PlaylistBaseLibrary.Entities
         private string valueField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string lang
         {
             get
@@ -605,7 +679,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
+        [XmlTextAttribute()]
         public string Value
         {
             get
@@ -620,7 +694,7 @@ namespace PlaylistBaseLibrary.Entities
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public partial class tvProgrammeLength
     {
 
@@ -629,7 +703,7 @@ namespace PlaylistBaseLibrary.Entities
         private string valueField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string units
         {
             get
@@ -643,7 +717,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
+        [XmlTextAttribute()]
         public string Value
         {
             get
@@ -658,14 +732,14 @@ namespace PlaylistBaseLibrary.Entities
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public partial class tvProgrammeIcon
     {
 
         private string srcField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string src
         {
             get
@@ -680,7 +754,7 @@ namespace PlaylistBaseLibrary.Entities
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public partial class tvProgrammeVideo
     {
 
@@ -716,7 +790,7 @@ namespace PlaylistBaseLibrary.Entities
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public partial class tvProgrammeAudio
     {
 
@@ -737,7 +811,7 @@ namespace PlaylistBaseLibrary.Entities
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public partial class tvProgrammeSubtitles
     {
         private List<string> languageField;
@@ -764,7 +838,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string type
         {
             get
@@ -779,7 +853,7 @@ namespace PlaylistBaseLibrary.Entities
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public partial class tvProgrammeRating
     {
 
@@ -801,7 +875,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string system
         {
             get
@@ -816,7 +890,7 @@ namespace PlaylistBaseLibrary.Entities
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public partial class tvProgrammeStarrating
     {
 
@@ -837,7 +911,7 @@ namespace PlaylistBaseLibrary.Entities
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public partial class tvProgrammeReview
     {
 
@@ -848,7 +922,7 @@ namespace PlaylistBaseLibrary.Entities
         private string valueField;
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string lang
         {
             get
@@ -862,7 +936,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [XmlAttributeAttribute()]
         public string type
         {
             get
@@ -876,7 +950,7 @@ namespace PlaylistBaseLibrary.Entities
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
+        [XmlTextAttribute()]
         public string Value
         {
             get
@@ -890,3 +964,4 @@ namespace PlaylistBaseLibrary.Entities
         }
     }
 }
+

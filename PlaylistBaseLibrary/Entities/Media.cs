@@ -1,8 +1,10 @@
-﻿using PlaylistBaseLibrary.Entities;
+﻿using hfa.PlaylistBaseLibrary.Entities;
+using PlaylistBaseLibrary.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace PlaylistManager.Entities
 {
@@ -17,6 +19,7 @@ namespace PlaylistManager.Entities
             MediaType = MediaType.LiveTv;
             Lang = "fr";
             IsValid = true;
+            MediaGroup = new MediaGroup();
         }
 
         public Media(string name, string url) : this()
@@ -58,6 +61,9 @@ namespace PlaylistManager.Entities
         /// </summary>
         public string Lang { get; set; }
 
+        /// <summary>
+        /// Original Name
+        /// </summary>
         [Required]
         public string Name { get; set; }
 
@@ -90,7 +96,33 @@ namespace PlaylistManager.Entities
 
         public MediaType MediaType { get; set; }
 
-        public string Group { get; set; }
+        public MediaGroup MediaGroup { get; set; }
+
+        public string GetTrimedDisplayName() => Regex.Replace(DisplayName, @"\s+", "");
+
+        public int? GetChannelNumber() => GetChannelNumber(Name);
+        public static int? GetChannelNumber(string mediaName)
+        {
+            var match = Regex.Match(mediaName, @"\b(?:[^\+])(?<number>\d{1,2})\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+            if (match.Success && match.Groups["number"].Success)
+            {
+                return Convert.ToInt32(match.Groups["number"]?.Value);
+            }
+            return null;
+        }
+
+        public string CleanNameForSearch() => CleanMediaNameForSearch(DisplayName);
+
+        public static string CleanMediaNameForSearch(string mediaName)
+        {
+            mediaName = Regex.Replace(mediaName, "\\s(((?:f?h|s?){1}d\\b|\\d{2,3}0p)|\\+\\d|\\(.*\\))", string.Empty, RegexOptions.IgnoreCase);
+            var match = Regex.Match(mediaName, "(?<name>[a-z\\s]+)", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace | RegexOptions.CultureInvariant);
+            if (match.Success && match.Groups["name"].Success)
+            {
+                return match.Groups["name"].Value;
+            }
+            return mediaName;
+        }
 
         #endregion
 

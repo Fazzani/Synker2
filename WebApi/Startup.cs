@@ -7,28 +7,56 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using hfa.WebApi.Common;
 using System.Net.WebSockets;
 using Microsoft.AspNetCore.Http;
 using System.Threading;
-using hfa.WebApi.Dal;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using hfa.WebApi.Common.Auth;
+using hfa.WebApi.Common.Filters;
+using System.Net;
+using Newtonsoft.Json;
+using AspNet.Core.Webhooks.Receivers;
+using hfa.WebApi.Services;
+using hfa.WebApi.Common.Middlewares;
+using hfa.Synker.Services.Xmltv;
+using hfa.Synker.Services.Dal;
+using hfa.Synker.Service.Services.Playlists;
+using Microsoft.AspNetCore.ResponseCompression;
+using hfa.PlaylistBaseLibrary.Providers;
+using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Elastic;
+using hfa.Synker.Service.Services.TvgMediaHandlers;
+using PlaylistBaseLibrary.ChannelHandlers;
+using hfa.Synker.Service.Services.Picons;
+using hfa.Synker.Service.Services.MediaRefs;
 using Microsoft.AspNetCore.Mvc;
-using hfa.WebApi.Common.Middleware;
-using Microsoft.AspNetCore.Rewrite;
+using Microsoft.Net.Http.Headers;
+using hfa.Synker.Service.Services;
+using hfa.Synker.Service.Services.Scraper;
+using ZNetCS.AspNetCore.Authentication.Basic;
+using ZNetCS.AspNetCore.Authentication.Basic.Events;
+using Microsoft.AspNetCore.Authentication;
+using hfa.Synker.Service.Services.Xtream;
+using hfa.Synker.Service.Services.Notification;
+using hfa.Synker.Service.Entities.Auth;
+using System.Security.Claims;
+using System.Runtime.InteropServices;
+using System.Reflection;
+using hfa.PlaylistBaseLibrary.Options;
+using hfa.Brokers.Messages.Configuration;
 
 namespace hfa.WebApi
 {
     public class Startup
     {
         internal static IConfiguration Configuration;
+
+        public static string AssemblyVersion = typeof(Startup).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
 
         public Startup(IHostingEnvironment env)
         {
@@ -49,35 +77,126 @@ namespace hfa.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-//#if Release
-//            services.Configure<MvcOptions>(options =>
-//            {
-//                options.Filters.Add(new RequireHttpsAttribute());
-//            });
-//#endif
+            services.
+               AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
+               .AddSingleton<IPasteBinService, PasteBinService>()
+               .AddSingleton<IAuthentificationService, AuthentificationService>()
+               .AddSingleton<IProviderFactory, ProviderFactory>()
+               .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
+               .AddScoped<IXmltvService, XmltvService>()
+               .AddScoped<IPiconsService, PiconsService>()
+               .AddScoped<IPlaylistService, PlaylistService>()
+               .AddScoped<IMediaRefService, MediaRefService>()
+               .AddScoped<ISitePackService, SitePackService>()
+               .AddScoped<IXtreamService, XtreamService>()
+               .AddScoped<IMediaScraper, MediaScraper>()
+               .AddScoped<INotificationService, NotificationService>()
+               .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
+               .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
+               .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
+               .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))
+               .Configure<GlobalOptions>(Configuration.GetSection(nameof(GlobalOptions)))
+               .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)));
+
+            services.AddMemoryCache();
+
+            var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
+             .UseMySql(Configuration.GetConnectionString("PlDatabase"),
+                a => a.MigrationsAssembly("hfa.WebApi")))
+             .BuildServiceProvider();
+
+            var DB = serviceProvider.GetService<SynkerDbContext>();
+            DB.Database.EnsureCreated();
+
+            #region Compression
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
+            services.AddResponseCompression(options =>
+            {
+                options.MimeTypes = new[]
+                {
+                    // Default
+                    "text/plain",
+                    "text/css",
+                    "application/javascript",
+                    "text/html",
+                    "application/xml",
+                    "text/xml",
+                    "application/json",
+                    "text/json",
+                    // Custom
+                    "image/svg+xml"
+                };
+            });
+            #endregion
+
             ConfigSecurity(services);
             //Logger
             var loggerFactory = new LoggerFactory();
-            loggerFactory.AddFile(Configuration.GetSection("Logging"));
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
 
-            services.AddMvc();
+            //cache
+            services.AddResponseCaching(options =>
+            {
+                options.UseCaseSensitivePaths = true;
+                options.MaximumBodySize = 1024;
+            });
+
+            //MVC
+            services.AddMvc(config =>
+            {
+                config.Filters.Add(typeof(GlobalExceptionFilterAttribute));
+                config.CacheProfiles.Add("Default",
+                   new CacheProfile()
+                   {
+                       Duration = 60,
+                       Location = ResponseCacheLocation.Any
+                   });
+                config.CacheProfiles.Add("Long",
+                   new CacheProfile()
+                   {
+                       Duration = 60
+                   });
+                config.CacheProfiles.Add("Never",
+                    new CacheProfile()
+                    {
+                        Location = ResponseCacheLocation.None,
+                        NoStore = true
+                    });
+            })
+            .AddJsonOptions(
+                options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            );
 
             //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?tabs=visual-studio
             services.AddSwaggerGen(c =>
             {
-                //c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
                 c.SwaggerDoc("v1", new Info
                 {
                     Version = "v1",
                     Title = "Synker API",
-                    Description = "Synchronize playlists API",
+                    Description = $"Synchronize playlists API {AssemblyVersion}",
                     TermsOfService = "None",
-                    Contact = new Contact { Name = "Fazzani Heni", Email = "fazzani.heni@outlook.fr", Url = "https://www.github.com/fazzani" },
-                    License = new License { Name = "Use under MIT", Url = "" }
+                    Contact = new Contact { Name = "Synker", Email = "contact@synker.ovh", Url = "https://www.github.com/fazzani/synker2" },
+                    License = new License { Name = "Use under MIT", Url = "" },
+
+                });
+
+                c.DescribeAllEnumsAsStrings();
+                c.IgnoreObsoleteActions();
+                c.IgnoreObsoleteProperties();
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                {
+                    In = "header",
+                    Description = "Please insert JWT with Bearer into field",
+                    Name = "Authorization",
+                    Type = "apiKey"
+                });
+                c.AddSecurityDefinition("Basic", new BasicAuthScheme
+                {
+                    Description = "Please insert username/password into fields",
+                    Type = "basic"
                 });
             });
+
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -87,104 +206,83 @@ namespace hfa.WebApi
                     .AllowCredentials());
             });
 
-            // services.AddOptions();
-
-            services.
-                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
-                .AddScoped<IAuthentificationService, AuthentificationService>()
-                .AddScoped<IWebHookService, WebHookServiceDefault>()
-                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
-                .Configure<ApplicationConfigData>(Configuration)
-                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)));
-
-            var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
-            .UseMySql(Configuration.GetConnectionString("PlDatabase"))
-            .UseLoggerFactory(loggerFactory))
-             .BuildServiceProvider();
-
-            var DB = serviceProvider.GetService<SynkerDbContext>();
-            DB.Database.EnsureCreated();
-
-            //services.AddApiVersioning();
+            #region Webhooks
+            // services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.UseGithubWebhook(() => new GithubOptions
+            {
+                ApiKey = Configuration.GetValue<string>("GitHubHookApiKey"),
+                WebHookAction = genericHookAction
+            }).UseAppVeyorWebhook(() => new AppveyorOptions
+            {
+                ApiKey = Configuration.GetValue<string>("AppveyorHookApiKey"),
+                WebHookAction = genericHookAction
+            });
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            app.UseCors("CorsPolicy");
+            app.UseResponseCompression();
 
-
-
-            //Redirect HTTPS for PROD Env
-            if (!env.IsDevelopment())
+            loggerFactory.AddFile(Configuration.GetSection("Logging"));
+            if (env.IsDevelopment())
             {
-                app.UseRewriter(new RewriteOptions().AddRedirectToHttps());
+                loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+                loggerFactory.AddDebug();
             }
+            var log = loggerFactory.CreateLogger<Startup>();
 
-            #region WebSockets
-            var webSocketOptions = new WebSocketOptions
+            try
             {
-                KeepAliveInterval = TimeSpan.FromSeconds(120),
-                ReceiveBufferSize = 4 * 1024
-            };
+                app.UseCors("CorsPolicy");
 
-            app.UseWebSockets(webSocketOptions);
+                //app.UseBasicAuthentication();
 
-            app.Use(async (context, next) =>
-            {
-                if (context.Request.Path == "/ws")
+                #region WebSockets
+
+                app.UseWebSockets(new WebSocketOptions
                 {
-                    if (context.WebSockets.IsWebSocketRequest)
-                    {
-                        var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                        await Echo(context, webSocket);
-                    }
-                    else
-                    {
-                        context.Response.StatusCode = 400;
-                    }
-                }
-                else
+                    KeepAliveInterval = TimeSpan.FromSeconds(120),
+                    ReceiveBufferSize = 4 * 1024
+                });
+
+                app.UseMiddleware<MessageWebSocketMiddleware>();
+                #endregion
+
+                #region Swagger
+
+                app.UseSwagger();
+                // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+                app.UseSwaggerUI(c =>
                 {
-                    await next();
-                }
-            });
-            #endregion
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Synker API V1");
+                    c.ShowJsonEditor();
+                });
+                #endregion
 
-            /** Web hooks **/
-            app.UseWebHooks(()=>"/api/v1/message", () => "qwertyuiopasdfghjklzxcvbnm123456");
+                app.UseWebHooks(typeof(AppveyorReceiver));
+                app.UseWebHooks(typeof(GithubReceiver));
+                //Cache
+                app.UseResponseCaching();
 
-            #region Swagger
+                app.UseStaticFiles();
 
-            app.UseSwagger();
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Synker API V1");
-            });
-            #endregion
-
-            app.UseStaticFiles();
-            app.UseMvc();
-        }
-
-        /// <summary>
-        /// Echo websokets
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="webSocket"></param>
-        /// <returns></returns>
-        private async Task Echo(HttpContext context, WebSocket webSocket)
-        {
-            var buffer = new byte[1024 * 4];
-            var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            while (!result.CloseStatus.HasValue)
-            {
-                await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
-
-                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                app.UseMvc();
             }
-            await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
+            catch (Exception ex)
+            {
+                app.Run(
+                  async context =>
+                  {
+                      log.LogError($"{ex.Message}");
+
+                      context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                      context.Response.ContentType = "text/plain";
+                      await context.Response.WriteAsync(ex.Message).ConfigureAwait(false);
+                      await context.Response.WriteAsync(ex.StackTrace).ConfigureAwait(false);
+                  });
+            }
         }
 
         /// <summary>
@@ -193,9 +291,9 @@ namespace hfa.WebApi
         /// <param name="services"></param>
         private void ConfigSecurity(IServiceCollection services)
         {
-            var securityOptions = new SecurityOptions();
-            var jwtAppSettingOptions = Configuration.GetSection(nameof(SecurityOptions));
-            jwtAppSettingOptions.Bind(securityOptions);
+            var sp = services.BuildServiceProvider();
+            // Resolve the services from the service provider
+            var authService = sp.GetService<IAuthentificationService>();
 
             services.AddAuthentication(options =>
             {
@@ -203,18 +301,91 @@ namespace hfa.WebApi
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(jwtBearerOptions =>
             {
-                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                jwtBearerOptions.SaveToken = true;
+                //jwtBearerOptions.BackchannelHttpHandler
+                jwtBearerOptions.RequireHttpsMetadata = true;
+                jwtBearerOptions.TokenValidationParameters = authService.Parameters;
+            }).AddBasicAuthentication(
+            options =>
+            {
+                options.Realm = "Synker";
+                options.Events = new BasicAuthenticationEvents
                 {
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityOptions.SymmetricSecurityKey)),
-                    ValidIssuer = securityOptions.Issuer,
-                    ValidAudience = securityOptions.Audience,
+                    OnValidatePrincipal = context =>
+                    {
+                        var basic = new BasicAuthenticationMiddleware();
+                        var principal = basic.Invoke(context.HttpContext, authService, sp.GetService<SynkerDbContext>(), sp.GetService<ILoggerFactory>());
+                        if (principal != null)
+                        {
+                            var ticket = new AuthenticationTicket(
+                                principal,
+                                new AuthenticationProperties(),
+                                BasicAuthenticationDefaults.AuthenticationScheme);
+
+                            return Task.FromResult(AuthenticateResult.Success(ticket));
+                        }
+
+                        return Task.FromResult(AuthenticateResult.Fail("Authentication failed."));
+                    }
                 };
             });
-
             services.AddAuthorization(authorizationOptions =>
             {
-                authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
+                authorizationOptions.AddPolicy(AuthorizePolicies.ADMIN, policyBuilder => policyBuilder.RequireClaim(ClaimTypes.Role, Role.ADMIN_ROLE_NAME));
+                authorizationOptions.AddPolicy(AuthorizePolicies.VIP, policyBuilder => policyBuilder.RequireClaim(AuthorizePolicies.VIP));
+
+                authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme, "Basic").RequireAuthenticatedUser().Build();
             });
         }
+
+        #region WebHook Action
+        Action<HttpContext, object> genericHookAction = async (context, message) =>
+        {
+            CancellationToken ct = context.RequestAborted;
+            var logger = context.RequestServices?.GetService<ILogger>();
+            try
+            {
+                var messageJson = string.Empty;
+                messageJson = JsonConvert.SerializeObject(message);
+                //Call webSocket to add new message (Db and trigger that for all observers)
+
+                if (message is AppveyorWebHookMessage appveyorMessage)
+                {
+                    logger?.LogInformation($"New WebSoket hook Message {nameof(AppveyorWebHookMessage)} : {messageJson}");
+                }
+                else if (message is GithubWebHookMessage githubMessage)
+                {
+                    logger?.LogInformation($"New WebSoket hook Message {nameof(GithubWebHookMessage)} : {messageJson}");
+                }
+
+                //Send to WebSocket
+                using (var socket = new ClientWebSocket())
+                {
+                    context.Response.ContentType = "application/json";
+                    context.Response.StatusCode = StatusCodes.Status200OK;
+                    await context.Response.WriteAsync(messageJson, ct);
+
+                    await socket.ConnectAsync(new Uri($"ws://{context.Request.Host}/ws"), ct);
+                    await MessageWebSocketMiddleware.SendStringAsync(socket, messageJson);
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", ct);
+                }
+            }
+            catch (WebSocketException wsex)
+            {
+                logger?.LogError(wsex.Message);
+            }
+            catch (Exception ex)
+            {
+                if (!context.Response.HasStarted)
+                {
+                    logger?.LogError(ex.Message);
+                    context.Response.ContentType = "application/json";
+                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                    await context.Response.WriteAsync(JsonConvert.SerializeObject(ex.Message), ct);
+                }
+            }
+        };
+
+        #endregion
     }
 }

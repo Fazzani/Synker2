@@ -1,18 +1,44 @@
 ﻿import { NgModule } from "@angular/core";
 
+export class SimpleQueryElastic {
+    From: number;
+    Size: number;
+    Query: string;
+    IndexName: string;
+}
+
 /**
  * Elastic Query
  * 
  * @export
  * @interface ElasticQuery
  */
-export interface ElasticQuery {
+export class ElasticQuery {
     from: number;
     size: number;
-    query: Object | null;
+    query: IElasticSubQuery | Object | null;
     sort: any;
+
+    public static Match(field: string, query: string): IElasticQueryMatch {
+        let res = <IElasticSubQuery>{};
+        res.query = <IElasticQueryMatch>{};
+        res.query.match = <IElasticQueryMatch>{};
+        res.query.match[field] = query;
+        return res;
+    }
 }
 
+export interface IElasticSubQuery {
+    query: any | null;
+}
+
+export interface IElasticQueryMatch {
+    query: any | null;
+}
+
+export interface IElasticQueryMatchPhrase {
+    match_phrase: any | null;
+}
 /**
  * Elastic Response
  * 
@@ -58,81 +84,11 @@ export interface ElasticResponse<T> {
     result: Array<T>;
 }
 
-/**
- * Tvg media (channel)
- * 
- * @export
- * @interface TvgMedia
- */
-export interface TvgMedia {
-    id: string;
-    name: string;
-    group?: string;
-    position: number;
-    enabled: boolean;
-    mediaType: number;
-    url: string;
-    lang: string;
-    urls: Array<string>;
-    tvg?: Tvg;
-    isValid: boolean;
-    startLineHeader?: string;
-}
 
-/**
- * Tvg channel field
- * 
- * @export
- * @interface Tvg
- */
-export interface Tvg {
-    id: string;
-    logo?: string;
-    name: string;
-    tvgIdentify: string;
-}
-
-/**
- * Tvg channel (EPG model)
- * @export
- * @interface tvChannel
- */
-export interface tvChannel {
-    displayname: Array<string>;
-    icon?: tvChannelIcon;
-    id: string;
-}
-
-/**
- * Tvg channel Icon
- * 
- * @export
- * @interface tvChannelIcon
- */
-export interface tvChannelIcon {
-    src: string;
-}
-
-/**
- * PageResultBase
- */
-export interface PagedResultBase {
-    CurrentPage: number;
-    PageCount: number;
-    PageSize: number;
-    RowCount: number;
-    FirstRowOnPage: number;
-    LastRowOnPage: number;
-}
-
-/**
- * PageResult
- * 
- * @export
- * @interface PagedResult
- * @extends {PagedResultBase}
- * @template T 
- */
-export interface PagedResult<T> extends PagedResultBase {
-    Results: Array<T>;
+export interface ElasticAggregations {
+    key: string,
+    keyAsString: null,
+    docCount: number,
+    docCountErrorUpperBound: any,
+    aggregations: any
 }

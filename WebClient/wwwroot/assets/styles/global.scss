@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 @import url('https://fonts.googleapis.com/icon?family=Roboto');
-@import 'variables';
+@import '_variables';
+//@import '../../assets/materialize-v0.100.2/sass/materialize.scss';
 
 body {
     margin: 0 !important;
@@ -13,16 +14,14 @@ app {
     bottom: 0;
     left: 0;
     right: 0;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
+    /*display: -webkit-box;*/
+    /*display: -ms-flexbox;*/
+    /*display: flex;*/
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
     -ms-flex-direction: column;
     flex-direction: column;
 }
-
-@import 'variables';
 
 .loading {
     opacity: 0;
@@ -36,9 +35,6 @@ app {
     transition: opacity .8s ease-out;
 }
 
-
-/* .loading screen is visible when app is not bootstraped yet, .my-app is empty */
-
 app:empty + .loading {
     opacity: 1;
     z-index: 100;
@@ -50,13 +46,9 @@ app:empty + .loading > h1 {
     margin-bottom: 50px;
 }
 
-md-card {
-    max-width: 80%;
-    margin: 2em auto;
-    text-align: center;
-}
 
-md-toolbar-row {
+
+mat-toolbar-row {
     justify-content: space-between;
 }
 
@@ -93,4 +85,14 @@ md-toolbar-row {
     100% {
         transform: translateY(150px);
     }
+}
+.collection {
+    text-align:initial !important;
+    .collection-item {
+        background-color: transparent !important;
+    }
+}
+
+.pointer {
+    cursor: pointer;
 }

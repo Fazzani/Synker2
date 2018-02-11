@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "hfa.Notification.Brokers": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

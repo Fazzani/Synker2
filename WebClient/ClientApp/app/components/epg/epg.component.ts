@@ -8,12 +8,12 @@ import { Subscription } from 'rxjs/Subscription';
 import { EpgService } from '../../services/epg/epg.service';
 import { CommonService, Constants } from '../../services/common/common.service';
 import { Observable } from "rxjs/Observable";
-import { tvChannel, ElasticQuery } from "../../types/elasticQuery.type";
+import { ElasticQuery } from "../../types/elasticQuery.type";
+import { tvChannel } from "../../types/xmltv.type";
 import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/merge';
+import { map, catchError, merge, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
+import { snakbar_duration } from '../../variables';
 
 @Component({
     selector: 'epg-media',
@@ -72,7 +72,7 @@ export class EpgComponent implements OnInit, OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.snackBar.open(epg.displayname + " was modified", "", { duration: 400 });
+            this.snackBar.open(epg.displayname + " was modified", "", { duration: snakbar_duration });
         });
     }
 
@@ -102,7 +102,7 @@ export class EpgModifyDialog {
 }
 
 /**
- * Media datasource for md-table component
+ * Media datasource for mat-table component
  */
 export class EpgDataSource extends DataSource<tvChannel> {
 
@@ -142,7 +142,7 @@ export class EpgDataSource extends DataSource<tvChannel> {
         if (typeof this.filter === "string") {
             if (this.filter !== undefined && this.filter != "")
                 query.query = {
-                    match: { "displayname": this.filter }
+                    match: { "_all": this.filter }
                 };
         }
         else {

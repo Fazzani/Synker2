@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
-import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
+import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatAutocompleteSelectedEvent } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -8,18 +8,17 @@ import { Subscription } from 'rxjs/Subscription';
 import { TvgMediaService } from '../../services/tvgmedia/tvgmedia.service';
 import { CommonService, Constants } from '../../services/common/common.service';
 import { Observable } from "rxjs/Observable";
-import { TvgMedia, ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
+import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
 import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/observable/merge';
-import 'rxjs/add/observable/merge';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/operator/switchMap';
+import { map, catchError, merge, debounceTime, distinctUntilChanged, switchMap, startWith } from 'rxjs/operators';
+
 import { EventTargetLike } from "rxjs/observable/FromEventObservable";
+import { TvgMedia, Tvg, TvgSource, MediaType } from '../../types/media.type';
+import { MediaRefService } from '../../services/mediaref/mediaref.service';
+import { mediaRef } from '../../types/mediaref.type';
+import { snakbar_duration } from '../../variables';
+import { SitePackService } from '../../services/sitepack/sitepack.service';
+import { sitePackChannel } from '../../types/sitepackchannel.type';
 
 @Component({
     selector: 'app-media',
@@ -76,7 +75,7 @@ export class MediaComponent implements OnInit, OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.snackBar.open(media.name + " was modified", "", { duration: 400 });
+            this.snackBar.open(media.name + " was modified", "", { duration: snakbar_duration });
         });
     }
 
@@ -93,20 +92,72 @@ export class MediaComponent implements OnInit, OnDestroy {
     selector: 'media-modify-dialog',
     templateUrl: './media.dialog.html'
 })
-export class TvgMediaModifyDialog {
+export class TvgMediaModifyDialog implements OnInit, OnDestroy {
+    mediaTypes: typeof MediaType;
+    tvgMedias: Observable<sitePackChannel[]>;
+    private searchTerms = new Subject<string>();
+    private filter: string;
+    compareFn: ((f1: any, f2: any) => boolean) | null = this.compareByValue;
 
     constructor(
         public dialogRef: MatDialogRef<TvgMediaModifyDialog>,
-        @Inject(MAT_DIALOG_DATA) public data: any) { }
+        private sitePackService: SitePackService,
+        @Inject(MAT_DIALOG_DATA) public mediaAndTvgSites: [TvgMedia, string[]]) {
 
+        this.mediaTypes = MediaType;
+
+        console.log('mediaAndTvgSites => ', mediaAndTvgSites);
+        if (mediaAndTvgSites[0].tvg == null) {
+            mediaAndTvgSites[0].tvg = <Tvg>{};
+        }
+    }
+
+    ngOnInit(): void {
+
+        let res = this.mediaAndTvgSites[1].map(x => `\"${x}\"`).reduce((p, c) => `${p} OR ${c}`);
+
+        this.tvgMedias = this.searchTerms
+            .debounceTime(1000)
+            .distinctUntilChanged()
+            .switchMap(term => term
+                ? this.sitePackService.simpleSearch<sitePackChannel>(`site : ${term}*^5 OR xmltv_id: ${term}`, "sitepack").map(x => x.result)
+                : Observable.of<sitePackChannel[]>([]))
+            .catch(error => {
+                console.log(error);
+                return Observable.of<sitePackChannel[]>([]);
+            });
+    }
+
+    compareByValue(f1: any, f2: any) {
+        return f1 != null && f2 != null && f1 == f2;
+    }
+
+    tvgSelectionChange(event: MatAutocompleteSelectedEvent): void {
+        let sitechannel = <sitePackChannel>event.option.value;
+        console.log('tvgSelectionChange', event);
+        this.mediaAndTvgSites[0].tvg.id = sitechannel.xmltv_id;
+        this.mediaAndTvgSites[0].tvg.name = sitechannel.channel_name;
+        this.mediaAndTvgSites[0].tvg.tvgIdentify = sitechannel.id;
+        this.mediaAndTvgSites[0].tvg.tvgSource = <TvgSource>{ country: sitechannel.country, site: sitechannel.site };
+    }
+
+    search(term: string): void {
+        this.searchTerms.next(term);
+    }
+
+    save(): void {
+        this.dialogRef.close();
+    }
     onNoClick(): void {
         this.dialogRef.close();
     }
 
+    ngOnDestroy(): void {
+    }
 }
 
 /**
- * Media datasource for md-table component
+ * Media datasource for mat-table component
  */
 export class MediaDataSource extends DataSource<TvgMedia> {
     took: number;
@@ -167,7 +218,9 @@ export class MediaDataSource extends DataSource<TvgMedia> {
         this.isLoadingResults = true;
 
         //TODO: à virer et la remplacer par un decorator
-        let defaultObjectTvgMedia = <TvgMedia>{ position: 0, name: 'jj', group: 'sd', lang: 'sq' };
+        let defaultObjectTvgMedia = <TvgMedia>{
+            position: 0, name: 'jj', mediaGroup: { name: 'sd' }, lang: 'sq'
+        };
         let typeProp = typeof defaultObjectTvgMedia[this._sort.active];
 
         let sortField = this._sort.active;
@@ -186,7 +239,7 @@ export class MediaDataSource extends DataSource<TvgMedia> {
         if (typeof this.filter === "string") {
             if (this.filter !== undefined && this.filter != "")
                 query.query = {
-                    match: { "name": this.filter }
+                    match: { "_all": this.filter }
                 };
         }
         else {

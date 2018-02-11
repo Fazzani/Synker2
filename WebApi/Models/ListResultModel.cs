@@ -6,29 +6,36 @@ using System.Threading.Tasks;
 
 namespace Hfa.WebApi.Models
 {
-    public class ListResultModel<T> : IListResultModel<T> where T : class
+    public class ListResultModel<T, T2> : IListResultModel<T2> where T : class where T2 : class, IModel<T, T2>, new()
     {
         private double _maxScore;
         private long _took;
-        private long _hits;
         private long _total;
-        private IEnumerable<T> _result;
+        private IEnumerable<T2> _result;
 
-        public ListResultModel(Nest.ISearchResponse<T> searchResponse)
+        public ListResultModel(ISearchResponse<T> searchResponse)
         {
-            _hits = searchResponse.Hits.Count;
+            _result = searchResponse.Hits.Select(x => new T2().ToModel(x));
+
             _took = searchResponse.Took;
             _total = searchResponse.Total;
-            _result = searchResponse.Documents;
             _maxScore = searchResponse.MaxScore;
         }
 
         public long Took => _took;
+
         public double MaxScore => _maxScore;
 
         public long Total => _total;
-        public long Hits => _hits;
 
-        public IEnumerable<T> Result => _result;
+        public IEnumerable<T2> Result => _result;
     }
+
+    public interface IModel<T, out T2> where T2 : new() where T : class
+    {
+        T2 ToModel(IHit<T> hit);
+    }
+
+
+
 }

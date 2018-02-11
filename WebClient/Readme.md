@@ -1,6 +1,8 @@
 ﻿![alt text](https://github.com/Fazzani/Synker2/blob/master/WebClient/wwwroot/favicon-32x32.png?raw=true)
+[![Build status](https://ci.appveyor.com/api/projects/status/9drbo0ty6whivq12?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2)
 ##### TODO
 
+- [ ] Redux pattern
 - [ ] Dev Home page
   - [ ] charts [link](https://github.com/swimlane/ngx-charts)
 - [ ] Dev Xmltv page
@@ -14,13 +16,16 @@
   - [ ] Typescript decorator for Sort (type:keyword or no)
 - [x] Dev EPG component
 - [ ] Animations
-- [ ] WebSockets (notification) [link1](https://tutorialedge.net/typescript/angular/angular-websockets-tutorial/) [link2](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/websockets) [link3](https://radu-matei.com/blog/aspnet-core-websockets-middleware/)
+- [ ] WebSockets (notification) [link1](https://tutorialedge.net/typescript/angular/angular-websockets-tutorial/)  [link2](https://radu-matei.com/blog/aspnet-core-websockets-middleware/)
+  - [ ] Add a global model for notification
+  - [x] Auto Reconnect for client side
+  - [x] SSL support
+  - [ ] Send notification from the client
 - [ ] Auth [link1](http://www.c-sharpcorner.com/article/authentication-with-angular-2-app-front-end-and-asp-net-webapi-backend/) [link2](https://github.com/auth0/angular2-jwt/tree/v1.0) [link3](https://auth0.com/blog/introducing-angular2-jwt-a-library-for-angular2-authentication/)
   - [x] AuthService for all Http requests 
   - [x] Connection page
-  - [ ] Register Page
-  - [ ] Display User infos
-  - [ ] Modify User
+  - [x] Register Page
+  - [ ] Display User infos & Modify User
   - [ ] Schedule refresh token [link](http://blog.ionic.io/ionic-2-and-auth0/)
 - [ ] Optim by angular module [Link](https://angular.io/guide/ngmodule#feature-modules)
   - [ ] Modulariser l'application by Feature/Module

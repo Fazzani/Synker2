@@ -21,8 +21,8 @@ namespace Hfa.SyncLibrary.Verbs
         {
             get
             {
-                yield return new Example("Normal scenario", new SyncMediasElasticVerb { FilePath="~/guide.xmltv" });
-                yield return new Example("Verbose", new SyncMediasElasticVerb { Verbose = true });
+                yield return new Example("Normal scenario", new SyncEpgElasticVerb { FilePath="~/guide.xmltv" });
+                yield return new Example("Verbose", new SyncEpgElasticVerb { Verbose = true });
             }
         }
     }

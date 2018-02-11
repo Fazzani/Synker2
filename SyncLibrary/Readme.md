@@ -1,13 +1,25 @@
-﻿# Notes
+﻿[![Build status](https://ci.appveyor.com/api/projects/status/nnk28cpkyyh1tot4?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2-fmqp0)
+
+## Goals
+<pre>Créer un service système permettant la synchrnisation entre des providers différents. 
+Il faut que ce soit modulable, configurable et autonome.
+Il faut que ce soit configurable via un fichier de config (json de préférence).
+Il faut qu'on puisse injecter une config via la CLI (sans que le fichier de config soit présent sur le disque dur). ça sera utile dans le cas d'un appel par la web API
+</pre>
+<pre><p>les providers qu'on peut avoir à titre d'exemple : un serveur Elastic, un serveur TvHeadend, une base de données 
+un fichier ou une url. le providers doivent être injectés par DLL, pour que ce soit extensible</p></pre>
+<pre>La communication avec le monde extérieur ça se passe via des API ou des WebHooks</pre>
+---------------------------
+## Notes
  - dotnet publish -r linux-arm -o Y:\SyncPlaylist
- - OCTOPUS deploy
  - [Commande nuget package](https://github.com/gsscoder/commandline) used
 #### TODO
+- [ ] Appveyor deploy
 - [ ] Diff to update properties only (epg, group, position, logo, urls for mutli) on (Elastic => TVH)
 - [ ] Use FormatableString for to string the different file's formats
 - [ ] Move mapping cache_filter to a simple file config
 - [ ] Load dynamicaly all handlers
-- [ ] Paralleize update medias
+- [ ] Parallelize update medias
 - [x] WebSockets when something started
 - [x] Format all medias (Epg, Names, Group, etc)
 - [x] Sync from local or remote files to Elastic

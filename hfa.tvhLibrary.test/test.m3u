@@ -1,0 +1,223 @@
+#EXTM3U
+#EXTINF:-1,*** SERVER DMTN-IPTV ***
+http://test.tv/live/test/test/11499.ts
+#EXTINF:-1,beIN SPORTS News HD
+http://test.tv/live/test/test/23691.ts
+#EXTINF:-1,beIN SPORTS HD
+http://test.tv/live/test/test/23690.ts
+#EXTINF:-1,beIN SPORTS 2 FHD
+http://test.tv/live/test/test/37117.ts
+#EXTINF:-1,beIN SPORTS 12 HD
+http://test.tv/live/test/test/23635.ts
+#EXTINF:-1,MBC Pro Sports 1 HD
+http://test.tv/live/test/test/23604.ts
+#EXTINF:-1,MBC Pro Sports 2 HD
+http://test.tv/live/test/test/23603.ts
+#EXTINF:-1,beIN SPORTS US HD
+http://test.tv/live/test/test/32027.ts
+#EXTINF:-1,beIN SPORTS Ñ HD
+http://test.tv/live/test/test/38286.ts
+#EXTINF:-1,beIN SPORTS 1 FR HD
+http://test.tv/live/test/test/35404.ts
+#EXTINF:-1,beIN SPORTS ES FHD
+http://test.tv/live/test/test/28050.ts
+#EXTINF:-1,beIN SPORTS ES
+http://test.tv/live/test/test/28049.ts
+#EXTINF:-1,beIN SPORTS 1 SD
+http://test.tv/live/test/test/23627.ts
+#EXTINF:-1,DMTN: Falcon eye2 HD
+http://test.tv/live/test/test/32213.ts
+#EXTINF:-1,TN: TUNISIE NAT 1
+http://test.tv/live/test/test/6656.ts
+#EXTINF:-1,TN: TUNISIE NAT 1 +2
+http://test.tv/live/test/test/23927.ts
+#EXTINF:-1,TN: TUNISIE NAT 2
+http://test.tv/live/test/test/525.ts
+#EXTINF:-1,TN: TUNISIE NAT 2 +4
+http://test.tv/live/test/test/23941.ts
+#EXTINF:-1,VOD TN: Choufli Hall 2007
+http://test.tv/live/test/test/7957.ts
+#EXTINF:-1,Animal Planet HD
+http://test.tv/live/test/test/26442.ts
+#EXTINF:-1,OSN Fashion
+http://test.tv/live/test/test/29617.ts
+#EXTINF:-1,VIP: BBC EARTH
+http://test.tv/live/test/test/28944.ts
+#EXTINF:-1,VIP: OUTDOOR CHANNEL
+http://test.tv/live/test/test/28962.ts
+#EXTINF:-1,OSN Movies +2 HD
+http://test.tv/live/test/test/29629.ts
+#EXTINF:-1,OSN Movies Action +2
+http://test.tv/live/test/test/29613.ts
+#EXTINF:-1,VIP: Bein Sport 10 HD
+http://test.tv/live/test/test/5331.ts
+#EXTINF:-1,beIN Sports ( TrueVision ) HD 1
+http://test.tv/live/test/test/31534.ts
+#EXTINF:-1,VIP: BEIN MAX 4 Fr
+http://test.tv/live/test/test/30357.ts
+#EXTINF:-1,DMTN: Fox Sports 1 HD US
+http://test.tv/live/test/test/32907.ts
+#EXTINF:-1,AR: MBC MASR 2 +8
+http://test.tv/live/test/test/23921.ts
+#EXTINF:-1,VIP FR: CINE FX FHD
+http://test.tv/live/test/test/38368.ts
+#EXTINF:-1,VIP FR: Polar+ FHD
+http://test.tv/live/test/test/38473.ts
+#EXTINF:-1,VIP FR: 13ème Rue FHD
+http://test.tv/live/test/test/37397.ts
+#EXTINF:-1,FR: TeleClub Sport Flash HD ( 1080P )
+http://test.tv/live/test/test/16584.ts
+#EXTINF:-1,FR: beIN Sports 1 FHD
+http://test.tv/live/test/test/16535.ts
+#EXTINF:-1,FR: BEINSPORT 1 HD
+http://test.tv/live/test/test/1882.ts
+#EXTINF:-1,FR: Canal + Sport HD
+http://test.tv/live/test/test/1957.ts
+#EXTINF:-1,FR: Orange Enquete Exlusive HD
+http://test.tv/live/test/test/26284.ts
+#EXTINF:-1,VIP USA: Fox Sports 2 HD
+http://test.tv/live/test/test/36178.ts
+#EXTINF:-1,CA: beIN Sports HD CA
+http://test.tv/live/test/test/15665.ts
+#EXTINF:-1,CA: TSN 5 HD
+http://test.tv/live/test/test/16788.ts
+#EXTINF:-1,CA: CBS HD
+http://test.tv/live/test/test/12581.ts
+#EXTINF:-1,CA: Super Ecran 1
+http://test.tv/live/test/test/11413.ts
+#EXTINF:-1,VIP CH: Nickelodeonannel
+http://test.tv/live/test/test/34291.ts
+#EXTINF:-1,VIP CH: Puls 8 FHD
+http://test.tv/live/test/test/34290.ts
+#EXTINF:-1,VIP CH: RTS 1
+http://test.tv/live/test/test/34287.ts
+#EXTINF:-1,VIP CH: RTS Deux HD
+http://test.tv/live/test/test/34286.ts
+#EXTINF:-1,VIP CH: RTS Un HD
+http://test.tv/live/test/test/34285.ts
+#EXTINF:-1,Sky Calcio 2 FHD
+http://test.tv/live/test/test/38279.ts
+#EXTINF:-1,VIP IT: Fox Sports HD
+http://test.tv/live/test/test/1410.ts
+#EXTINF:-1,VIP IT: Sky Sport Plus HD
+http://test.tv/live/test/test/17060.ts
+#EXTINF:-1,VIP IT: Sky Supercalcio HD
+http://test.tv/live/test/test/9000.ts
+#EXTINF:-1,MALTA: XEJK
+http://test.tv/live/test/test/24558.ts
+#EXTINF:-1,MT: SMASH TV
+http://test.tv/live/test/test/17062.ts
+#EXTINF:-1,VIASAT: C More First ( SE )
+http://test.tv/live/test/test/11192.ts
+#EXTINF:-1,SE: Horse & Country
+http://test.tv/live/test/test/24303.ts
+#EXTINF:-1,NO: TV 2 HD
+http://test.tv/live/test/test/28349.ts
+#EXTINF:-1,DK: TV6 FHD
+http://test.tv/live/test/test/36620.ts
+#EXTINF:-1,FI: TV7
+http://test.tv/live/test/test/26385.ts
+#EXTINF:-1,BT Sport 3 FHD
+http://test.tv/live/test/test/33484.ts
+#EXTINF:-1,Sky Sports Football UK
+http://test.tv/live/test/test/33487.ts
+#EXTINF:-1,Sky Sports Premier League UK
+http://test.tv/live/test/test/33477.ts
+#EXTINF:-1,UK VIP: eir Sport 1
+http://test.tv/live/test/test/30841.ts
+#EXTINF:-1,UK VIP: BT Sport Extra 4
+http://test.tv/live/test/test/31121.ts
+#EXTINF:-1,DE: TLC HD ( 1080P )
+http://test.tv/live/test/test/17793.ts
+#EXTINF:-1,DE: TLC HD ( 1080P ) AT
+http://test.tv/live/test/test/17831.ts
+#EXTINF:-1,DE: TLC HD
+http://test.tv/live/test/test/9635.ts
+#EXTINF:-1,ES: BEIN MAX 8
+http://test.tv/live/test/test/24243.ts
+#EXTINF:-1,ES: VOD Taquilla 14
+http://test.tv/live/test/test/17575.ts
+#EXTINF:-1,VIP: beIN SPORTS 3 TR
+http://test.tv/live/test/test/4499.ts
+#EXTINF:-1,TR: beIN Sports 1 FHD
+http://test.tv/live/test/test/36607.ts
+#EXTINF:-1,NL: Film 1 Premiere HD ( 1080P )
+http://test.tv/live/test/test/1448.ts
+#EXTINF:-1,ALB-VIP: AL K SPORT1
+http://test.tv/live/test/test/4265.ts
+#EXTINF:-1,BE: 2BE HD
+http://test.tv/live/test/test/9306.ts
+#EXTINF:-1,BG: Balkanika FHD
+http://test.tv/live/test/test/35648.ts
+#EXTINF:-1,BR: E! HD
+http://test.tv/live/test/test/34816.ts
+#EXTINF:-1,RU: Министерство Идей
+http://test.tv/live/test/test/31238.ts
+#EXTINF:-1,AZ: AMC
+http://test.tv/live/test/test/9293.ts
+#EXTINF:-1,MK: MRT Sat 1
+http://test.tv/live/test/test/18142.ts
+#EXTINF:-1,RO: Acasa Tv HD
+http://test.tv/live/test/test/8701.ts
+#EXTINF:-1,PL: Canal+ Sport HD
+http://test.tv/live/test/test/32581.ts
+#EXTINF:-1,HU: DuckTV
+http://test.tv/live/test/test/10649.ts
+#EXTINF:-1,CZ: NOVA SPORT 1 HD
+http://test.tv/live/test/test/11066.ts
+#EXTINF:-1,ISR: YES Sport 1 HD
+http://test.tv/live/test/test/35980.ts
+#EXTINF:-1,GR: EPSILON
+http://test.tv/live/test/test/8240.ts
+#EXTINF:-1,EE: History
+http://test.tv/live/test/test/8098.ts
+#EXTINF:-1,SLO: VOYO
+http://test.tv/live/test/test/18906.ts
+#EXTINF:-1,SK: CGN TV
+http://test.tv/live/test/test/12100.ts
+#EXTINF:-1,JP: WOWOW PRIME
+http://test.tv/live/test/test/12047.ts
+#EXTINF:-1,SK: Alilang
+http://test.tv/live/test/test/8840.ts
+#EXTINF:-1,VIP VT: K+ 1 HD
+http://test.tv/live/test/test/24555.ts
+#EXTINF:-1,MY: Skynet Sports 6 SD
+http://test.tv/live/test/test/12225.ts
+#EXTINF:-1,ID: GLOBALTV
+http://test.tv/live/test/test/12110.ts
+#EXTINF:-1,IND: SUVARNA PLUS
+http://test.tv/live/test/test/16046.ts
+#EXTINF:-1,PK: 92 HD
+http://test.tv/live/test/test/10262.ts
+#EXTINF:-1,CN: CCTV 15
+http://test.tv/live/test/test/11999.ts
+#EXTINF:-1,HK: LE Sports 10 FHD
+http://test.tv/live/test/test/36368.ts
+#EXTINF:-1,CN: Letv Drama 17
+http://test.tv/live/test/test/11981.ts
+#EXTINF:-1,AU: Fox Sport News
+http://test.tv/live/test/test/31723.ts
+#EXTINF:-1,AFG: SROOD
+http://test.tv/live/test/test/17079.ts
+#EXTINF:-1,Kurd: Zarok TV
+http://test.tv/live/test/test/32095.ts
+#EXTINF:-1,PER: persian star 2
+http://test.tv/live/test/test/24411.ts
+#EXTINF:-1,Latino: 8TV
+http://test.tv/live/test/test/9118.ts
+#EXTINF:-1,AF: Congo TV
+http://test.tv/live/test/test/37638.ts
+#EXTINF:-1,AF: CRTV CM
+http://test.tv/live/test/test/37769.ts
+#EXTINF:-1,AF: DBS (Cameroon)
+http://test.tv/live/test/test/37711.ts
+#EXTINF:-1,AF: EBC 1 TV  (Ethiopia)
+http://test.tv/live/test/test/37633.ts
+#EXTINF:-1,AF: Gabon TV GA
+http://test.tv/live/test/test/37765.ts
+#EXTINF:-1,US-CA: Super Channel Vault
+http://test.tv/live/test/test/33405.ts
+#EXTINF:-1,US: Lifetime Movies HD
+http://test.tv/live/test/test/33653.ts
+#EXTINF:-1,VOD FR: Canal Play Live (X-Men:Apocalypse)
+http://test.tv/live/test/test/37120.ts
