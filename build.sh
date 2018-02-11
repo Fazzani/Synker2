@@ -9,6 +9,7 @@ echo $dockerImage
 
 if [ $DOCKER_BUILD="true" ]; then
   echo "Is Docker build";
+  cd Brokers/
   docker build --build-arg arch=$arch -t $dockerImage -t $dockerImageBase:latest .
   docker images
   docker run --rm $dockerImage
