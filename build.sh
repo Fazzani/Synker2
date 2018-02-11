@@ -2,7 +2,6 @@
 
 set -evuxo
 
-
 dockerImageBase="synker/broker"
 dockerImage=$dockerImageBase:linux-$arch
 echo $dockerImage
@@ -26,13 +25,13 @@ fi
 
 cd WebClient
 npm install
-cd .. dotnet restore 
-
+dotnet restore 
 dotnet build -c Release -o ./artifacts
 
 echo "Running Tests"
 
 #dotnet test hfa.synker.batch.test/hfa.synker.batch.test.csproj
-dotnet test hfa.tvhLibrary.test/hfa.tvhLibrary.test.csproj
+cd ../hfa.tvhLibrary.test
+dotnet restore && dotnet xunit
 
 exit 0
