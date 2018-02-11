@@ -10,7 +10,7 @@ RUN net user /add synker /fullname:"Synker Iptv"
 RUN net localgroup synkerGroup /add
 RUN net localgroup synkerGroup synker /add
 RUN net localgroup synkerGroup
-USER synker:synker
+USER synker:synkerGroup
 RUN whoami
 
 #Expose Smtp and POP ports for mailing
