@@ -6,8 +6,8 @@ LABEL maintainer="synker-team@synker.ovh" \
 
 # Create Group and user
 
-RUN NET USER synker "PASSWORD_DOCKER_$$"/add
-RUN NET LOCALGROUP synker /add /comment:"Group for synker application"
+RUN NET net user /add synker
+RUN net LOCALGROUP synker /add /comment:"Group for synker application"
 USER synker
 RUN whoami
 # add permissions for user and group
