@@ -9,10 +9,10 @@ env:
   matrix:
     - DOCKER_BUILD=true arch=x64
     - DOCKER_BUILD=false arch=x64
-os:  
+os:
   - linux
 #  - osx
-branches:  
+branches:
   only:
     - master
     - Develop
@@ -21,7 +21,7 @@ services:
 before_install:
   - chmod +x build.sh
 script:
- - ./build.sh $DOCKER_BUILD --quiet verify
+  - ./build.sh $DOCKER_BUILD --quiet verify
 cache:
   directories:
     - node_modules

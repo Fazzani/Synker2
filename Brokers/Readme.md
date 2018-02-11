@@ -1,7 +1,9 @@
 ﻿[![Build status](https://ci.appveyor.com/api/projects/status/jskpfdwhep4s3b4r?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2-0j10q)
 
-[![](https://images.microbadger.com/badges/version/synker/broker.svg)](https://microbadger.com/images/synker/broker "Get your own version badge on microbadger.com")
-[![](https://images.microbadger.com/badges/image/synker/broker.svg)](https://microbadger.com/images/synker/broker "Get your own image badge on microbadger.com")
+**Travis ci**
+
+- Master [![](https://travis-ci.org/Fazzani/Synker2.svg?branch=master)](https://travis-ci.org/Fazzani/Synker2)
+- Develop [![](https://travis-ci.org/Fazzani/Synker2.svg?branch=Develop)](https://travis-ci.org/Fazzani/Synker2)
 ## Context
 
 - Notification app service based on RabbitMQ

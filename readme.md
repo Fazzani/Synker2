@@ -1,5 +1,10 @@
 ﻿[![Build status](https://ci.appveyor.com/api/projects/status/9drbo0ty6whivq12?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2)
 
+**Travis ci**
+
+- Master [![](https://travis-ci.org/Fazzani/Synker2.svg?branch=master)](https://travis-ci.org/Fazzani/Synker2)
+- Develop [![](https://travis-ci.org/Fazzani/Synker2.svg?branch=Develop)](https://travis-ci.org/Fazzani/Synker2)
+
 [link SEO](https://github.com/angular/universal/tree/master/modules/aspnetcore-engine)
 ### CI & DEPLOY
 
