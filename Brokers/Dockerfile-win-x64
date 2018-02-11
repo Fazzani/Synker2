@@ -22,11 +22,11 @@ FROM microsoft/aspnetcore-build:2.0 AS build
 WORKDIR /src
 COPY *.sln ./
 RUN ls
-COPY ./hfa.Notification.Brokers/hfa.Notification.Brokers.csproj hfa.Notification.Brokers/
-COPY ./hfa.Notification.DTo/hfa.Brokers.Messages.csproj hfa.Notification.DTo/
+COPY ./Brokers/hfa.Notification.Brokers/hfa.Notification.Brokers.csproj hfa.Notification.Brokers/
+COPY ./Brokers/hfa.Notification.DTo/hfa.Brokers.Messages.csproj hfa.Notification.DTo/
 RUN dotnet restore
 COPY . .
-WORKDIR /src/hfa.Notification.Brokers
+WORKDIR /src/Brokers/hfa.Notification.Brokers
 RUN dotnet build -c Release -o /app -r win-$env:arch
 
 FROM build AS publish
