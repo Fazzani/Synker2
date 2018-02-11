@@ -25,7 +25,6 @@ ARG arch
 RUN echo $env:arch
 WORKDIR /src
 COPY *.sln ./
-RUN ls
 COPY ./Brokers/hfa.Notification.Brokers/hfa.Notification.Brokers.csproj hfa.Notification.Brokers/
 COPY ./Brokers/hfa.Notification.DTo/hfa.Brokers.Messages.csproj hfa.Notification.DTo/
 RUN dotnet restore
