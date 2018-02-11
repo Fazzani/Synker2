@@ -112,7 +112,6 @@ Global
 		{C548BD23-EEAC-4EE6-A3DE-6A8E6C1970BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C548BD23-EEAC-4EE6-A3DE-6A8E6C1970BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C548BD23-EEAC-4EE6-A3DE-6A8E6C1970BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C548BD23-EEAC-4EE6-A3DE-6A8E6C1970BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
