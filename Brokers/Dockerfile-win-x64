@@ -4,15 +4,14 @@ LABEL maintainer="synker-team@synker.ovh" \
       description="Notification broker service for Synker suite application" \
       system.dist="win" system.arch="$env" multi.name="Synker notification broker"
 
-# Create Group and user
-
-RUN net user /add synker
-RUN net localgroup synker /add
-RUN net localgroup synker synker /add
-RUN net localgroup synker
+# Step 4: Create user
+RUN net user /add synker /fullname:"Synker Iptv"
+# Step 5: Create Group
+RUN net localgroup synkerGroup /add
+RUN net localgroup synkerGroup synker /add
+RUN net localgroup synkerGroup
 USER synker:synker
 RUN whoami
-# add permissions for user and group
 
 #Expose Smtp and POP ports for mailing
 EXPOSE 110:110
