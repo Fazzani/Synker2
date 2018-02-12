@@ -46,6 +46,7 @@ docker exec -it broker ls -l /app
   - [ ] WebApi
   - [ ] Batch
   - [ ] Broker
+- [ ] **appsettings.json bind to volume by environment**
 - [ ] CI/CD appveyor config
 - [ ] Creating **Linux service** into the Dockerfile AND run it
 - [ ] Creating an **ENTRYPOINT/CMD** for Dockerfile service (display version for example)
