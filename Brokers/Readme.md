@@ -41,6 +41,11 @@ docker exec -it broker ls -l /app
 - Routing by header
 
 ### DOCKER
+- [ ] Travis CI/CD by application 
+  - [ ] WebClient
+  - [ ] WebApi
+  - [ ] Batch
+  - [ ] Broker
 - [ ] CI/CD appveyor config
 - [ ] Creating **Linux service** into the Dockerfile AND run it
 - [ ] Creating an **ENTRYPOINT/CMD** for Dockerfile service (display version for example)

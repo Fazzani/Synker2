@@ -14,7 +14,7 @@ namespace hfa.synker.batch.test
         static StartUp()
         {
             WebHostBuilder = new WebHostBuilder()
-                .UseContentRoot(Path.Combine(string.Format("..{0}..{0}..{0}..{0}", Path.DirectorySeparatorChar), "WebApi"))
+                .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseEnvironment("Development")
                 .UseStartup<Startup>();
 
