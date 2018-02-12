@@ -3,6 +3,7 @@ using Hfa.SyncLibrary.Verbs;
 using Moq;
 using SyncLibrary;
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,7 +31,7 @@ namespace hfa.synker.batch.test
                 var res = SynchElastic.PushXmltvAsync(new PushXmltvVerb
                 {
                     ApiUrl = ApiUrl,
-                    FilePath = @"data\epg.xmltv"
+                    FilePath = Path.Combine(Directory.GetCurrentDirectory(), "epg.xmltv")
                 }, _messageService, client, appData).GetAwaiter().GetResult();
 
                 //TODO : Fixer ce test d'intégration
