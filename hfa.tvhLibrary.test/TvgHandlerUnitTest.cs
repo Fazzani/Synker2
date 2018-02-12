@@ -27,7 +27,7 @@ namespace hfa.tvhLibrary.test
         [InlineData("beIN SPORTS 1 FR HD", "France")]
         [InlineData("beIN SPORTS ES FHD", "Spain")]
         [InlineData("VOD FR: Canal Play Live (Rupture pour tous)", "France")]
-        public async Task TvgCultureIsSetTest(string channelName, string lang = "")
+        public void TvgCultureIsSetTest(string channelName, string lang = "")
         {
             var handler = new TvgMediaCultureMatcherHandler(null);
             var tvgMedia = new TvgMedia
@@ -50,7 +50,7 @@ namespace hfa.tvhLibrary.test
         [InlineData("Bein Sports 1080P")]
         [InlineData("MyHD: Rotana Aflam HD")]
         [InlineData("OSN VIP: FUEL HD ( 1080P )")]
-        public async Task TvgCultureIsNotSetTest(string channelName)
+        public void TvgCultureIsNotSetTest(string channelName)
         {
             var handler = new TvgMediaCultureMatcherHandler(null);
             var tvgMedia = new TvgMedia
@@ -68,7 +68,7 @@ namespace hfa.tvhLibrary.test
         [InlineData("TN: TUNISIE NAT 1 +2 fhd")]
         [InlineData("AR: MBC DRAMA +2")]
         [InlineData("AR: MBC DRAMA +8")]
-        public async Task TvgShiftIsSetTest(string channelName)
+        public void TvgShiftIsSetTest(string channelName)
         {
             var handler = new TvgMediaShiftMatcherHandler(null);
             var tvgMedia = new TvgMedia
