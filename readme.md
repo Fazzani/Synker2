@@ -18,6 +18,11 @@
   - [ ] RabbitMQ
   - [ ] HAProxy
   - [ ] Rancher
+### linux env compatibility
+
+- [ ] Sockets linux endpoint
+- [ ] StdOut/stdErr for logging
+- [ ] Install application files into system folders as /usr/data for app data, /etc/bin/ for exe and /var/log for logs
   
 ### Package nuget PlaylistLibrary
 
