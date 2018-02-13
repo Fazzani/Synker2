@@ -72,3 +72,4 @@ docker exec -it broker ls -l /app
 - Azure Vault
 - [Store configuration data using Docker Configs](https://docs.docker.com/engine/swarm/configs/)
 - [DockerFile Dotnet Core Console Application](http://www.ben-morris.com/using-docker-to-build-and-deploy-net-core-console-applications/)
+- [socket with dotnet Core application](http://www.c-sharpcorner.com/article/building-a-tcp-server-in-net-core-on-ubuntu/)
