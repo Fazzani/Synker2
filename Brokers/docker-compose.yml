@@ -33,8 +33,9 @@ services:
       - 5672:5672
       - 80:80
 
-  hfa.notification.brokers:
-    image: hfa.notification.brokers
+  synker.broker:
+    container_name: broker
+    image: synker/broker
      environment:
       - ASPNETCORE_ENVIRONMENT=Prod
     depends_on:

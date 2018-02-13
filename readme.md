@@ -6,16 +6,19 @@
 - Develop [![](https://travis-ci.org/Fazzani/Synker2.svg?branch=Develop)](https://travis-ci.org/Fazzani/Synker2)
 
 [link SEO](https://github.com/angular/universal/tree/master/modules/aspnetcore-engine)
-### CI & DEPLOY
+### CI & DEPLOY Docker
 
-- [x] CI & Deploy synker batch on appveyor && package nuget for library projects
-- [ ] Auto restart service after new deploy (InCrontab)
-- [ ] Test Synker batch service
-- [ ] Config SSL encrypt [link1](https://certbot.eff.org/#debianstretch-other)
-- [ ] Config smtp [link1](https://wiki.debian-fr.xyz/Configuration_d%27un_serveur_mail_avec_Postfix)
-- [ ] FileBeat all logs (batch + webApps)
-- [ ] dbForge Studio for MySQL (eq de SSDT) DbUp
-
+- Dockerize all applications
+  - [ ] WebClient
+  - [ ] WebApi
+  - [ ] Broker
+  - [ ] Batch
+  - [ ] ELK
+  - [ ] MariaDb
+  - [ ] RabbitMQ
+  - [ ] HAProxy
+  - [ ] Rancher
+  
 ### Package nuget PlaylistLibrary
 
 - dotnet pack hfa.PlaylistBaseLibrary.csproj /p:PackageVersion=1.0.0-beta -c Release
