@@ -12,7 +12,7 @@ init:
   - cmd: git config --global core.autocrlf true
   - cmd: pwd
 clone_depth: 10
-# environment variables
+
 environment:
   nodejs_version: '8'
   ASPNETCORE_ENVIRONMENT: 'Production'
