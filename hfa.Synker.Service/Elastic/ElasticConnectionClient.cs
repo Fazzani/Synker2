@@ -52,8 +52,8 @@ namespace hfa.Synker.Service.Services.Elastic
                 .InferMappingFor<Picon>(m => m.IndexName(_config.PiconIndex).IdProperty(p => p.Id))
                 .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).TypeName("doc").IdProperty(p => p.id).Rename(x => x.Update, "update_date"));
 
-            if (!Client.IndexExists(_config.DefaultIndex).Exists)
-                MappingPlaylistConfig();
+            //if (!Client.IndexExists(_config.DefaultIndex).Exists)
+            //    MappingPlaylistConfig();
 
             //SitePack index
             if (!Client.IndexExists(_config.SitePackIndex).Exists)

@@ -22,6 +22,7 @@
     "deploy": "dotnet build && sh \"./Scripts/deploy.sh\""
   },
   "dependencies": {
+    "@angular/material": "~5.2.4",
     "@angular/animations": "^5.2.4",
     "@angular/cdk": "~5.2.0",
     "@angular/common": "^5.2.4",
@@ -31,7 +32,6 @@
     "@angular/flex-layout": "2.0.0-beta.12",
     "@angular/forms": "^5.2.4",
     "@angular/http": "^5.2.4",
-    "@angular/material": "~5.2.0",
     "@angular/platform-browser": "^5.2.4",
     "@angular/platform-browser-dynamic": "^5.2.4",
     "@angular/platform-server": "^5.2.4",

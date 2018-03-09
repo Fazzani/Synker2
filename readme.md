@@ -18,6 +18,11 @@
   - [ ] RabbitMQ
   - [ ] HAProxy
   - [ ] Rancher
+### linux env compatibility
+
+- [ ] [Sockets](http://www.c-sharpcorner.com/article/building-a-tcp-server-in-net-core-on-ubuntu/) linux endpoint
+- [ ] StdOut/stdErr for logging
+- [ ] Install application files into system folders as /usr/data for app data, /etc/bin/ for exe and /var/log for logs
   
 ### Package nuget PlaylistLibrary
 

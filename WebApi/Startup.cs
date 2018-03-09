@@ -105,8 +105,8 @@ namespace hfa.WebApi
                 a => a.MigrationsAssembly("hfa.WebApi")))
              .BuildServiceProvider();
 
-            var DB = serviceProvider.GetService<SynkerDbContext>();
-            DB.Database.EnsureCreated();
+            //var DB = serviceProvider.GetService<SynkerDbContext>();
+            //DB.Database.EnsureCreated();
 
             #region Compression
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);

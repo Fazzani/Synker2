@@ -9,6 +9,7 @@
     <DockerServiceName>hfa.notification.brokers</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".env" />
     <None Include="cluster-entrypoint.sh" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
