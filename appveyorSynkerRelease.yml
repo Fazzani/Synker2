@@ -43,15 +43,9 @@ artifacts:
    name: batch
    type: WebDeployPackage
 test_script:
-  # restore packages for our unit tests
-  - cmd: dotnet restore ../hfa.tvhLibrary.test/hfa.tvhLibrary.test.csproj --verbosity m
-  - cmd: dotnet restore ../hfa.synker.batch.test/hfa.synker.batch.test.csproj --verbosity m
-  # run the unit tests (requires changing into the test directory)
-  - cmd: cd ../hfa.tvhLibrary.test/
-  - cmd: dotnet xunit -appveyor -notrait "Category=Integration"
-  - cmd: cd ../hfa.synker.batch.test/
-  - cmd: dotnet xunit -appveyor -notrait "Category=Integration"
-  - cmd: cd ../WebClient && npm run test:ci
+  - cmd: cd ./hfa.tvhLibrary.test/ &&  dotnet restore --verbosity m && dotnet xunit -appveyor -notrait "Category=Integration" && cd ..
+  - cmd: cd ./hfa.synker.batch.test/ && dotnet restore --verbosity m && dotnet xunit -appveyor -notrait "Category=Integration" && cd ..
+  - cmd: cd ./WebClient && npm run test:ci && cd ..
 deploy:
   - provider: GitHub
     force_update: true
