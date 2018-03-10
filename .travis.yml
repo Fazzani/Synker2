@@ -15,7 +15,7 @@ os:
 branches:
   only:
     - master
-    - /^tag-.*$/
+    - /^\d\.\d\.\d$/
 services:
   - docker
 before_install:
