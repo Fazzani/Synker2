@@ -2,8 +2,11 @@
 
 set -evuxo
 echo "$TRAVIS_TAG"
+if [ -z "$TRAVIS_TAG" ]; then
+	echo "Isn't a Docker build";
+fi
 
-if [[ "$DOCKER_BUILD" == true && "$TRAVIS_TAG"!="" ]]; then
+if [[ "$DOCKER_BUILD" == true ]]; then
   echo "Is a Docker build";
   docker login -u=$DOCKER_USER -p=$DOCKER_PASS
   version=${TRAVIS_TAG:latest}
@@ -12,7 +15,5 @@ if [[ "$DOCKER_BUILD" == true && "$TRAVIS_TAG"!="" ]]; then
   docker-compose push
   exit 0
 fi
-
-echo "Isn't a Docker build";
 
 exit 0
