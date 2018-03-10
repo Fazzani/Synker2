@@ -58,7 +58,6 @@ deploy:
     on:
       appveyor_repo_tag: true
       branch: master
-deploy:
   - provider: Environment
     name: Synker.batch PROD
     on:
