@@ -1,23 +1,15 @@
 ﻿[![Build status](https://ci.appveyor.com/api/projects/status/hwigxlp50tlut2ws?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2-8v1uw)
 
+[![GitHub release](https://img.shields.io/github/release/qubyte/rubidium.svg?style=for-the-badge)](https://github.com/Fazzani/Synker2/releases/latest)
+
+
 **Travis ci**
 
 - Master [![](https://travis-ci.org/Fazzani/Synker2.svg?branch=master)](https://travis-ci.org/Fazzani/Synker2)
 - Develop [![](https://travis-ci.org/Fazzani/Synker2.svg?branch=Develop)](https://travis-ci.org/Fazzani/Synker2)
 
 [link SEO](https://github.com/angular/universal/tree/master/modules/aspnetcore-engine)
-### CI & DEPLOY Docker
 
-- Dockerize all applications
-  - [ ] WebClient
-  - [ ] WebApi
-  - [ ] Broker
-  - [ ] Batch
-  - [ ] ELK
-  - [ ] MariaDb
-  - [ ] RabbitMQ
-  - [ ] HAProxy
-  - [ ] Rancher
 ### linux env compatibility
 
 - [ ] [Sockets](http://www.c-sharpcorner.com/article/building-a-tcp-server-in-net-core-on-ubuntu/) linux endpoint
