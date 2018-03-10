@@ -19,7 +19,10 @@ services:
   - docker
 before_install:
   - chmod +x travis-build.sh
-  - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c \"zcat {file} | docker load\"; fi
+  - | 
+  if [[ -d $HOME/docker ]]; then 
+    ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c \"zcat {file} | docker load\"; 
+  fi
 script:
   - ./travis-build.sh $DOCKER_BUILD --quiet verify
 before_cache:
