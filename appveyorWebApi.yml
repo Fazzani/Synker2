@@ -40,7 +40,7 @@ artifacts:
 deploy:
   - provider: GitHub
     force_update: true
-    tag: $(APPVEYOR_REPO_TAG_NAME)
+    tag: synkerapi-v$(APPVEYOR_REPO_TAG_NAME)
     release: synkerapi-v$(appveyor_build_version)
     description: 'Synker Api'
     auth_token:
@@ -50,7 +50,6 @@ deploy:
     prerelease: false
     on:
       appveyor_repo_tag: true
-      branch: master
   - provider: Environment
     name: Synker Api Prod
     on:
