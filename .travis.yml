@@ -8,7 +8,7 @@ env:
     - CLI_VERSION: Latest
   matrix:
     - DOCKER_BUILD=true arch=x64
-    - DOCKER_BUILD=false arch=x64
+    #- DOCKER_BUILD=false arch=x64
 os:
   - linux
 #  - osx
