@@ -7,12 +7,11 @@ services:
     ports:
       - "80"
 
-#  hfa.webclient:
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#    ports:
-#      - "80"
-
+  hfa.webclient:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"
 
   hfa.notification.brokers:
     environment:
@@ -20,10 +19,8 @@ services:
     ports:
       - "80"
 
-
   hfa.synker.batch:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "80"
-
