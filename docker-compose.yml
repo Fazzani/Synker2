@@ -2,27 +2,27 @@ version: '3'
 
 services:
   hfa.webapi:
-    image: synker/webapi:${version:latest}
+    image: synker/webapi:${version:-latest}
     build:
       context: .
       dockerfile: WebApi/Dockerfile
 
   hfa.webclient:
-    image: synker/webclient:${version:latest}
+    image: synker/webclient:${version:-latest}
     build:
       context: .
       dockerfile: WebClient/Dockerfile
 
 
   hfa.notification.brokers:
-    image: synker/brokers:${version:latest}
+    image: synker/brokers:${version:-latest}
     build:
       context: .
       dockerfile: Brokers/hfa.Notification.Brokers/Dockerfile
 
 
   hfa.synker.batch:
-    image: synker/batch:${version:latest}
+    image: synker/batch:${version:-latest}
     build:
       context: .
       dockerfile: SyncLibrary/Dockerfile
