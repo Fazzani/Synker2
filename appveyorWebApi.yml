@@ -47,7 +47,7 @@ deploy:
     description: 'Synker Api'
     auth_token:
       secure: fxsWwiwYRs4GHT6/jIwcDWUnRXNkbo7njWqp/9mT+5x86SxWqvSgJhbYW0KmtHer
-    artifact: .\WebApi\artifactsWebApi
+    artifact: WebApi
     draft: false
     prerelease: false
     on:
