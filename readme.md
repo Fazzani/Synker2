@@ -1,10 +1,9 @@
-﻿| |  |
-| --- | --- |
-| **Appveyor** | [![Build status](https://ci.appveyor.com/api/projects/status/hwigxlp50tlut2ws?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2-8v1uw) |
+﻿| | ||
+| --- | --- | -- |
+| **Appveyor** | [![Build status](https://ci.appveyor.com/api/projects/status/hwigxlp50tlut2ws?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2-8v1uw) |[![Build history](https://buildstats.info/appveyor/chart/Fazzani/synker2-8v1uw)](https://ci.appveyor.com/project/dustinmoris/ci-buildstats/history)|
 | **Travis Master** | [![](https://travis-ci.org/Fazzani/Synker2.svg?branch=master)](https://travis-ci.org/Fazzani/Synker2) |
 | **Travis Develop** | [![](https://travis-ci.org/Fazzani/Synker2.svg?branch=Develop)](https://travis-ci.org/Fazzani/Synker2) |
 | **Release** | [![GitHub release](https://img.shields.io/github/release/Fazzani/Synker2.svg?style=for-the-badge)](https://github.com/Fazzani/Synker2) |
-| **Appveyor Build history** |[![Build history](https://buildstats.info/appveyor/chart/Fazzani/synker2-8v1uw)](https://ci.appveyor.com/project/dustinmoris/ci-buildstats/history)|
 
 [link SEO](https://github.com/angular/universal/tree/master/modules/aspnetcore-engine)
 
