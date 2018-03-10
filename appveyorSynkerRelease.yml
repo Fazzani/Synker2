@@ -1,0 +1,94 @@
+version: '1.0.{build}'
+image: Visual Studio 2017
+configuration: Release
+init:
+  # Good practise, because Windows line endings are different from Unix/Linux ones
+  - cmd: git config --global core.autocrlf true
+  - cmd: pwd
+clone_depth: 10
+# environment variables
+environment:
+  nodejs_version: '8'
+  ASPNETCORE_ENVIRONMENT: 'Production'
+matrix:
+  fast_finish: true
+install:
+  - choco install googlechrome -y --ignore-checksums
+  - ps: Install-Product node $Env:nodejs_version
+before_build:
+  - cmd: dotnet --version
+  - cmd: dotnet restore ./WebClient/hfa.WebClient.csproj --verbosity m
+  - cmd: dotnet restore ./WebApi/hfa.WebApi.csproj --verbosity m
+build_script:
+  - cmd: dotnet publish -c %CONFIGURATION% -r linux-x64 ./WebClient/hfa.WebClient.csproj --verbosity m -o artifactsWebClient
+  - cmd: dotnet publish -c %CONFIGURATION% -r linux-x64 ./WebApi/hfa.WebApi.csproj --verbosity m -o artifactsWebApi
+  - cmd: dotnet publish -c %CONFIGURATION% -r linux-x64 ./SyncLibrary/hfa.Synker.batch.csproj --verbosity m -o artifactsBatch
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
+
+artifacts:
+ - path: .\WebClient\artifactsWebClient
+   name: WebClient
+   type: WebDeployPackage
+ - path: .\WebClient\artifactsWebApi
+   name: WebApi
+   type: WebDeployPackage
+ - path: .\SyncLibrary\artifactsBatch
+   name: batch
+   type: WebDeployPackage
+test_script:
+  # restore packages for our unit tests
+  - cmd: dotnet restore ../hfa.tvhLibrary.test/hfa.tvhLibrary.test.csproj --verbosity m
+  - cmd: dotnet restore ../hfa.synker.batch.test/hfa.synker.batch.test.csproj --verbosity m
+  # run the unit tests (requires changing into the test directory)
+  - cmd: cd ../hfa.tvhLibrary.test/
+  - cmd: dotnet xunit -appveyor -notrait "Category=Integration"
+  - cmd: cd ../hfa.synker.batch.test/
+  - cmd: dotnet xunit -appveyor -notrait "Category=Integration"
+  - cmd: cd ../WebClient && npm run test:ci
+deploy:
+  - provider: GitHub
+    force_update: true
+    tag: $(APPVEYOR_REPO_TAG_NAME)
+    release: synkerclient-v$(appveyor_build_version)
+    description: 'Synker Api'
+    auth_token:
+      secure: fxsWwiwYRs4GHT6/jIwcDWUnRXNkbo7njWqp/9mT+5x86SxWqvSgJhbYW0KmtHer
+    artifact: WebClient
+    draft: false
+    prerelease: false
+    on:
+      appveyor_repo_tag: true
+      branch: master
+  - provider: GitHub
+    force_update: true
+    tag: $(APPVEYOR_REPO_TAG_NAME)
+    release: synkerapi-v$(appveyor_build_version)
+    description: 'Synker Client'
+    auth_token:
+      secure: fxsWwiwYRs4GHT6/jIwcDWUnRXNkbo7njWqp/9mT+5x86SxWqvSgJhbYW0KmtHer
+    artifact: WebApi
+    draft: false
+    prerelease: false
+    on:
+      appveyor_repo_tag: true
+      branch: master   
+  - provider: GitHub
+    force_update: true
+    tag: $(APPVEYOR_REPO_TAG_NAME)
+    release: synkerbatch-v$(appveyor_build_version)
+    description: 'Synker Batch'
+    auth_token:
+      secure: fxsWwiwYRs4GHT6/jIwcDWUnRXNkbo7njWqp/9mT+5x86SxWqvSgJhbYW0KmtHer
+    artifact: batch
+    draft: false
+    prerelease: false
+    on:
+      appveyor_repo_tag: true
+      branch: master

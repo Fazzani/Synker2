@@ -44,21 +44,8 @@ artifacts:
    type: zip
 on_finish :
   # any cleanup in here
-deploy:
-  - provider: GitHub
-    force_update: true
-    tag: $(APPVEYOR_REPO_TAG_NAME)
-    release: synkerbatch-v$(appveyor_build_version)
-    description: 'Synker batch'
-    auth_token:
-      secure: fxsWwiwYRs4GHT6/jIwcDWUnRXNkbo7njWqp/9mT+5x86SxWqvSgJhbYW0KmtHer
-    artifact: SynkerBatch
-    draft: false
-    prerelease: false
-    on:
-      appveyor_repo_tag: true
-      branch: master
-  - provider: Environment
-    name: Synker.batch PROD
-    on:
-      branch: Develop
+#deploy:
+#  - provider: Environment
+#    name: Synker.batch PROD
+#    on:
+#      branch: Develop

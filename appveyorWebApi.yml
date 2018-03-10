@@ -5,14 +5,14 @@ branches:
   only:
   - master
   - Develop
-#only_commits:
-#  message: /buildapi:|build:/
+only_commits:
+  message: /buildapi:|build:/
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
   - cmd: pwd
 clone_depth: 10
-
+# environment variables
 environment:
   nodejs_version: '8'
   ASPNETCORE_ENVIRONMENT: 'Production'
@@ -21,7 +21,6 @@ matrix:
 before_build:
   - cmd: dotnet --version
   - cmd: dotnet restore ./WebApi/hfa.WebApi.csproj --verbosity m
-
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
@@ -30,27 +29,14 @@ dotnet_csproj:
   assembly_version: '{version}'
   file_version: '{version}'
   informational_version: '{version}'
-
 build_script:
-  - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj --verbosity m -o artifactsWebApi
+  - cmd: dotnet publish -c %CONFIGURATION% -r linux-x64 ./WebApi/hfa.WebApi.csproj --verbosity m -o artifactsWebApi
 artifacts:
  - path: .\WebApi\artifactsWebApi
    name: WebApi
    type: WebDeployPackage
-deploy:
-  - provider: GitHub
-    force_update: true
-    tag: synkerapi-v$(APPVEYOR_REPO_TAG_NAME)
-    release: synkerapi-v$(appveyor_build_version)
-    description: 'Synker Api'
-    auth_token:
-      secure: fxsWwiwYRs4GHT6/jIwcDWUnRXNkbo7njWqp/9mT+5x86SxWqvSgJhbYW0KmtHer
-    artifact: WebApi
-    draft: false
-    prerelease: false
-    on:
-      appveyor_repo_tag: true
-  - provider: Environment
-    name: Synker Api Prod
-    on:
-      branch: Develop
+#deploy:
+#  - provider: Environment
+#    name: Synker Api Prod
+#    on:
+#      branch: Develop
