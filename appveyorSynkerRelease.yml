@@ -10,6 +10,7 @@ clone_depth: 10
 environment:
   nodejs_version: '8'
   ASPNETCORE_ENVIRONMENT: 'Production'
+skip_non_tags: true
 matrix:
   fast_finish: true
 install:
