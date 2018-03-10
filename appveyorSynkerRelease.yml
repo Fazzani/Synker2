@@ -56,7 +56,7 @@ deploy:
   - provider: GitHub
     force_update: true
     tag: $(APPVEYOR_REPO_TAG_NAME)
-    release: synkerclient-v$(appveyor_build_version)
+    release: synkerclient-$(APPVEYOR_REPO_TAG_NAME)
     description: 'Synker Api'
     auth_token:
       secure: fxsWwiwYRs4GHT6/jIwcDWUnRXNkbo7njWqp/9mT+5x86SxWqvSgJhbYW0KmtHer
@@ -69,7 +69,7 @@ deploy:
   - provider: GitHub
     force_update: true
     tag: $(APPVEYOR_REPO_TAG_NAME)
-    release: synkerapi-v$(appveyor_build_version)
+    release: synkerapi-$(APPVEYOR_REPO_TAG_NAME)
     description: 'Synker Client'
     auth_token:
       secure: fxsWwiwYRs4GHT6/jIwcDWUnRXNkbo7njWqp/9mT+5x86SxWqvSgJhbYW0KmtHer
@@ -82,7 +82,7 @@ deploy:
   - provider: GitHub
     force_update: true
     tag: $(APPVEYOR_REPO_TAG_NAME)
-    release: synkerbatch-v$(appveyor_build_version)
+    release: synkerbatch-$(APPVEYOR_REPO_TAG_NAME)
     description: 'Synker Batch'
     auth_token:
       secure: fxsWwiwYRs4GHT6/jIwcDWUnRXNkbo7njWqp/9mT+5x86SxWqvSgJhbYW0KmtHer
