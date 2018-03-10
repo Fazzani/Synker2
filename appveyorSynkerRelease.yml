@@ -20,10 +20,13 @@ before_build:
   - cmd: dotnet --version
   - cmd: dotnet restore ./WebClient/hfa.WebClient.csproj --verbosity m
   - cmd: dotnet restore ./WebApi/hfa.WebApi.csproj --verbosity m
+  - cmd: dotnet restore ./SyncLibrary/hfa.Synker.batch.csproj --verbosity m
+  - cmd: dotnet restore ./Brokers/hfa.Notification.Brokers/hfa.Notification.Brokers.csproj --verbosity m
 build_script:
   - cmd: dotnet publish -c %CONFIGURATION% -r linux-x64 ./WebClient/hfa.WebClient.csproj --verbosity m -o artifactsWebClient
   - cmd: dotnet publish -c %CONFIGURATION% -r linux-x64 ./WebApi/hfa.WebApi.csproj --verbosity m -o artifactsWebApi
   - cmd: dotnet publish -c %CONFIGURATION% -r linux-x64 ./SyncLibrary/hfa.Synker.batch.csproj --verbosity m -o artifactsBatch
+  - cmd: dotnet publish -c %CONFIGURATION% -r linux-x64 ./Brokers/hfa.Notification.Brokers/hfa.Notification.Brokers.csproj --verbosity m -o artifactsBroker
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
@@ -42,6 +45,9 @@ artifacts:
    type: WebDeployPackage
  - path: .\SyncLibrary\artifactsBatch
    name: batch
+   type: WebDeployPackage
+ - path: .\Brokers\hfa.Notification.Brokers\artifactsBroker
+   name: broker
    type: WebDeployPackage
 test_script:
   - cmd: cd ./hfa.tvhLibrary.test/ &&  dotnet restore --verbosity m && dotnet xunit -appveyor -notrait "Category=Integration" && cd ..
@@ -82,6 +88,19 @@ deploy:
     auth_token:
       secure: fxsWwiwYRs4GHT6/jIwcDWUnRXNkbo7njWqp/9mT+5x86SxWqvSgJhbYW0KmtHer
     artifact: batch
+    draft: false
+    prerelease: false
+    on:
+      appveyor_repo_tag: true
+      branch: master
+  - provider: GitHub
+    force_update: true
+    tag: $(APPVEYOR_REPO_TAG_NAME)
+    release: synkerbroker-$(APPVEYOR_REPO_TAG_NAME)
+    description: 'Synker Broker'
+    auth_token:
+      secure: fxsWwiwYRs4GHT6/jIwcDWUnRXNkbo7njWqp/9mT+5x86SxWqvSgJhbYW0KmtHer
+    artifact: broker
     draft: false
     prerelease: false
     on:
