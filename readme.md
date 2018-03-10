@@ -1,4 +1,4 @@
-﻿[![Build status](https://ci.appveyor.com/api/projects/status/9drbo0ty6whivq12?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2)
+﻿[![Build status](https://ci.appveyor.com/api/projects/status/hwigxlp50tlut2ws?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2-8v1uw)
 
 **Travis ci**
 
