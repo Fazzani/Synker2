@@ -13,7 +13,7 @@ if [[ "$DOCKER_BUILD" == true ]]; then
 
   # build image with github tag version
   version=$TRAVIS_TAG
-  export $version
+  export "$version"
   docker-compose build
 
   # build image with latest tag version
