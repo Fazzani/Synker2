@@ -3,7 +3,7 @@
 set -evuxo
 echo "$TRAVIS_TAG"
 
-if [[ "$DOCKER_BUILD" == true && -z "$TRAVIS_TAG" ]]; then
+if [[ "$DOCKER_BUILD" == true && "$TRAVIS_TAG"!="" ]]; then
   echo "Is a Docker build";
   docker login -u=$DOCKER_USER -p=$DOCKER_PASS
   version=${TRAVIS_TAG:latest}
