@@ -49,6 +49,20 @@ test_script:
   - cmd: dotnet xunit -appveyor -notrait "Category=Integration"
   - cmd: cd ../WebClient && npm run test:ci
 deploy:
+  - provider: GitHub
+    force_update: true
+    tag: $(APPVEYOR_REPO_TAG_NAME)
+    release: synkerclient-v$(appveyor_build_version)
+    description: 'Synker Client'
+    auth_token:
+      secure: fxsWwiwYRs4GHT6/jIwcDWUnRXNkbo7njWqp/9mT+5x86SxWqvSgJhbYW0KmtHer
+    artifact: WebClient
+    draft: false
+    prerelease: false
+    on:
+      appveyor_repo_tag: true
+      branch: master
+deploy:
   - provider: Environment
     name: Synker WebClient Prod
     on:

@@ -30,3 +30,4 @@ build_script:
   - cmd: dotnet nuget push artifacts\**\*.* -k ux16b846ggi3wy8arhuyxaqx -s https://ci.appveyor.com/nuget/fazzani/api/v2/package
 artifacts:
   - path: 'artifacts\*.nupkg'
+
