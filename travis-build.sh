@@ -12,14 +12,11 @@ if [[ "$DOCKER_BUILD" == true ]]; then
   docker login -u=$DOCKER_USER -p=$DOCKER_PASS
 
   # build image with github tag version
-  version=$TRAVIS_TAG
-  export "$version"
+  export version=$TRAVIS_TAG
   docker-compose build
 
   # build image with latest tag version
-  version="latest"
-  export $version
-
+  export version="latest"
   docker-compose push
   exit 0
 fi
