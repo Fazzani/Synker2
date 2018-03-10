@@ -38,19 +38,19 @@ artifacts:
    name: WebApi
    type: WebDeployPackage
 deploy:
-  - provider: Environment
-    name: Synker Api Prod
-    on:
-      branch: Develop
   - provider: GitHub
     force_update: true
     tag: $(APPVEYOR_REPO_TAG_NAME)
-    release: $(APPVEYOR_REPO_TAG_NAME)
+    #release: $(APPVEYOR_REPO_TAG_NAME)
     description: 'Synker Api'
     auth_token:
       secure: fxsWwiwYRs4GHT6/jIwcDWUnRXNkbo7njWqp/9mT+5x86SxWqvSgJhbYW0KmtHer
-    artifact: .\WebApi\artifactsWebApi
+    artifact: WebApi
     draft: false
     prerelease: false
     on:
       appveyor_repo_tag: true
+  - provider: Environment
+    name: Synker Api Prod
+    on:
+      branch: Develop
