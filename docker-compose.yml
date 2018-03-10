@@ -7,11 +7,11 @@ services:
       context: .
       dockerfile: WebApi/Dockerfile
 
-  hfa.webclient:
-    image: synker/webclient:${version:-latest}
-    build:
-      context: .
-      dockerfile: WebClient/Dockerfile
+#  hfa.webclient:
+#    image: synker/webclient:${version:-latest}
+#    build:
+#      context: .
+#      dockerfile: WebClient/Dockerfile
 
 
   hfa.notification.brokers:
