@@ -1,4 +1,5 @@
 FROM microsoft/aspnetcore:2.0 AS base
+RUN rm -rf node_modules && rm -rf /usr/lib/node_modules
 WORKDIR /app
 EXPOSE 80
 
@@ -19,7 +20,7 @@ WORKDIR /src/WebClient
 RUN dotnet build -c Release -o /app
 
 FROM build AS publish
-RUN npm install isarray && npm install --save-dev core-util-is
+RUN npm i isarray && npm i --save-dev core-util-is && npm i webpack@latest -g
 RUN dotnet publish -c Release -o /app
 
 FROM base AS final
