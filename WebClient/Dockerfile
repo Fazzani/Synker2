@@ -8,7 +8,7 @@ RUN apt-get -qq update && apt-get -y upgrade
 # Create Group and user
 # add user and group permissions
 RUN groupadd -r synker && mkdir /home/synker && useradd --no-log-init -d /home/synker -r -g synker synker
-RUN chown synker:synker -R /home/synker
+RUN mkdir /home/synker/webclient && chown synker:synker -R /home/synker && chmod -R 777 /home/synker
 USER synker:synker
 RUN chmod -R 700 /home/synker/webclient
 WORKDIR /home/synker/webclient

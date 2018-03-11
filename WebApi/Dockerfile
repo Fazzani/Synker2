@@ -7,10 +7,9 @@ LABEL maintainer="synker-team@synker.ovh" \
 RUN apt-get -qq update && apt-get -y upgrade
 # Create Group and user
 RUN groupadd -r synker && mkdir /home/synker && useradd --no-log-init -d /home/synker -r -g synker synker
-RUN chown synker:synker -R /home/synker
+RUN mkdir /home/synker/webapi && chown synker:synker -R /home/synker && chmod -R 777 /home/synker
 USER synker:synker
 # add user and group permissions
-RUN chmod -R 700 /home/synker/webapi
 WORKDIR /home/synker/webapi
 #Expose Smtp and POP ports for mailing
 EXPOSE 80
