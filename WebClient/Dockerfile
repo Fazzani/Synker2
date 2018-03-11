@@ -7,12 +7,11 @@ LABEL maintainer="synker-team@synker.ovh" \
 RUN apt-get -qq update && apt-get -y upgrade
 # Create Group and user
 # add user and group permissions
-RUN groupadd -r synker && mkdir /home/synker && useradd --no-log-init -d /home/synker -r -g synker synker
-RUN mkdir /home/synker/webclient && chown synker:synker -R /home/synker && chmod -R 777 /home/synker
-USER synker:synker
-RUN chmod -R 700 /home/synker/webclient
-WORKDIR /home/synker/webclient
-#Expose Smtp and POP ports for mailing
+#RUN groupadd -r synker && mkdir /home/synker && useradd --no-log-init -d /home/synker -r -g synker synker
+#RUN mkdir /app && chown synker:synker -R /home/synker && chmod -R 777 /home/synker
+#USER synker:synker
+#RUN chmod -R 700 /app
+#WORKDIR /app
 EXPOSE 80
 
 
@@ -37,7 +36,7 @@ COPY WebClient/hfa.WebClient.csproj WebClient/
 RUN dotnet restore -nowarn:msb3202,nu1503
 COPY . .
 WORKDIR /src/WebClient
-RUN dotnet build -c Release -o /home/synker/webclient -r linux-$arch
+RUN dotnet build -c Release -o /app -r linux-$arch
 
 ARG arch=x64
 FROM build AS publish
@@ -46,9 +45,9 @@ ARG arch
     #git \
     #unzip
 #RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-RUN dotnet publish -c Release -o /home/synker/webclient -r linux-$arch
+RUN dotnet publish -c Release -o /app -r linux-$arch
 
 FROM base AS final
-WORKDIR /home/synker/webclient
-COPY --from=publish /home/synker/webclient .
+WORKDIR /app
+COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "hfa.WebClient.dll"]
