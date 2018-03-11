@@ -5,7 +5,7 @@ LABEL maintainer="synker-team@synker.ovh" \
       system.dist="linux" system.arch="$env" multi.name="Synker notification broker"
 ARG arch
 RUN echo $env:arch
-RUN apt-get update -y
+RUN apt-get -qq update && apt-get -y upgrade
 # Create Group and user
 RUN groupadd -r synker && useradd --no-log-init -r -g synker synker
 USER synker:synker

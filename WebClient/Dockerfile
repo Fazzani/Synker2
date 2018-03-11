@@ -1,8 +1,22 @@
+ARG arch=x64
 FROM microsoft/aspnetcore:2.0 AS base
-WORKDIR /app
+ARG arch
+LABEL maintainer="synker-team@synker.ovh" \
+      description="WebClient Synker suite application" \
+      system.dist="linux" system.arch="$arch" multi.name="Synker WebClient"
+RUN apt-get -qq update && apt-get -y upgrade
+# Create Group and user
+RUN groupadd -r synker && useradd --no-log-init -r -g synker synker
+USER synker:synker
+# add user and group permissions
+WORKDIR /home/synker/webclient
+#Expose Smtp and POP ports for mailing
 EXPOSE 80
 
+
+ARG arch=x64
 FROM microsoft/aspnetcore-build:2.0 AS build
+ARG arch
 ENV NODE_VERSION 8.9.4
 ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz
 ENV NODE_DOWNLOAD_SHA 21fb4690e349f82d708ae766def01d7fec1b085ce1f5ab30d9bda8ee126ca8fc
@@ -17,26 +31,22 @@ RUN curl -SL "$NODE_DOWNLOAD_URL" --output nodejs.tar.gz \
 
 WORKDIR /src
 COPY Synker.sln ./
-
 COPY WebClient/hfa.WebClient.csproj WebClient/
 RUN dotnet restore -nowarn:msb3202,nu1503
 COPY . .
 WORKDIR /src/WebClient
-RUN dotnet build -c Release -o /app
+RUN dotnet build -c Release -o /home/synker/webclient -r linux-$arch
 
+ARG arch=x64
 FROM build AS publish
+ARG arch
 #RUN apt-get -qq update && apt-get -qqy --no-install-recommends install wget gnupg \
     #git \
     #unzip
 #RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-#RUN apt-get install -y nodejs
-#RUN rm -rf node_modules && rm -rf /usr/lib/node_modules 
-#&& npm install
-#RUN npm i isarray && npm i --save-dev core-util-is && npm i webpack@latest -g
-#RUN apt-get -qq update && apt-get -y upgrade
-RUN dotnet publish -c Release -o /app
+RUN dotnet publish -c Release -o /home/synker/webclient -r linux-$arch
 
 FROM base AS final
-WORKDIR /app
-COPY --from=publish /app .
+WORKDIR /home/synker/webclient
+COPY --from=publish /home/synker/webclient .
 ENTRYPOINT ["dotnet", "hfa.WebClient.dll"]
