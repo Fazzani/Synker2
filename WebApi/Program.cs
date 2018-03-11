@@ -35,14 +35,15 @@ namespace Web
 
             return WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseKestrel(options =>
-                {
-                    options.Listen(IPAddress.Loopback, 56800);
-                    options.Listen(IPAddress.Loopback, 44312, listenOptions =>
-                    {
-                        listenOptions.UseHttps(certificateFileName, certificatePassword);
-                    });
-                })
+                .UseKestrel()
+                //.UseKestrel(options =>
+                //{
+                //    options.Listen(IPAddress.Loopback, 56800);
+                //    options.Listen(IPAddress.Loopback, 44312, listenOptions =>
+                //    {
+                //        listenOptions.UseHttps(certificateFileName, certificatePassword);
+                //    });
+                //})
                 .UseIISIntegration()
                 //.UseUrls("http://localhost:56800", "https://*:44312")
                 .Build();
