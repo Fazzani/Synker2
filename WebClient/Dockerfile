@@ -44,7 +44,6 @@ ARG arch
 #RUN apt-get -qq update && apt-get -qqy --no-install-recommends install wget gnupg \
     #git \
     #unzip
-#RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 RUN dotnet publish -c Release -o /app -r linux-$arch
 
 FROM base AS final

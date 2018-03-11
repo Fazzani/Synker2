@@ -6,7 +6,7 @@
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
     <IsPackable>false</IsPackable>
-    <AssemblyName>WebClient</AssemblyName>
+    <AssemblyName>hfa.WebClient</AssemblyName>
     <RootNamespace>WebClient</RootNamespace>
     <UserSecretsId>f934f0be-ac10-4dd6-b82f-d7aecb08f04b</UserSecretsId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
