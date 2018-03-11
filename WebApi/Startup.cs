@@ -66,6 +66,9 @@ namespace hfa.WebApi
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
+            Console.WriteLine($"env.EnvironmentName: {env.EnvironmentName}");
+            Console.WriteLine($"env.ContentRootPath: {env.ContentRootPath}");
+
             if (env.IsDevelopment())
             {
                 builder.AddUserSecrets<Startup>();

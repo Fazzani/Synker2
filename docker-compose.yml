@@ -7,11 +7,11 @@ services:
   #    context: .
   #    dockerfile: Dockerfile
 
-  hfa.webclient:
-    image: synker/webclient:${version:-latest}
-    build:
-      context: .
-      dockerfile: WebClient/Dockerfile
+  #hfa.webclient:
+  #  image: synker/webclient:${version:-latest}
+  #  build:
+  #    context: .
+  #    dockerfile: WebClient/Dockerfile
   
   hfa.webapi:
     image: synker/webapi:${version:-latest}
@@ -19,16 +19,16 @@ services:
       context: .
       dockerfile: WebApi/Dockerfile
   
-  hfa.notification.brokers:
-    image: synker/brokers:${version:-latest}
-    build:
-      context: .
-      dockerfile: Brokers/hfa.Notification.Brokers/Dockerfile
-  
-  
-  hfa.synker.batch:
-    image: synker/batch:${version:-latest}
-    build:
-      context: .
-      dockerfile: SyncLibrary/Dockerfile
+ #hfa.notification.brokers:
+ #  image: synker/brokers:${version:-latest}
+ #  build:
+ #    context: .
+ #    dockerfile: Brokers/hfa.Notification.Brokers/Dockerfile
+ #
+ #
+ #hfa.synker.batch:
+ #  image: synker/batch:${version:-latest}
+ #  build:
+ #    context: .
+ #    dockerfile: SyncLibrary/Dockerfile
   
