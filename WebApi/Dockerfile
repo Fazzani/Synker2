@@ -6,7 +6,7 @@ LABEL maintainer="synker-team@synker.ovh" \
       system.dist="linux" system.arch="$arch" multi.name="Synker WebClient"
 RUN apt-get -qq update && apt-get -y upgrade
 # Create Group and user
-RUN groupadd -r synker && useradd --no-log-init -r -g synker synker -d /home/synker
+RUN groupadd -r synker && mkdir /home/synker && useradd --no-log-init -d /home/synker -r -g synker synker
 RUN chown synker:synker -R /home/synker
 USER synker:synker
 # add user and group permissions
