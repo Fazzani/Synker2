@@ -22,7 +22,7 @@ namespace webClient
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseKestrel()
-                .UseUrls("http://localhost:56801")
+                .UseUrls("http://*:56801")
                 .Build();
     }
 }

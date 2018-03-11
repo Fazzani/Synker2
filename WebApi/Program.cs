@@ -25,13 +25,13 @@ namespace Web
             var config = new ConfigurationBuilder()
                .SetBasePath(Directory.GetCurrentDirectory())
                .AddEnvironmentVariables()
-               .AddJsonFile("certificate.json", optional: true, reloadOnChange: true)
-               .AddJsonFile($"certificate.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", reloadOnChange: true, optional: true)
+               //.AddJsonFile("certificate.json", optional: true, reloadOnChange: true)
+               //.AddJsonFile($"certificate.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", reloadOnChange: true, optional: true)
                .Build();
 
-            var certificateSettings = config.GetSection("certificateSettings");
-            string certificateFileName = certificateSettings.GetValue<string>("filename");
-            string certificatePassword = certificateSettings.GetValue<string>("password");
+            //var certificateSettings = config.GetSection("certificateSettings");
+            //string certificateFileName = certificateSettings.GetValue<string>("filename");
+            //string certificatePassword = certificateSettings.GetValue<string>("password");
 
             return WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
@@ -45,7 +45,7 @@ namespace Web
                 //    });
                 //})
                 .UseIISIntegration()
-                //.UseUrls("http://localhost:56800", "https://*:44312")
+                .UseUrls("http://*:56800")
                 .Build();
         }
     }
