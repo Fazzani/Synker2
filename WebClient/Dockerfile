@@ -6,9 +6,11 @@ LABEL maintainer="synker-team@synker.ovh" \
       system.dist="linux" system.arch="$arch" multi.name="Synker WebClient"
 RUN apt-get -qq update && apt-get -y upgrade
 # Create Group and user
-RUN groupadd -r synker && useradd --no-log-init -r -g synker synker
-USER synker:synker
 # add user and group permissions
+RUN groupadd -r synker && useradd --no-log-init -r -g synker synker -d /home/synker
+RUN chown synker:synker -R /home/synker
+USER synker:synker
+RUN chmod -R 700 /home/synker/webclient
 WORKDIR /home/synker/webclient
 #Expose Smtp and POP ports for mailing
 EXPOSE 80
