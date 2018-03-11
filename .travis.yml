@@ -23,8 +23,6 @@ script:
   - ./travis-build.sh $DOCKER_BUILD --quiet verify
 cache:
   bundler: true
-  directories:
-    - node_modules
     - "~/.local/share/NuGet/Cache"
 notifications: # set notification options
   email:
