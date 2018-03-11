@@ -28,6 +28,12 @@
     <!-- Files not to publish (note that the 'dist' subfolders are re-added below) -->
     <Content Remove="ClientApp\**" />
   </ItemGroup>
+  <!--<ItemGroup>
+    <Compile Remove="node_modules\**" />
+    <Content Remove="node_modules\**" />
+    <EmbeddedResource Remove="node_modules\**" />
+    <None Remove="node_modules\**" /> 
+  </ItemGroup>-->
 
   <ItemGroup>
     <None Remove="ClientApp\app\app.module.routing.ts" />
@@ -119,9 +125,13 @@
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-    <Exec Command="npm i npm@latest -g" />
-    <Exec Command="npm i webpack@latest -g" />
-    <Exec Command="npm i" />
+    <Exec Command="npm cache clean" />
+    <!--<Exec Command="rm -rf node_modules" />-->
+    <Exec Command="npm install" />
+    <Exec Command="npm uninstall --save node-sass" />
+    <Exec Command="npm install --save node-sass" />
+    <!--<Exec Command="npm i rxjs" />
+    <Exec Command="npm cache clean" />-->
     <Exec Command="npm -v" />
     <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.vendor.js --env.prod" />
     <Exec Command="node node_modules/webpack/bin/webpack.js --env.prod" />
