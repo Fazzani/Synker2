@@ -271,7 +271,6 @@ __pycache__/
 *.log
 **/appsettings.development.json
 **/appsettings.staging.json
-**/appsettings.production.json
 log/
 /Brokers/image_history
 /Brokers/hfa.Notification.Brokers/appsettings.Prod.json
