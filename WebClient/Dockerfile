@@ -12,7 +12,7 @@ RUN apt-get -qq update && apt-get -y upgrade
 #USER synker:synker
 #RUN chmod -R 700 /app
 #WORKDIR /app
-EXPOSE 80
+EXPOSE 56801
 
 
 ARG arch=x64

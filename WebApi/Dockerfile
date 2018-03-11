@@ -12,7 +12,7 @@ RUN apt-get -qq update && apt-get -y upgrade
 # add user and group permissions
 WORKDIR /app
 #Expose Smtp and POP ports for mailing
-EXPOSE 80
+EXPOSE 56800
 
 ARG arch=x64
 FROM microsoft/aspnetcore-build:2.0 AS build
