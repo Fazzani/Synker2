@@ -44,7 +44,7 @@ namespace Web
                 //        listenOptions.UseHttps(certificateFileName, certificatePassword);
                 //    });
                 //})
-                .UseIISIntegration()
+                //.UseIISIntegration()
                 .UseUrls("http://*:56800")
                 .Build();
         }
