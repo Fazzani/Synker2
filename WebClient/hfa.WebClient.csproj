@@ -63,9 +63,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include=".well-known\empty.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="ClientApp\app\directives\" />
     <Folder Include="ClientApp\app\services\xmltv\" />
-    <Folder Include=".well-known\" />
     <Folder Include="wwwroot\assets\images\" />
     <Folder Include="wwwroot\dist\" />
   </ItemGroup>
