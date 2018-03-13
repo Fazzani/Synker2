@@ -38,4 +38,5 @@ RUN dotnet publish -c Release -o /app -r linux-$arch
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
+RUN mkdir /app/.well-known
 ENTRYPOINT ["dotnet", "hfa.WebApi.dll"]
