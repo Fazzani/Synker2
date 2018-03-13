@@ -58,23 +58,9 @@ namespace hfa.WebApi
 
         public static string AssemblyVersion = typeof(Startup).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-
-            Console.WriteLine($"env.EnvironmentName: {env.EnvironmentName}");
-            Console.WriteLine($"env.ContentRootPath: {env.ContentRootPath}");
-
-            if (env.IsDevelopment())
-            {
-                builder.AddUserSecrets<Startup>();
-            }
-
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.

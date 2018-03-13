@@ -10,43 +10,54 @@ using Microsoft.Extensions.Logging;
 using hfa.WebApi;
 using System.Security.Cryptography.X509Certificates;
 using System.Net;
+using Serilog;
 
 namespace Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
+          .SetBasePath(Directory.GetCurrentDirectory())
+          .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+          .AddUserSecrets<Startup>()
+          .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true, reloadOnChange: true)
+          .AddEnvironmentVariables()
+          .Build();
+
+        public static int Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .CreateLogger();
+
+            try
+            {
+                Log.Information("Getting the motors running...");
+
+                BuildWebHost(args).Run();
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Host terminated unexpectedly");
+                return 1;
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
+
         }
 
-        public static IWebHost BuildWebHost(string[] args)
-        {
-            var config = new ConfigurationBuilder()
-               .SetBasePath(Directory.GetCurrentDirectory())
-               .AddEnvironmentVariables()
-               //.AddJsonFile("certificate.json", optional: true, reloadOnChange: true)
-               //.AddJsonFile($"certificate.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", reloadOnChange: true, optional: true)
-               .Build();
-
-            //var certificateSettings = config.GetSection("certificateSettings");
-            //string certificateFileName = certificateSettings.GetValue<string>("filename");
-            //string certificatePassword = certificateSettings.GetValue<string>("password");
-
-            return WebHost.CreateDefaultBuilder(args)
+        public static IWebHost BuildWebHost(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseKestrel()
-                //.UseKestrel(options =>
-                //{
-                //    options.Listen(IPAddress.Loopback, 56800);
-                //    options.Listen(IPAddress.Loopback, 44312, listenOptions =>
-                //    {
-                //        listenOptions.UseHttps(certificateFileName, certificatePassword);
-                //    });
-                //})
-                //.UseIISIntegration()
+                .UseSerilog()
                 .UseUrls("http://*:56800")
                 .Build();
-        }
     }
 }
