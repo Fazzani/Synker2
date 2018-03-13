@@ -49,6 +49,8 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using hfa.PlaylistBaseLibrary.Options;
 using hfa.Brokers.Messages.Configuration;
+using System.IO;
+using Microsoft.Extensions.FileProviders;
 
 namespace hfa.WebApi
 {
@@ -213,6 +215,14 @@ namespace hfa.WebApi
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             app.UseResponseCompression();
+
+            //Chanllenge Let's Encrypt path
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @".well-known")),
+                RequestPath = new PathString("/.well-known"),
+                ServeUnknownFileTypes = true // serve extensionless file
+            });
 
             loggerFactory.AddFile(Configuration.GetSection("Logging"));
             if (env.IsDevelopment())
