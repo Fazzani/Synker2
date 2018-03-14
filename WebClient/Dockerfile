@@ -36,7 +36,7 @@ COPY . .
 #COPY WebClient/hfa.WebClient.csproj WebClient/
 RUN dotnet restore -nowarn:msb3202,nu1503
 WORKDIR /src/WebClient
-RUN dotnet build -c Release -o /app -r linux-$arch
+RUN dotnet build -c Release -o /app -r linux-$arch  Synker.sln
 
 ARG arch=x64
 FROM build AS publish
