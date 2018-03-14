@@ -271,7 +271,12 @@ namespace hfa.WebApi
 
                 app.UseStaticFiles();
 
-                app.UseMvc();
+                app.UseMvc(routes =>
+                {
+                    routes.MapRoute(
+                        name: "default",
+                        template: "{controller=HealthCheck}/{action=Index}");
+                });
             }
             catch (Exception ex)
             {

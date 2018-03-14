@@ -14,6 +14,7 @@ using hfa.WebApi.Models.HealthCheck;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
+using System.Reflection;
 
 namespace hfa.WebApi.Controllers
 {
@@ -53,6 +54,12 @@ namespace hfa.WebApi.Controllers
                 default:
                     return Ok();
             }
+        }
+
+        [HttpGet("/")]
+        public IActionResult Index()
+        {
+            return Ok($"Welcome to Synker Api : {typeof(Startup).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version}");
         }
 
         [HttpGet("error")]
