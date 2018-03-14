@@ -1,4 +1,4 @@
-language: csharp
+language: ruby
 sudo: required
 mono: none
 dotnet: 2.0.0

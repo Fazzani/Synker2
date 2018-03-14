@@ -25,7 +25,7 @@ COPY PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj PlaylistBaseLibrary/
 COPY Brokers/hfa.Notification.DTo/hfa.Brokers.Messages.csproj Brokers/hfa.Notification.DTo/
 COPY SyncLibrary/hfa.Synker.batch.csproj SyncLibrary/
 COPY hfa.TvhLibrary/hfa.TvhLibrary.csproj hfa.TvhLibrary/
-RUN dotnet restore -nowarn:msb3202,nu1503
+RUN dotnet restore Synker.sln -nowarn:msb3202,nu1503
 COPY . .
 WORKDIR /src/WebApi
 RUN dotnet build -c Release -o /app -r linux-$arch
