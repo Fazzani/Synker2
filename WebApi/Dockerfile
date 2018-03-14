@@ -18,15 +18,17 @@ ARG arch=x64
 FROM microsoft/aspnetcore-build:2.0 AS build
 ARG arch
 WORKDIR /src
-COPY Synker.sln ./
-COPY WebApi/hfa.WebApi.csproj WebApi/
-COPY hfa.Synker.Service/hfa.Synker.Service.csproj hfa.Synker.Service/
-COPY PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj PlaylistBaseLibrary/
-COPY Brokers/hfa.Notification.DTo/hfa.Brokers.Messages.csproj Brokers/hfa.Notification.DTo/
-COPY SyncLibrary/hfa.Synker.batch.csproj SyncLibrary/
-COPY hfa.TvhLibrary/hfa.TvhLibrary.csproj hfa.TvhLibrary/
-RUN dotnet restore Synker.sln -nowarn:msb3202,nu1503
+#COPY Synker.sln ./
+#COPY WebApi/hfa.WebApi.csproj WebApi/
+#COPY hfa.Synker.Service/hfa.Synker.Service.csproj hfa.Synker.Service/
+#COPY PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj PlaylistBaseLibrary/
+#COPY Brokers/hfa.Notification.DTo/hfa.Brokers.Messages.csproj Brokers/hfa.Notification.DTo/
+#COPY SyncLibrary/hfa.Synker.batch.csproj SyncLibrary/
+#COPY hfa.TvhLibrary/hfa.TvhLibrary.csproj hfa.TvhLibrary/
 COPY . .
+# TODO : TO Remove after updating 2.1.3 dotnet cli version
+RUN dotnet sln Synker.sln remove docker-compose.dcproj
+RUN dotnet restore -nowarn:msb3202,nu1503 Synker.sln
 WORKDIR /src/WebApi
 RUN dotnet build -c Release -o /app -r linux-$arch
 
