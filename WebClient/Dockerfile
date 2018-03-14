@@ -34,6 +34,7 @@ WORKDIR /src
 COPY Synker.sln ./
 COPY . .
 #COPY WebClient/hfa.WebClient.csproj WebClient/
+RUN dotnet sln Synker.sln remove docker-compose.dcproj
 RUN dotnet restore -nowarn:msb3202,nu1503 Synker.sln
 WORKDIR /src/WebClient
 RUN dotnet build -c Release -o /app -r linux-$arch 
