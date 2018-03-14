@@ -34,9 +34,9 @@ WORKDIR /src
 COPY Synker.sln ./
 COPY . .
 #COPY WebClient/hfa.WebClient.csproj WebClient/
-RUN dotnet restore -nowarn:msb3202,nu1503
+RUN dotnet restore -nowarn:msb3202,nu1503 Synker.sln
 WORKDIR /src/WebClient
-RUN dotnet build -c Release -o /app -r linux-$arch  Synker.sln
+RUN dotnet build -c Release -o /app -r linux-$arch 
 
 ARG arch=x64
 FROM build AS publish
