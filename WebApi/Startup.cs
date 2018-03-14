@@ -49,6 +49,8 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using hfa.PlaylistBaseLibrary.Options;
 using hfa.Brokers.Messages.Configuration;
+using System.IO;
+using Microsoft.Extensions.FileProviders;
 
 namespace hfa.WebApi
 {
@@ -58,23 +60,9 @@ namespace hfa.WebApi
 
         public static string AssemblyVersion = typeof(Startup).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-
-            Console.WriteLine($"env.EnvironmentName: {env.EnvironmentName}");
-            Console.WriteLine($"env.ContentRootPath: {env.ContentRootPath}");
-
-            if (env.IsDevelopment())
-            {
-                builder.AddUserSecrets<Startup>();
-            }
-
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -227,6 +215,14 @@ namespace hfa.WebApi
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             app.UseResponseCompression();
+
+            //Chanllenge Let's Encrypt path
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @".well-known")),
+                RequestPath = new PathString("/.well-known"),
+                ServeUnknownFileTypes = true // serve extensionless file
+            });
 
             loggerFactory.AddFile(Configuration.GetSection("Logging"));
             if (env.IsDevelopment())

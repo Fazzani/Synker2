@@ -21,6 +21,9 @@ if [[ "$DOCKER_BUILD" == true ]]; then
   docker-compose build
   docker-compose push
   
+  if [ -f ./trigger-build.sh ]; then
+    . ./trigger-build.sh "Fazzani/synker-docker"
+  fi
   exit 0
 fi
 
