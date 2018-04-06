@@ -31,8 +31,9 @@ RUN curl -SL "$NODE_DOWNLOAD_URL" --output nodejs.tar.gz \
     && ln -f -s /usr/local/opt/nodejs8/bin/node /usr/local/bin/node \
     && ln -f -s /usr/local/opt/nodejs8/bin/node /usr/local/bin/nodejs
 
-# Install yarn from the local .tgz
-RUN npm install -g -s --no-progress yarn
+# Install yarn
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN apt-get update && apt-get install yarn
 
 WORKDIR /src
 COPY Synker.sln ./
