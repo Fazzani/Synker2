@@ -142,7 +142,6 @@
     <!--<Exec Command="npm i rxjs" />
     <Exec Command="npm cache clean" />-->
     <Exec Command="npm -v" />
-    <Exec Command="npm install --production" />
     <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.vendor.js --env.prod" />
     <Exec Command="node node_modules/webpack/bin/webpack.js --env.prod" />
 
