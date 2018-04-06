@@ -13,6 +13,8 @@ RUN apt-get -qq update && apt-get -y upgrade
 WORKDIR /app
 #Expose Smtp and POP ports for mailing
 EXPOSE 56800
+HEALTHCHECK --interval=5m --timeout=3s CMD curl -f http://localhost:58600/api/v1/HealthCheck/0 || exit 1
+
 
 ARG arch=x64
 FROM microsoft/aspnetcore-build:2.0 AS build

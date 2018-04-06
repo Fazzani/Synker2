@@ -171,7 +171,7 @@ namespace hfa.WebApi
 
                 });
 
-                c.DescribeAllEnumsAsStrings();
+               // c.DescribeAllEnumsAsStrings();
                 c.IgnoreObsoleteActions();
                 c.IgnoreObsoleteProperties();
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme
@@ -256,14 +256,14 @@ namespace hfa.WebApi
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Synker API V1");
-                    c.ShowJsonEditor();
+                    //c.ShowJsonEditor();
                 });
                 #endregion
 
                 app.UseWebHooks(typeof(AppveyorReceiver));
                 app.UseWebHooks(typeof(GithubReceiver));
                 //Cache
-                app.UseResponseCaching();
+              //  app.UseResponseCaching();
 
                 app.UseStaticFiles();
 

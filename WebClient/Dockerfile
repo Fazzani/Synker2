@@ -13,6 +13,7 @@ RUN apt-get -qq update && apt-get -y upgrade
 #RUN chmod -R 700 /app
 #WORKDIR /app
 EXPOSE 56801
+HEALTHCHECK --interval=5m --timeout=3s CMD curl -f http://localhost:58601/ || exit 1
 
 
 ARG arch=x64
