@@ -31,6 +31,12 @@ RUN curl -SL "$NODE_DOWNLOAD_URL" --output nodejs.tar.gz \
     && ln -f -s /usr/local/opt/nodejs8/bin/node /usr/local/bin/node \
     && ln -f -s /usr/local/opt/nodejs8/bin/node /usr/local/bin/nodejs
 
+# Install yarn from the local .tgz
+RUN mkdir -p /opt
+ADD latest.tar.gz /opt/
+RUN mv /opt/dist /opt/yarn
+ENV PATH "$PATH:/opt/yarn/bin"
+
 WORKDIR /src
 COPY Synker.sln ./
 COPY . .
