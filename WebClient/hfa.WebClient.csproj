@@ -135,9 +135,10 @@
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
     <Exec Command="npm cache clean" />
     <!--<Exec Command="rm -rf node_modules" />-->
-    <Exec Command="yarn install" />
+    <Exec Command="yarn global add node-gyp" />
+    <Exec Command="yarn install --production" />
     <Exec Command="npm uninstall --save node-sass" />
-    <Exec Command="npm install --save node-sass" />
+    <Exec Command="npm install --save node-sass --production" />
     <!--<Exec Command="npm i rxjs" />
     <Exec Command="npm cache clean" />-->
     <Exec Command="npm -v" />
