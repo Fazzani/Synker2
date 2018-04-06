@@ -49,7 +49,7 @@ RUN dotnet build -c Release -o /app -r linux-$arch
 ARG arch=x64
 FROM build AS publish
 ARG arch
-RUN npm install -g -s --no-progress yarn
+RUN npm install && ls -la
 RUN dotnet publish -c Release -o /app -r linux-$arch
 
 FROM base AS final
