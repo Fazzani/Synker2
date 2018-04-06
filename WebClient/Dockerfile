@@ -46,9 +46,7 @@ RUN dotnet build -c Release -o /app -r linux-$arch
 ARG arch=x64
 FROM build AS publish
 ARG arch
-#RUN apt-get -qq update && apt-get -qqy --no-install-recommends install wget gnupg \
-    #git \
-    #unzip
+RUN npm install -g -s --no-progress yarn
 RUN dotnet publish -c Release -o /app -r linux-$arch
 
 FROM base AS final
