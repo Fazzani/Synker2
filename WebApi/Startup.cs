@@ -269,26 +269,25 @@ namespace hfa.WebApi
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Synker API V1");
-                    c.DefaultModelExpandDepth(2);
-                    c.DefaultModelRendering(ModelRendering.Model);
-                    c.DefaultModelsExpandDepth(-1);
+                    //c.DefaultModelExpandDepth(2);
+                    //c.DefaultModelRendering(ModelRendering.Model);
+                    //c.DefaultModelsExpandDepth(-1);
                     c.DisplayOperationId();
                     c.DisplayRequestDuration();
                     c.DocExpansion(DocExpansion.None);
                     c.EnableDeepLinking();
                     c.EnableFilter();
-                    c.MaxDisplayedTags(5);
+                    //c.MaxDisplayedTags(5);
                     c.ShowExtensions();
                     c.EnableValidator();
-                    c.SupportedSubmitMethods(SubmitMethod.Get, SubmitMethod.Head);
-                    //c.ShowJsonEditor();
+                    c.SupportedSubmitMethods(SubmitMethod.Get, SubmitMethod.Post, SubmitMethod.Delete, SubmitMethod.Put);
                 });
                 #endregion
 
                 app.UseWebHooks(typeof(AppveyorReceiver));
                 app.UseWebHooks(typeof(GithubReceiver));
                 //Cache
-              //  app.UseResponseCaching();
+                //  app.UseResponseCaching();
 
                 app.UseStaticFiles();
 
