@@ -28,7 +28,7 @@ namespace hfa.WebApi.Controllers
         {
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetBy(HealthCheckEnum id)
         {
             switch (id)

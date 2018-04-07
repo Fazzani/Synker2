@@ -51,6 +51,8 @@ using hfa.PlaylistBaseLibrary.Options;
 using hfa.Brokers.Messages.Configuration;
 using System.IO;
 using Microsoft.Extensions.FileProviders;
+using hfa.WebApi.Common.Swagger;
+using Newtonsoft.Json.Converters;
 
 namespace hfa.WebApi
 {
@@ -154,10 +156,16 @@ namespace hfa.WebApi
                     });
             })
             .AddJsonOptions(
-                options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.Formatting = Formatting.Indented;
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                }
             );
 
-            //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?tabs=visual-studio
+            //https://github.com/domaindrivendev/Swashbuckle.AspNetCore
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
@@ -171,9 +179,13 @@ namespace hfa.WebApi
 
                 });
 
-               // c.DescribeAllEnumsAsStrings();
+                c.OperationFilter<AuthResponsesOperationFilter>();
+                c.DescribeAllEnumsAsStrings();
+                c.DescribeStringEnumsInCamelCase();
                 c.IgnoreObsoleteActions();
                 c.IgnoreObsoleteProperties();
+                c.SchemaFilter<AutoRestSchemaFilter>();
+
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {
                     In = "header",
@@ -181,6 +193,7 @@ namespace hfa.WebApi
                     Name = "Authorization",
                     Type = "apiKey"
                 });
+
                 c.AddSecurityDefinition("Basic", new BasicAuthScheme
                 {
                     Description = "Please insert username/password into fields",
@@ -256,6 +269,18 @@ namespace hfa.WebApi
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Synker API V1");
+                    c.DefaultModelExpandDepth(2);
+                    c.DefaultModelRendering(ModelRendering.Model);
+                    c.DefaultModelsExpandDepth(-1);
+                    c.DisplayOperationId();
+                    c.DisplayRequestDuration();
+                    c.DocExpansion(DocExpansion.None);
+                    c.EnableDeepLinking();
+                    c.EnableFilter();
+                    c.MaxDisplayedTags(5);
+                    c.ShowExtensions();
+                    c.EnableValidator();
+                    c.SupportedSubmitMethods(SubmitMethod.Get, SubmitMethod.Head);
                     //c.ShowJsonEditor();
                 });
                 #endregion
@@ -326,7 +351,9 @@ namespace hfa.WebApi
                                 new AuthenticationProperties(),
                                 BasicAuthenticationDefaults.AuthenticationScheme);
 
+                            context.Principal = principal;
                             return Task.FromResult(AuthenticateResult.Success(ticket));
+                            //return Task.CompletedTask;
                         }
 
                         return Task.FromResult(AuthenticateResult.Fail("Authentication failed."));

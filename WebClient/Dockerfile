@@ -13,8 +13,7 @@ RUN apt-get -qq update && apt-get -y upgrade
 #RUN chmod -R 700 /app
 #WORKDIR /app
 EXPOSE 56801
-HEALTHCHECK --interval=5m --timeout=30s CMD curl -f http://localhost:56801/ || exit 1
-
+HEALTHCHECK --interval=2m --timeout=30s CMD curl -f http://localhost:56801/ || exit 1
 
 ARG arch=x64
 FROM microsoft/aspnetcore-build:2.0 AS build
