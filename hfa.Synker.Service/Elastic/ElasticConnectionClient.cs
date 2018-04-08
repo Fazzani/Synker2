@@ -33,27 +33,6 @@ namespace hfa.Synker.Service.Services.Elastic
 
         private void Init()
         {
-            _settings = new ConnectionSettings(new Uri(_config.ElasticUrl));
-            _settings
-                .BasicAuthentication(_config.ElasticUserName, _config.ElasticPassword)
-                .DisableDirectStreaming(true)
-                .DefaultIndex(_config.DefaultIndex)
-                .PrettyJson()
-                .RequestTimeout(TimeSpan.FromSeconds(_config.RequestTimeout))
-                .EnableHttpCompression();
-
-#if DEBUG
-            _settings.EnableDebugMode();
-#endif
-            _settings
-                //.InferMappingFor<Message>(m => m.IndexName(_config.MessageIndex).IdProperty(p => p.Id))
-                .InferMappingFor<TvgMedia>(m => m.IdProperty(p => p.Id))
-                .InferMappingFor<tvChannel>(m => m.IdProperty(p => p.id))
-                .InferMappingFor<Tvg>(m => m.IdProperty(p => p.Id))
-                .InferMappingFor<tvProgramme>(m => m.IdProperty(p => p.Id).IndexName("xmltv-*"))
-                .InferMappingFor<MediaRef>(m => m.IndexName(_config.MediaRefIndex).IdProperty(p => p.Id))
-                .InferMappingFor<Picon>(m => m.IndexName(_config.PiconIndex).IdProperty(p => p.Id))
-                .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).TypeName("doc").IdProperty(p => p.id).Rename(x => x.Update, "update_date"));
 
             //if (!Client.IndexExists(_config.DefaultIndex).Exists)
             //    MappingPlaylistConfig();
@@ -91,6 +70,31 @@ namespace hfa.Synker.Service.Services.Elastic
                 MappingPicons(_config.PiconIndex);
 
             Client.Value.Map<tv>(x => x.Index("xmltv-*").AutoMap());
+        }
+
+        private void InitSettings()
+        {
+            _settings = new ConnectionSettings(new Uri(_config.ElasticUrl));
+            _settings
+                .BasicAuthentication(_config.ElasticUserName, _config.ElasticPassword)
+                .DisableDirectStreaming(true)
+                .DefaultIndex(_config.DefaultIndex)
+                .PrettyJson()
+                .RequestTimeout(TimeSpan.FromSeconds(_config.RequestTimeout))
+                .EnableHttpCompression();
+
+#if DEBUG
+            _settings.EnableDebugMode();
+#endif
+            _settings
+                //.InferMappingFor<Message>(m => m.IndexName(_config.MessageIndex).IdProperty(p => p.Id))
+                .InferMappingFor<TvgMedia>(m => m.IdProperty(p => p.Id))
+                .InferMappingFor<tvChannel>(m => m.IdProperty(p => p.id))
+                .InferMappingFor<Tvg>(m => m.IdProperty(p => p.Id))
+                .InferMappingFor<tvProgramme>(m => m.IdProperty(p => p.Id).IndexName("xmltv-*"))
+                .InferMappingFor<MediaRef>(m => m.IndexName(_config.MediaRefIndex).IdProperty(p => p.Id))
+                .InferMappingFor<Picon>(m => m.IndexName(_config.PiconIndex).IdProperty(p => p.Id))
+                .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).TypeName("doc").IdProperty(p => p.id).Rename(x => x.Update, "update_date"));
         }
 
         private void MappingSitePackConfig(string indexName)
@@ -263,6 +267,7 @@ namespace hfa.Synker.Service.Services.Elastic
                     {
                         if (_client == null)
                         {
+                            InitSettings();
                             _client = new ElasticClient(_settings);
                             Init();
                         }
