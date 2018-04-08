@@ -49,7 +49,7 @@ namespace hfa.WebApi.Controllers
                         return StatusCode((int)HttpStatusCode.InternalServerError);
                     }
                 case HealthCheckEnum.Elastic:
-                    var elasticResponse = await _elasticConnectionClient.Client.ClusterHealthAsync(cancellationToken: HttpContext.RequestAborted);
+                    var elasticResponse = await _elasticConnectionClient.Client.Value.ClusterHealthAsync(cancellationToken: HttpContext.RequestAborted);
                     return elasticResponse.IsValid ? Ok() : StatusCode((int)HttpStatusCode.InternalServerError);
                 default:
                     return Ok();

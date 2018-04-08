@@ -93,7 +93,7 @@ namespace hfa.Synker.Service.Services.Picons
                 };
             }
 
-            var response = await _elasticConnectionClient.Client.SearchAsync<Picon>(x => x.Query(q => container), cancellationToken);
+            var response = await _elasticConnectionClient.Client.Value.SearchAsync<Picon>(x => x.Query(q => container), cancellationToken);
 
             return response.Documents.ToList();
         }
@@ -111,7 +111,7 @@ namespace hfa.Synker.Service.Services.Picons
             descriptor.IndexMany(picons);
             descriptor.Refresh(Elasticsearch.Net.Refresh.True);
             _logger.LogInformation($"Sync picons count : {picons.Count()}");
-            var response = await _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
+            var response = await _elasticConnectionClient.Client.Value.BulkAsync(descriptor, cancellationToken);
 
             return response;
         }

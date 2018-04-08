@@ -58,7 +58,7 @@ namespace Hfa.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
-            var response = await _elasticConnectionClient.Client.GetAsync(new DocumentPath<SitePackChannel>(id), null, cancellationToken);
+            var response = await _elasticConnectionClient.Client.Value.GetAsync(new DocumentPath<SitePackChannel>(id), null, cancellationToken);
 
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);

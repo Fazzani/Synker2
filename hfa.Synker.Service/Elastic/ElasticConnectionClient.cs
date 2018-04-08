@@ -29,7 +29,10 @@ namespace hfa.Synker.Service.Services.Elastic
         {
             _config = config.Value;
             _loggerFactory = loggerFactory;
+        }
 
+        private void Init()
+        {
             _settings = new ConnectionSettings(new Uri(_config.ElasticUrl));
             _settings
                 .BasicAuthentication(_config.ElasticUserName, _config.ElasticPassword)
@@ -56,16 +59,16 @@ namespace hfa.Synker.Service.Services.Elastic
             //    MappingPlaylistConfig();
 
             //SitePack index
-            if (!Client.IndexExists(_config.SitePackIndex).Exists)
+            if (!Client.Value.IndexExists(_config.SitePackIndex).Exists)
             {
                 MappingSitePackConfig(_config.SitePackIndex);
             }
 
             //Create sitepack_retreive_country
-            var pipeCountry = Client.GetPipeline(r => r.Id(new Id(SITE_PACK_RETREIVE_COUNTRY_PIPELINE)));
+            var pipeCountry = Client.Value.GetPipeline(r => r.Id(new Id(SITE_PACK_RETREIVE_COUNTRY_PIPELINE)));
             if (pipeCountry.Pipelines == null || pipeCountry.Pipelines.Count == 0)
             {
-                var respPipeSitePack = Client.PutPipeline(new Id(SITE_PACK_RETREIVE_COUNTRY_PIPELINE), f => f
+                var respPipeSitePack = Client.Value.PutPipeline(new Id(SITE_PACK_RETREIVE_COUNTRY_PIPELINE), f => f
                  .Description("Used for retreiving country from source field")
                  .Processors(p => p.Script(s => s.Inline("if(ctx.source != null) { ctx.country =  /\\//.split(ctx.source)[4]; }"))));
 
@@ -73,10 +76,10 @@ namespace hfa.Synker.Service.Services.Elastic
             }
 
             //Create picons channel number pipeline
-            var pipeChannelNumber = Client.GetPipeline(r => r.Id(new Id(PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE)));
+            var pipeChannelNumber = Client.Value.GetPipeline(r => r.Id(new Id(PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE)));
             if (pipeChannelNumber.Pipelines == null || pipeChannelNumber.Pipelines.Count == 0)
             {
-                var respPipePicons = Client.PutPipeline(new Id(PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE), f => f
+                var respPipePicons = Client.Value.PutPipeline(new Id(PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE), f => f
                  .Description("Used for retreiving channel number from picon name and add new field ch_number to store the value into")
                  .Processors(p => p.Script(s => s.Inline("if(ctx.name != null) { Matcher m = /(?:[^\\+])(\\d{1,2})/.matcher(ctx.name); if(m!=null && m.find())  { ctx.ch_number = m.group(1); } }"))));
 
@@ -84,16 +87,16 @@ namespace hfa.Synker.Service.Services.Elastic
             }
 
             //Picon index
-            if (!Client.IndexExists(_config.PiconIndex).Exists)
+            if (!Client.Value.IndexExists(_config.PiconIndex).Exists)
                 MappingPicons(_config.PiconIndex);
 
-            Client.Map<tv>(x => x.Index("xmltv-*").AutoMap());
+            Client.Value.Map<tv>(x => x.Index("xmltv-*").AutoMap());
         }
 
         private void MappingSitePackConfig(string indexName)
         {
             var keywordProperty = new PropertyName("keyword");
-            var response = Client.CreateIndex(indexName, c => c
+            var response = Client.Value.CreateIndex(indexName, c => c
             .Settings(s => s
                      .Setting("max_result_window", 1_000_000)
                      .Analysis(a => a
@@ -130,7 +133,7 @@ namespace hfa.Synker.Service.Services.Elastic
         public void MappingPicons(string indexName)
         {
             var keywordProperty = new PropertyName("keyword");
-            var response = Client.CreateIndex(indexName, c => c
+            var response = Client.Value.CreateIndex(indexName, c => c
             .Settings(s => s
                      .Setting("max_result_window", _config.MaxResultWindow)
                      .Analysis(a => a
@@ -178,7 +181,7 @@ namespace hfa.Synker.Service.Services.Elastic
         public void MappingPlaylistConfig()
         {
             var keywordProperty = new PropertyName("keyword");
-            var response = Client.CreateIndex(_config.DefaultIndex, c => c
+            var response = Client.Value.CreateIndex(_config.DefaultIndex, c => c
             .Settings(s => s
             .Setting("max_result_window", 1_000_000)
             .Setting("analysis.char_filter.drop_specChars.type", "pattern_replace")
@@ -245,12 +248,12 @@ namespace hfa.Synker.Service.Services.Elastic
 
         public void DeleteDefaultIndex()
         {
-            var indexExistsResponse = Client.IndexExists(_config.DefaultIndex);
+            var indexExistsResponse = Client.Value.IndexExists(_config.DefaultIndex);
             if (indexExistsResponse.Exists)
-                Client.DeleteIndex(_config.DefaultIndex, null);
+                Client.Value.DeleteIndex(_config.DefaultIndex, null);
         }
 
-        public ElasticClient Client
+        public Lazy<ElasticClient> Client
         {
             get
             {
@@ -259,10 +262,14 @@ namespace hfa.Synker.Service.Services.Elastic
                     lock (syncRoot)
                     {
                         if (_client == null)
+                        {
                             _client = new ElasticClient(_settings);
+                            Init();
+                        }
+
                     }
                 }
-                return _client;
+                return new Lazy<ElasticClient>(() => _client);
             }
         }
 

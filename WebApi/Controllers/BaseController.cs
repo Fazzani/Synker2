@@ -43,7 +43,7 @@ namespace Hfa.WebApi.Controllers
         internal virtual protected async Task<IActionResult> SearchAsync<T, T2>([FromBody] string query, CancellationToken cancellationToken)
             where T : class where T2 : class, IModel<T, T2>, new()
         {
-            var response = await _elasticConnectionClient.Client.LowLevel
+            var response = await _elasticConnectionClient.Client.Value.LowLevel
                 .SearchAsync<SearchResponse<T>>(_elasticConfig.DefaultIndex, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
 
             if (!response.SuccessOrKnownError)
@@ -56,7 +56,7 @@ namespace Hfa.WebApi.Controllers
         internal virtual protected async Task<IActionResult> SearchAsync<T, T2>([FromBody] string query, string indexName, CancellationToken cancellationToken)
              where T : class where T2 : class, IModel<T, T2>, new()
         {
-            var response = await _elasticConnectionClient.Client.LowLevel
+            var response = await _elasticConnectionClient.Client.Value.LowLevel
                 .SearchAsync<SearchResponse<T>>(indexName, typeof(T).Name.ToLowerInvariant(), query, null, cancellationToken);
 
             if (!response.SuccessOrKnownError)
@@ -69,7 +69,7 @@ namespace Hfa.WebApi.Controllers
         internal virtual protected async Task<IActionResult> SearchQueryStringAsync<T, T2>([FromBody] SimpleQueryElastic simpleQueryElastic, CancellationToken cancellationToken)
              where T : class where T2 : class, IModel<T, T2>, new()
         {
-            var response = await _elasticConnectionClient.Client.SearchAsync<T>(s => s
+            var response = await _elasticConnectionClient.Client.Value.SearchAsync<T>(s => s
             .Index(simpleQueryElastic.IndexName)
             .From(simpleQueryElastic.From)
             .Size(simpleQueryElastic.Size)

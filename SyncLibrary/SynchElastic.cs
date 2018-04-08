@@ -189,7 +189,7 @@ namespace SyncLibrary
                 var tvModel = (tv)ser.Deserialize(response);
 
                 //Sync Elastic
-                var responseBulk = await elasticClient.Client.BulkAsync(x => x.Index(_elastiConfig.Value.DefaultIndex)
+                var responseBulk = await elasticClient.Client.Value.BulkAsync(x => x.Index(_elastiConfig.Value.DefaultIndex)
                 .CreateMany(tvModel.channel, (bd, q) => bd.Index(_elastiConfig.Value.DefaultIndex)), token);
                 responseBulk.AssertElasticResponse();
             }

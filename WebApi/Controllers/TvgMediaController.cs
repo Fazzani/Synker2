@@ -50,7 +50,7 @@ namespace Hfa.WebApi.Controllers
         [Route("search")]
         public async Task<IActionResult> SearchAsync([FromBody] QueryListBaseModel query, CancellationToken cancellationToken)
         {
-            var response = await _elasticConnectionClient.Client.SearchAsync<TvgMedia>(rq => rq
+            var response = await _elasticConnectionClient.Client.Value.SearchAsync<TvgMedia>(rq => rq
                 .Size(query.PageSize)
                 .From(query.Skip)
                 .Sort(x => GetSortDescriptor(x, query.SortDict))
@@ -71,7 +71,7 @@ namespace Hfa.WebApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var response = await _elasticConnectionClient.Client.SearchAsync<TvgMedia>(rq => rq
+            var response = await _elasticConnectionClient.Client.Value.SearchAsync<TvgMedia>(rq => rq
                 .From(0)
                 .Size(1)
                 .Index<TvgMedia>()

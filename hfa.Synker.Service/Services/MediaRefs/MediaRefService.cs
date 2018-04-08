@@ -32,7 +32,7 @@ namespace hfa.Synker.Service.Services.MediaRefs
 
         public async Task<MediaRef> MatchTermByDispaynamesAsync(string term, CancellationToken cancellationToken)
         {
-            var allMediasRef = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
+            var allMediasRef = await _elasticConnectionClient.Client.Value.SearchAsync<MediaRef>(s => s
                .Index(_elasticConnectionClient.ElasticConfig.MediaRefIndex)
                .Size(1)
                .From(0)
@@ -61,7 +61,7 @@ namespace hfa.Synker.Service.Services.MediaRefs
                 MinScore = 0.5
             };
 
-            var allMediasRef = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(req, cancellationToken);
+            var allMediasRef = await _elasticConnectionClient.Client.Value.SearchAsync<MediaRef>(req, cancellationToken);
 
             return allMediasRef
                     .Documents
@@ -70,7 +70,7 @@ namespace hfa.Synker.Service.Services.MediaRefs
 
         public async Task<IBulkResponse> RemoveDuplicatedMediaRefAsync(CancellationToken cancellationToken)
         {
-            var allMediasRef = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
+            var allMediasRef = await _elasticConnectionClient.Client.Value.SearchAsync<MediaRef>(s => s
                .Index(_elasticConnectionClient.ElasticConfig.MediaRefIndex)
                .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
                .From(0)
@@ -88,13 +88,13 @@ namespace hfa.Synker.Service.Services.MediaRefs
             }
 
             //Remove duplicated
-            await _elasticConnectionClient.Client.DeleteByQueryAsync<MediaRef>(d => d.MatchAll(), cancellationToken);
-            return await _elasticConnectionClient.Client.IndexManyAsync<MediaRef>(distinctMediaRef, _elasticConnectionClient.ElasticConfig.MediaRefIndex, null, cancellationToken);
+            await _elasticConnectionClient.Client.Value.DeleteByQueryAsync<MediaRef>(d => d.MatchAll(), cancellationToken);
+            return await _elasticConnectionClient.Client.Value.IndexManyAsync<MediaRef>(distinctMediaRef, _elasticConnectionClient.ElasticConfig.MediaRefIndex, null, cancellationToken);
         }
 
         public async Task<IBulkResponse> SynkAsync(CancellationToken cancellationToken)
         {
-            var response = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(s => s
+            var response = await _elasticConnectionClient.Client.Value.SearchAsync<SitePackChannel>(s => s
                .Index(_elasticConnectionClient.ElasticConfig.SitePackIndex)
                .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
                .From(0)
@@ -122,7 +122,7 @@ namespace hfa.Synker.Service.Services.MediaRefs
 
             var tasks = mediasRef.Select(async m =>
             {
-                var findLogoResponse = await _elasticConnectionClient.Client.SearchAsync<Picon>(x =>
+                var findLogoResponse = await _elasticConnectionClient.Client.Value.SearchAsync<Picon>(x =>
                 x.Query(q => q.Match(fz =>
                           fz.Field(f => f.Name)
                              .Query(m.DisplayNames.FirstOrDefault()))).Size(1), cancellationToken);
@@ -137,7 +137,7 @@ namespace hfa.Synker.Service.Services.MediaRefs
 
             descriptor.IndexMany(mediasRef);
 
-            return await _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
+            return await _elasticConnectionClient.Client.Value.BulkAsync(descriptor, cancellationToken);
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace hfa.Synker.Service.Services.MediaRefs
         /// <returns></returns>
         public async Task<IBulkResponse> SynkPiconsAsync(CancellationToken cancellationToken)
         {
-            var response = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
+            var response = await _elasticConnectionClient.Client.Value.SearchAsync<MediaRef>(s => s
                .Index(_elasticConnectionClient.ElasticConfig.MediaRefIndex)
                .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
                .From(0)
@@ -157,7 +157,7 @@ namespace hfa.Synker.Service.Services.MediaRefs
             var tasks = response.Documents.Select(async m =>
             {
                 //Match all displaynames with boost
-                var findLogoResponse = await _elasticConnectionClient.Client.SearchAsync<Picon>(x =>
+                var findLogoResponse = await _elasticConnectionClient.Client.Value.SearchAsync<Picon>(x =>
                 x.Query(q => q.Match(fz =>
                           fz.Field(f => f.Name)
                              .Query(m.DisplayNames.FirstOrDefault().RemoveDiacritics().RemoveChars(new char[] { ' ' })))).Size(1), cancellationToken);
@@ -172,12 +172,12 @@ namespace hfa.Synker.Service.Services.MediaRefs
 
             descriptor.IndexMany(response.Documents);
 
-            return await _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
+            return await _elasticConnectionClient.Client.Value.BulkAsync(descriptor, cancellationToken);
         }
 
         public async Task<List<string>> ListCulturesAsync(string filter, CancellationToken cancellationToken)
         {
-            var response = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
+            var response = await _elasticConnectionClient.Client.Value.SearchAsync<MediaRef>(s => s
               .Index(_elasticConnectionClient.ElasticConfig.MediaRefIndex)
               .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
               .From(0)
@@ -194,7 +194,7 @@ namespace hfa.Synker.Service.Services.MediaRefs
 
         public async Task<long> DeleteManyAsync(string[] ids, CancellationToken cancellationToken)
         {
-            var response = await _elasticConnectionClient.Client.DeleteByQueryAsync<MediaRef>(x => x.Query(q => q.Ids(i => i.Values(ids))));
+            var response = await _elasticConnectionClient.Client.Value.DeleteByQueryAsync<MediaRef>(x => x.Query(q => q.Ids(i => i.Values(ids))));
             return response.Deleted;
         }
 
@@ -203,14 +203,14 @@ namespace hfa.Synker.Service.Services.MediaRefs
             var descriptor = new BulkDescriptor();
             descriptor.IndexMany(mediasRef);
             descriptor.Refresh(Elasticsearch.Net.Refresh.True);
-            return await _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
+            return await _elasticConnectionClient.Client.Value.BulkAsync(descriptor, cancellationToken);
         }
 
         public async Task<ISearchResponse<MediaRef>> GroupsAsync(string filter, int? size, CancellationToken cancellationToken)
         {
             if (!string.IsNullOrEmpty(filter))
             {
-                return await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
+                return await _elasticConnectionClient.Client.Value.SearchAsync<MediaRef>(s => s
                  .Index(_elasticConnectionClient.ElasticConfig.MediaRefIndex)
                  .Size(size.Value)
                  .Query(x => x.Match(m => m.Field(f => f.Groups.Suffix(ElasticConfig.ELK_KEYWORD_SUFFIX)).Query(filter)))
@@ -218,7 +218,7 @@ namespace hfa.Synker.Service.Services.MediaRefs
             }
             else
             {
-                return await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
+                return await _elasticConnectionClient.Client.Value.SearchAsync<MediaRef>(s => s
                      .Index(_elasticConnectionClient.ElasticConfig.MediaRefIndex)
                      .Size(0)
                      .Aggregations(a => a
@@ -243,7 +243,7 @@ namespace hfa.Synker.Service.Services.MediaRefs
         {
             _logger.LogInformation($"Lister les TvgSites");
 
-            var allMediasRef = await _elasticConnectionClient.Client.SearchAsync<MediaRef>(s => s
+            var allMediasRef = await _elasticConnectionClient.Client.Value.SearchAsync<MediaRef>(s => s
                .Index(_elasticConnectionClient.ElasticConfig.MediaRefIndex)
                .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
                .From(0)
