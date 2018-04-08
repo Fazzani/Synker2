@@ -63,10 +63,10 @@ namespace hfa.WebApi.Common.Filters
             response.StatusCode = (int)status;
             response.ContentType = "application/json";
 
-            if (_hostingEnvironment.IsDevelopment())
+            //if (_hostingEnvironment.IsDevelopment())
                 context.Result = new ObjectResult(context.Exception);
-            else
-                context.Result = new ObjectResult(new { status = status, message = message });
+            //else
+              //  context.Result = new ObjectResult(new { status = status, message = message });
         }
     }
 }
