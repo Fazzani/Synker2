@@ -22,7 +22,9 @@ using hfa.WebApi.Common;
 namespace Hfa.WebApi.Controllers
 {
     [Route("api/v1/[controller]")]
+#if !DEBUG
     [Authorize]
+#endif
     public class PiconsController : BaseController
     {
         private IPiconsService _piconsService;
