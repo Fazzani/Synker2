@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+#Notif another build
+trigger(){
+
+  if [ -f ./trigger-build.sh ]; then
+    . ./trigger-build.sh $1
+  fi
+
+}
+
 set -evuxo
 echo "$TRAVIS_TAG"
 if [ -z "$TRAVIS_TAG" ]; then
@@ -10,9 +19,23 @@ fi
 if [[ "$DOCKER_BUILD" == true ]]; then
   echo "Is a Docker build";
   docker login -u=$DOCKER_USER -p=$DOCKER_PASS
+  export version=$TRAVIS_TAG
+  
+  # si le message contient build_webclient alors on build uniquement le client
+  if [[ $TRAVIS_COMMIT_MESSAGE == *"build_webclient"* ]]; then
+    docker build -t synker/webclient:${version:-latest} WebClient/Dockerfile
+    trigger "Fazzani/synker-docker"
+	exit 0
+  fi
+
+  # si le message contient build_webapi alors on build uniquement l'api
+  if [[ $TRAVIS_COMMIT_MESSAGE == *"build_webapi"* ]]; then
+    docker build -t synker/webapi:${version:-latest} WebApi/Dockerfile
+    trigger "Fazzani/synker-docker"
+	exit 0
+  fi
 
   # build image with github tag version
-  export version=$TRAVIS_TAG
   docker-compose build
   docker-compose push
 
@@ -21,9 +44,8 @@ if [[ "$DOCKER_BUILD" == true ]]; then
   docker-compose build
   docker-compose push
   
-  if [ -f ./trigger-build.sh ]; then
-    . ./trigger-build.sh "Fazzani/synker-docker"
-  fi
+  trigger "Fazzani/synker-docker"
+  
   exit 0
 fi
 
