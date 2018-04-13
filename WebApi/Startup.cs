@@ -287,7 +287,7 @@ namespace hfa.WebApi
                 app.UseWebHooks(typeof(AppveyorReceiver));
                 app.UseWebHooks(typeof(GithubReceiver));
                 //Cache
-                //  app.UseResponseCaching();
+                app.UseResponseCaching();
 
                 app.UseStaticFiles();
 

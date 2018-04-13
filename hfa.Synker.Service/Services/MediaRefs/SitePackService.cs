@@ -134,9 +134,33 @@ namespace hfa.Synker.Service.Services
             return tvgSites.Documents.Distinct(new DistinctTvgSiteBySite()).Take(count).ToList();
         }
 
+        /// <summary>
+        /// Force update country field
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IBulkResponse> SyncCountrySitePackAsync(CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation($"Lister les SitePackChannels");
+
+            var tvgSites = await _elasticConnectionClient.Client.Value.SearchAsync<SitePackChannel>(s => s
+               .Index(_elasticConnectionClient.ElasticConfig.SitePackIndex)
+               .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
+               .From(0)
+               , cancellationToken);
+
+            var descriptor = new BulkDescriptor();
+            descriptor.Pipeline(ElasticConnectionClient.SITE_PACK_RETREIVE_COUNTRY_PIPELINE);
+            descriptor.IndexMany(tvgSites.Documents);
+            descriptor.Refresh(Elasticsearch.Net.Refresh.True);
+
+            return await _elasticConnectionClient.Client.Value.BulkAsync(descriptor, cancellationToken);
+        }
+
         public async Task<IBulkResponse> SaveAsync(List<SitePackChannel> sitepacks, CancellationToken cancellationToken)
         {
             var descriptor = new BulkDescriptor();
+            descriptor.Pipeline(ElasticConnectionClient.SITE_PACK_RETREIVE_COUNTRY_PIPELINE);
             descriptor.IndexMany(sitepacks);
             descriptor.Refresh(Elasticsearch.Net.Refresh.True);
             return await _elasticConnectionClient.Client.Value.BulkAsync(descriptor, cancellationToken);

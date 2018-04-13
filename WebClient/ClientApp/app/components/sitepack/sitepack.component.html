@@ -26,6 +26,9 @@
             <a mat-icon-button>
                 <mat-icon class="mat-24" aria-label="Synchronize picons global" matTooltip="Synchronize picons global (from github)" (click)="synkPiconsGlobal()">add_a_photo</mat-icon>
             </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Synchronize countries" matTooltip="Synchronize countries" (click)="synkCountries()">language</mat-icon>
+            </a>
         </div>
     </mat-toolbar>
     <mat-table #table [dataSource]="dataSource" matSort class="noselect">

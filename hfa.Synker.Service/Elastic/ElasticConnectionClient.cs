@@ -3,7 +3,6 @@ using PlaylistBaseLibrary.Entities;
 using PlaylistManager.Entities;
 using System;
 using Microsoft.Extensions.Logging;
-using hfa.Synker.Services.Entities.Messages;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Services.Xmltv;
 using Microsoft.Extensions.Options;
@@ -33,7 +32,6 @@ namespace hfa.Synker.Service.Services.Elastic
 
         private void Init()
         {
-
             //if (!Client.IndexExists(_config.DefaultIndex).Exists)
             //    MappingPlaylistConfig();
 
@@ -48,11 +46,17 @@ namespace hfa.Synker.Service.Services.Elastic
             if (pipeCountry.Pipelines == null || pipeCountry.Pipelines.Count == 0)
             {
                 var respPipeSitePack = Client.Value.PutPipeline(new Id(SITE_PACK_RETREIVE_COUNTRY_PIPELINE), f => f
-                 .Description("Used for retreiving country from source field")
-                 .Processors(p => p.Script(s => s.Inline("if(ctx.source != null) { ctx.country =  /\\//.split(ctx.source)[4]; }"))));
+                 .Description("Used for retreiving country from source field (xml path)")
+                 .Processors(p => p.Script(s => s.Inline("if(ctx.source != null) { ctx.country =  /\\//.split(ctx.source)[4]; } else { ctx.country = ''}"))));
 
                 _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(respPipeSitePack.DebugInformation);
             }
+
+            var pipelineResponse = Client.Value.PutPipeline("default-pipeline", p => p
+                .Processors(pr => pr
+                    .Set<SitePackChannel>(t => t.Field(f => f.Country).Value("Default"))
+                )
+            );
 
             //Create picons channel number pipeline
             var pipeChannelNumber = Client.Value.GetPipeline(r => r.Id(new Id(PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE)));
@@ -121,7 +125,8 @@ namespace hfa.Synker.Service.Services.Elastic
                               .Keyword(t => t.Name(pt => pt.Source))
                               .Keyword(t => t.Name(pt => pt.Site_id))
                               .Keyword(t => t.Name(pt => pt.Xmltv_id))
-                              .Keyword(t => t.Name(pt => pt.Update))
+                              .Date(t => t.Name(pt => pt.Update))
+                              .Keyword(t => t.Name(pt => pt.Country))
                               .Text(t => t
                                 .Name(pt => pt.DisplayNames)
                                 .Fields(f => f.Keyword(k => k.Name(keywordProperty)))

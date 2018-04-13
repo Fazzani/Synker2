@@ -171,5 +171,11 @@ namespace Hfa.WebApi.Controllers
             return Ok(cultures);
         }
 
+        [HttpPost("countries")]
+        public async Task<IActionResult> SyncCountryAsync(CancellationToken cancellationToken)
+        {
+            var response = await _sitePackService.SyncCountrySitePackAsync(cancellationToken);
+            return Ok(response);
+        }
     }
 }
