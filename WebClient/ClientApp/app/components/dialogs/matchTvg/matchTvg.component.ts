@@ -51,7 +51,6 @@ export class MatchTvgDialog implements OnInit, OnDestroy {
 
         let model: MatchTvgPostModel = <MatchTvgPostModel>{ minScore: this.matchTvgFormModel.minScore };
         let mediasToMatch = this.medias.filter((v, i) => v.selected || this.matchTvgFormModel.matchAll);
-
         if (!this.matchTvgFormModel.overrideTvg)
             mediasToMatch = mediasToMatch.filter(x => x.tvg == null || x.tvg.id == '');
 
