@@ -78,7 +78,7 @@
         </mat-menu>
 
     </mat-toolbar>
-    <mat-table #table [dataSource]="dataSource" matSort class="noselect" [trackBy]="trackByPosition" style="margin-bottom:62px">
+    <mat-table #table [dataSource]="dataSource" matSort class="noselect grid-wide" [trackBy]="trackByPosition">
         <!-- Generic column definition -->
         <ng-container *ngFor="let column of columnDefs" [matColumnDef]="column.columnDef">
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.header }} </mat-header-cell>
