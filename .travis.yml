@@ -14,7 +14,7 @@ os:
 #  - osx
 branches:
   only:
-    - /^\d\.\d\.\d$/
+    - /^\d+\.\d+\.\d+$/
 services:
   - docker
 before_install:
