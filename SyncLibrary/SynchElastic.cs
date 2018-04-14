@@ -68,7 +68,7 @@ namespace SyncLibrary
 
                 Logger(nameof(SynchElastic)).LogInformation("Init batch Synker...");
 
-                _messagesService.SendAsync(Message.PingMessage, _apiConfig.ApiUserName, _apiConfig.ApiPassword, ts.Token).GetAwaiter().GetResult();
+                _messagesService.SendAsync(Message.PingMessage, _apiConfig.UserName, _apiConfig.Password, ts.Token).GetAwaiter().GetResult();
 
                 ArgsParserAsync(args, _messagesService).GetAwaiter().GetResult();
             }
@@ -79,7 +79,7 @@ namespace SyncLibrary
             catch (Exception e)
             {
                 Logger(nameof(SynchElastic)).LogCritical(e, e.Message);
-                _messagesService.SendAsync(e.Message, MessageTypeEnum.EXCEPTION, _apiConfig.ApiUserName, _apiConfig.ApiPassword, ts.Token).GetAwaiter().GetResult();
+                _messagesService.SendAsync(e.Message, MessageTypeEnum.EXCEPTION, _apiConfig.UserName, _apiConfig.Password, ts.Token).GetAwaiter().GetResult();
             }
         }
 
@@ -134,7 +134,7 @@ namespace SyncLibrary
                         };
 
                         //Add new message for user
-                        await _messagesService.SendAsync(message, _apiConfig.ApiUserName, _apiConfig.ApiPassword, ts.Token);
+                        await _messagesService.SendAsync(message, _apiConfig.UserName, _apiConfig.Password, ts.Token);
                         //Send Email Notification
                         string result = await Init.Engine.CompileRenderAsync("diff_playlist.cshtml", new DiffEmailViewModel
                         {
@@ -173,7 +173,7 @@ namespace SyncLibrary
         {
             Stream response = null;
             await _messagesService.SendAsync($"Start Sync Xmltv file {options.FilePath} to Elastic", MessageTypeEnum.START_SYNC_EPG_CONFIG,
-                config.ApiUserName, config.ApiPassword, token);
+                config.UserName, config.Password, token);
             try
             {
                 if (!File.Exists(options.FilePath))
@@ -205,7 +205,7 @@ namespace SyncLibrary
                 response?.Dispose();
             }
             await _messagesService.SendAsync($"END Sync Xmltv file {options.FilePath} to Elastic", MessageTypeEnum.END_SYNC_EPG_CONFIG,
-                config.ApiUserName, config.ApiPassword, token);
+                config.UserName, config.Password, token);
         }
 
         /// <summary>
@@ -222,8 +222,8 @@ namespace SyncLibrary
                 Content = options.Message,
                 MessageType = (MessageTypeEnum)Enum.Parse(typeof(MessageTypeEnum), options.MessageType.ToString())
             },
-            config.ApiUserName,
-            config.ApiPassword,
+            config.UserName,
+            config.Password,
             token);
         }
 
@@ -264,7 +264,7 @@ namespace SyncLibrary
         /// <returns></returns>
         public static async Task<bool> PushXmltvAsync(PushXmltvVerb options, IMessageService messagesService, HttpClient httpClient, ApiOptions config, CancellationToken token = default(CancellationToken))
         {
-            await messagesService.SendAsync($"Pushing {options.FilePath}", MessageTypeEnum.START_PUSH_XMLTV, config.ApiUserName, config.ApiPassword, token);
+            await messagesService.SendAsync($"Pushing {options.FilePath}", MessageTypeEnum.START_PUSH_XMLTV, config.UserName, config.Password, token);
             if (!File.Exists(options.FilePath))
             {
                 await messagesService.SendAsync($"File not Exist {options.FilePath}", MessageTypeEnum.START_PUSH_XMLTV, token);
@@ -279,7 +279,7 @@ namespace SyncLibrary
                 {
                     var httpResponseMessage = await httpClient.PostAsync(new Uri(options.ApiUrl), new JsonContent(xs.Deserialize(sr)), token);
                     await messagesService.SendAsync($"END save new config {options.FilePath} with httpResponseMessage : {httpResponseMessage.ReasonPhrase} ",
-                        MessageTypeEnum.END_PUSH_XMLTV, config.ApiUserName, config.ApiPassword, token);
+                        MessageTypeEnum.END_PUSH_XMLTV, config.UserName, config.Password, token);
                     return httpResponseMessage.IsSuccessStatusCode;
                 }
             }

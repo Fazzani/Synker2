@@ -8,9 +8,9 @@
 
     public class ApiOptions
     {
-        public string ApiUrlMessage { get; set; }
-        public string ApiUserName { get; set; }
-        public string ApiPassword { get; set; }
+        public string Url { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
 
     }
     public class TvhOptions
