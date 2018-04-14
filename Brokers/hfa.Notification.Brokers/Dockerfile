@@ -31,6 +31,6 @@ ARG arch
 RUN dotnet publish -c Release -o /app -r linux-$arch
 
 FROM base AS final
-WORKDIR /happ
+WORKDIR /app
 COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "hfa.Notification.Brokers.dll"]
