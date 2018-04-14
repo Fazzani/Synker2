@@ -25,7 +25,7 @@ namespace hfa.synker.batch.test
         [Trait("Category", "Integration")]
         public void PushXmlvTest()
         {
-            var appData = new Hfa.SyncLibrary.Infrastructure.ApplicationConfigData { };
+            var appData = new Hfa.SyncLibrary.Infrastructure.ApiOptions { };
             using (var client = StartUp.Client)
             {
                 var res = SynchElastic.PushXmltvAsync(new PushXmltvVerb

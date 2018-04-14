@@ -24,7 +24,7 @@ COPY Brokers/hfa.Notification.DTo/hfa.Brokers.Messages.csproj Brokers/hfa.Notifi
 RUN dotnet restore -nowarn:msb3202,nu1503
 COPY . .
 WORKDIR /src/Brokers/hfa.Notification.Brokers
-RUN dotnet build -c Release -o /home/synker/broker -r linux-$arch
+RUN dotnet build -c Release -o /app -r linux-$arch
 
 FROM build AS publish
 ARG arch
