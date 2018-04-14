@@ -73,7 +73,7 @@ namespace Hfa.WebApi.Controllers
         {
             sitepacks.ForEach(x =>
             {
-                if (x.DisplayNames == null)
+                if (x.DisplayNames == null || ! x.DisplayNames.Any())
                     x.DisplayNames = new List<string> { x.Channel_name };
                 x.DisplayNames = x.DisplayNames.Distinct().ToList();
             });

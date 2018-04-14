@@ -42,18 +42,16 @@ docker exec -it broker ls -l /app
 
 ### DOCKER
 - [ ] Travis CI/CD by application 
-  - [ ] WebClient
-  - [ ] WebApi
+  - [x] WebClient
+  - [x] WebApi
   - [ ] Batch
   - [ ] Broker
-- [ ] **appsettings.json bind to volume by environment**
-- [ ] CI/CD appveyor config
 - [ ] Creating **Linux service** into the Dockerfile AND run it
 - [ ] Creating an **ENTRYPOINT/CMD** for Dockerfile service (display version for example)
 - [ ] Docker-compose for the **DEV env** and another for **Prod**
 - [ ] **Rex-ray** storage driver test
 - [ ] Clusturing the **application Stack** and scale application test
-- [ ] Log stdout / stderr
+- [x] Log stdout / stderr
 - [ ] **Redis** for caching
 - [x] Creating **user/group** for service
 - [x] Resoudre le pb des **appsettings** by env
