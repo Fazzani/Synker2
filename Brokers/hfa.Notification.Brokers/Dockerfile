@@ -6,10 +6,10 @@ LABEL maintainer="synker-team@synker.ovh" \
       system.dist="linux" system.arch="$arch" multi.name="Synker notification broker"
 RUN apt-get -qq update && apt-get -y upgrade
 # Create Group and user
-RUN groupadd -r synker && useradd --no-log-init -r -g synker synker
-USER synker:synker
+#RUN groupadd -r synker && useradd --no-log-init -r -g synker synker
+#USER synker:synker
 # add user and group permissions
-WORKDIR /home/synker/broker
+WORKDIR /app
 #Expose Smtp and POP ports for mailing
 EXPOSE 110:110
 EXPOSE 587:587
@@ -28,9 +28,9 @@ RUN dotnet build -c Release -o /home/synker/broker -r linux-$arch
 
 FROM build AS publish
 ARG arch
-RUN dotnet publish -c Release -o /home/synker/broker -r linux-$arch
+RUN dotnet publish -c Release -o /app -r linux-$arch
 
 FROM base AS final
-WORKDIR /home/synker/broker
-COPY --from=publish /home/synker/broker .
+WORKDIR /happ
+COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "hfa.Notification.Brokers.dll"]

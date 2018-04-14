@@ -6,10 +6,10 @@ LABEL maintainer="synker-team@synker.ovh" \
       system.dist="linux" system.arch="$arch" multi.name="Synker Batch"
 RUN apt-get -qq update && apt-get -y upgrade
 # Create Group and user
-RUN groupadd -r synker && useradd --no-log-init -r -g synker synker
-USER synker:synker
+#RUN groupadd -r synker && useradd --no-log-init -r -g synker synker
+#USER synker:synker
 # add user and group permissions
-WORKDIR /home/synker/batch
+WORKDIR /app
 
 ARG arch=x64
 FROM microsoft/aspnetcore-build:2.0 AS build
@@ -29,9 +29,9 @@ RUN dotnet build -c Release -o /home/synker/batch -r linux-$arch
 ARG arch=x64
 FROM build AS publish
 ARG arch
-RUN dotnet publish -c Release -o /home/synker/batch -r linux-$arch
+RUN dotnet publish -c Release -o /app -r linux-$arch
 
 FROM base AS final
-WORKDIR /home/synker/batch
-COPY --from=publish /home/synker/batch .
+WORKDIR /app
+COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "hfa.Synker.batch.dll"]
