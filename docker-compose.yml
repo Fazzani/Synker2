@@ -19,16 +19,15 @@ services:
       context: .
       dockerfile: WebApi/Dockerfile
   
-#  hfa.notification.brokers:
-#    image: synker/brokers:${version:-latest}
-#    build:
-#      context: .
-#      dockerfile: Brokers/hfa.Notification.Brokers/Dockerfile
-#  
-#  
-#  hfa.synker.batch:
-#    image: synker/batch:${version:-latest}
-#    build:
-#      context: .
-#      dockerfile: SyncLibrary/Dockerfile
-#  
+  hfa.notification.brokers:
+    image: synker/brokers:${version:-latest}
+    build:
+      context: .
+      dockerfile: Brokers/hfa.Notification.Brokers/Dockerfile
+  
+  
+  hfa.synker.batch:
+    image: synker/batch:${version:-latest}
+    build:
+      context: .
+      dockerfile: SyncLibrary/Dockerfile
