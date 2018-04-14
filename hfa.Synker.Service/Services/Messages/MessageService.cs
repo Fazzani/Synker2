@@ -127,7 +127,7 @@ namespace hfa.Synker.Services.Messages
                 return await client.PostAsync(url, new JsonContent(obj), cancellationToken);
             }
         }
-
+        
         public static string Base64Encode(string plainText)
         {
             var plainTextBytes = Encoding.ASCII.GetBytes(plainText);
