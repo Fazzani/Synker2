@@ -419,7 +419,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
      * Force reset from source
      */
     reset(): void {
-        this.playlistService.synk(new PlaylistPostModel()).subscribe(res => {
+        this.playlistService.synk(<PlaylistPostModel>{ url: this.playlistBS.value.url, provider: this.playlistBS.value.importProvider, freindlyname: "tmp", publicId: this.playlistBS.value.publicId }).subscribe(res => {
             this.playlistBS.next(res);
             this.commonService.info('Success', "Playlist was synchronized with source");
         });

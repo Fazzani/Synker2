@@ -74,8 +74,7 @@ namespace hfa.Synker.Service.Services.Playlists
                     playlistEntity.Medias = new JsonObject<List<TvgMedia>>(sourceList.Where(x => x.IsValid).ToList());
                 }
 
-                playlistEntity.Tags.Object.Add(PlaylistTags.IsXtream, isXtreamPlaylist.ToString());
-                playlistEntity.Tags = JsonConvert.SerializeObject(playlistEntity.Tags.Object);
+                UpdateIsXtreamTag(isXtreamPlaylist, playlistEntity);
             }
 
             if (playlistEntity.CreatedDate == default)
@@ -83,6 +82,20 @@ namespace hfa.Synker.Service.Services.Playlists
 
             var res = await _dbcontext.SaveChangesAsync(cancellationToken);
             return playlistEntity;
+        }
+
+        private static void UpdateIsXtreamTag(bool isXtreamPlaylist, Playlist playlistEntity)
+        {
+            if (!playlistEntity.Tags.Object.Any(x => String.Equals(x.Key, PlaylistTags.IsXtream, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                playlistEntity.Tags.Object.Add(PlaylistTags.IsXtream, isXtreamPlaylist.ToString());
+
+            }
+            else
+            {
+                playlistEntity.Tags.Object[PlaylistTags.IsXtream] = isXtreamPlaylist.ToString();
+            }
+            playlistEntity.Tags = JsonConvert.SerializeObject(playlistEntity.Tags.Object);
         }
 
         /// <summary>
@@ -129,7 +142,7 @@ namespace hfa.Synker.Service.Services.Playlists
                 var sourceList = await playlist.PullAsync(cancellationToken);
 
                 if (sourceList == null)
-                    return (new List<TvgMedia>(), pl.TvgMedias?? new List<TvgMedia>());
+                    return (new List<TvgMedia>(), pl.TvgMedias ?? new List<TvgMedia>());
 
                 return (sourceList.Where(s => pl.TvgMedias.All(t => t.Url != s.Url)), pl.TvgMedias.Where(s => sourceList.All(t => t.Url != s.Url)));
             }
