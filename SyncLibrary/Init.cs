@@ -34,7 +34,7 @@ namespace Hfa.SyncLibrary
 
         public static RazorLightEngine Engine { get; }
 
-        public static bool IsDev(string env) => env.Equals(DEV);
+        public static bool IsDev => (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? DEV).Equals(DEV);
 
         static Init()
         {
@@ -54,7 +54,7 @@ namespace Hfa.SyncLibrary
                 .SetBasePath(Path.Combine(AppContext.BaseDirectory))
                 .AddJsonFile("appsettings.json", optional: true);
 
-            if (IsDev(environment))
+            if (IsDev)
             {
                 builder.AddUserSecrets<Init>()
                     .AddJsonFile(
@@ -71,7 +71,7 @@ namespace Hfa.SyncLibrary
 
             //Config Logger
             var loggerFactory = new LoggerFactory().AddConsole();
-            if (IsDev(environment))
+            if (IsDev)
             {
                 loggerFactory.AddDebug();
             }

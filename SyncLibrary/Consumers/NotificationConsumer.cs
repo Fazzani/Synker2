@@ -19,7 +19,7 @@ namespace hfa.Notification.Brokers.Consumers
         ILogger _logger;
         private IModel _mailChannel;
         private INotificationService _notificationService;
-        private string MailQueueName = Init.IsDev(Init.Enviroment) ? "synker.dev.mail.queue" : "synker.mail.queue";
+        private string MailQueueName = Init.IsDev ? "synker.dev.mail.queue" : "synker.mail.queue";
         private EventHandler<CallbackExceptionEventArgs> eventChannel_CallbackException;
 
         public NotificationConsumer(INotificationService notificationService, ILogger<NotificationConsumer> logger)
