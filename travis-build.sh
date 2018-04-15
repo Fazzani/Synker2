@@ -9,6 +9,17 @@ trigger(){
 
 }
 
+build_only_project()
+{
+  version=$0
+  project=$1
+  dockerfilePath=$2
+  # si le message contient build_webapi alors on build uniquement l'api
+  docker build -t synker/$project:${version} -t synker/$project:latest -f $dockerfilePath .
+  docker push synker/$project
+  trigger "Fazzani/synker-docker"
+}
+
 set -evuxo
 echo "$TRAVIS_TAG"
 if [ -z "$TRAVIS_TAG" ]; then
@@ -23,25 +34,19 @@ if [[ "$DOCKER_BUILD" == true ]]; then
   
   # si le message contient build_webclient alors on build uniquement le client
   if [[ $TRAVIS_COMMIT_MESSAGE == *"build_webclient"* ]]; then
-    docker build -t synker/webclient:${version} -t synker/webclient:latest -f WebClient/Dockerfile .
-	docker push synker/webclient
-    trigger "Fazzani/synker-docker"
+    build_only_project $version "webclient" "WebClient/Dockerfile"
 	exit 0
   fi
 
   # si le message contient build_webapi alors on build uniquement l'api
   if [[ $TRAVIS_COMMIT_MESSAGE == *"build_webapi"* ]]; then
-    docker build -t synker/webapi:${version} -t synker/webapi:latest -f WebApi/Dockerfile .
-	docker push synker/webapi
-    trigger "Fazzani/synker-docker"
+    build_only_project $version "webapi" "WebApi/Dockerfile"
 	exit 0
   fi
 
   # si le message contient build_webapi alors on build uniquement l'api
   if [[ $TRAVIS_COMMIT_MESSAGE == *"build_batch"* ]]; then
-    docker build -t synker/batch:${version} -t synker/batch:latest -f SyncLibrary/Dockerfile .
-	docker push synker/batch
-    trigger "Fazzani/synker-docker"
+    build_only_project $version "batch" "SyncLibrary/Dockerfile"
 	exit 0
   fi
 
