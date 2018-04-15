@@ -6,8 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using hfa.Brokers.Messages.Emailing;
 using hfa.Synker.Service.Elastic;
+using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Elastic;
-using hfa.Synker.Service.Services.Notification;
 using hfa.Synker.Services.Dal;
 using hfa.WebApi.Common.Filters;
 using hfa.WebApi.Models.Notifications;
@@ -25,9 +25,9 @@ namespace hfa.WebApi.Controllers
     [Authorize]
     public class NotificationController : BaseController
     {
-        private INotificationService _notificationService;
+        private IMessageQueueService _notificationService;
 
-        public NotificationController(INotificationService notificationService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
+        public NotificationController(IMessageQueueService notificationService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
            : base(config, loggerFactory, elasticConnectionClient, context)
         {

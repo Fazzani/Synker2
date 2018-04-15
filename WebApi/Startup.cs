@@ -35,17 +35,14 @@ using PlaylistBaseLibrary.ChannelHandlers;
 using hfa.Synker.Service.Services.Picons;
 using hfa.Synker.Service.Services.MediaRefs;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
 using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Scraper;
 using ZNetCS.AspNetCore.Authentication.Basic;
 using ZNetCS.AspNetCore.Authentication.Basic.Events;
 using Microsoft.AspNetCore.Authentication;
 using hfa.Synker.Service.Services.Xtream;
-using hfa.Synker.Service.Services.Notification;
 using hfa.Synker.Service.Entities.Auth;
 using System.Security.Claims;
-using System.Runtime.InteropServices;
 using System.Reflection;
 using hfa.PlaylistBaseLibrary.Options;
 using hfa.Brokers.Messages.Configuration;
@@ -83,7 +80,7 @@ namespace hfa.WebApi
                .AddScoped<ISitePackService, SitePackService>()
                .AddScoped<IXtreamService, XtreamService>()
                .AddScoped<IMediaScraper, MediaScraper>()
-               .AddScoped<INotificationService, NotificationService>()
+               .AddScoped<IMessageQueueService, MessageQueueService>()
                .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))

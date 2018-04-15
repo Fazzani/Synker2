@@ -1,24 +1,22 @@
-using PlaylistBaseLibrary.Providers.Linq;
 using PlaylistManager.Entities;
-using System;
-using TvheadendLibrary;
-using Xunit;
-using System.Linq;
-using TvheadendLibrary.Common;
 using System.Collections.Generic;
-using static TvheadendLibrary.Constants;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TvheadendLibrary;
+using TvheadendLibrary.Common;
+using Xunit;
+using static TvheadendLibrary.Constants;
 
 namespace hfa.tvhLibrary.test
 {
     public class TvheadendServiceUnitTest
     {
-        readonly TvheadendService _tvheadendService;
+        private readonly TvheadendService _tvheadendService;
         private readonly Playlist<TvgMedia> _playlist;
-        const string TvhUrl = "http://heni.freeboxos.fr:9981";
-        const string TvhUserName = "heni";
-        const string TvhPassword = "heni";
+        private const string TvhUrl = "http://heni.freeboxos.fr:9981";
+        private const string TvhUserName = "heni";
+        private const string TvhPassword = "heni";
 
         public TvheadendServiceUnitTest()
         {
@@ -34,7 +32,7 @@ namespace hfa.tvhLibrary.test
             Assert.NotEmpty(medias);
         }
 
-        [Theory(DisplayName ="List Channels")]
+        [Theory(DisplayName = "List Channels")]
         [InlineData("name", "bein")]
         [InlineData("tags", "France")]
         public void UpdateMediaTest(string field, string query)
@@ -64,7 +62,6 @@ namespace hfa.tvhLibrary.test
             res.SingleOrDefault()["name"] = nameof(UpdateNode);
             _tvheadendService.UpdateNode(res);
 
-
             res = await _tvheadendService.NodesAsync(new QueryParams
             {
                 Limit = 1,
@@ -76,7 +73,7 @@ namespace hfa.tvhLibrary.test
             _tvheadendService.UpdateNode(res);
         }
 
-        [Theory(DisplayName ="List EPG")]
+        [Theory(DisplayName = "List EPG")]
         [InlineData("name", "bein", 2)]
         [InlineData("id", "osn", 5)]
         public void ListEpg(string field, string query, int count)

@@ -30,13 +30,13 @@ using hfa.Synker.batch;
 using hfa.Synker.Service.Services.Playlists;
 using hfa.Synker.Services.Dal;
 using hfa.PlaylistBaseLibrary.Providers;
-using Newtonsoft.Json;
-using System.Text;
-using hfa.Synker.Service.Services.Notification;
+using hfa.Synker.Service.Services;
 using Microsoft.EntityFrameworkCore;
 using hfa.Brokers.Messages.Emailing;
-using System.Reflection;
 using hfa.Synker.batch.EmailModels;
+using Newtonsoft.Json;
+using System.Text;
+using System.Reflection;
 
 [assembly: InternalsVisibleTo("hfa.synker.batch.test")]
 namespace SyncLibrary
@@ -45,7 +45,7 @@ namespace SyncLibrary
     {
         static CancellationTokenSource ts = new CancellationTokenSource();
         static IMessageService _messagesService;
-        private static INotificationService _notificationService;
+        private static IMessageQueueService _notificationService;
         static IElasticConnectionClient _elasticClient;
         static ApiOptions _apiConfig;
         private static TvhOptions _tvhConfig;
@@ -64,7 +64,7 @@ namespace SyncLibrary
                 _elastiConfig = Init.ServiceProvider.GetService<IOptions<ElasticConfig>>();
                 _elasticClient = Init.ServiceProvider.GetService<IElasticConnectionClient>();
                 _messagesService = Init.ServiceProvider.GetService<IMessageService>();
-                _notificationService = Init.ServiceProvider.GetService<INotificationService>();
+                _notificationService = Init.ServiceProvider.GetService<IMessageQueueService>();
 
                 Logger(nameof(SynchElastic)).LogInformation("Init batch Synker...");
 

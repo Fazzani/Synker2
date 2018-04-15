@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <StartupObject>SyncLibrary.SynchElastic</StartupObject>
+    <StartupObject>hfa.Synker.batch.Program</StartupObject>
     <UserSecretsId>f934f0be-ac10-4dd6-b82f-d7aecb08f04b</UserSecretsId>
     <ApplicationIcon />
     <Win32Resource />
