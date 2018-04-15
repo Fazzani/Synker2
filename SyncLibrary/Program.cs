@@ -1,21 +1,17 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using hfa.Brokers.Messages.Configuration;
-using hfa.Brokers.Messages.Emailing;
 using Hfa.SyncLibrary;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 using System;
-using System.Text;
-using hfa.Notification.Brokers.Emailing;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using System.Runtime.Loader;
 using hfa.Notification.Brokers.Consumers;
 using System.Threading.Tasks;
 
-namespace hfa.Notification.Brokers
+namespace hfa.Synker.batch
 {
     public class Program
     {
@@ -36,7 +32,7 @@ namespace hfa.Notification.Brokers
             // Capture SIGTERM  
             AssemblyLoadContext.Default.Unloading += Default_Unloading;
 
-            _logger = Common.Logger(nameof(Program));
+            _logger = SyncLibrary.Global.Common.Logger(nameof(Program));
             _rabbitConfig = Init.ServiceProvider.GetService<IOptions<RabbitMQConfiguration>>();
             _notificationConsumer = Init.ServiceProvider.GetService<INotificationConsumer>();
 

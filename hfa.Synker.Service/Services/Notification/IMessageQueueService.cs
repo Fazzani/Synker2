@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace hfa.Synker.Service.Services.Notification
+namespace hfa.Synker.Service.Services
 {
-    public interface INotificationService
+    public interface IMessageQueueService
     {
         /// <summary>
         /// Send email

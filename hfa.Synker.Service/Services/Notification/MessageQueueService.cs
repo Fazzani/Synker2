@@ -12,9 +12,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace hfa.Synker.Service.Services.Notification
+namespace hfa.Synker.Service.Services
 {
-    public class NotificationService : INotificationService
+    public class MessageQueueService : IMessageQueueService
     {
         private IConnectionFactory _connectionFactory;
         private ILogger _logger;
@@ -25,7 +25,7 @@ namespace hfa.Synker.Service.Services.Notification
         const string MailExchangeName = "synker.mail.queue";
         private const string MailRoutingKey = "synker.mail.*";
 #endif
-        public NotificationService(IOptions<RabbitMQConfiguration> rabbitmqOptions, ILoggerFactory loggerFactory)
+        public MessageQueueService(IOptions<RabbitMQConfiguration> rabbitmqOptions, ILoggerFactory loggerFactory)
         {
             _connectionFactory = new ConnectionFactory()
             {
@@ -34,7 +34,7 @@ namespace hfa.Synker.Service.Services.Notification
                 UserName = rabbitmqOptions.Value.Username,
                 Password = rabbitmqOptions.Value.Password
             };
-            _logger = loggerFactory.CreateLogger(typeof(INotificationService));
+            _logger = loggerFactory.CreateLogger(typeof(IMessageQueueService));
         }
 
         /// <summary>
