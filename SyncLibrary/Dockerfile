@@ -15,16 +15,14 @@ ARG arch=x64
 FROM microsoft/aspnetcore-build:2.0 AS build
 ARG arch
 WORKDIR /src
-#COPY Synker.sln ./
-#COPY SyncLibrary/hfa.Synker.batch.csproj SyncLibrary/
-#COPY hfa.TvhLibrary/hfa.TvhLibrary.csproj hfa.TvhLibrary/
-#COPY PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj PlaylistBaseLibrary/
-#COPY hfa.Synker.Service/hfa.Synker.Service.csproj hfa.Synker.Service/
-#COPY hfa.Notification.DTo/hfa.Brokers.Messages.csproj hfa.Notification.DTo/
+COPY Synker.sln ./
+COPY SyncLibrary/hfa.Synker.batch.csproj SyncLibrary/
+COPY hfa.TvhLibrary/hfa.TvhLibrary.csproj hfa.TvhLibrary/
+COPY PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj PlaylistBaseLibrary/
+COPY hfa.Synker.Service/hfa.Synker.Service.csproj hfa.Synker.Service/
+COPY hfa.Notification.DTo/hfa.Brokers.Messages.csproj hfa.Notification.DTo/
+RUN dotnet restore -nowarn:msb3202,nu1503
 COPY . .
-# TODO : TO Remove after updating 2.1.3 dotnet cli version
-RUN dotnet sln Synker.sln remove docker-compose.dcproj
-RUN dotnet restore -nowarn:msb3202,nu1503 Synker.sln
 WORKDIR /src/SyncLibrary
 RUN dotnet build -c Release -o /app -r linux-$arch
 

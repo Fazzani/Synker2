@@ -23,21 +23,21 @@ if [[ "$DOCKER_BUILD" == true ]]; then
   
   # si le message contient build_webclient alors on build uniquement le client
   if [[ $TRAVIS_COMMIT_MESSAGE == *"build_webclient"* ]]; then
-    docker build -t synker/webclient:${version:-latest} WebClient/
+    docker build -t synker/webclient:${version:-latest} -f WebClient/Dockerfile .
     trigger "Fazzani/synker-docker"
 	exit 0
   fi
 
   # si le message contient build_webapi alors on build uniquement l'api
   if [[ $TRAVIS_COMMIT_MESSAGE == *"build_webapi"* ]]; then
-    docker build -t synker/webapi:${version:-latest} WebApi/
+    docker build -t synker/webapi:${version:-latest} -f WebApi/Dockerfile .
     trigger "Fazzani/synker-docker"
 	exit 0
   fi
 
   # si le message contient build_webapi alors on build uniquement l'api
   if [[ $TRAVIS_COMMIT_MESSAGE == *"build_batch"* ]]; then
-    docker build -t synker/batch:${version:-latest} SyncLibrary/
+    docker build -t synker/batch:${version:-latest} -f SyncLibrary/Dockerfile .
     trigger "Fazzani/synker-docker"
 	exit 0
   fi
