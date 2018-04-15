@@ -35,6 +35,13 @@ if [[ "$DOCKER_BUILD" == true ]]; then
 	exit 0
   fi
 
+  # si le message contient build_webapi alors on build uniquement l'api
+  if [[ $TRAVIS_COMMIT_MESSAGE == *"build_batch"* ]]; then
+    docker build -t synker/batch:${version:-latest} SyncLibrary/
+    trigger "Fazzani/synker-docker"
+	exit 0
+  fi
+
   # build image with github tag version
   docker-compose build
   docker-compose push
