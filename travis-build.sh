@@ -15,8 +15,8 @@ build_only_project()
   project=$1
   dockerfilePath=$2
   # si le message contient build_webapi alors on build uniquement l'api
-  docker build -t synker/$project:${version} -t synker/$project:latest -f $dockerfilePath .
-  docker push synker/$project
+  docker build -t "synker/${project}:${version}" -t "synker/${project}:latest" -f $dockerfilePath .
+  docker push "synker/${project}"
   trigger "Fazzani/synker-docker"
 }
 
@@ -34,19 +34,19 @@ if [[ "$DOCKER_BUILD" == true ]]; then
   
   # si le message contient build_webclient alors on build uniquement le client
   if [[ $TRAVIS_COMMIT_MESSAGE == *"build_webclient"* ]]; then
-    build_only_project "webclient" $version "WebClient/Dockerfile"
+    build_only_project $version "webclient" "WebClient/Dockerfile"
 	exit 0
   fi
 
   # si le message contient build_webapi alors on build uniquement l'api
   if [[ $TRAVIS_COMMIT_MESSAGE == *"build_webapi"* ]]; then
-    build_only_project "webapi" $version "WebApi/Dockerfile"
+    build_only_project $version "webapi" "WebApi/Dockerfile"
 	exit 0
   fi
 
   # si le message contient build_webapi alors on build uniquement l'api
   if [[ $TRAVIS_COMMIT_MESSAGE == *"build_batch"* ]]; then
-    build_only_project "batch" $version "SyncLibrary/Dockerfile"
+    build_only_project $version "batch" "SyncLibrary/Dockerfile"
 	exit 0
   fi
 
