@@ -1,10 +1,5 @@
-﻿using hfa.Synker.Service.Services.Picons;
-using hfa.Synker.Service.Services.TvgMediaHandlers;
+﻿using hfa.Synker.Service.Services.TvgMediaHandlers;
 using PlaylistManager.Entities;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace hfa.tvhLibrary.test

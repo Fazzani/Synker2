@@ -1,12 +1,7 @@
 using hfa.synker.batch.MoqServices;
 using Hfa.SyncLibrary.Verbs;
-using Moq;
 using SyncLibrary;
-using System;
 using System.IO;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace hfa.synker.batch.test
