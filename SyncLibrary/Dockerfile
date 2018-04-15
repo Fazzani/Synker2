@@ -20,7 +20,7 @@ COPY SyncLibrary/hfa.Synker.batch.csproj SyncLibrary/
 COPY hfa.TvhLibrary/hfa.TvhLibrary.csproj hfa.TvhLibrary/
 COPY PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj PlaylistBaseLibrary/
 COPY hfa.Synker.Service/hfa.Synker.Service.csproj hfa.Synker.Service/
-COPY Brokers/hfa.Notification.DTo/hfa.Brokers.Messages.csproj Brokers/hfa.Notification.DTo/
+COPY hfa.Notification.DTo/hfa.Brokers.Messages.csproj hfa.Notification.DTo/
 RUN dotnet restore -nowarn:msb3202,nu1503
 COPY . .
 WORKDIR /src/SyncLibrary
