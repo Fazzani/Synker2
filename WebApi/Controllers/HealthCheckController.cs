@@ -14,6 +14,7 @@ using hfa.WebApi.Models.HealthCheck;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
+using System.Reflection;
 
 namespace hfa.WebApi.Controllers
 {
@@ -27,7 +28,7 @@ namespace hfa.WebApi.Controllers
         {
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetBy(HealthCheckEnum id)
         {
             switch (id)
@@ -48,11 +49,17 @@ namespace hfa.WebApi.Controllers
                         return StatusCode((int)HttpStatusCode.InternalServerError);
                     }
                 case HealthCheckEnum.Elastic:
-                    var elasticResponse = await _elasticConnectionClient.Client.ClusterHealthAsync(cancellationToken: HttpContext.RequestAborted);
+                    var elasticResponse = await _elasticConnectionClient.Client.Value.ClusterHealthAsync(cancellationToken: HttpContext.RequestAborted);
                     return elasticResponse.IsValid ? Ok() : StatusCode((int)HttpStatusCode.InternalServerError);
                 default:
                     return Ok();
             }
+        }
+
+        [HttpGet("/")]
+        public IActionResult Index()
+        {
+            return Ok($"Welcome to Synker Api : {typeof(Startup).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version}");
         }
 
         [HttpGet("error")]

@@ -21,7 +21,7 @@ export class PlaylistDiffDialog implements OnInit, OnDestroy {
         @Inject(MAT_DIALOG_DATA) public playlist: PlaylistModel) { }
 
     ngOnInit(): void {
-        this.playlistService.diff(<PlaylistPostModel>{ provider: "m3u", publicId: this.playlist.publicId, url: this.playlist.url, freindlyname: "tmp" }).subscribe((res: any) => {
+        this.playlistService.diff(<PlaylistPostModel>{ provider: this.playlist.importProvider, publicId: this.playlist.publicId, url: this.playlist.url, freindlyname: "tmp" }).subscribe((res: any) => {
             this.newMedias = res.item1;
             this.removedMedias = res.item2;
         });

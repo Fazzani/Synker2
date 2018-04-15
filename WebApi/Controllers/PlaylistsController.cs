@@ -237,7 +237,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("synk")]
         [ValidateModel]
-        public async Task<IActionResult> SynkAsync(PlaylistPostModel playlistPostModel, CancellationToken cancellationToken)
+        public async Task<IActionResult> SynkAsync([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken)
         {
             //Vérifier si la playlist existe-elle avant 
             var stopwatch = Stopwatch.StartNew();

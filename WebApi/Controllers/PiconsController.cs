@@ -22,7 +22,9 @@ using hfa.WebApi.Common;
 namespace Hfa.WebApi.Controllers
 {
     [Route("api/v1/[controller]")]
+#if !DEBUG
     [Authorize]
+#endif
     public class PiconsController : BaseController
     {
         private IPiconsService _piconsService;
@@ -56,7 +58,7 @@ namespace Hfa.WebApi.Controllers
         [ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "id" })]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
-            var response = await _elasticConnectionClient.Client.GetAsync(new DocumentPath<Picon>(id), null, cancellationToken);
+            var response = await _elasticConnectionClient.Client.Value.GetAsync(new DocumentPath<Picon>(id), null, cancellationToken);
 
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);

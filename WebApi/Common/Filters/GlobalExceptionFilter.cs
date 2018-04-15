@@ -58,7 +58,7 @@ namespace hfa.WebApi.Common.Filters
                 status = HttpStatusCode.NotFound;
             }
 
-            _logger.LogError(nameof(GlobalExceptionFilterAttribute), context.Exception);
+            _logger.LogError(context.Exception, message);
             var response = context.HttpContext.Response;
             response.StatusCode = (int)status;
             response.ContentType = "application/json";

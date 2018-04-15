@@ -35,20 +35,21 @@ using PlaylistBaseLibrary.ChannelHandlers;
 using hfa.Synker.Service.Services.Picons;
 using hfa.Synker.Service.Services.MediaRefs;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
 using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Scraper;
 using ZNetCS.AspNetCore.Authentication.Basic;
 using ZNetCS.AspNetCore.Authentication.Basic.Events;
 using Microsoft.AspNetCore.Authentication;
 using hfa.Synker.Service.Services.Xtream;
-using hfa.Synker.Service.Services.Notification;
 using hfa.Synker.Service.Entities.Auth;
 using System.Security.Claims;
-using System.Runtime.InteropServices;
 using System.Reflection;
 using hfa.PlaylistBaseLibrary.Options;
 using hfa.Brokers.Messages.Configuration;
+using System.IO;
+using Microsoft.Extensions.FileProviders;
+using hfa.WebApi.Common.Swagger;
+using Newtonsoft.Json.Converters;
 
 namespace hfa.WebApi
 {
@@ -58,20 +59,9 @@ namespace hfa.WebApi
 
         public static string AssemblyVersion = typeof(Startup).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-
-            if (env.IsDevelopment())
-            {
-                builder.AddUserSecrets<Startup>();
-            }
-
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -90,7 +80,7 @@ namespace hfa.WebApi
                .AddScoped<ISitePackService, SitePackService>()
                .AddScoped<IXtreamService, XtreamService>()
                .AddScoped<IMediaScraper, MediaScraper>()
-               .AddScoped<INotificationService, NotificationService>()
+               .AddScoped<IMessageQueueService, MessageQueueService>()
                .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
@@ -163,10 +153,16 @@ namespace hfa.WebApi
                     });
             })
             .AddJsonOptions(
-                options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.Formatting = Formatting.Indented;
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                }
             );
 
-            //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?tabs=visual-studio
+            //https://github.com/domaindrivendev/Swashbuckle.AspNetCore
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
@@ -180,9 +176,13 @@ namespace hfa.WebApi
 
                 });
 
+                c.OperationFilter<AuthResponsesOperationFilter>();
                 c.DescribeAllEnumsAsStrings();
+                c.DescribeStringEnumsInCamelCase();
                 c.IgnoreObsoleteActions();
                 c.IgnoreObsoleteProperties();
+                c.SchemaFilter<AutoRestSchemaFilter>();
+
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {
                     In = "header",
@@ -190,6 +190,7 @@ namespace hfa.WebApi
                     Name = "Authorization",
                     Type = "apiKey"
                 });
+
                 c.AddSecurityDefinition("Basic", new BasicAuthScheme
                 {
                     Description = "Please insert username/password into fields",
@@ -225,6 +226,14 @@ namespace hfa.WebApi
         {
             app.UseResponseCompression();
 
+            //Chanllenge Let's Encrypt path
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @".well-known")),
+                RequestPath = new PathString("/.well-known"),
+                ServeUnknownFileTypes = true // serve extensionless file
+            });
+
             loggerFactory.AddFile(Configuration.GetSection("Logging"));
             if (env.IsDevelopment())
             {
@@ -257,7 +266,18 @@ namespace hfa.WebApi
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Synker API V1");
-                    c.ShowJsonEditor();
+                    //c.DefaultModelExpandDepth(2);
+                    //c.DefaultModelRendering(ModelRendering.Model);
+                    //c.DefaultModelsExpandDepth(-1);
+                    c.DisplayOperationId();
+                    c.DisplayRequestDuration();
+                    c.DocExpansion(DocExpansion.None);
+                    c.EnableDeepLinking();
+                    c.EnableFilter();
+                    //c.MaxDisplayedTags(5);
+                    c.ShowExtensions();
+                    c.EnableValidator();
+                    c.SupportedSubmitMethods(SubmitMethod.Get, SubmitMethod.Post, SubmitMethod.Delete, SubmitMethod.Put);
                 });
                 #endregion
 
@@ -268,7 +288,12 @@ namespace hfa.WebApi
 
                 app.UseStaticFiles();
 
-                app.UseMvc();
+                app.UseMvc(routes =>
+                {
+                    routes.MapRoute(
+                        name: "default",
+                        template: "{controller=HealthCheck}/{action=Index}");
+                });
             }
             catch (Exception ex)
             {
@@ -322,7 +347,9 @@ namespace hfa.WebApi
                                 new AuthenticationProperties(),
                                 BasicAuthenticationDefaults.AuthenticationScheme);
 
+                            context.Principal = principal;
                             return Task.FromResult(AuthenticateResult.Success(ticket));
+                            //return Task.CompletedTask;
                         }
 
                         return Task.FromResult(AuthenticateResult.Fail("Authentication failed."));

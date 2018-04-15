@@ -1,4 +1,4 @@
-language: csharp
+language: ruby
 sudo: required
 mono: none
 dotnet: 2.0.0
@@ -8,27 +8,25 @@ env:
     - CLI_VERSION: Latest
   matrix:
     - DOCKER_BUILD=true arch=x64
-    - DOCKER_BUILD=false arch=x64
+    #- DOCKER_BUILD=false arch=x64
 os:
   - linux
 #  - osx
 branches:
   only:
-    - master
-    - Develop
+    - /^\d+\.\d+\.\d+$/
 services:
   - docker
 before_install:
-  - chmod +x build.sh
+  - chmod +x travis-build.sh
 script:
-  - ./build.sh $DOCKER_BUILD --quiet verify
+  - ./travis-build.sh $DOCKER_BUILD --quiet verify
 cache:
-  directories:
-    - node_modules
+  bundler: true
     - "~/.local/share/NuGet/Cache"
 notifications: # set notification options
   email:
     recipients:
       - tunisienheni@gmail.com
-    on_success: always
+    on_success: change
     on_failure: change

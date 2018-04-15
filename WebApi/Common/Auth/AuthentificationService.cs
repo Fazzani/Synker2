@@ -33,6 +33,7 @@ namespace hfa.WebApi.Common.Auth
         public AuthentificationService(IOptions<SecurityOptions> securityOptions)
         {
             _securityOptions = securityOptions.Value;
+
             ValidFor = TimeSpan.FromMinutes(_securityOptions.TokenLifetimeInMinutes);
 
             if (_securityOptions.UseRsa)

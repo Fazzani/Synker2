@@ -97,6 +97,17 @@ export class SitePackComponent implements OnInit, OnDestroy {
         });
     }
 
+    /**
+    * Synchronize country field
+    */
+    synkCountries(): void {
+
+        this.sitePackService.syncCountries().subscribe(res => {
+            this.snackBar.open("Country field was synchronized");
+            this.reload();
+        });
+    }
+
     ///**
     // * Match mediaRef with picons
     // */

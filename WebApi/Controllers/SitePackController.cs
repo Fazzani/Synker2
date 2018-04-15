@@ -58,7 +58,7 @@ namespace Hfa.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
-            var response = await _elasticConnectionClient.Client.GetAsync(new DocumentPath<SitePackChannel>(id), null, cancellationToken);
+            var response = await _elasticConnectionClient.Client.Value.GetAsync(new DocumentPath<SitePackChannel>(id), null, cancellationToken);
 
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);
@@ -73,7 +73,7 @@ namespace Hfa.WebApi.Controllers
         {
             sitepacks.ForEach(x =>
             {
-                if (x.DisplayNames == null)
+                if (x.DisplayNames == null || ! x.DisplayNames.Any())
                     x.DisplayNames = new List<string> { x.Channel_name };
                 x.DisplayNames = x.DisplayNames.Distinct().ToList();
             });
@@ -171,5 +171,11 @@ namespace Hfa.WebApi.Controllers
             return Ok(cultures);
         }
 
+        [HttpPost("countries")]
+        public async Task<IActionResult> SyncCountryAsync(CancellationToken cancellationToken)
+        {
+            var response = await _sitePackService.SyncCountrySitePackAsync(cancellationToken);
+            return Ok(response);
+        }
     }
 }

@@ -82,4 +82,14 @@ export class SitePackService extends BaseService {
             return res;
         }).catch(this.handleError);
     }
+
+    /**
+     * Sync countries
+     * @returns
+     */
+    syncCountries(): Observable<number> {
+        return this.http.post(variables.BASE_API_URL + `${this.BaseUrl}/countries`, null).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
 }

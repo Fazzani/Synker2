@@ -10,7 +10,7 @@ namespace hfa.WebApi.Models.Playlists
     public class PlaylistPostModel
     {
         [Required]
-        public string Provider { get; set; }
+        public string Provider { get; set; } = "m3u";
 
         [Required]
         public string Url { get; set; }

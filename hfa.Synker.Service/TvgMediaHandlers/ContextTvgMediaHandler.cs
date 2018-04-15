@@ -30,7 +30,7 @@ namespace hfa.Synker.Service.Services.TvgMediaHandlers
             {
                 if (_mediaConfig == null)
                 {
-                    var responseMediaConfig = _elasticConnectionClient.Client.SearchAsync<MediaConfiguration>(x => x.From(0).Size(1)).GetAwaiter().GetResult();
+                    var responseMediaConfig = _elasticConnectionClient.Client.Value.SearchAsync<MediaConfiguration>(x => x.From(0).Size(1)).GetAwaiter().GetResult();
                     if (responseMediaConfig.Documents.Any())
                         _mediaConfig = responseMediaConfig.Documents.FirstOrDefault();
                     else

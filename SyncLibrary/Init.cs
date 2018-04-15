@@ -1,35 +1,40 @@
-﻿using hfa.Brokers.Messages.Configuration;
-using hfa.Synker.Service.Elastic;
-using hfa.Synker.Service.Services.Elastic;
-using hfa.Synker.Service.Services.Notification;
-using hfa.Synker.Service.Services.Playlists;
-using hfa.Synker.Service.Services.TvgMediaHandlers;
-using hfa.Synker.Services.Dal;
-using hfa.Synker.Services.Messages;
-using Hfa.SyncLibrary.Infrastructure;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using PlaylistBaseLibrary.ChannelHandlers;
-using RazorLight;
-using SyncLibrary;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using PlaylistBaseLibrary.ChannelHandlers;
 
 namespace Hfa.SyncLibrary
 {
+    using RazorLight;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using hfa.Brokers.Messages.Configuration;
+    using hfa.Notification.Brokers.Consumers;
+    using hfa.Notification.Brokers.Emailing;
+    using hfa.Synker.batch.Infrastructure;
+    using hfa.Synker.Service.Elastic;
+    using hfa.Synker.Service.Services.Elastic;
+    using hfa.Synker.Service.Services.Playlists;
+    using hfa.Synker.Service.Services.TvgMediaHandlers;
+    using hfa.Synker.Services.Dal;
+    using hfa.Synker.Services.Messages;
+    using Hfa.SyncLibrary.Infrastructure;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.DependencyInjection.Extensions;
+    using Microsoft.Extensions.Logging;
+    using hfa.Synker.Service.Services;
+
     public class Init
     {
         private const string DEV = "Development";
         internal static IConfiguration Configuration;
         internal static ServiceProvider ServiceProvider;
+        internal const string Enviroment = DEV;
 
         public static RazorLightEngine Engine { get; }
 
-        static bool IsDev(string env) => env.Equals(DEV);
+        public static bool IsDev(string env) => env.Equals(DEV);
 
         static Init()
         {
@@ -67,25 +72,36 @@ namespace Hfa.SyncLibrary
             //Config Logger
             var loggerFactory = new LoggerFactory().AddConsole();
             if (IsDev(environment))
+            {
                 loggerFactory.AddDebug();
+            }
             else
+            {
                 loggerFactory.AddFile(Configuration.GetSection("Logging"));
+            }
 
             //Register Services IOC
             ServiceProvider = new ServiceCollection()
                 .AddSingleton(loggerFactory)
                 .AddLogging()
                 .AddOptions()
-                .Configure<ApplicationConfigData>(Configuration)
+                .Replace(ServiceDescriptor.Singleton(typeof(ILogger<>), typeof(TimedLogger<>)))
+                .Configure<TvhOptions>(Configuration.GetSection(nameof(TvhOptions)))
+                .Configure<ApiOptions>(Configuration.GetSection(nameof(ApiOptions)))
                 .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                 .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
-                .AddSingleton<IMessageService>(s=> new MessageService(Configuration.GetValue<string>("ApiUrlMessage"), loggerFactory))
-                .AddSingleton<INotificationService, NotificationService>()
+                .AddSingleton<IMessageService>(s => new MessageService(Configuration.GetValue<string>($"{nameof(ApiOptions)}:Url"), loggerFactory))
                 .AddSingleton<IPlaylistService, PlaylistService>()
                 .AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                 .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
                 .AddDbContext<SynkerDbContext>(options => options.UseMySql(Configuration.GetConnectionString("PlDatabase")))
+                .Configure<MailOptions>(Configuration.GetSection(nameof(MailOptions)))
+                .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
+                .AddSingleton<IMessageQueueService, MessageQueueService>()
+                .AddSingleton<INotificationConsumer, NotificationConsumer>()
+                .AddSingleton<INotificationService, NotificationService>()
                 .BuildServiceProvider();
+         
         }
 
         internal static void Build()

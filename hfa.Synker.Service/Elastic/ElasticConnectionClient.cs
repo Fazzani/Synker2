@@ -3,7 +3,6 @@ using PlaylistBaseLibrary.Entities;
 using PlaylistManager.Entities;
 using System;
 using Microsoft.Extensions.Logging;
-using hfa.Synker.Services.Entities.Messages;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Services.Xmltv;
 using Microsoft.Extensions.Options;
@@ -29,7 +28,56 @@ namespace hfa.Synker.Service.Services.Elastic
         {
             _config = config.Value;
             _loggerFactory = loggerFactory;
+        }
 
+        private void Init()
+        {
+            //if (!Client.IndexExists(_config.DefaultIndex).Exists)
+            //    MappingPlaylistConfig();
+
+            //SitePack index
+            if (!Client.Value.IndexExists(_config.SitePackIndex).Exists)
+            {
+                MappingSitePackConfig(_config.SitePackIndex);
+            }
+
+            //Create sitepack_retreive_country
+            var pipeCountry = Client.Value.GetPipeline(r => r.Id(new Id(SITE_PACK_RETREIVE_COUNTRY_PIPELINE)));
+            if (pipeCountry.Pipelines == null || pipeCountry.Pipelines.Count == 0)
+            {
+                var respPipeSitePack = Client.Value.PutPipeline(new Id(SITE_PACK_RETREIVE_COUNTRY_PIPELINE), f => f
+                 .Description("Used for retreiving country from source field (xml path)")
+                 .Processors(p => p.Script(s => s.Inline("if(ctx.source != null) { ctx.country =  /\\//.split(ctx.source)[4]; } else { ctx.country = ''}"))));
+
+                _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(respPipeSitePack.DebugInformation);
+            }
+
+            var pipelineResponse = Client.Value.PutPipeline("default-pipeline", p => p
+                .Processors(pr => pr
+                    .Set<SitePackChannel>(t => t.Field(f => f.Country).Value("Default"))
+                )
+            );
+
+            //Create picons channel number pipeline
+            var pipeChannelNumber = Client.Value.GetPipeline(r => r.Id(new Id(PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE)));
+            if (pipeChannelNumber.Pipelines == null || pipeChannelNumber.Pipelines.Count == 0)
+            {
+                var respPipePicons = Client.Value.PutPipeline(new Id(PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE), f => f
+                 .Description("Used for retreiving channel number from picon name and add new field ch_number to store the value into")
+                 .Processors(p => p.Script(s => s.Inline("if(ctx.name != null) { Matcher m = /(?:[^\\+])(\\d{1,2})/.matcher(ctx.name); if(m!=null && m.find())  { ctx.ch_number = m.group(1); } }"))));
+
+                _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(respPipePicons.DebugInformation);
+            }
+
+            //Picon index
+            if (!Client.Value.IndexExists(_config.PiconIndex).Exists)
+                MappingPicons(_config.PiconIndex);
+
+            Client.Value.Map<tv>(x => x.Index("xmltv-*").AutoMap());
+        }
+
+        private void InitSettings()
+        {
             _settings = new ConnectionSettings(new Uri(_config.ElasticUrl));
             _settings
                 .BasicAuthentication(_config.ElasticUserName, _config.ElasticPassword)
@@ -51,49 +99,12 @@ namespace hfa.Synker.Service.Services.Elastic
                 .InferMappingFor<MediaRef>(m => m.IndexName(_config.MediaRefIndex).IdProperty(p => p.Id))
                 .InferMappingFor<Picon>(m => m.IndexName(_config.PiconIndex).IdProperty(p => p.Id))
                 .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).TypeName("doc").IdProperty(p => p.id).Rename(x => x.Update, "update_date"));
-
-            //if (!Client.IndexExists(_config.DefaultIndex).Exists)
-            //    MappingPlaylistConfig();
-
-            //SitePack index
-            if (!Client.IndexExists(_config.SitePackIndex).Exists)
-            {
-                MappingSitePackConfig(_config.SitePackIndex);
-            }
-
-            //Create sitepack_retreive_country
-            var pipeCountry = Client.GetPipeline(r => r.Id(new Id(SITE_PACK_RETREIVE_COUNTRY_PIPELINE)));
-            if (pipeCountry.Pipelines == null || pipeCountry.Pipelines.Count == 0)
-            {
-                var respPipeSitePack = Client.PutPipeline(new Id(SITE_PACK_RETREIVE_COUNTRY_PIPELINE), f => f
-                 .Description("Used for retreiving country from source field")
-                 .Processors(p => p.Script(s => s.Inline("if(ctx.source != null) { ctx.country =  /\\//.split(ctx.source)[4]; }"))));
-
-                _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(respPipeSitePack.DebugInformation);
-            }
-
-            //Create picons channel number pipeline
-            var pipeChannelNumber = Client.GetPipeline(r => r.Id(new Id(PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE)));
-            if (pipeChannelNumber.Pipelines == null || pipeChannelNumber.Pipelines.Count == 0)
-            {
-                var respPipePicons = Client.PutPipeline(new Id(PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE), f => f
-                 .Description("Used for retreiving channel number from picon name and add new field ch_number to store the value into")
-                 .Processors(p => p.Script(s => s.Inline("if(ctx.name != null) { Matcher m = /(?:[^\\+])(\\d{1,2})/.matcher(ctx.name); if(m!=null && m.find())  { ctx.ch_number = m.group(1); } }"))));
-
-                _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(respPipePicons.DebugInformation);
-            }
-
-            //Picon index
-            if (!Client.IndexExists(_config.PiconIndex).Exists)
-                MappingPicons(_config.PiconIndex);
-
-            Client.Map<tv>(x => x.Index("xmltv-*").AutoMap());
         }
 
         private void MappingSitePackConfig(string indexName)
         {
             var keywordProperty = new PropertyName("keyword");
-            var response = Client.CreateIndex(indexName, c => c
+            var response = Client.Value.CreateIndex(indexName, c => c
             .Settings(s => s
                      .Setting("max_result_window", 1_000_000)
                      .Analysis(a => a
@@ -114,7 +125,8 @@ namespace hfa.Synker.Service.Services.Elastic
                               .Keyword(t => t.Name(pt => pt.Source))
                               .Keyword(t => t.Name(pt => pt.Site_id))
                               .Keyword(t => t.Name(pt => pt.Xmltv_id))
-                              .Keyword(t => t.Name(pt => pt.Update))
+                              .Date(t => t.Name(pt => pt.Update))
+                              .Keyword(t => t.Name(pt => pt.Country))
                               .Text(t => t
                                 .Name(pt => pt.DisplayNames)
                                 .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
@@ -130,7 +142,7 @@ namespace hfa.Synker.Service.Services.Elastic
         public void MappingPicons(string indexName)
         {
             var keywordProperty = new PropertyName("keyword");
-            var response = Client.CreateIndex(indexName, c => c
+            var response = Client.Value.CreateIndex(indexName, c => c
             .Settings(s => s
                      .Setting("max_result_window", _config.MaxResultWindow)
                      .Analysis(a => a
@@ -178,7 +190,7 @@ namespace hfa.Synker.Service.Services.Elastic
         public void MappingPlaylistConfig()
         {
             var keywordProperty = new PropertyName("keyword");
-            var response = Client.CreateIndex(_config.DefaultIndex, c => c
+            var response = Client.Value.CreateIndex(_config.DefaultIndex, c => c
             .Settings(s => s
             .Setting("max_result_window", 1_000_000)
             .Setting("analysis.char_filter.drop_specChars.type", "pattern_replace")
@@ -245,12 +257,12 @@ namespace hfa.Synker.Service.Services.Elastic
 
         public void DeleteDefaultIndex()
         {
-            var indexExistsResponse = Client.IndexExists(_config.DefaultIndex);
+            var indexExistsResponse = Client.Value.IndexExists(_config.DefaultIndex);
             if (indexExistsResponse.Exists)
-                Client.DeleteIndex(_config.DefaultIndex, null);
+                Client.Value.DeleteIndex(_config.DefaultIndex, null);
         }
 
-        public ElasticClient Client
+        public Lazy<ElasticClient> Client
         {
             get
             {
@@ -259,10 +271,15 @@ namespace hfa.Synker.Service.Services.Elastic
                     lock (syncRoot)
                     {
                         if (_client == null)
+                        {
+                            InitSettings();
                             _client = new ElasticClient(_settings);
+                            Init();
+                        }
+
                     }
                 }
-                return _client;
+                return new Lazy<ElasticClient>(() => _client);
             }
         }
 

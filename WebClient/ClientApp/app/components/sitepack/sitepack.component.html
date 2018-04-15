@@ -1,4 +1,4 @@
-﻿<div class="site-container">
+﻿<div fxLayout="column" style="margin-top:56px">
     <mat-toolbar color="custom" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlexFill>
         <div style="display:flex; flex:1">
             <mat-form-field floatPlaceholder="never">
@@ -26,9 +26,12 @@
             <a mat-icon-button>
                 <mat-icon class="mat-24" aria-label="Synchronize picons global" matTooltip="Synchronize picons global (from github)" (click)="synkPiconsGlobal()">add_a_photo</mat-icon>
             </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Synchronize countries" matTooltip="Synchronize countries" (click)="synkCountries()">language</mat-icon>
+            </a>
         </div>
     </mat-toolbar>
-    <mat-table #table [dataSource]="dataSource" matSort class="noselect">
+    <mat-table #table [dataSource]="dataSource" matSort class="noselect grid-wide">
         <!-- logo -->
         <ng-container matColumnDef="logo">
             <mat-header-cell *matHeaderCellDef> Logo </mat-header-cell>

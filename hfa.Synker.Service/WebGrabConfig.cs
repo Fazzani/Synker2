@@ -29,6 +29,11 @@ namespace hfa.Synker.Service.Services.Xmltv
     [XmlRoot(ElementName = "channel")]
     public class SitePackChannel : IEqualityComparer<SitePackChannel>
     {
+        public SitePackChannel()
+        {
+            DisplayNames = new List<string>();
+        }
+
         [XmlIgnore]
         public string id { get; set; }
         DateTime _update;

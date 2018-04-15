@@ -30,24 +30,13 @@ dotnet_csproj:
   file_version: '{version}'
   informational_version: '{version}'
 build_script:
-  - cmd: dotnet publish -c Release ./WebApi/hfa.WebApi.csproj --verbosity m -o artifactsWebApi
+  - cmd: dotnet publish -c %CONFIGURATION% -r linux-x64 ./WebApi/hfa.WebApi.csproj --verbosity m -o artifactsWebApi
 artifacts:
  - path: .\WebApi\artifactsWebApi
    name: WebApi
    type: WebDeployPackage
-deploy:
-  - provider: Environment
-    name: Synker Api Prod
-    on:
-      branch: Develop
-  - provider: GitHub
-    release: synkerapi-v$(appveyor_build_version)
-    description: 'Synker Api'
-    auth_token:
-      secure: fxsWwiwYRs4GHT6/jIwcDWUnRXNkbo7njWqp/9mT+5x86SxWqvSgJhbYW0KmtHer
-    artifact: .\WebApi\artifactsWebApi
-    draft: false
-    prerelease: false
-    on:
-      branch: master        
-      appveyor_repo_tag: true
+#deploy:
+#  - provider: Environment
+#    name: Synker Api Prod
+#    on:
+#      branch: Develop

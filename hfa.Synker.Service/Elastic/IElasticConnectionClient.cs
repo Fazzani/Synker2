@@ -1,13 +1,15 @@
-﻿using hfa.Synker.Service.Elastic;
-using Nest;
-
-namespace hfa.Synker.Service.Services.Elastic
+﻿namespace hfa.Synker.Service.Services.Elastic
 {
+    using hfa.Synker.Service.Elastic;
+    using Nest;
+    using System;
+
     public interface IElasticConnectionClient
     {
-        ElasticClient Client { get; }
+        Lazy<ElasticClient> Client { get; }
 
         void DeleteDefaultIndex();
+
         void MappingPlaylistConfig();
 
         ElasticConfig ElasticConfig { get; }

@@ -1,16 +1,11 @@
-﻿using Hfa.SyncLibrary;
-using Microsoft.Extensions.Logging;
-using Nest;
-using PlaylistManager.Entities;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace hfa.SyncLibrary
+﻿namespace hfa.SyncLibrary
 {
+    using Hfa.SyncLibrary;
+    using Microsoft.Extensions.Logging;
+    using Nest;
+    using PlaylistManager.Entities;
+    using System;
+
     namespace Global
     {
 
@@ -23,6 +18,7 @@ namespace hfa.SyncLibrary
                     Common.Logger("Elastic").LogError(response.DebugInformation);
             }
         }
+        
         public class Common
         {
             public static ILogger Logger(string cat = "default") => _LoggerFactory.CreateLogger(cat);

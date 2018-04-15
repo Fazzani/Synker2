@@ -6,16 +6,21 @@
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
     <IsPackable>false</IsPackable>
-    <AssemblyName>WebClient</AssemblyName>
+    <AssemblyName>hfa.WebClient</AssemblyName>
     <RootNamespace>WebClient</RootNamespace>
     <UserSecretsId>f934f0be-ac10-4dd6-b82f-d7aecb08f04b</UserSecretsId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <LangVersion>latest</LangVersion>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="2.5.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
@@ -27,6 +32,12 @@
     <!-- Files not to publish (note that the 'dist' subfolders are re-added below) -->
     <Content Remove="ClientApp\**" />
   </ItemGroup>
+  <!--<ItemGroup>
+    <Compile Remove="node_modules\**" />
+    <Content Remove="node_modules\**" />
+    <EmbeddedResource Remove="node_modules\**" />
+    <None Remove="node_modules\**" /> 
+  </ItemGroup>-->
 
   <ItemGroup>
     <None Remove="ClientApp\app\app.module.routing.ts" />
@@ -53,6 +64,10 @@
     <None Remove="ClientApp\app\types\xmltv.type.ts" />
     <None Remove="ClientApp\app\types\xtream.type.ts" />
     <None Remove="ClientApp\app\variables.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include=".well-known\json.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -118,9 +133,14 @@
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-    <Exec Command="npm i npm@latest -g" />
-    <Exec Command="npm i webpack@latest -g" />
-    <Exec Command="npm i" />
+    <Exec Command="npm cache clean" />
+    <!--<Exec Command="rm -rf node_modules" />-->
+    <Exec Command="yarn global add node-gyp" />
+    <Exec Command="yarn install" />
+    <Exec Command="npm uninstall --save node-sass" />
+    <Exec Command="npm install --save node-sass" />
+    <!--<Exec Command="npm i rxjs" />
+    <Exec Command="npm cache clean" />-->
     <Exec Command="npm -v" />
     <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.vendor.js --env.prod" />
     <Exec Command="node node_modules/webpack/bin/webpack.js --env.prod" />

@@ -1,23 +1,12 @@
-﻿[![Build status](https://ci.appveyor.com/api/projects/status/9drbo0ty6whivq12?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2)
-
-**Travis ci**
-
-- Master [![](https://travis-ci.org/Fazzani/Synker2.svg?branch=master)](https://travis-ci.org/Fazzani/Synker2)
-- Develop [![](https://travis-ci.org/Fazzani/Synker2.svg?branch=Develop)](https://travis-ci.org/Fazzani/Synker2)
+﻿| | | |
+|-|-|-|
+| **Appveyor** | [![Build status](https://ci.appveyor.com/api/projects/status/hwigxlp50tlut2ws?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2-8v1uw) |[![Build history](https://buildstats.info/appveyor/chart/Fazzani/synker2-8v1uw)](https://ci.appveyor.com/project/dustinmoris/ci-buildstats/history)|
+| **Travis Master** | [![](https://travis-ci.org/Fazzani/Synker2.svg?branch=master)](https://travis-ci.org/Fazzani/Synker2) |
+| **Travis Develop** | [![](https://travis-ci.org/Fazzani/Synker2.svg?branch=Develop)](https://travis-ci.org/Fazzani/Synker2) |
+| **Release** | [![GitHub release](https://img.shields.io/github/release/Fazzani/Synker2.svg?style=for-the-badge)](https://github.com/Fazzani/Synker2/releases/latest) |
 
 [link SEO](https://github.com/angular/universal/tree/master/modules/aspnetcore-engine)
-### CI & DEPLOY Docker
 
-- Dockerize all applications
-  - [ ] WebClient
-  - [ ] WebApi
-  - [ ] Broker
-  - [ ] Batch
-  - [ ] ELK
-  - [ ] MariaDb
-  - [ ] RabbitMQ
-  - [ ] HAProxy
-  - [ ] Rancher
 ### linux env compatibility
 
 - [ ] [Sockets](http://www.c-sharpcorner.com/article/building-a-tcp-server-in-net-core-on-ubuntu/) linux endpoint
@@ -29,7 +18,7 @@
 - dotnet pack hfa.PlaylistBaseLibrary.csproj /p:PackageVersion=1.0.0-beta -c Release
 - dotnet nuget push "bin\Release\hfa.playlistbaselibrary.1.0.0-beta.nupkg" -k ux16b846ggi3wy8arhuyxaqx -s https://ci.appveyor.com/nuget/fazzani-22jw22ht3p0v/api/v2/package
 
-Objectifs
+Targets
 =========
 - [ ] PDB file test debug a dll
 - [ ] CodeDom

@@ -47,7 +47,7 @@ namespace hfa.Synker.Service.Services
                 req.Query &= new TermQuery { Field = "site", Value = site };
             }
 
-            var sitePacks = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(req, cancellationToken);
+            var sitePacks = await _elasticConnectionClient.Client.Value.SearchAsync<SitePackChannel>(req, cancellationToken);
 
             return sitePacks.Documents.FirstOrDefault();
         }
@@ -62,7 +62,7 @@ namespace hfa.Synker.Service.Services
                & new MatchQuery { Field = "displayNames", Query = mediaName, Fuzziness = Fuzziness.Auto }
             };
 
-            var sitePacks = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(req, cancellationToken);
+            var sitePacks = await _elasticConnectionClient.Client.Value.SearchAsync<SitePackChannel>(req, cancellationToken);
 
             return sitePacks.Documents.FirstOrDefault();
         }
@@ -87,7 +87,7 @@ namespace hfa.Synker.Service.Services
                 req.Query &= Query<SitePackChannel>.Terms(m => m.Field(new Field("site")).Terms(tvgSites).Boost(1.1));
             }
 
-            var allMediasRef = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(req, cancellationToken);
+            var allMediasRef = await _elasticConnectionClient.Client.Value.SearchAsync<SitePackChannel>(req, cancellationToken);
 
             return allMediasRef
                     .Documents
@@ -106,7 +106,7 @@ namespace hfa.Synker.Service.Services
                 MinScore = 0.5
             };
 
-            var allMediasRef = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(req, cancellationToken);
+            var allMediasRef = await _elasticConnectionClient.Client.Value.SearchAsync<SitePackChannel>(req, cancellationToken);
 
             return allMediasRef
                     .Documents
@@ -124,7 +124,7 @@ namespace hfa.Synker.Service.Services
         {
             _logger.LogInformation($"Lister les SitePackChannels");
 
-            var tvgSites = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(s => s
+            var tvgSites = await _elasticConnectionClient.Client.Value.SearchAsync<SitePackChannel>(s => s
                .Index(_elasticConnectionClient.ElasticConfig.SitePackIndex)
                .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
                .From(0)
@@ -134,17 +134,41 @@ namespace hfa.Synker.Service.Services
             return tvgSites.Documents.Distinct(new DistinctTvgSiteBySite()).Take(count).ToList();
         }
 
+        /// <summary>
+        /// Force update country field
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IBulkResponse> SyncCountrySitePackAsync(CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation($"Lister les SitePackChannels");
+
+            var tvgSites = await _elasticConnectionClient.Client.Value.SearchAsync<SitePackChannel>(s => s
+               .Index(_elasticConnectionClient.ElasticConfig.SitePackIndex)
+               .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
+               .From(0)
+               , cancellationToken);
+
+            var descriptor = new BulkDescriptor();
+            descriptor.Pipeline(ElasticConnectionClient.SITE_PACK_RETREIVE_COUNTRY_PIPELINE);
+            descriptor.IndexMany(tvgSites.Documents);
+            descriptor.Refresh(Elasticsearch.Net.Refresh.True);
+
+            return await _elasticConnectionClient.Client.Value.BulkAsync(descriptor, cancellationToken);
+        }
+
         public async Task<IBulkResponse> SaveAsync(List<SitePackChannel> sitepacks, CancellationToken cancellationToken)
         {
             var descriptor = new BulkDescriptor();
+            descriptor.Pipeline(ElasticConnectionClient.SITE_PACK_RETREIVE_COUNTRY_PIPELINE);
             descriptor.IndexMany(sitepacks);
             descriptor.Refresh(Elasticsearch.Net.Refresh.True);
-            return await _elasticConnectionClient.Client.BulkAsync(descriptor, cancellationToken);
+            return await _elasticConnectionClient.Client.Value.BulkAsync(descriptor, cancellationToken);
         }
 
         public async Task<long> DeleteManyAsync(string[] ids, CancellationToken cancellationToken)
         {
-            var response = await _elasticConnectionClient.Client.DeleteByQueryAsync<SitePackChannel>(x => x.Query(q => q.Ids(i => i.Values(ids))));
+            var response = await _elasticConnectionClient.Client.Value.DeleteByQueryAsync<SitePackChannel>(x => x.Query(q => q.Ids(i => i.Values(ids))));
             return response.Deleted;
         }
 
@@ -156,7 +180,7 @@ namespace hfa.Synker.Service.Services
         /// <returns></returns>
         public async Task<List<string>> ListCountriesAsync(string filter, CancellationToken cancellationToken)
         {
-            var response = await _elasticConnectionClient.Client.SearchAsync<SitePackChannel>(s => s
+            var response = await _elasticConnectionClient.Client.Value.SearchAsync<SitePackChannel>(s => s
               .Index(_elasticConnectionClient.ElasticConfig.SitePackIndex)
               .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
               .From(0)

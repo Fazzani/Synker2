@@ -60,7 +60,7 @@ namespace Hfa.WebApi.Controllers
         [Route("webgrab")]
         public async Task<IActionResult> Webgrab([FromBody]List<string> siteIds, CancellationToken cancellationToken)
         {
-            var response = await _elasticConnectionClient.Client.MultiGetAsync(x => x.GetMany<SitePackChannel>(siteIds), cancellationToken);
+            var response = await _elasticConnectionClient.Client.Value.MultiGetAsync(x => x.GetMany<SitePackChannel>(siteIds), cancellationToken);
 
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);
@@ -113,7 +113,7 @@ namespace Hfa.WebApi.Controllers
             {
                 string indexName = $"xmltv-{prog.Key}";
                 //Indexer les prog by day, chaque dans un index à part
-                var responseBulk = await _elasticConnectionClient.Client
+                var responseBulk = await _elasticConnectionClient.Client.Value
                     .BulkAsync(x => x.Index(indexName)
                         .CreateMany(prog.ToList(),
                         (bd, q) => bd.Index(indexName).Id(q.Id))
@@ -150,7 +150,7 @@ namespace Hfa.WebApi.Controllers
         [HttpGet("channels/{id}")]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
-            var response = await _elasticConnectionClient.Client.GetAsync(new DocumentPath<SitePackChannel>(id), null, cancellationToken);
+            var response = await _elasticConnectionClient.Client.Value.GetAsync(new DocumentPath<SitePackChannel>(id), null, cancellationToken);
 
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);
