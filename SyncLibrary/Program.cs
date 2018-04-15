@@ -15,7 +15,7 @@ namespace hfa.Synker.batch
 {
     public class Program
     {
-        private static string MailQueueName = Init.IsDev(Init.Enviroment) ? "synker.dev.mail.queue" : "synker.mail.queue";
+        private static string MailQueueName = Init.IsDev ? "synker.dev.mail.queue" : "synker.mail.queue";
         private static ILogger _logger;
         private static IOptions<RabbitMQConfiguration> _rabbitConfig;
         private static INotificationConsumer _notificationConsumer;

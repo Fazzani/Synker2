@@ -34,7 +34,7 @@ namespace Hfa.SyncLibrary
 
         public static RazorLightEngine Engine { get; }
 
-        public static bool IsDev(string env) => env.Equals(DEV);
+        public static bool IsDev => (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? DEV).Equals(DEV);
 
         static Init()
         {
@@ -54,7 +54,7 @@ namespace Hfa.SyncLibrary
                 .SetBasePath(Path.Combine(AppContext.BaseDirectory))
                 .AddJsonFile("appsettings.json", optional: true);
 
-            if (IsDev(environment))
+            if (IsDev)
             {
                 builder.AddUserSecrets<Init>()
                     .AddJsonFile(
@@ -71,7 +71,7 @@ namespace Hfa.SyncLibrary
 
             //Config Logger
             var loggerFactory = new LoggerFactory().AddConsole();
-            if (IsDev(environment))
+            if (IsDev)
             {
                 loggerFactory.AddDebug();
             }
@@ -90,13 +90,12 @@ namespace Hfa.SyncLibrary
                 .Configure<ApiOptions>(Configuration.GetSection(nameof(ApiOptions)))
                 .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                 .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
+                .Configure<MailOptions>(Configuration.GetSection(nameof(MailOptions)))
+                .AddDbContext<SynkerDbContext>(options => options.UseMySql(Configuration.GetConnectionString("PlDatabase")))
+                .AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                 .AddSingleton<IMessageService>(s => new MessageService(Configuration.GetValue<string>($"{nameof(ApiOptions)}:Url"), loggerFactory))
                 .AddSingleton<IPlaylistService, PlaylistService>()
-                .AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                 .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
-                .AddDbContext<SynkerDbContext>(options => options.UseMySql(Configuration.GetConnectionString("PlDatabase")))
-                .Configure<MailOptions>(Configuration.GetSection(nameof(MailOptions)))
-                .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
                 .AddSingleton<IMessageQueueService, MessageQueueService>()
                 .AddSingleton<INotificationConsumer, NotificationConsumer>()
                 .AddSingleton<INotificationService, NotificationService>()
