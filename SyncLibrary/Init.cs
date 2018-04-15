@@ -67,9 +67,13 @@ namespace Hfa.SyncLibrary
             //Config Logger
             var loggerFactory = new LoggerFactory().AddConsole();
             if (IsDev(environment))
+            {
                 loggerFactory.AddDebug();
+            }
             else
+            {
                 loggerFactory.AddFile(Configuration.GetSection("Logging"));
+            }
 
             //Register Services IOC
             ServiceProvider = new ServiceCollection()
@@ -80,7 +84,7 @@ namespace Hfa.SyncLibrary
                 .Configure<ApiOptions>(Configuration.GetSection(nameof(ApiOptions)))
                 .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                 .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
-                .AddSingleton<IMessageService>(s=> new MessageService(Configuration.GetValue<string>($"{nameof(ApiOptions)}:Url"), loggerFactory))
+                .AddSingleton<IMessageService>(s => new MessageService(Configuration.GetValue<string>($"{nameof(ApiOptions)}:Url"), loggerFactory))
                 .AddSingleton<INotificationService, NotificationService>()
                 .AddSingleton<IPlaylistService, PlaylistService>()
                 .AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()

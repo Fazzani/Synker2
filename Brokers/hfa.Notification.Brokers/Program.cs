@@ -12,6 +12,8 @@ using hfa.Notification.Brokers.Emailing;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using System.Runtime.Loader;
+using hfa.Notification.Brokers.Consumers;
+using System.Threading.Tasks;
 
 namespace hfa.Notification.Brokers
 {
@@ -20,8 +22,7 @@ namespace hfa.Notification.Brokers
         private static string MailQueueName = Init.IsDev(Init.Enviroment) ? "synker.dev.mail.queue" : "synker.mail.queue";
         private static ILogger _logger;
         private static IOptions<RabbitMQConfiguration> _rabbitConfig;
-        private static INotificationService _notifService;
-
+        private static INotificationConsumer _notificationConsumer;
         public static ManualResetEvent _Shutdown = new ManualResetEvent(false);
         public static ManualResetEventSlim _Complete = new ManualResetEventSlim();
 
@@ -37,7 +38,7 @@ namespace hfa.Notification.Brokers
 
             _logger = Common.Logger(nameof(Program));
             _rabbitConfig = Init.ServiceProvider.GetService<IOptions<RabbitMQConfiguration>>();
-            _notifService = Init.ServiceProvider.GetService<INotificationService>();
+            _notificationConsumer = Init.ServiceProvider.GetService<INotificationConsumer>();
 
             _logger.LogInformation("starting consumption");
 
@@ -53,48 +54,7 @@ namespace hfa.Notification.Brokers
             {
                 using (var connection = factory.CreateConnection())
                 {
-                    using (var mailChannel = connection.CreateModel())
-                    {
-                        mailChannel.QueueDeclare(queue: MailQueueName,
-                                                durable: false,
-                                                exclusive: false,
-                                                autoDelete: false,
-                                                arguments: null);
-
-                        mailChannel.CallbackException += Channel_CallbackException;
-                        var mailConsumer = new EventingBasicConsumer(mailChannel);
-
-                        mailConsumer.Received += (model, ea) =>
-                        {
-                            try
-                            {
-                                _logger.LogInformation($"New Mail poped from the queue {MailQueueName}");
-                                var body = ea.Body;
-                                var message = Encoding.UTF8.GetString(body);
-                                var mail = JsonConvert.DeserializeObject<EmailNotification>(message);
-                                _notifService.SendMailAsync(mail, CancellationToken.None).GetAwaiter().GetResult();
-                                //ack message
-                                mailChannel.BasicAck(ea.DeliveryTag, true);
-
-                                _logger.LogInformation($"Mail from {mail.From} to {mail.To}");
-                            }
-                            catch (Exception e)
-                            {
-                                _logger.LogError(e, e.Message);
-                                mailChannel.BasicReject(ea.DeliveryTag, true);
-                            }
-                        };
-
-                        mailChannel.BasicConsume(queue: MailQueueName,
-                                                autoAck: false,
-                                                consumer: mailConsumer);
-
-                        while (!_Shutdown.WaitOne())
-                        {
-                            Thread.Sleep(1000);
-                        }
-
-                    }
+                    Task.Factory.StartNew(() => _notificationConsumer.Start(connection, _Shutdown)).ConfigureAwait(false).GetAwaiter().GetResult();
                 }
             }
             catch (Exception e)
@@ -104,13 +64,8 @@ namespace hfa.Notification.Brokers
 
             Console.Write("Exiting...");
             _Complete.Set();
-
+            
             return 0;
-        }
-
-        private static void Channel_CallbackException(object sender, CallbackExceptionEventArgs e)
-        {
-            _logger.LogError(e.Exception, e.Exception.Message);
         }
 
         private static void Default_Unloading(AssemblyLoadContext obj)

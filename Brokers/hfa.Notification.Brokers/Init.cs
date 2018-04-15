@@ -1,6 +1,7 @@
 ﻿using hfa.Brokers.Messages;
 using hfa.Brokers.Messages.Configuration;
 using hfa.Notification.Brokers;
+using hfa.Notification.Brokers.Consumers;
 using hfa.Notification.Brokers.Emailing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -66,6 +67,7 @@ namespace Hfa.SyncLibrary
                 .Configure<MailOptions>(Configuration.GetSection(nameof(MailOptions)))
                 .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
                 .AddSingleton<INotificationService, NotificationService>()
+                .AddSingleton<INotificationConsumer, NotificationConsumer>()
                 .BuildServiceProvider();
         }
 
