@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hfa.PlaylistBaseLibrary", "PlaylistBaseLibrary\hfa.PlaylistBaseLibrary.csproj", "{9CBAF850-159C-4861-9E3D-64F6C8668820}"
 EndProject
@@ -47,6 +47,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hfa.Brokers.Messages", "hfa.Notification.DTo\hfa.Brokers.Messages.csproj", "{596679D9-F0DA-45CB-BFAE-F85B4D092216}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebgrabDocker", "WebgrabDocker", "{B11D53AC-103B-4D59-969A-5E886EA764AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -108,6 +110,7 @@ Global
 		{CFC79F77-DC24-4525-89CA-F20E0B7D7299} = {78EF6AEE-E1A5-4928-87A8-2E5A3BCAC604}
 		{ECB3EA08-11A5-42BE-A45E-03C60D055F7B} = {7E298705-9F1B-429B-865B-F63F679C6501}
 		{596679D9-F0DA-45CB-BFAE-F85B4D092216} = {7E298705-9F1B-429B-865B-F63F679C6501}
+		{B11D53AC-103B-4D59-969A-5E886EA764AF} = {33E18C12-C454-4243-8E2D-2753AEFDCD41}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {731E8F56-7BA7-4652-A0AE-758D20E2DE9F}

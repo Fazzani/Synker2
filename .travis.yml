@@ -15,9 +15,9 @@ os:
 branches:
   only:
     - /^\d+\.\d+\.\d+$/
+    - master
 services:
   - docker
-  - master
 before_install:
   - chmod +x travis-build.sh
 script:
