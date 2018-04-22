@@ -32,7 +32,7 @@ using hfa.Synker.Services.Dal;
 using hfa.PlaylistBaseLibrary.Providers;
 using hfa.Synker.Service.Services;
 using Microsoft.EntityFrameworkCore;
-using hfa.Brokers.Messages.Emailing;
+using hfa.Brokers.Messages.Models;
 using hfa.Synker.batch.EmailModels;
 using Newtonsoft.Json;
 using System.Text;

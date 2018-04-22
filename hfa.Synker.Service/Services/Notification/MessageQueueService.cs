@@ -1,5 +1,5 @@
 ﻿using hfa.Brokers.Messages.Configuration;
-using hfa.Brokers.Messages.Emailing;
+using hfa.Brokers.Messages.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;

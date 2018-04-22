@@ -4,7 +4,7 @@
     using RabbitMQ.Client;
     using System.Threading;
 
-    public interface INotificationConsumer : IConsumer
+    public interface IWebGrabDockerConsumer : IConsumer
     {
     }
 }

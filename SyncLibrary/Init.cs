@@ -24,6 +24,7 @@ namespace Hfa.SyncLibrary
     using Microsoft.Extensions.DependencyInjection.Extensions;
     using Microsoft.Extensions.Logging;
     using hfa.Synker.Service.Services;
+    using hfa.Synker.batch.Consumers;
 
     public class Init
     {
@@ -88,6 +89,7 @@ namespace Hfa.SyncLibrary
                 .Replace(ServiceDescriptor.Singleton(typeof(ILogger<>), typeof(TimedLogger<>)))
                 .Configure<TvhOptions>(Configuration.GetSection(nameof(TvhOptions)))
                 .Configure<ApiOptions>(Configuration.GetSection(nameof(ApiOptions)))
+                .Configure<DockerOptions>(Configuration.GetSection(nameof(DockerOptions)))
                 .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                 .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
                 .Configure<MailOptions>(Configuration.GetSection(nameof(MailOptions)))
@@ -98,6 +100,7 @@ namespace Hfa.SyncLibrary
                 .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
                 .AddSingleton<IMessageQueueService, MessageQueueService>()
                 .AddSingleton<INotificationConsumer, NotificationConsumer>()
+                .AddSingleton<IWebGrabDockerConsumer, WebGrabDockerConsumer>()
                 .AddSingleton<INotificationService, NotificationService>()
                 .BuildServiceProvider();
          

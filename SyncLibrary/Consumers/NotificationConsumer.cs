@@ -1,4 +1,4 @@
-﻿using hfa.Brokers.Messages.Emailing;
+﻿using hfa.Brokers.Messages.Models;
 using hfa.Notification.Brokers.Emailing;
 using Hfa.SyncLibrary;
 using Microsoft.Extensions.Logging;

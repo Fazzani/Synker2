@@ -1,4 +1,4 @@
-﻿using hfa.Brokers.Messages.Emailing;
+﻿using hfa.Brokers.Messages.Models;
 using System.Threading;
 using System.Threading.Tasks;
 

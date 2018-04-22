@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using System.Runtime.Loader;
 using hfa.Notification.Brokers.Consumers;
 using System.Threading.Tasks;
+using Hfa.SyncLibrary.Infrastructure;
 
 namespace hfa.Synker.batch
 {
@@ -19,6 +20,7 @@ namespace hfa.Synker.batch
         private static ILogger _logger;
         private static IOptions<RabbitMQConfiguration> _rabbitConfig;
         private static INotificationConsumer _notificationConsumer;
+        private static IWebGrabDockerConsumer _webGrabDockerConsumer;
         public static ManualResetEvent _Shutdown = new ManualResetEvent(false);
         public static ManualResetEventSlim _Complete = new ManualResetEventSlim();
 
@@ -35,6 +37,7 @@ namespace hfa.Synker.batch
             _logger = SyncLibrary.Global.Common.Logger(nameof(Program));
             _rabbitConfig = Init.ServiceProvider.GetService<IOptions<RabbitMQConfiguration>>();
             _notificationConsumer = Init.ServiceProvider.GetService<INotificationConsumer>();
+            _webGrabDockerConsumer = Init.ServiceProvider.GetService<IWebGrabDockerConsumer>();
 
             _logger.LogInformation("starting consumption");
 
@@ -50,7 +53,8 @@ namespace hfa.Synker.batch
             {
                 using (var connection = factory.CreateConnection())
                 {
-                    Task.Factory.StartNew(() => _notificationConsumer.Start(connection, _Shutdown)).ConfigureAwait(false).GetAwaiter().GetResult();
+                    Task.WaitAll(Task.Run(()=> _notificationConsumer.Start(connection, _Shutdown)), 
+                        Task.Run(() => _webGrabDockerConsumer.Start(connection, _Shutdown)));
                 }
             }
             catch (Exception e)

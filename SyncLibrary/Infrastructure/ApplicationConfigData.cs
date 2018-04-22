@@ -1,4 +1,6 @@
-﻿namespace Hfa.SyncLibrary.Infrastructure
+﻿using System;
+
+namespace Hfa.SyncLibrary.Infrastructure
 {
 
     public class ConnectionStrings
@@ -19,4 +21,18 @@
         public string TvhUserName { get; set; }
         public string TvhPassword { get; set; }
     }
+
+    public class DockerOptions
+    {
+        public string CertPassword { get; set; }
+        public string CertFilePath { get; set; }
+
+        /// <summary>
+        /// Docker daemon url
+        /// </summary>
+        public string Url { get; set; }
+
+        public Uri Uri => new Uri(Url);
+    }
+
 }

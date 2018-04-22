@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using hfa.Brokers.Messages.Emailing;
+using hfa.Brokers.Messages.Models;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Elastic;

@@ -29,6 +29,24 @@ un fichier ou une url. le providers doivent être injectés par DLL, pour que ce
 - [x] Put all Logs to elastic logstash
 - [x] Put EPG referentiel to Elastic
 - [x] Mapping TvgMedia to Elastic
+      
+## Docker daemon api
+
+* [Docker Api Reference][docker_api_ref]
+* Display Docker config view
+
+```sh
+env | grep DOCKER
+```
+
+* Generating cert key.pfx for certification connection type:
+
+```sh
+# Display docker certif path
+echo $DOCKER_CERT_PATH
+# Generate cert pfx
+openssl pkcs12 -export -inkey key.pem -in cert.pem -out key.pfx -certfile ca.pem
+```
 
 #### BUGS
 
@@ -99,3 +117,5 @@ GET filebeat*/_search
   }
 }
 </code></pre>
+
+[docker_api_ref]:https://docs.docker.com/engine/api/v1.28

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace hfa.Brokers.Messages.Emailing
+namespace hfa.Brokers.Messages.Models
 {
     public class EmailNotification : NotificationContext
     {
