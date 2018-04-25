@@ -201,17 +201,26 @@ namespace hfa.Synker.Service.Services
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<SitePackChannel>> GetAllFromPlaylists(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<string>> GetAllFromPlaylists(CancellationToken cancellationToken = default)
         {
-            var siteIds = await _dbcontext.Playlist.SelectMany(x => x.TvgSites).ToListAsync();
-            var response = await _elasticConnectionClient.Client.Value.MultiGetAsync(x => x.GetMany<SitePackChannel>(siteIds), cancellationToken);
+            var siteIds = await _dbcontext.Playlist.SelectMany(x => x.TvgSites).Where(x => !string.IsNullOrEmpty(x)).ToListAsync();
+
+            var response = await _elasticConnectionClient.Client.Value.SearchAsync<SitePackChannel>(x => x
+            .Query(q => q
+                .Terms(t => t
+                    .Field(f => f.Site)
+                    .Terms(siteIds)))
+            .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
+            .From(0)
+            .Aggregations(a => a.Terms("unique", f => f.Field(fi => fi.Site.Suffix("keyword")))));
 
             if (!response.IsValid)
             {
                 throw new ApplicationException($"Elasticsearch error {response.ServerError}");
             }
-            
-            return response.Documents.Select(x => x.Source).Cast<SitePackChannel>();
+
+            //TODO: Get only last 2 fragments tvg file path (split by '/')
+            return response.Documents.Select(x => x.Source).Distinct();
         }
     }
 }

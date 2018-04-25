@@ -177,5 +177,13 @@ namespace Hfa.WebApi.Controllers
             var response = await _sitePackService.SyncCountrySitePackAsync(cancellationToken);
             return Ok(response);
         }
+
+        [HttpGet]
+        [Route("sitepacks/used")]
+        public async Task<IActionResult> GetAllFromPlaylists(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var sitePack = await _sitePackService.GetAllFromPlaylists(cancellationToken);
+            return Ok(sitePack);
+        }
     }
 }

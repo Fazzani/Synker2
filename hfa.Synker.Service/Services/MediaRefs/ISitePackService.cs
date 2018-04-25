@@ -72,6 +72,6 @@ namespace hfa.Synker.Service.Services
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<IEnumerable<SitePackChannel>> GetAllFromPlaylists(CancellationToken cancellationToken = default);
+        Task<IEnumerable<string>> GetAllFromPlaylists(CancellationToken cancellationToken = default);
     }
 }
