@@ -51,7 +51,7 @@ namespace Hfa.WebApi.Controllers
 
         /// <summary>
         /// WebGrab a list of channels
-        /// Genetate a xml file config
+        /// Generate a xml file config
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>

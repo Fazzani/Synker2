@@ -66,5 +66,12 @@ namespace hfa.Synker.Service.Services
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<IBulkResponse> SyncCountrySitePackAsync(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Get all used Sitepack channels by playlists
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<IEnumerable<SitePackChannel>> GetAllFromPlaylists(CancellationToken cancellationToken = default);
     }
 }

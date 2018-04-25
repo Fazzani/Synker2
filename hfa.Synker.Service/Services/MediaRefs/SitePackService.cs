@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace hfa.Synker.Service.Services
 {
@@ -195,5 +196,22 @@ namespace hfa.Synker.Service.Services
             return response.Documents.Select(x => x.Country).Distinct().ToList();
         }
 
+        /// <summary>
+        /// Get all used Sitepack channels by playlists
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<SitePackChannel>> GetAllFromPlaylists(CancellationToken cancellationToken = default)
+        {
+            var siteIds = await _dbcontext.Playlist.SelectMany(x => x.TvgSites).ToListAsync();
+            var response = await _elasticConnectionClient.Client.Value.MultiGetAsync(x => x.GetMany<SitePackChannel>(siteIds), cancellationToken);
+
+            if (!response.IsValid)
+            {
+                throw new ApplicationException($"Elasticsearch error {response.ServerError}");
+            }
+            
+            return response.Documents.Select(x => x.Source).Cast<SitePackChannel>();
+        }
     }
 }

@@ -118,7 +118,6 @@ namespace hfa.Synker.Service.Services.Playlists
             return newMedias.ToList();
         }
 
-
         /// <summary>
         /// Genére un rapport avec les new medias et 
         /// les médias qui n'existes plus
