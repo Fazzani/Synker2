@@ -62,6 +62,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\hfa.synker.entities\hfa.synker.entities.csproj" />
     <ProjectReference Include="..\hfa.Synker.Service\hfa.Synker.Service.csproj" />
     <ProjectReference Include="..\hfa.TvhLibrary\hfa.TvhLibrary.csproj" />
   </ItemGroup>

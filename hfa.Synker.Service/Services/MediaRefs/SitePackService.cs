@@ -10,6 +10,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Xml.Serialization;
+using System.Xml;
+using System.IO;
 
 namespace hfa.Synker.Service.Services
 {
@@ -201,7 +204,7 @@ namespace hfa.Synker.Service.Services
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<string>> GetAllFromPlaylists(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<string>> GetAllFromPlaylistsAsync(CancellationToken cancellationToken = default)
         {
             var siteIds = await _dbcontext.Playlist.SelectMany(x => x.TvgSites).Where(x => !string.IsNullOrEmpty(x)).ToListAsync();
 
@@ -221,6 +224,37 @@ namespace hfa.Synker.Service.Services
 
             //TODO: Get only last 2 fragments tvg file path (split by '/')
             return response.Documents.Select(x => x.Source).Distinct();
+        }
+
+        /// <summary>
+        /// Generate WebGrab++.config.xml from channels sitepack file
+        /// </summary>
+        /// <param name="sitePackUrl"></param>
+        /// <param name="sitePackUrl">Output filename</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<string> WebgrabConfigBySitePackAsync(string sitePackUrl, string filename, CancellationToken cancellationToken = default)
+        {
+            using (var reader = XmlReader.Create(sitePackUrl))
+            {
+                var webGragModel = Settings.New;
+                webGragModel.Filename = $"/data/{filename}";
+                var ser = new XmlSerializer(typeof(site));
+                var site = (site)ser.Deserialize(reader);
+
+                webGragModel.Channel = site.channels.Distinct(new SitePackChannel()).ToList();
+                var xmlSerializer = new XmlSerializer(typeof(Settings));
+
+                using (var ms = new MemoryStream())
+                {
+                    xmlSerializer.Serialize(ms, webGragModel);
+                    ms.Position = 0;
+                    using (var sr = new StreamReader(ms))
+                    {
+                        return await sr.ReadToEndAsync();
+                    }
+                }
+            }
         }
     }
 }

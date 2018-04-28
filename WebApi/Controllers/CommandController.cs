@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Hfa.WebApi.Controllers;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
-using hfa.WebApi.Common;
 using Microsoft.AspNetCore.Authorization;
 using hfa.WebApi.Common.Filters;
 using hfa.WebApi.Models.Xmltv;
@@ -24,7 +23,9 @@ namespace hfa.WebApi.Controllers
     [Authorize]
     public class CommandController : BaseController
     {
-        public CommandController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
+        public CommandController(IOptions<ElasticConfig> config, 
+            ILoggerFactory loggerFactory, 
+            IElasticConnectionClient elasticConnectionClient,
             SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
@@ -40,17 +41,19 @@ namespace hfa.WebApi.Controllers
         public async Task<IActionResult> GetCommand([FromQuery] bool? all)
         {
             if (all.HasValue && all.Value)
+            {
                 return new OkObjectResult((await _dbContext.Command
                     .OrderByDescending(x => x.Id)
                     .ToListAsync())
-                    .Select(x => x.CommandText));
+                  .Select(x => x.CommandText));
+            }
 
             return new OkObjectResult((await _dbContext
                     .Command
                     .Where(x => x.UserId == UserId && x.TreatedDate == null)
                     .OrderByDescending(x => x.Id)
                     .ToListAsync())
-                    .Select(x => x.CommandText));
+                  .Select(x => x.CommandText));
         }
 
         [HttpGet("users/{userId}")]
@@ -58,22 +61,25 @@ namespace hfa.WebApi.Controllers
         {
             if (await _dbContext.Users.FindAsync(userId) == null)
             {
-                return BadRequest("User not exist");
+                return BadRequest("User doesn't exist");
             }
 
             if (all.HasValue)
+            {
                 return new OkObjectResult((await _dbContext
                     .Command
                     .OrderBy(x => x.Id)
                     .Where(x => x.UserId == userId)
-                    .ToListAsync()).Select(CommandModel.ToModel));
+                    .ToListAsync())
+                  .Select(CommandModel.ToModel));
+            }
 
             return new OkObjectResult((await _dbContext
                 .Command
                 .OrderBy(x => x.Id)
                 .Where(x => x.UserId == userId && x.Status == CommandStatusEnum.None)
                 .ToListAsync())
-                .Select(CommandModel.ToModel));
+              .Select(CommandModel.ToModel));
         }
 
         [HttpGet("{id}")]
@@ -160,9 +166,7 @@ namespace hfa.WebApi.Controllers
             return Ok(command);
         }
 
-        private bool CommandExists(int id)
-        {
-            return _dbContext.Command.Any(e => e.Id == id);
-        }
+        private bool CommandExists(int id) => 
+            _dbContext.Command.Any(e => e.Id == id);
     }
 }

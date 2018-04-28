@@ -86,7 +86,7 @@ namespace hfa.Synker.Service.Services.Xmltv
                 return false;
             }
 
-            return x.GetHashCode() == y.GetHashCode();
+            return x.Xmltv_id == y.Xmltv_id;
         }
 
         public int GetHashCode(SitePackChannel obj)
@@ -95,7 +95,7 @@ namespace hfa.Synker.Service.Services.Xmltv
             {
                 return 0;
             }
-            return obj.id.GetHashCode();
+            return obj.Xmltv_id.GetHashCode();
         }
 
         public override string ToString() => $"{MediaType}:{Channel_name} {id} {Country}";

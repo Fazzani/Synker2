@@ -46,14 +46,19 @@ namespace hfa.Synker.batch
                 HostName = _rabbitConfig.Value.Hostname,
                 Port = _rabbitConfig.Value.Port,
                 UserName = _rabbitConfig.Value.Username,
-                Password = _rabbitConfig.Value.Password
+                Password = _rabbitConfig.Value.Password,
+                //ContinuationTimeout = new TimeSpan(0, 0, 60),
+                RequestedConnectionTimeout = 90_000,
+                VirtualHost = Init.IsDev ? "/dev" : "/"
             };
 
             try
             {
                 using (var connection = factory.CreateConnection())
                 {
-                    Task.WaitAll(Task.Run(()=> _notificationConsumer.Start(connection, _Shutdown)), 
+                    _logger.LogDebug($"Connected to rabbit host : {factory.HostName}{factory.VirtualHost}");
+                    Task.WaitAll(
+                        Task.Run(() => _notificationConsumer.Start(connection, _Shutdown)),
                         Task.Run(() => _webGrabDockerConsumer.Start(connection, _Shutdown)));
                 }
             }
@@ -62,9 +67,9 @@ namespace hfa.Synker.batch
                 _logger.LogError(e, e.Message);
             }
 
-            Console.Write("Exiting...");
+            _logger.LogDebug("Exiting...");
             _Complete.Set();
-            
+
             return 0;
         }
 

@@ -22,17 +22,14 @@
 
     public class WebGrabDockerConsumer : IWebGrabDockerConsumer, IDisposable
     {
-        private const string WEBGRAB_IMAGE = "synker/webgraboneshoturl";
         ILogger _logger;
-        private DockerOptions _dockerOptions;
         private IModel _webgrabChannel;
-        private string WebGrabQueueName = Init.IsDev ? "synker.dev.webgrab.queue" : "synker.webgrab.queue";
+        private string WebGrabQueueName = "synker.webgrab.queue";
         private EventHandler<CallbackExceptionEventArgs> eventChannel_CallbackException;
 
-        public WebGrabDockerConsumer(ILogger<NotificationConsumer> logger, IOptions<DockerOptions> dockerOptions)
+        public WebGrabDockerConsumer(ILogger<NotificationConsumer> logger)
         {
             _logger = logger;
-            _dockerOptions = dockerOptions.Value;
             eventChannel_CallbackException = new EventHandler<CallbackExceptionEventArgs>(Channel_CallbackException);
         }
 
@@ -48,14 +45,12 @@
                 _logger.LogInformation($"New WebGrab config poped from the queue {WebGrabQueueName}");
 
                 var body = ea.Body;
-                var message = Encoding.UTF8.GetString(body);
-                var mail = JsonConvert.DeserializeObject<WebGrabNotification>(message);
+                var messageString = Encoding.UTF8.GetString(body);
+                var webGrabNotificationMessage = JsonConvert.DeserializeObject<WebGrabNotification>(messageString);
 
-                var credentials = new CertificateCredentials(new X509Certificate2(_dockerOptions.CertFilePath, _dockerOptions.CertPassword));
-                credentials.ServerCertificateValidationCallback += (o, c, ch, er) => true;
                 var cancellationToken = new CancellationTokenSource();
 
-                CreateContainerAsync(credentials, ea, cancellationToken.Token).GetAwaiter().GetResult();
+                CreateContainerAsync(ea, webGrabNotificationMessage, cancellationToken.Token).GetAwaiter().GetResult();
             }
             catch (Exception e)
             {
@@ -65,26 +60,38 @@
         }
 
         /// <summary>
-        /// 
+        /// Run docker container    
         /// </summary>
         /// <param name="credentials"></param>
         /// <param name="ea"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        private async Task CreateContainerAsync(CertificateCredentials credentials, BasicDeliverEventArgs ea, CancellationToken cancellationToken)
+        private async Task CreateContainerAsync(BasicDeliverEventArgs ea, WebGrabNotification webGrabNotificationMessage, CancellationToken cancellationToken)
         {
-            using (var dockerClient = new DockerClientConfiguration(_dockerOptions.Uri, credentials).CreateClient())
+            CertificateCredentials credentials = null;
+            if (webGrabNotificationMessage.RunnableHost.Authentication != null
+                && !string.IsNullOrEmpty(webGrabNotificationMessage.RunnableHost.Authentication.CertPath))
+            {
+                credentials = new CertificateCredentials(new X509Certificate2(webGrabNotificationMessage.RunnableHost.Authentication.CertPath, webGrabNotificationMessage.RunnableHost.Authentication.Password));
+                credentials.ServerCertificateValidationCallback += (o, c, ch, er) => true;
+            }
+
+            using (var dockerClient = new DockerClientConfiguration(webGrabNotificationMessage.RunnableHost.AdressUri, credentials).CreateClient())
             {
                 IList<ContainerListResponse> containers = await dockerClient.Containers.ListContainersAsync(new ContainersListParameters()
                 {
                     All = true
                 }, cancellationToken);
 
-                var images = await dockerClient.Images.ListImagesAsync(new ImagesListParameters { MatchName = WEBGRAB_IMAGE });
+                var images = await dockerClient.Images.ListImagesAsync(new ImagesListParameters { MatchName = webGrabNotificationMessage.DockerImage });
                 if (images.Count == 0)
                 {
                     // No image found. Pulling latest ..
-                    await dockerClient.Images.CreateImageAsync(new ImagesCreateParameters { FromImage = WEBGRAB_IMAGE, Tag = "latest" }, null, IgnoreProgress.Forever);
+                    await dockerClient.Images.CreateImageAsync(new ImagesCreateParameters
+                    {
+                        FromImage = webGrabNotificationMessage.DockerImage,
+                        Tag = "latest"
+                    }, null, IgnoreProgress.Forever);
                 }
 
                 /*
@@ -101,15 +108,15 @@
                  */
                 var createdContainer = await dockerClient.Containers.CreateContainerAsync(new CreateContainerParameters
                 {
-                    Image = WEBGRAB_IMAGE,
-                    Env = new List<string> { "WEBGRAB_CONFIG_URL=https://raw.githubusercontent.com/Fazzani/xmltv/master/WebGrab%2B%2B.config.xml" },
+                    Image = webGrabNotificationMessage.DockerImage,
+                    Env = new List<string> { $"WEBGRAB_CONFIG_URL={webGrabNotificationMessage.WebgrabConfigUrl}", "DEBUG=1" },
                     HostConfig = new HostConfig
                     {
-                        AutoRemove = true,
+                        AutoRemove = !Init.IsDev,
                         Mounts = new List<Mount>
                         {
                             new Mount{
-                            Source = "/c/Users/Heni/Source/Repos/WebGrabDocker/WebGrabFromUrl/tmp",
+                            Source = webGrabNotificationMessage.MountSourcePath,
                             Target = "/data",
                             ReadOnly = false,
                             Type = "bind"
@@ -137,7 +144,8 @@
                                         durable: false,
                                         exclusive: false,
                                         autoDelete: false,
-                                        arguments: null);
+                                        arguments: null
+                                        );
 
             _webgrabChannel.CallbackException += eventChannel_CallbackException;
             var mailConsumer = new EventingBasicConsumer(_webgrabChannel);

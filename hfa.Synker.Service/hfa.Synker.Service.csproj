@@ -24,7 +24,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.1" />
     <PackageReference Include="RabbitMQ.Client" Version="5.0.1" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
     <PackageReference Include="TMDbLib" Version="1.2.0-alpha" />
   </ItemGroup>
 
@@ -38,6 +38,7 @@
     </AssemblyAttribute>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\hfa.synker.entities\hfa.synker.entities.csproj" />
     <ProjectReference Include="..\hfa.Notification.DTo\hfa.Brokers.Messages.csproj" />
     <ProjectReference Include="..\PlaylistBaseLibrary\hfa.PlaylistBaseLibrary.csproj" />
   </ItemGroup>

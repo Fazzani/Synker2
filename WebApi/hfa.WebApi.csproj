@@ -30,14 +30,14 @@
     <!--<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="2.0.0" />-->
     <PackageReference Include="NEST" Version="5.6.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="Pastebin.API.CSharp" Version="1.0.7" />
+    <PackageReference Include="Pastebin.API.CSharp" Version="1.0.12" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="2.6.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.0.0" />
     <PackageReference Include="SSH.NET" Version="2016.1.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="2.3.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="2.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.0" />
     <PackageReference Include="ZNetCS.AspNetCore.Authentication.Basic" Version="3.0.0" />
   </ItemGroup>
@@ -48,6 +48,7 @@
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\hfa.synker.entities\hfa.synker.entities.csproj" />
     <ProjectReference Include="..\hfa.Synker.Service\hfa.Synker.Service.csproj" />
     <ProjectReference Include="..\PlaylistBaseLibrary\hfa.PlaylistBaseLibrary.csproj" />
     <ProjectReference Include="..\SyncLibrary\hfa.Synker.batch.csproj" />

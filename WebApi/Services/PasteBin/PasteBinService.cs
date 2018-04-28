@@ -19,7 +19,7 @@ namespace hfa.WebApi.Services
         {
             _pasteBinOptions = pasteBinOptions?.Value;
             Pastebin.DevKey = _pasteBinOptions.UserKey;
-            _me = Pastebin.Login(_pasteBinOptions.UserName, _pasteBinOptions.Password);
+            _me = Pastebin.LoginAsync(_pasteBinOptions.UserName, _pasteBinOptions.Password).GetAwaiter().GetResult();
             _logger = loggerFactory.CreateLogger(typeof(PasteBinService));
         }
 
@@ -43,9 +43,25 @@ namespace hfa.WebApi.Services
             return null;
         }
 
-        public IEnumerable<Paste> List(int count = 50) => _me.ListPastes(count);
-        public void Delete(Paste paste) => _me.DeletePaste(paste);
-        public void ListTrendingPastes() => Pastebin.ListTrendingPastes();
+        public async Task<IEnumerable<Paste>> ListAsync(int count = 50) => await _me.ListPastesAsync(count);
+        public async Task DeleteAsync(Paste paste) => await _me.DeletePasteAsync(paste);
+
+        /// <summary>
+        /// Delete by paste title
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns>True if paste exist</returns>
+        public async Task<bool> DeleteAsync(string title)
+        {
+            var paste = (await _me.ListPastesAsync(1000)).FirstOrDefault(x => x.Title.Equals(title, StringComparison.InvariantCultureIgnoreCase));
+            if (paste != null)
+            {
+                await _me.DeletePasteAsync(paste);
+                return true;
+            }
+            return false;
+        }
+        public async Task ListTrendingPastesAsync() => await Pastebin.ListTrendingPastesAsync();
 
         /// <summary>
         /// Create public paste

@@ -22,6 +22,10 @@ using hfa.WebApi.Models.Elastic;
 using Hfa.WebApi.Commmon;
 using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Xmltv;
+using System.IO;
+using PastebinAPI;
+using hfa.WebApi.Services;
+using hfa.Synker.Service.Entities.Auth;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Hfa.WebApi.Controllers
@@ -30,15 +34,18 @@ namespace Hfa.WebApi.Controllers
     [Authorize]
     public class SitePackController : BaseController
     {
+        const string PREFIX_WEBGRAB_FILENAME = "WebGrab";
         IMemoryCache _memoryCache;
         private ISitePackService _sitePackService;
+        private readonly IPasteBinService _pasteBinService;
 
         public SitePackController(IMemoryCache memoryCache, ISitePackService sitePackService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
-            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IPasteBinService pasteBinService)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _memoryCache = memoryCache;
             _sitePackService = sitePackService;
+            _pasteBinService = pasteBinService;
         }
 
         [HttpPost]
@@ -73,7 +80,7 @@ namespace Hfa.WebApi.Controllers
         {
             sitepacks.ForEach(x =>
             {
-                if (x.DisplayNames == null || ! x.DisplayNames.Any())
+                if (x.DisplayNames == null || !x.DisplayNames.Any())
                     x.DisplayNames = new List<string> { x.Channel_name };
                 x.DisplayNames = x.DisplayNames.Distinct().ToList();
             });
@@ -179,11 +186,49 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("sitepacks/used")]
-        public async Task<IActionResult> GetAllFromPlaylists(CancellationToken cancellationToken = default(CancellationToken))
+        [Route("used")]
+        public async Task<IActionResult> GetAllFromPlaylistsAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            var sitePack = await _sitePackService.GetAllFromPlaylists(cancellationToken);
-            return Ok(sitePack);
+            const string URL_SITEPACK_PREFIX = "https://raw.githubusercontent.com/SilentButeo2/webgrabplus-siteinipack/master/siteini.pack/";
+
+            var sitePack = await _sitePackService.GetAllFromPlaylistsAsync(cancellationToken);
+
+            var result = sitePack.Select(x =>
+            {
+                var fragment = x.Split("/");
+                return $"{URL_SITEPACK_PREFIX}{string.Join("/", fragment[fragment.Length - 2], fragment[fragment.Length - 1])}";
+            });
+
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("webgrabconfig")]
+        [ValidateModel]
+        public async Task<IActionResult> WebgrabConfigBySitePackAsync([FromBody]SimpleModelPost sitePackUrl, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            const string Docker_WEBGRABBER_IMAGE_NAME = "synker/webgraboneshoturl:latest";
+
+            var tab = sitePackUrl.Value.Split("/");
+            var fileName = $"{PREFIX_WEBGRAB_FILENAME}_{tab[tab.Length - 1]}";
+
+            var webgrabContent = await _sitePackService.WebgrabConfigBySitePackAsync(sitePackUrl.Value, fileName, cancellationToken);
+
+            //Put WebGrabConfig to PasteBin
+            // lists all pastes for this user
+            await _pasteBinService.DeleteAsync(fileName);
+            var paste = await _pasteBinService.PushAsync(fileName, webgrabContent, Expiration.OneDay, PastebinAPI.Language.XML, Visibility.Public);
+
+            //await _dbContext.Command.AddAsync(new Command
+            //{
+                //CommandText = $"docker run -it --rm -e {paste.RawUrl} -v '$(pwd):/data' {Docker_WEBGRABBER_IMAGE_NAME}",
+                //UserId = UserId.Value,
+                //Comments = $"Adding new command to webgrab {sitePackUrl} from {nameof(WebgrabConfigBySitePackAsync)} by {UserId}{Environment.NewLine}"
+            //});
+
+            //_logger.LogInformation($"Adding new command to webgrab {sitePackUrl} from {nameof(WebgrabConfigBySitePackAsync)} by {UserId}");
+
+            return new OkObjectResult(paste);
         }
     }
 }

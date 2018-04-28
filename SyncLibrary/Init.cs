@@ -89,7 +89,6 @@ namespace Hfa.SyncLibrary
                 .Replace(ServiceDescriptor.Singleton(typeof(ILogger<>), typeof(TimedLogger<>)))
                 .Configure<TvhOptions>(Configuration.GetSection(nameof(TvhOptions)))
                 .Configure<ApiOptions>(Configuration.GetSection(nameof(ApiOptions)))
-                .Configure<DockerOptions>(Configuration.GetSection(nameof(DockerOptions)))
                 .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                 .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
                 .Configure<MailOptions>(Configuration.GetSection(nameof(MailOptions)))

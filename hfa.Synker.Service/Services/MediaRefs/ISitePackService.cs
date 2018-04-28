@@ -72,6 +72,15 @@ namespace hfa.Synker.Service.Services
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<IEnumerable<string>> GetAllFromPlaylists(CancellationToken cancellationToken = default);
+        Task<IEnumerable<string>> GetAllFromPlaylistsAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Generate WebGrab++.config.xml from channels sitepack file
+        /// </summary>
+        /// <param name="sitePackUrl"></param>
+        /// <param name="fileName"> output filename</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<string> WebgrabConfigBySitePackAsync(string sitePackUrl, string fileName, CancellationToken cancellationToken = default);
     }
 }

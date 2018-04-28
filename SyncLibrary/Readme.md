@@ -1,7 +1,7 @@
 ﻿[![Build status](https://ci.appveyor.com/api/projects/status/nnk28cpkyyh1tot4?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2-fmqp0)
 
 ## Goals
-<pre>Créer un service système permettant la synchrnisation entre des providers différents. 
+<pre>Créer un service système permettant la synchronisation entre des providers différents. 
 Il faut que ce soit modulable, configurable et autonome.
 Il faut que ce soit configurable via un fichier de config (json de préférence).
 Il faut qu'on puisse injecter une config via la CLI (sans que le fichier de config soit présent sur le disque dur). ça sera utile dans le cas d'un appel par la web API
@@ -32,6 +32,7 @@ un fichier ou une url. le providers doivent être injectés par DLL, pour que ce
       
 ## Docker daemon api
 
+* [Active Docker Api remote access][linux_api_docker_remote_access_activate]
 * [Docker Api Reference][docker_api_ref]
 * Display Docker config view
 
@@ -119,3 +120,4 @@ GET filebeat*/_search
 </code></pre>
 
 [docker_api_ref]:https://docs.docker.com/engine/api/v1.28
+[linux_api_docker_remote_access_activate]:http://www.littlebigextra.com/how-to-enable-remote-rest-api-on-docker-host/

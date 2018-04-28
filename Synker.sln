@@ -51,6 +51,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hfa.Brokers.Messages", "hfa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebgrabDocker", "WebgrabDocker", "{B11D53AC-103B-4D59-969A-5E886EA764AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hfa.synker.entities", "..\hfa.synker.entities\hfa.synker.entities.csproj", "{9DFD3770-43F4-4587-9D5D-6ECDC9C69860}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,10 @@ Global
 		{596679D9-F0DA-45CB-BFAE-F85B4D092216}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{596679D9-F0DA-45CB-BFAE-F85B4D092216}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{596679D9-F0DA-45CB-BFAE-F85B4D092216}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DFD3770-43F4-4587-9D5D-6ECDC9C69860}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DFD3770-43F4-4587-9D5D-6ECDC9C69860}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DFD3770-43F4-4587-9D5D-6ECDC9C69860}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DFD3770-43F4-4587-9D5D-6ECDC9C69860}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +118,7 @@ Global
 		{ECB3EA08-11A5-42BE-A45E-03C60D055F7B} = {7E298705-9F1B-429B-865B-F63F679C6501}
 		{596679D9-F0DA-45CB-BFAE-F85B4D092216} = {7E298705-9F1B-429B-865B-F63F679C6501}
 		{B11D53AC-103B-4D59-969A-5E886EA764AF} = {33E18C12-C454-4243-8E2D-2753AEFDCD41}
+		{9DFD3770-43F4-4587-9D5D-6ECDC9C69860} = {7E298705-9F1B-429B-865B-F63F679C6501}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {731E8F56-7BA7-4652-A0AE-758D20E2DE9F}

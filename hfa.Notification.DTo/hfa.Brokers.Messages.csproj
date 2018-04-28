@@ -6,4 +6,8 @@
     <RootNamespace>hfa.Brokers.Messages</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\hfa.synker.entities\hfa.synker.entities.csproj" />
+  </ItemGroup>
+
 </Project>

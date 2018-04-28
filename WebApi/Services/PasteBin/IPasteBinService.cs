@@ -21,19 +21,19 @@ namespace hfa.WebApi.Services
         /// Delete a paste
         /// </summary>
         /// <param name="paste"></param>
-        void Delete(Paste paste);
+        Task DeleteAsync(Paste paste);
 
         /// <summary>
         /// List of paste
         /// </summary>
         /// <param name="count"></param>
         /// <returns></returns>
-        IEnumerable<Paste> List(int count = 50);
+        Task<IEnumerable<Paste>> ListAsync(int count = 50);
 
         /// <summary>
         /// Trending pastes
         /// </summary>
-        void ListTrendingPastes();
+        Task ListTrendingPastesAsync();
 
         /// <summary>
         /// Push with your account a paste
@@ -45,5 +45,12 @@ namespace hfa.WebApi.Services
         /// <param name="visibility"></param>
         /// <returns></returns>
         Task<Paste> PushAsync(string title, string content, Expiration expiration, Language language, Visibility visibility = Visibility.Private);
+
+        /// <summary>
+        /// Delete by paste title
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns>True if paste exist</returns>
+        Task<bool> DeleteAsync(string title);
     }
 }
