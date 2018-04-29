@@ -22,7 +22,8 @@ WORKDIR /src
 #COPY hfa.Synker.Service/hfa.Synker.Service.csproj hfa.Synker.Service/
 #COPY hfa.Notification.DTo/hfa.Brokers.Messages.csproj hfa.Notification.DTo/
 COPY . .
-RUN dotnet restore -nowarn:msb3202,nu1503
+RUN dotnet sln Synker.sln remove docker-compose.dcproj
+RUN dotnet restore -nowarn:msb3202,nu1503 Synker.sln
 WORKDIR /src/SyncLibrary
 RUN dotnet build -c Release -o /app -r linux-$arch
 
