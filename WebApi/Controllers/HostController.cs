@@ -10,23 +10,24 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using hfa.WebApi.Common.Filters;
-using hfa.WebApi.Models.Xmltv;
-using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Entities;
 using hfa.WebApi.Common.Auth;
+using System.Threading;
+using Hfa.WebApi.Models;
 
 namespace hfa.WebApi.Controllers
 {
     [Produces("application/json")]
     [Route("api/v1/[controller]")]
     [Authorize]
+    [Authorize(Policy = AuthorizePolicies.ADMIN)]
     public class HostController : BaseController
     {
         private IAuthentificationService _authentificationService;
-        public HostController(IAuthentificationService authentificationService, 
+        public HostController(IAuthentificationService authentificationService,
             IOptions<ElasticConfig> config,
             ILoggerFactory loggerFactory,
             IElasticConnectionClient elasticConnectionClient,
@@ -36,9 +37,28 @@ namespace hfa.WebApi.Controllers
             _authentificationService = authentificationService;
         }
 
+        /// <summary>
+        /// List Hosts
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("search")]
+        [Authorize(Policy = AuthorizePolicies.ADMIN)]
+        public IActionResult List([FromBody] QueryListBaseModel query)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var response = _dbContext.Hosts
+                .OrderByDescending(x => x.Id)
+                .GetPaged(query.PageNumber, query.PageSize, query.GetAll);
+
+            return Ok(response);
+        }
+
         [HttpGet("{id}")]
         [ValidateModel]
-        public async Task<IActionResult> GetCommand([FromRoute] int id)
+        public async Task<IActionResult> Get([FromRoute] int id, CancellationToken cancellationToken)
         {
             var host = await _dbContext.Hosts.SingleOrDefaultAsync(m => m.Id == id);
 
@@ -52,7 +72,7 @@ namespace hfa.WebApi.Controllers
 
         [HttpPut("{id}")]
         [ValidateModel]
-        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Host host)
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Host host, CancellationToken cancellationToken)
         {
             if (id != host.Id)
             {
@@ -82,9 +102,9 @@ namespace hfa.WebApi.Controllers
 
         [HttpPost]
         [ValidateModel]
-        public async Task<IActionResult> Post([FromBody] Host host)
+        public async Task<IActionResult> Post([FromBody] Host host, CancellationToken cancellationToken)
         {
-            if (!string.IsNullOrEmpty(host.Authentication.Password))
+            if (!string.IsNullOrEmpty(host.Authentication?.Password))
             {
                 host.Authentication.Password.HashPassword(_authentificationService.Salt);
             }
@@ -97,7 +117,7 @@ namespace hfa.WebApi.Controllers
 
         [HttpDelete("{id}")]
         [ValidateModel]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
         {
             var host = await _dbContext.Hosts.SingleOrDefaultAsync(m => m.Id == id);
             if (host == null)

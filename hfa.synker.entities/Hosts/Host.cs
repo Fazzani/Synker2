@@ -7,6 +7,11 @@
 
     public class Host : EntityBase
     {
+        public Host()
+        {
+            Authentication = new Authentication();
+        }
+
         [Required]
         public string Name { get; set; }
 
