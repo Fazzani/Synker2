@@ -34,6 +34,8 @@ namespace hfa.Brokers.Messages.Models
         /// </summary>
         public Host RunnableHost { get; set; }
 
+        public string Cron { get; set; } = "0 4 * * *";
+
     }
     
 }

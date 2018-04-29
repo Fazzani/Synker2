@@ -35,6 +35,8 @@ namespace Hfa.WebApi.Controllers
     public class SitePackController : BaseController
     {
         const string PREFIX_WEBGRAB_FILENAME = "WebGrab";
+        const string URL_SITEPACK_PREFIX = "https://raw.githubusercontent.com/SilentButeo2/webgrabplus-siteinipack/master/siteini.pack/";
+        const string Docker_WEBGRABBER_IMAGE_NAME = "synker/webgraboneshoturl:latest";
         IMemoryCache _memoryCache;
         private ISitePackService _sitePackService;
         private readonly IPasteBinService _pasteBinService;
@@ -185,12 +187,21 @@ namespace Hfa.WebApi.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Liste des Sitepacks used in all playlists
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("used")]
         public async Task<IActionResult> GetAllFromPlaylistsAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            const string URL_SITEPACK_PREFIX = "https://raw.githubusercontent.com/SilentButeo2/webgrabplus-siteinipack/master/siteini.pack/";
+            IEnumerable<string> result = await GetSitepacksToWebGrab(cancellationToken);
+            return Ok(result);
+        }
 
+        private async Task<IEnumerable<string>> GetSitepacksToWebGrab(CancellationToken cancellationToken)
+        {
             var sitePack = await _sitePackService.GetAllFromPlaylistsAsync(cancellationToken);
 
             var result = sitePack.Select(x =>
@@ -198,37 +209,62 @@ namespace Hfa.WebApi.Controllers
                 var fragment = x.Split("/");
                 return $"{URL_SITEPACK_PREFIX}{string.Join("/", fragment[fragment.Length - 2], fragment[fragment.Length - 1])}";
             });
-
-            return Ok(result);
+            return result;
         }
 
+        /// <summary>
+        /// Pousser sur pastebin un nouveau Webgrab.config.xml selon un sitepack.channel.xml
+        /// </summary>
+        /// <param name="sitePackUrl"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("webgrabconfig")]
         [ValidateModel]
         public async Task<IActionResult> WebgrabConfigBySitePackAsync([FromBody]SimpleModelPost sitePackUrl, CancellationToken cancellationToken = default(CancellationToken))
         {
-            const string Docker_WEBGRABBER_IMAGE_NAME = "synker/webgraboneshoturl:latest";
+            var paste = await SynkSitePackToWebgrabAsync(sitePackUrl.Value, cancellationToken);
+            return new OkObjectResult(paste);
+        }
 
-            var tab = sitePackUrl.Value.Split("/");
+        /// <summary>
+        /// Récupérer la liste des sitepacks à Webgrabber et les pousser sur Pastebin
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("synk/webgrab")]
+        [ValidateModel]
+        public async Task<IActionResult> SynkAllSitePackToWebGrab(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            foreach (var sitePackUrl in await GetSitepacksToWebGrab(cancellationToken))
+            {
+                var paste = await SynkSitePackToWebgrabAsync(sitePackUrl, cancellationToken);
+                await _dbContext.Command.AddAsync(new Command
+                {
+                    CommandText = $"docker run -itd --rm -e 'WEBGRAB_CONFIG_URL={paste.RawUrl}' -e DEBUG=0 -v '/mnt/nfs/webgrab/xmltv:/data' " +
+                        $"{Docker_WEBGRABBER_IMAGE_NAME}",
+                    UserId = UserId.Value,
+                    Cron = "0 3 * * *",
+                    CommandExecutingType = CommandExecutingType.Cron,
+                    Comments = $"Adding new cronned command to webgrab {sitePackUrl} from {nameof(WebgrabConfigBySitePackAsync)} by {UserId}{Environment.NewLine}"
+                });
+
+                _logger.LogInformation($"Adding new cronned command to webgrab {sitePackUrl} from {nameof(WebgrabConfigBySitePackAsync)} by {UserId}");
+            }
+
+            return Ok();
+        }
+
+        private async Task<Paste> SynkSitePackToWebgrabAsync(string sitePackUrl, CancellationToken cancellationToken)
+        {
+            var tab = sitePackUrl.Split("/");
             var fileName = $"{PREFIX_WEBGRAB_FILENAME}_{tab[tab.Length - 1]}";
 
-            var webgrabContent = await _sitePackService.WebgrabConfigBySitePackAsync(sitePackUrl.Value, fileName, cancellationToken);
+            var webgrabContent = await _sitePackService.WebgrabConfigBySitePackAsync(sitePackUrl, fileName, cancellationToken);
 
-            //Put WebGrabConfig to PasteBin
-            // lists all pastes for this user
             await _pasteBinService.DeleteAsync(fileName);
-            var paste = await _pasteBinService.PushAsync(fileName, webgrabContent, Expiration.OneDay, PastebinAPI.Language.XML, Visibility.Public);
-
-            //await _dbContext.Command.AddAsync(new Command
-            //{
-                //CommandText = $"docker run -it --rm -e {paste.RawUrl} -v '$(pwd):/data' {Docker_WEBGRABBER_IMAGE_NAME}",
-                //UserId = UserId.Value,
-                //Comments = $"Adding new command to webgrab {sitePackUrl} from {nameof(WebgrabConfigBySitePackAsync)} by {UserId}{Environment.NewLine}"
-            //});
-
-            //_logger.LogInformation($"Adding new command to webgrab {sitePackUrl} from {nameof(WebgrabConfigBySitePackAsync)} by {UserId}");
-
-            return new OkObjectResult(paste);
+            return await _pasteBinService.PushAsync(fileName, webgrabContent, Expiration.OneDay, PastebinAPI.Language.XML, Visibility.Public);
         }
     }
 }

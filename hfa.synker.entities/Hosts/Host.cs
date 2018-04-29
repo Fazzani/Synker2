@@ -18,6 +18,10 @@
         public string Port { get; set; }
 
         public Uri AdressUri => new Uri($"http://{Address}:{Port}");
+
+        public string Comments { get; set; }
+
+        public bool Enabled { get; set; } = true;
     }
 
     public class Authentication

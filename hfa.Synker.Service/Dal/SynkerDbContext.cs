@@ -14,11 +14,16 @@ namespace hfa.Synker.Services.Dal
     public class SynkerDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+
         public DbSet<Role> Roles { get; set; }
 
         public DbSet<Message> Messages { get; set; }
+
         public DbSet<Command> Command { get; set; }
+
         public DbSet<Playlist> Playlist { get; set; }
+
+        public DbSet<Host> Hosts { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -32,6 +37,14 @@ namespace hfa.Synker.Services.Dal
 
             modelBuilder.Entity<User>()
             .HasIndex(b => new { b.FirstName, b.LastName });
+
+            modelBuilder.Entity<Host>()
+            .HasIndex(b => new { b.Address, b.Port });
+
+            modelBuilder.Entity<Host>(entity =>
+            {
+                entity.OwnsOne(e => e.Authentication);
+            });
 
             modelBuilder.Entity<Playlist>()
             .HasIndex(b => b.UniqueId)

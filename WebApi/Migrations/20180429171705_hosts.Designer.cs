@@ -16,9 +16,10 @@ using System.Collections.Generic;
 namespace hfa.WebApi.Migrations
 {
     [DbContext(typeof(SynkerDbContext))]
-    partial class SynkerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180429171705_hosts")]
+    partial class hosts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

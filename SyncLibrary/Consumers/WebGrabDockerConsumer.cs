@@ -9,6 +9,7 @@
     using Hfa.SyncLibrary.Infrastructure;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
+    using NCrontab;
     using Newtonsoft.Json;
     using RabbitMQ.Client;
     using RabbitMQ.Client.Events;
@@ -48,9 +49,21 @@
                 var messageString = Encoding.UTF8.GetString(body);
                 var webGrabNotificationMessage = JsonConvert.DeserializeObject<WebGrabNotification>(messageString);
 
-                var cancellationToken = new CancellationTokenSource();
-
-                CreateContainerAsync(ea, webGrabNotificationMessage, cancellationToken.Token).GetAwaiter().GetResult();
+                var cron = CrontabSchedule.Parse(webGrabNotificationMessage.Cron);
+                var cronOcc = cron.GetNextOccurrence(DateTime.UtcNow).ToString("yyyy-MM-dd HH:mm");
+                if (cronOcc == DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm"))
+                {
+                    var cancellationToken = new CancellationTokenSource();
+                    CreateContainerAsync(ea, webGrabNotificationMessage, cancellationToken.Token).GetAwaiter().GetResult();
+                }
+                else
+                {
+#if DEBUG
+                    Thread.Sleep(6000);
+#endif
+                    _logger.LogInformation($"Requeing Message {webGrabNotificationMessage.WebgrabConfigUrl}");
+                    _webgrabChannel.BasicReject(ea.DeliveryTag, true);
+                }
             }
             catch (Exception e)
             {

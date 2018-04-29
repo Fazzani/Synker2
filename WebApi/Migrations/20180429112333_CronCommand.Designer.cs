@@ -16,9 +16,10 @@ using System.Collections.Generic;
 namespace hfa.WebApi.Migrations
 {
     [DbContext(typeof(SynkerDbContext))]
-    partial class SynkerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180429112333_CronCommand")]
+    partial class CronCommand
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -172,34 +173,6 @@ namespace hfa.WebApi.Migrations
                     b.ToTable("UserRole");
                 });
 
-            modelBuilder.Entity("hfa.Synker.Service.Entities.Host", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Address")
-                        .IsRequired();
-
-                    b.Property<string>("Comments");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<bool>("Enabled");
-
-                    b.Property<string>("Name")
-                        .IsRequired();
-
-                    b.Property<string>("Port");
-
-                    b.Property<DateTime>("UpdatedDate");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Address", "Port");
-
-                    b.ToTable("Hosts");
-                });
-
             modelBuilder.Entity("hfa.Synker.Service.Entities.Playlists.Playlist", b =>
                 {
                     b.Property<int>("Id")
@@ -287,27 +260,6 @@ namespace hfa.WebApi.Migrations
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("hfa.Synker.Service.Entities.Host", b =>
-                {
-                    b.OwnsOne("hfa.Synker.Service.Entities.Authentication", "Authentication", b1 =>
-                        {
-                            b1.Property<int>("HostId");
-
-                            b1.Property<string>("CertPath");
-
-                            b1.Property<string>("Password");
-
-                            b1.Property<string>("Username");
-
-                            b1.ToTable("Hosts");
-
-                            b1.HasOne("hfa.Synker.Service.Entities.Host")
-                                .WithOne("Authentication")
-                                .HasForeignKey("hfa.Synker.Service.Entities.Authentication", "HostId")
-                                .OnDelete(DeleteBehavior.Cascade);
-                        });
                 });
 
             modelBuilder.Entity("hfa.Synker.Service.Entities.Playlists.Playlist", b =>

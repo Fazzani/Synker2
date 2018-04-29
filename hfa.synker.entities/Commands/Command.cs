@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace hfa.Synker.Service.Entities.Auth
+﻿namespace hfa.Synker.Service.Entities.Auth
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
     /// <summary>
     /// Synker command entity
     /// </summary>
@@ -51,6 +49,10 @@ namespace hfa.Synker.Service.Entities.Auth
         /// Replay command count 
         /// </summary>
         public int ReplayCount { get; set; } = 0;
+
+        public CommandExecutingType CommandExecutingType { get; set; } = CommandExecutingType.Default;
+
+        public string Cron { get; set; }
     }
 
     /// <summary>
@@ -80,5 +82,10 @@ namespace hfa.Synker.Service.Entities.Auth
         /// shell command type
         /// </summary>
         Shell = 0
+    }
+    public enum CommandExecutingType : byte
+    {
+        Default = 0,
+        Cron = 1
     }
 }
