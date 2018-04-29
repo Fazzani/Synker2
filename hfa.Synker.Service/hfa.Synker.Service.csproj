@@ -38,8 +38,8 @@
     </AssemblyAttribute>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\hfa.synker.entities\hfa.synker.entities.csproj" />
     <ProjectReference Include="..\hfa.Notification.DTo\hfa.Brokers.Messages.csproj" />
+    <ProjectReference Include="..\hfa.synker.entities\hfa.synker.entities.csproj" />
     <ProjectReference Include="..\PlaylistBaseLibrary\hfa.PlaylistBaseLibrary.csproj" />
   </ItemGroup>
 
