@@ -15,14 +15,14 @@ ARG arch=x64
 FROM microsoft/aspnetcore-build:2.0 AS build
 ARG arch
 WORKDIR /src
-COPY Synker.sln ./
-COPY SyncLibrary/hfa.Synker.batch.csproj SyncLibrary/
-COPY hfa.TvhLibrary/hfa.TvhLibrary.csproj hfa.TvhLibrary/
-COPY PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj PlaylistBaseLibrary/
-COPY hfa.Synker.Service/hfa.Synker.Service.csproj hfa.Synker.Service/
-COPY hfa.Notification.DTo/hfa.Brokers.Messages.csproj hfa.Notification.DTo/
-RUN dotnet restore -nowarn:msb3202,nu1503
+#COPY Synker.sln ./
+#COPY SyncLibrary/hfa.Synker.batch.csproj SyncLibrary/
+#COPY hfa.TvhLibrary/hfa.TvhLibrary.csproj hfa.TvhLibrary/
+#COPY PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj PlaylistBaseLibrary/
+#COPY hfa.Synker.Service/hfa.Synker.Service.csproj hfa.Synker.Service/
+#COPY hfa.Notification.DTo/hfa.Brokers.Messages.csproj hfa.Notification.DTo/
 COPY . .
+RUN dotnet restore -nowarn:msb3202,nu1503
 WORKDIR /src/SyncLibrary
 RUN dotnet build -c Release -o /app -r linux-$arch
 
