@@ -14,6 +14,7 @@ import { MediaComponent } from "./components/media/media.component";
 import { AdminComponent } from "./components/admin/admin.component";
 import { AdminDashboardComponent } from "./components/admin/dashboard/admin.dashboard.component";
 import { UserComponent } from "./components/user/user.component";
+import { HostsComponent } from "./components/admin/hosts/hosts.component";
 
 const appRoutes: Routes = [
     { path: 'home', component: HomeComponent, canActivate: [LoginRouteGuard] },
@@ -35,6 +36,9 @@ const appRoutes: Routes = [
                     {
                         path: 'users',
                         component: UsersComponent
+                    }, {
+                        path: 'hosts',
+                        component: HostsComponent
                     }, {
                         path: '',
                         component: AdminDashboardComponent 

@@ -11,6 +11,13 @@
                 <span class="title" mat-line>Users</span>
                 <span mat-line class="secondary">Users manager</span>
             </a>
+            <a mat-list-item class="sidenav-link" [routerLink]="['./hosts']" (click)="sidenav.toggle()">
+                <mat-icon mat-list-icon>
+                    important_devices
+                </mat-icon>
+                <span class="title" mat-line>Hosts</span>
+                <span mat-line class="secondary">Hosts manager</span>
+            </a>
         </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>

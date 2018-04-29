@@ -60,6 +60,8 @@ import { AdminDashboardComponent } from './components/admin/dashboard/admin.dash
 import { UserComponent } from './components/user/user.component';
 import { AppRoutingModule } from './app.module.routing';
 import { LoaderComponent } from './components/shared/loader/loader.component';
+import { HostsService } from './services/admin/hosts.service';
+import { HostsComponent } from './components/admin/hosts/hosts.component';
 
 @NgModule({
     declarations: [
@@ -75,6 +77,7 @@ import { LoaderComponent } from './components/shared/loader/loader.component';
         UserComponent,
         AdminDashboardComponent,
         UsersComponent,
+        HostsComponent,
         LoaderComponent,
         TvgMediaModifyDialog,
         EpgModifyDialog,
@@ -109,7 +112,8 @@ import { LoaderComponent } from './components/shared/loader/loader.component';
         AppRoutingModule
     ],
     entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, PlaylistBulkUpdate,
-        PlaylistTvgSitesDialog, PlaylistAddDialog, PlaylistUpdateDialog, PlaylistDiffDialog, SitePackModifyDialog, GroupsDialog, MatchTvgDialog, PlaylistInfosDialog],
+        PlaylistTvgSitesDialog, PlaylistAddDialog, PlaylistUpdateDialog, PlaylistDiffDialog, SitePackModifyDialog, GroupsDialog,
+        MatchTvgDialog, PlaylistInfosDialog],
     providers: [
         CommonService,
         TvgMediaService,
@@ -124,6 +128,7 @@ import { LoaderComponent } from './components/shared/loader/loader.component';
         UsersService,
         XtreamService,
         SitePackService,
+        HostsService,
         EpgService,
         {
             provide: HTTP_INTERCEPTORS,

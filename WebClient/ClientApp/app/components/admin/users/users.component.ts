@@ -38,7 +38,6 @@ export class UsersComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.dataSource = new MatTableDataSource<User>([]);
         this.paginator.pageSizeOptions = [50, 100, 250, 1000];
-        this.dataSource = new MatTableDataSource<User>([]);
 
         this.query = <QueryListBaseModel>{ getAll: true };
 
