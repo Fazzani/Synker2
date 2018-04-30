@@ -26,6 +26,8 @@ using System.IO;
 using PastebinAPI;
 using hfa.WebApi.Services;
 using hfa.Synker.Service.Entities.Auth;
+using hfa.synker.entities;
+using Microsoft.EntityFrameworkCore;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Hfa.WebApi.Controllers
@@ -237,21 +239,43 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         public async Task<IActionResult> SynkAllSitePackToWebGrab(CancellationToken cancellationToken = default(CancellationToken))
         {
+            _dbContext.WebGrabConfigDockers.RemoveRange(_dbContext.WebGrabConfigDockers);
+            //TODO: Equilibrer la charge sur les différentes hosts
+            var host = await _dbContext.Hosts.Where(h => h.Enabled).FirstOrDefaultAsync(cancellationToken);
+
             foreach (var sitePackUrl in await GetSitepacksToWebGrab(cancellationToken))
             {
-                var paste = await SynkSitePackToWebgrabAsync(sitePackUrl, cancellationToken);
-                await _dbContext.Command.AddAsync(new Command
+                try
                 {
-                    CommandText = $"docker run -itd --rm -e 'WEBGRAB_CONFIG_URL={paste.RawUrl}' -e DEBUG=0 -v '/mnt/nfs/webgrab/xmltv:/data' " +
-                        $"{Docker_WEBGRABBER_IMAGE_NAME}",
-                    UserId = UserId.Value,
-                    Cron = "0 3 * * *",
-                    CommandExecutingType = CommandExecutingType.Cron,
-                    Comments = $"Adding new cronned command to webgrab {sitePackUrl} from {nameof(WebgrabConfigBySitePackAsync)} by {UserId}{Environment.NewLine}"
-                });
+                    var paste = await SynkSitePackToWebgrabAsync(sitePackUrl, cancellationToken);
+                    await _dbContext.WebGrabConfigDockers.AddAsync(new WebGrabConfigDocker
+                    {
+                        Cron = "0 3 * * *",
+                        DockerImage = Docker_WEBGRABBER_IMAGE_NAME,
+                        MountSourcePath = "/mnt/nfs/webgrab/xmltv:/data",
+                        RunnableHost = host,
+                        WebgrabConfigUrl = paste.RawUrl
+                    }, cancellationToken);
 
-                _logger.LogInformation($"Adding new cronned command to webgrab {sitePackUrl} from {nameof(WebgrabConfigBySitePackAsync)} by {UserId}");
+                    //await _dbContext.Command.AddAsync(new Command
+                    //{
+                    //    CommandText = $"docker run -itd --rm -e 'WEBGRAB_CONFIG_URL={paste.RawUrl}' -e DEBUG=0 -v '/mnt/nfs/webgrab/xmltv:/data' " +
+                    //        $"{Docker_WEBGRABBER_IMAGE_NAME}",
+                    //    UserId = UserId.Value,
+                    //    Cron = "0 3 * * *",
+                    //    CommandExecutingType = CommandExecutingType.Cron,
+                    //    Comments = $"Adding new cronned command to webgrab {sitePackUrl} from {nameof(WebgrabConfigBySitePackAsync)} by {UserId}{Environment.NewLine}"
+                    //});
+
+                    _logger.LogInformation($"Adding new cronned command to webgrab {sitePackUrl} from {nameof(WebgrabConfigBySitePackAsync)} by {UserId}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, ex.Message);
+                }
             }
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Ok();
         }

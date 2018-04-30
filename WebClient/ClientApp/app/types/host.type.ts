@@ -4,7 +4,7 @@
     public address: string;
     public authentication: Authentication;
     public port: string;
-    public adressUri: string;
+    public addressUri: string;
     public comments: string;
     public enabled: boolean;
 }

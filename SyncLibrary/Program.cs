@@ -1,19 +1,18 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using hfa.Brokers.Messages.Configuration;
-using Hfa.SyncLibrary;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using RabbitMQ.Client;
-using System;
-using System.Threading;
-using Microsoft.Extensions.Logging;
-using System.Runtime.Loader;
-using hfa.Notification.Brokers.Consumers;
-using System.Threading.Tasks;
-using Hfa.SyncLibrary.Infrastructure;
-
-namespace hfa.Synker.batch
+﻿namespace hfa.Synker.batch
 {
+    using Microsoft.Extensions.DependencyInjection;
+    using hfa.Brokers.Messages.Configuration;
+    using Hfa.SyncLibrary;
+    using Microsoft.Extensions.Options;
+    using RabbitMQ.Client;
+    using System;
+    using System.Threading;
+    using Microsoft.Extensions.Logging;
+    using System.Runtime.Loader;
+    using hfa.Notification.Brokers.Consumers;
+    using System.Threading.Tasks;
+    using hfa.Synker.batch.Producers;
+
     public class Program
     {
         private static string MailQueueName = Init.IsDev ? "synker.dev.mail.queue" : "synker.mail.queue";
@@ -21,6 +20,7 @@ namespace hfa.Synker.batch
         private static IOptions<RabbitMQConfiguration> _rabbitConfig;
         private static INotificationConsumer _notificationConsumer;
         private static IWebGrabDockerConsumer _webGrabDockerConsumer;
+        private static IWebGrabDockerProducer _webGrabDockerProducer;
         public static ManualResetEvent _Shutdown = new ManualResetEvent(false);
         public static ManualResetEventSlim _Complete = new ManualResetEventSlim();
 
@@ -38,6 +38,7 @@ namespace hfa.Synker.batch
             _rabbitConfig = Init.ServiceProvider.GetService<IOptions<RabbitMQConfiguration>>();
             _notificationConsumer = Init.ServiceProvider.GetService<INotificationConsumer>();
             _webGrabDockerConsumer = Init.ServiceProvider.GetService<IWebGrabDockerConsumer>();
+            _webGrabDockerProducer = Init.ServiceProvider.GetService<IWebGrabDockerProducer>();
 
             _logger.LogInformation("starting consumption");
 
@@ -56,10 +57,11 @@ namespace hfa.Synker.batch
             {
                 using (var connection = factory.CreateConnection())
                 {
-                    _logger.LogDebug($"Connected to rabbit host : {factory.HostName}{factory.VirtualHost}");
+                    _logger.LogDebug($"Connected to rabbit host: {factory.HostName}{factory.VirtualHost}");
                     Task.WaitAll(
                         Task.Run(() => _notificationConsumer.Start(connection, _Shutdown)),
-                        Task.Run(() => _webGrabDockerConsumer.Start(connection, _Shutdown)));
+                        Task.Run(() => _webGrabDockerConsumer.Start(connection, _Shutdown)),
+                        Task.Run(() => _webGrabDockerProducer.Start(connection, _Shutdown)));
                 }
             }
             catch (Exception e)

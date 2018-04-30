@@ -1,5 +1,6 @@
 ﻿namespace hfa.Synker.Service.Entities
 {
+    using hfa.synker.entities;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -22,11 +23,13 @@
 
         public string Port { get; set; }
 
-        public Uri AdressUri => new Uri($"http://{Address}:{Port}");
+        public Uri AddressUri => new Uri($"http://{Address}:{Port}");
 
         public string Comments { get; set; }
 
         public bool Enabled { get; set; } = true;
+
+        public virtual ICollection<WebGrabConfigDocker> WebGrabConfigDockers { get; set; } = new List<WebGrabConfigDocker>();
     }
 
     public class Authentication

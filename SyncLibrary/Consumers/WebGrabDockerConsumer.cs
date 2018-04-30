@@ -89,7 +89,7 @@
                 credentials.ServerCertificateValidationCallback += (o, c, ch, er) => true;
             }
 
-            using (var dockerClient = new DockerClientConfiguration(webGrabNotificationMessage.RunnableHost.AdressUri, credentials).CreateClient())
+            using (var dockerClient = new DockerClientConfiguration(webGrabNotificationMessage.RunnableHost.AddressUri, credentials).CreateClient())
             {
                 IList<ContainerListResponse> containers = await dockerClient.Containers.ListContainersAsync(new ContainersListParameters()
                 {
@@ -128,7 +128,7 @@
                         AutoRemove = !Init.IsDev,
                         Mounts = new List<Mount>
                         {
-                            new Mount{
+                            new Mount {
                             Source = webGrabNotificationMessage.MountSourcePath,
                             Target = "/data",
                             ReadOnly = false,

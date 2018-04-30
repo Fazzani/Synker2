@@ -78,6 +78,7 @@ namespace hfa.WebApi
                .AddScoped<IPlaylistService, PlaylistService>()
                .AddScoped<IMediaRefService, MediaRefService>()
                .AddScoped<ISitePackService, SitePackService>()
+               .AddScoped<ICommandService, CommandService>()
                .AddScoped<IXtreamService, XtreamService>()
                .AddScoped<IMediaScraper, MediaScraper>()
                .AddScoped<IMessageQueueService, MessageQueueService>()

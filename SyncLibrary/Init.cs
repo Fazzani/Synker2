@@ -25,6 +25,7 @@ namespace Hfa.SyncLibrary
     using Microsoft.Extensions.Logging;
     using hfa.Synker.Service.Services;
     using hfa.Synker.batch.Consumers;
+    using hfa.Synker.batch.Producers;
 
     public class Init
     {
@@ -100,9 +101,11 @@ namespace Hfa.SyncLibrary
                 .AddSingleton<IMessageQueueService, MessageQueueService>()
                 .AddSingleton<INotificationConsumer, NotificationConsumer>()
                 .AddSingleton<IWebGrabDockerConsumer, WebGrabDockerConsumer>()
+                .AddSingleton<IWebGrabDockerProducer, WebGrabDockerProducer>()
                 .AddSingleton<INotificationService, NotificationService>()
+                .AddSingleton<IWebGrabConfigService, WebGrabConfigService>()
+                .AddSingleton<ICommandService, CommandService>()
                 .BuildServiceProvider();
-         
         }
 
         internal static void Build()

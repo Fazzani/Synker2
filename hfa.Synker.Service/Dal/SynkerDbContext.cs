@@ -1,4 +1,5 @@
-﻿using hfa.Synker.Service.Entities;
+﻿using hfa.synker.entities;
+using hfa.Synker.Service.Entities;
 using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Service.Entities.Playlists;
 using hfa.Synker.Services.Entities.Messages;
@@ -24,6 +25,7 @@ namespace hfa.Synker.Services.Dal
         public DbSet<Playlist> Playlist { get; set; }
 
         public DbSet<Host> Hosts { get; set; }
+        public DbSet<WebGrabConfigDocker> WebGrabConfigDockers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -55,6 +57,7 @@ namespace hfa.Synker.Services.Dal
 
             modelBuilder.Entity<UserRole>().HasKey(pc => new { pc.UserId, pc.RoleId });
 
+            modelBuilder.Entity<WebGrabConfigDocker>().HasOne(r => r.RunnableHost).WithMany(x => x.WebGrabConfigDockers).HasForeignKey(x => x.HostId);
             modelBuilder.Entity<UserRole>().HasOne(r => r.User).WithMany(x => x.UserRoles).HasForeignKey(x => x.UserId);
             modelBuilder.Entity<UserRole>().HasOne(r => r.Role).WithMany(x => x.UserRoles).HasForeignKey(x => x.RoleId);
 
