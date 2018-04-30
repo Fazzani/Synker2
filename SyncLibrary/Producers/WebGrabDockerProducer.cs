@@ -72,7 +72,8 @@
                     _logger.LogInformation($"Queuing new webgrab config {webGrabNotification.WebgrabConfigUrl}");
                 }
 
-                Thread.Sleep(1000);
+                //Task sleeping for one day
+                Thread.Sleep(new TimeSpan(24,0,0));
             }
         }
 
