@@ -22,9 +22,9 @@
             _logger = loggerFactory.CreateLogger(nameof(WebGrabConfigService));
 
         }
-        public async Task<IEnumerable<WebGrabConfigDocker>> GetWebGrabToExecuteAsync(CancellationToken cancellationToken =default)
+        public async Task<IEnumerable<WebGrabConfigDocker>> GetWebGrabToExecuteAsync(CancellationToken cancellationToken = default)
         {
-            return await _dbcontext.WebGrabConfigDockers.ToListAsync();
+            return await _dbcontext.WebGrabConfigDockers.Include(x => x.RunnableHost).ToListAsync();
         }
 
     }

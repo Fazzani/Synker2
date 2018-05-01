@@ -14,6 +14,7 @@
     using RabbitMQ.Client;
     using RabbitMQ.Client.Events;
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Cryptography.X509Certificates;
@@ -50,20 +51,11 @@
                 var webGrabNotificationMessage = JsonConvert.DeserializeObject<WebGrabNotification>(messageString);
 
                 var cron = CrontabSchedule.Parse(webGrabNotificationMessage.Cron);
-                var cronOcc = cron.GetNextOccurrence(DateTime.UtcNow).ToString("yyyy-MM-dd HH:mm");
-                if (cronOcc == DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm"))
-                {
-                    var cancellationToken = new CancellationTokenSource();
-                    CreateContainerAsync(ea, webGrabNotificationMessage, cancellationToken.Token).GetAwaiter().GetResult();
-                }
-                else
-                {
-#if DEBUG
-                    Thread.Sleep(6000);
-#endif
-                    _logger.LogInformation($"Requeing Message {webGrabNotificationMessage.WebgrabConfigUrl}");
-                    _webgrabChannel.BasicReject(ea.DeliveryTag, true);
-                }
+                var cronOcc = cron.GetNextOccurrence(DateTime.UtcNow);
+                var cancellationTokenSource = new CancellationTokenSource();
+                Task.Factory.StartNew(() =>
+                    CreateContainerAsync((cronOcc - DateTime.UtcNow).Duration(), ea, webGrabNotificationMessage, cancellationTokenSource.Token),
+                    cancellationTokenSource.Token).GetAwaiter().GetResult();
             }
             catch (Exception e)
             {
@@ -79,54 +71,60 @@
         /// <param name="ea"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        private async Task CreateContainerAsync(BasicDeliverEventArgs ea, WebGrabNotification webGrabNotificationMessage, CancellationToken cancellationToken)
+        private async Task CreateContainerAsync(TimeSpan nextExecutionTime, BasicDeliverEventArgs ea, WebGrabNotification webGrabNotificationMessage, CancellationToken cancellationToken)
         {
-            CertificateCredentials credentials = null;
-            if (webGrabNotificationMessage.RunnableHost.Authentication != null
-                && !string.IsNullOrEmpty(webGrabNotificationMessage.RunnableHost.Authentication.CertPath))
+            try
             {
-                credentials = new CertificateCredentials(new X509Certificate2(webGrabNotificationMessage.RunnableHost.Authentication.CertPath, webGrabNotificationMessage.RunnableHost.Authentication.Password));
-                credentials.ServerCertificateValidationCallback += (o, c, ch, er) => true;
-            }
+                _webgrabChannel.BasicAck(ea.DeliveryTag, true);
+                _logger.LogInformation($"Waiting for {nextExecutionTime}{Environment.NewLine}");
+                await Task.Delay(nextExecutionTime);
 
-            using (var dockerClient = new DockerClientConfiguration(webGrabNotificationMessage.RunnableHost.AddressUri, credentials).CreateClient())
-            {
-                IList<ContainerListResponse> containers = await dockerClient.Containers.ListContainersAsync(new ContainersListParameters()
+                CertificateCredentials credentials = null;
+                if (webGrabNotificationMessage.RunnableHost.Authentication != null
+                    && !string.IsNullOrEmpty(webGrabNotificationMessage.RunnableHost.Authentication.CertPath))
                 {
-                    All = true
-                }, cancellationToken);
-
-                var images = await dockerClient.Images.ListImagesAsync(new ImagesListParameters { MatchName = webGrabNotificationMessage.DockerImage });
-                if (images.Count == 0)
-                {
-                    // No image found. Pulling latest ..
-                    await dockerClient.Images.CreateImageAsync(new ImagesCreateParameters
-                    {
-                        FromImage = webGrabNotificationMessage.DockerImage,
-                        Tag = "latest"
-                    }, null, IgnoreProgress.Forever);
+                    credentials = new CertificateCredentials(new X509Certificate2(webGrabNotificationMessage.RunnableHost.Authentication.CertPath, webGrabNotificationMessage.RunnableHost.Authentication.Password));
+                    credentials.ServerCertificateValidationCallback += (o, c, ch, er) => true;
                 }
 
-                /*
-                 * docker run -it --rm -e WEBGRAB_CONFIG_URL=https://raw.githubusercontent.com/Fazzani/xmltv/master/WebGrab++.config.xml \
-                 * -v "$(pwd):/data" synker/webgraboneshoturl:latest
-                 * /mnt/nfs/webgrab/xmltv
-                 * 
-                 * on windows 
-                 * -------
-                 * docker run -it --rm -e "WEBGRAB_CONFIG_URL=https://raw.githubusercontent.com/Fazzani/xmltv/master/WebGrab%2B%2B.config.xml" \
-                 * -e DEBUG=1 -v /$(pwd):/data synker/webgraboneshoturl:latest
-                 * To see for sharing volume : https://github.com/rocker-org/rocker/wiki/Sharing-files-with-host-machine
-                 * example code :  https://gist.github.com/yreynhout/c7569833d78c8db255ec8d7703bb3ae5
-                 */
-                var createdContainer = await dockerClient.Containers.CreateContainerAsync(new CreateContainerParameters
+                using (var dockerClient = new DockerClientConfiguration(webGrabNotificationMessage.RunnableHost.AddressUri, credentials).CreateClient())
                 {
-                    Image = webGrabNotificationMessage.DockerImage,
-                    Env = new List<string> { $"WEBGRAB_CONFIG_URL={webGrabNotificationMessage.WebgrabConfigUrl}", "DEBUG=1" },
-                    HostConfig = new HostConfig
+                    IList<ContainerListResponse> containers = await dockerClient.Containers.ListContainersAsync(new ContainersListParameters()
                     {
-                        AutoRemove = !Init.IsDev,
-                        Mounts = new List<Mount>
+                        All = true
+                    }, cancellationToken);
+
+                    var images = await dockerClient.Images.ListImagesAsync(new ImagesListParameters { MatchName = webGrabNotificationMessage.DockerImage });
+                    if (images.Count == 0)
+                    {
+                        // No image found. Pulling latest ..
+                        await dockerClient.Images.CreateImageAsync(new ImagesCreateParameters
+                        {
+                            FromImage = webGrabNotificationMessage.DockerImage,
+                            Tag = "latest"
+                        }, null, IgnoreProgress.Forever);
+                    }
+
+                    /*
+                     * docker run -it --rm -e WEBGRAB_CONFIG_URL=https://raw.githubusercontent.com/Fazzani/xmltv/master/WebGrab++.config.xml \
+                     * -v "$(pwd):/data" synker/webgraboneshoturl:latest
+                     * /mnt/nfs/webgrab/xmltv
+                     * 
+                     * on windows 
+                     * -------
+                     * docker run -it --rm -e "WEBGRAB_CONFIG_URL=https://raw.githubusercontent.com/Fazzani/xmltv/master/WebGrab%2B%2B.config.xml" \
+                     * -e DEBUG=1 -v /$(pwd):/data synker/webgraboneshoturl:latest
+                     * To see for sharing volume : https://github.com/rocker-org/rocker/wiki/Sharing-files-with-host-machine
+                     * example code :  https://gist.github.com/yreynhout/c7569833d78c8db255ec8d7703bb3ae5
+                     */
+                    var createdContainer = await dockerClient.Containers.CreateContainerAsync(new CreateContainerParameters
+                    {
+                        Image = webGrabNotificationMessage.DockerImage,
+                        Env = new List<string> { $"WEBGRAB_CONFIG_URL={webGrabNotificationMessage.WebgrabConfigUrl}", "DEBUG=1" },
+                        HostConfig = new HostConfig
+                        {
+                            AutoRemove = !Init.IsDev,
+                            Mounts = new List<Mount>
                         {
                             new Mount {
                             Source = webGrabNotificationMessage.MountSourcePath,
@@ -134,18 +132,24 @@
                             ReadOnly = false,
                             Type = "bind"
                         }}
-                    }
-                }, cancellationToken);
+                        }
+                    }, cancellationToken);
 
-                var containerIsStarted = await dockerClient
-                    .Containers
-                    .StartContainerAsync(createdContainer.ID, new ContainerStartParameters(), cancellationToken);
+                    var containerIsStarted = await dockerClient
+                        .Containers
+                        .StartContainerAsync(createdContainer.ID, new ContainerStartParameters(), cancellationToken);
 
-                //Monitoring container executing and waiting for the end
-                _logger.LogInformation($"container started id : {createdContainer.ID}");
+                    //Monitoring container executing and waiting for the end
+                    _logger.LogInformation($"container started id : {createdContainer.ID} for webGrabConfig.xml : {webGrabNotificationMessage.WebgrabConfigUrl} on host {webGrabNotificationMessage.RunnableHost.AddressUri}");
 
-                //ack message
-                _webgrabChannel.BasicAck(ea.DeliveryTag, true);
+                    //ack message
+                    //_webgrabChannel.BasicAck(ea.DeliveryTag, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                //TODO: Publish new message
             }
         }
 

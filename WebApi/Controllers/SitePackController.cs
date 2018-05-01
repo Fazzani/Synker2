@@ -252,7 +252,7 @@ namespace Hfa.WebApi.Controllers
                     {
                         Cron = "0 3 * * *",
                         DockerImage = Docker_WEBGRABBER_IMAGE_NAME,
-                        MountSourcePath = "/mnt/nfs/webgrab/xmltv:/data",
+                        MountSourcePath = "/mnt/nfs/webgrab/xmltv",
                         RunnableHost = host,
                         WebgrabConfigUrl = paste.RawUrl
                     }, cancellationToken);

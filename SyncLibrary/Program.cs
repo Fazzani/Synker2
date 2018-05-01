@@ -15,7 +15,7 @@
 
     public class Program
     {
-        private static string MailQueueName = Init.IsDev ? "synker.dev.mail.queue" : "synker.mail.queue";
+        private static string MailQueueName = "synker.mail.queue";
         private static ILogger _logger;
         private static IOptions<RabbitMQConfiguration> _rabbitConfig;
         private static INotificationConsumer _notificationConsumer;
@@ -23,6 +23,14 @@
         private static IWebGrabDockerProducer _webGrabDockerProducer;
         public static ManualResetEvent _Shutdown = new ManualResetEvent(false);
         public static ManualResetEventSlim _Complete = new ManualResetEventSlim();
+        private static IConnection _connection;
+        private static CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+
+#if DEBUG
+        const double _24H = 1000 * 60 * 60; // Toutes les heures
+#else
+        const double _24H = 1000 * 60 * 60 * 24;
+#endif
 
         static int Main(string[] args)
         {
@@ -55,14 +63,21 @@
 
             try
             {
-                using (var connection = factory.CreateConnection())
+                _connection = factory.CreateConnection();
+                _logger.LogDebug($"Connected to rabbit host: {factory.HostName}{factory.VirtualHost}");
+
+                var timer = new System.Timers.Timer
                 {
-                    _logger.LogDebug($"Connected to rabbit host: {factory.HostName}{factory.VirtualHost}");
-                    Task.WaitAll(
-                        Task.Run(() => _notificationConsumer.Start(connection, _Shutdown)),
-                        Task.Run(() => _webGrabDockerConsumer.Start(connection, _Shutdown)),
-                        Task.Run(() => _webGrabDockerProducer.Start(connection, _Shutdown)));
-                }
+                    Interval = _24H
+                };
+
+                timer.Elapsed += TimerElapsedWebGrabProducer;
+                timer.Start();
+
+                Task.WaitAll(
+                    Task.Run(() => _notificationConsumer.Start(_connection, _Shutdown)),
+                    Task.Run(() => _webGrabDockerConsumer.Start(_connection, _Shutdown)),
+                    _webGrabDockerProducer.StartAsync(_connection, _cancellationTokenSource.Token));
             }
             catch (Exception e)
             {
@@ -75,10 +90,15 @@
             return 0;
         }
 
+        private static async void TimerElapsedWebGrabProducer(object sender, System.Timers.ElapsedEventArgs e) =>
+            await _webGrabDockerProducer.StartAsync(_connection, _cancellationTokenSource.Token);
+
         private static void Default_Unloading(AssemblyLoadContext obj)
         {
             _logger.LogInformation($"Shutting down in response to SIGTERM.");
             _Shutdown.Set();
+            _cancellationTokenSource.Cancel();
+            _connection.Close(1, "Application Shutting down [SIGTERM received].");
             _Complete.Wait();
         }
     }

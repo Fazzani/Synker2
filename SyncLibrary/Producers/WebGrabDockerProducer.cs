@@ -14,6 +14,7 @@
 
     public class WebGrabDockerProducer : IWebGrabDockerProducer, IDisposable
     {
+        static JsonSerializerSettings JsonSerializerSettings =  new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
         ILogger _logger;
         private IWebGrabConfigService _webGrabConfigService;
         private IModel _webgrabChannel;
@@ -25,7 +26,7 @@
             _webGrabConfigService = webGrabConfigService;
         }
 
-        public void Start(IConnection connection, ManualResetEvent shutdown)
+        public async Task StartAsync(IConnection connection, CancellationToken cancellationToken)
         {
             _webgrabChannel = connection.CreateModel();
 
@@ -35,45 +36,46 @@
                                         autoDelete: false,
                                         arguments: null
                                         );
-            while (!shutdown.WaitOne())
+
+            _webgrabChannel.QueuePurge(WebGrabQueueName);
+
+            await Task.Delay(5000);
+
+            foreach (var config in await _webGrabConfigService.GetWebGrabToExecuteAsync(cancellationToken))
             {
-                foreach (var config in _webGrabConfigService.GetWebGrabToExecuteAsync(CancellationToken.None).GetAwaiter().GetResult())
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var webGrabNotification = new WebGrabNotification
                 {
-                    var webGrabNotification = new WebGrabNotification
-                    {
-                        Cron = config.Cron,
-                        DockerImage = config.DockerImage,
-                        RunnableHost = config.RunnableHost,
-                        MountSourcePath = config.MountSourcePath,
-                        WebgrabConfigUrl = config.WebgrabConfigUrl
-                    };
+                    Cron = config.Cron,
+                    DockerImage = config.DockerImage,
+                    RunnableHost = config.RunnableHost,
+                    MountSourcePath = config.MountSourcePath,
+                    WebgrabConfigUrl = config.WebgrabConfigUrl
+                };
 
-                    var jsonified = JsonConvert.SerializeObject(webGrabNotification);
-                    var customerBuffer = Encoding.UTF8.GetBytes(jsonified);
+                var jsonified = JsonConvert.SerializeObject(webGrabNotification, JsonSerializerSettings);
+                var customerBuffer = Encoding.UTF8.GetBytes(jsonified);
 
-                    IBasicProperties props = _webgrabChannel.CreateBasicProperties();
-                    props.ContentType = "application/json";
-                    props.DeliveryMode = 2;
-                    props.AppId = webGrabNotification.AppId;
-                    props.UserId = webGrabNotification.UserId;
-                    props.Timestamp = new AmqpTimestamp(unixTime: DateTime.UtcNow.ToUnixTimestamp());
+                IBasicProperties props = _webgrabChannel.CreateBasicProperties();
+                props.ContentType = "application/json";
+                props.DeliveryMode = 2;
+                props.AppId = webGrabNotification.AppId;
+                props.UserId = webGrabNotification.UserId;
+                props.Timestamp = new AmqpTimestamp(unixTime: DateTime.UtcNow.ToUnixTimestamp());
 
-                    _webgrabChannel.ExchangeDeclare(WebGrabQueueName, ExchangeType.Direct);
-                    _webgrabChannel.QueueDeclare(WebGrabQueueName, false, false, false, null);
-                    _webgrabChannel.QueueBind(WebGrabQueueName, WebGrabQueueName, WebGrabQueueName, null);
+                _webgrabChannel.ExchangeDeclare(WebGrabQueueName, ExchangeType.Direct);
+                _webgrabChannel.QueueDeclare(WebGrabQueueName, false, false, false, null);
+                _webgrabChannel.QueueBind(WebGrabQueueName, WebGrabQueueName, WebGrabQueueName, null);
 
-                    //TODO: Envoyer le message au bon moment
+                //TODO: Envoyer le message au bon moment
 
-                    _webgrabChannel.BasicPublish(exchange: WebGrabQueueName,
-                                         routingKey: WebGrabQueueName,
-                                         basicProperties: null,
-                                         body: customerBuffer);
+                _webgrabChannel.BasicPublish(exchange: WebGrabQueueName,
+                                     routingKey: WebGrabQueueName,
+                                     basicProperties: null,
+                                     body: customerBuffer);
 
-                    _logger.LogInformation($"Queuing new webgrab config {webGrabNotification.WebgrabConfigUrl}");
-                }
-
-                //Task sleeping for one day
-                Thread.Sleep(new TimeSpan(24,0,0));
+                _logger.LogInformation($"Queuing new webgrab config {webGrabNotification.WebgrabConfigUrl}");
             }
         }
 

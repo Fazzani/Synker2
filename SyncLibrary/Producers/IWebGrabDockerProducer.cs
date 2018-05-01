@@ -1,10 +1,11 @@
 ﻿using RabbitMQ.Client;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace hfa.Synker.batch.Producers
 {
     public interface IWebGrabDockerProducer
     {
-        void Start(IConnection connection, ManualResetEvent shutdown);
+        Task StartAsync(IConnection connection, CancellationToken cancellationToken);
     }
 }
