@@ -258,16 +258,6 @@ namespace Hfa.WebApi.Controllers
                         WebgrabConfigUrl = paste.RawUrl
                     }, cancellationToken);
 
-                    //await _dbContext.Command.AddAsync(new Command
-                    //{
-                    //    CommandText = $"docker run -itd --rm -e 'WEBGRAB_CONFIG_URL={paste.RawUrl}' -e DEBUG=0 -v '/mnt/nfs/webgrab/xmltv:/data' " +
-                    //        $"{Docker_WEBGRABBER_IMAGE_NAME}",
-                    //    UserId = UserId.Value,
-                    //    Cron = "0 3 * * *",
-                    //    CommandExecutingType = CommandExecutingType.Cron,
-                    //    Comments = $"Adding new cronned command to webgrab {sitePackUrl} from {nameof(WebgrabConfigBySitePackAsync)} by {UserId}{Environment.NewLine}"
-                    //});
-
                     _logger.LogInformation($"Adding new cronned command to webgrab {sitePackUrl} from {nameof(WebgrabConfigBySitePackAsync)} by {UserId}");
                 }
                 catch (Exception ex)

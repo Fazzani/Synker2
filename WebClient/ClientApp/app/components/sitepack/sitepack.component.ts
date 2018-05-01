@@ -100,6 +100,17 @@ export class SitePackComponent implements OnInit, OnDestroy {
     /**
     * Synchronize country field
     */
+    synkWebgrab(): void {
+
+        this.sitePackService.synkWebgrab().subscribe(res => {
+            this.snackBar.open("Sitepack webgrab config was synchronized");
+            this.reload();
+        });
+    }
+
+    /**
+    * Synchronize country field
+    */
     synkCountries(): void {
 
         this.sitePackService.syncCountries().subscribe(res => {

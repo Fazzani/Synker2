@@ -92,4 +92,14 @@ export class SitePackService extends BaseService {
             return res;
         }).catch(this.handleError);
     }
+
+    /**
+     * synk webgrab configuration from sitepack collected from playlists
+     * @returns
+     */
+    synkWebgrab(): Observable<any> {
+        return this.http.post(variables.BASE_API_URL + `${this.BaseUrl}/synk/webgrab`, null).map(res => {
+            return res;
+        }).catch(this.handleError);
+    }
 }

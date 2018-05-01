@@ -29,6 +29,11 @@
             <a mat-icon-button>
                 <mat-icon class="mat-24" aria-label="Synchronize countries" matTooltip="Synchronize countries" (click)="synkCountries()">language</mat-icon>
             </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Synchronize webgrab configs" matTooltip="Synchronize webgrab configs" (click)="synkWebgrab()">
+                    compare_arrows
+                </mat-icon>
+            </a>
         </div>
     </mat-toolbar>
     <mat-table #table [dataSource]="dataSource" matSort class="noselect grid-wide">
