@@ -242,6 +242,7 @@ namespace Hfa.WebApi.Controllers
             _dbContext.WebGrabConfigDockers.RemoveRange(_dbContext.WebGrabConfigDockers);
             //TODO: Equilibrer la charge sur les différentes hosts
             var host = await _dbContext.Hosts.Where(h => h.Enabled).FirstOrDefaultAsync(cancellationToken);
+            var i = 0;
 
             foreach (var sitePackUrl in await GetSitepacksToWebGrab(cancellationToken))
             {
@@ -250,7 +251,7 @@ namespace Hfa.WebApi.Controllers
                     var paste = await SynkSitePackToWebgrabAsync(sitePackUrl, cancellationToken);
                     await _dbContext.WebGrabConfigDockers.AddAsync(new WebGrabConfigDocker
                     {
-                        Cron = "0 3 * * *",
+                        Cron = $"0 {i++} * * *",
                         DockerImage = Docker_WEBGRABBER_IMAGE_NAME,
                         MountSourcePath = "/mnt/nfs/webgrab/xmltv",
                         RunnableHost = host,
