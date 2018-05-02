@@ -62,7 +62,8 @@
 
             try
             {
-                _connection = factory.CreateConnection();
+                _logger.LogInformation($"rabbitmq VirtualHost : {factory.VirtualHost}");
+               _connection = factory.CreateConnection();
                 _logger.LogInformation($"Connected to rabbit host: {factory.HostName}{factory.VirtualHost}");
 
                 var timer = new System.Timers.Timer
