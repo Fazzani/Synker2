@@ -270,6 +270,7 @@ __pycache__/
 .vscode/
 *.log
 **/appsettings.development.json
+**/appsettings.Production.json
 **/appsettings.staging.json
 log/
 *.bookmark
