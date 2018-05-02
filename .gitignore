@@ -272,6 +272,6 @@ __pycache__/
 **/appsettings.development.json
 **/appsettings.staging.json
 log/
-/Brokers/image_history
-/Brokers/hfa.Notification.Brokers/appsettings.Prod.json
-/Brokers/appsettings.Prod.json
+*.bookmark
+*docker-elk-serilog-*-buffer-*.json
+*docker-elk-serilog-*-buffer-*.json

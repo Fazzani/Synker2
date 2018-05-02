@@ -57,6 +57,7 @@ namespace hfa.Notification.Brokers.Consumers
 
         public void Start(IConnection connection, ManualResetEvent shutdown)
         {
+            _logger.LogInformation($"Start Notification consumer");
             _mailChannel = connection.CreateModel();
 
             _mailChannel.QueueDeclare(queue: MailQueueName,

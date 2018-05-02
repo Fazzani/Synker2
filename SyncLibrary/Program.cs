@@ -15,7 +15,6 @@
 
     public class Program
     {
-        private static string MailQueueName = "synker.mail.queue";
         private static ILogger _logger;
         private static IOptions<RabbitMQConfiguration> _rabbitConfig;
         private static INotificationConsumer _notificationConsumer;
@@ -64,7 +63,7 @@
             try
             {
                 _connection = factory.CreateConnection();
-                _logger.LogDebug($"Connected to rabbit host: {factory.HostName}{factory.VirtualHost}");
+                _logger.LogInformation($"Connected to rabbit host: {factory.HostName}{factory.VirtualHost}");
 
                 var timer = new System.Timers.Timer
                 {
@@ -84,7 +83,7 @@
                 _logger.LogError(e, e.Message);
             }
 
-            _logger.LogDebug("Exiting...");
+            _logger.LogInformation("Exiting...");
             _Complete.Set();
 
             return 0;

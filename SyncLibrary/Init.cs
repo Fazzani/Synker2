@@ -26,6 +26,7 @@ namespace Hfa.SyncLibrary
     using hfa.Synker.Service.Services;
     using hfa.Synker.batch.Consumers;
     using hfa.Synker.batch.Producers;
+    using Serilog;
 
     public class Init
     {
@@ -71,23 +72,15 @@ namespace Hfa.SyncLibrary
 
             Configuration = builder.Build();
 
-            //Config Logger
-            var loggerFactory = new LoggerFactory().AddConsole();
-            if (IsDev)
-            {
-                loggerFactory.AddDebug();
-            }
-            else
-            {
-                loggerFactory.AddFile(Configuration.GetSection("Logging"));
-            }
+            var loggerFactory = new LoggerFactory().AddSerilog();
 
             //Register Services IOC
             ServiceProvider = new ServiceCollection()
-                .AddSingleton(loggerFactory)
                 .AddLogging()
                 .AddOptions()
-                .Replace(ServiceDescriptor.Singleton(typeof(ILogger<>), typeof(TimedLogger<>)))
+                .AddSingleton(loggerFactory)
+                .AddSingleton(Configuration)
+                //.Replace(ServiceDescriptor.Singleton(typeof(ILogger<>), typeof(TimedLogger<>)))
                 .Configure<TvhOptions>(Configuration.GetSection(nameof(TvhOptions)))
                 .Configure<ApiOptions>(Configuration.GetSection(nameof(ApiOptions)))
                 .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
@@ -106,6 +99,12 @@ namespace Hfa.SyncLibrary
                 .AddSingleton<IWebGrabConfigService, WebGrabConfigService>()
                 .AddSingleton<ICommandService, CommandService>()
                 .BuildServiceProvider();
+
+            Log.Logger = new LoggerConfiguration()
+              .ReadFrom.Configuration(Configuration)
+              .Enrich.FromLogContext()
+              .WriteTo.Console()
+              .CreateLogger();
         }
 
         internal static void Build()

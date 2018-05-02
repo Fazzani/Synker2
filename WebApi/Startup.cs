@@ -81,6 +81,7 @@ namespace hfa.WebApi
                .AddScoped<ICommandService, CommandService>()
                .AddScoped<IXtreamService, XtreamService>()
                .AddScoped<IMediaScraper, MediaScraper>()
+               .AddScoped<IWebGrabConfigService, WebGrabConfigService>()
                .AddScoped<IMessageQueueService, MessageQueueService>()
                .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))

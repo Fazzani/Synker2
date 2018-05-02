@@ -28,6 +28,7 @@
 
         public async Task StartAsync(IConnection connection, CancellationToken cancellationToken)
         {
+            _logger.LogInformation($"Start Webgrab Producer");
             _webgrabChannel = connection.CreateModel();
 
             _webgrabChannel.QueueDeclare(queue: WebGrabQueueName,

@@ -155,6 +155,7 @@
 
         public void Start(IConnection connection, ManualResetEvent shutdown)
         {
+            _logger.LogInformation($"Start webgrab consumer");
             _webgrabChannel = connection.CreateModel();
 
             _webgrabChannel.QueueDeclare(queue: WebGrabQueueName,
