@@ -62,10 +62,10 @@
 
             try
             {
-                _logger.LogInformation($"Rabbitmq VirtualHost : {factory.VirtualHost}");
+                _logger.LogInformation($"Rabbitmq : {_rabbitConfig.Value.Username} : {_rabbitConfig.Value.Password}");
                 _connection = factory.CreateConnection();
                 _connection.CallbackException += _connection_CallbackException;
-                _logger.LogInformation($"Connected to rabbit host: {factory.HostName}{factory.VirtualHost}");
+                _logger.LogInformation($"Connected to rabbit host: {factory.HostName}{factory.VirtualHost}:{_rabbitConfig.Value.Port}");
 
                 var timer = new System.Timers.Timer
                 {
