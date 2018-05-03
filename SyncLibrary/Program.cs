@@ -62,8 +62,9 @@
 
             try
             {
-                _logger.LogInformation($"rabbitmq VirtualHost : {factory.VirtualHost}");
-               _connection = factory.CreateConnection();
+                _logger.LogInformation($"Rabbitmq VirtualHost : {factory.VirtualHost}");
+                _connection = factory.CreateConnection();
+                _connection.CallbackException += _connection_CallbackException;
                 _logger.LogInformation($"Connected to rabbit host: {factory.HostName}{factory.VirtualHost}");
 
                 var timer = new System.Timers.Timer
@@ -75,30 +76,33 @@
                 timer.Start();
 
                 Task.WaitAll(
-                    Task.Run(() => _notificationConsumer.Start(_connection, _Shutdown)),
-                    Task.Run(() => _webGrabDockerConsumer.Start(_connection, _Shutdown)),
+                    Task.Run(() => _notificationConsumer.Start(_connection, _Shutdown), _cancellationTokenSource.Token),
+                    Task.Run(() => _webGrabDockerConsumer.Start(_connection, _Shutdown), _cancellationTokenSource.Token),
                     _webGrabDockerProducer.StartAsync(_connection, _cancellationTokenSource.Token));
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.Message);
+                _logger.LogCritical(e, e.Message);
             }
 
-            _logger.LogInformation("Exiting...");
+            _logger.LogInformation("Batch exiting...");
             _Complete.Set();
 
             return 0;
         }
+
+        private static void _connection_CallbackException(object sender, RabbitMQ.Client.Events.CallbackExceptionEventArgs e) =>
+            _logger.LogError(e.Exception, e.Exception.Message);
 
         private static async void TimerElapsedWebGrabProducer(object sender, System.Timers.ElapsedEventArgs e) =>
             await _webGrabDockerProducer.StartAsync(_connection, _cancellationTokenSource.Token);
 
         private static void Default_Unloading(AssemblyLoadContext obj)
         {
-            _logger.LogInformation($"Shutting down in response to SIGTERM.");
+            _logger.LogWarning($"Shutting down in response to SIGTERM.");
             _Shutdown.Set();
             _cancellationTokenSource.Cancel();
-            _connection.Close(1, "Application Shutting down [SIGTERM received].");
+            _connection?.Close(1, "Application Shutting down [SIGTERM received].");
             _Complete.Wait();
         }
     }
