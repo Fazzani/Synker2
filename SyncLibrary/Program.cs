@@ -62,10 +62,10 @@
 
             try
             {
-                _logger.LogInformation($"Rabbitmq : {_rabbitConfig.Value.Username} : {_rabbitConfig.Value.Password}");
+                _logger.LogDebug($"Rabbitmq : {_rabbitConfig.Value.Username} : {_rabbitConfig.Value.Password}");
                 _connection = factory.CreateConnection();
                 _connection.CallbackException += _connection_CallbackException;
-                _logger.LogInformation($"Connected to rabbit host: {factory.HostName}{factory.VirtualHost}:{_rabbitConfig.Value.Port}");
+                _logger.LogDebug($"Connected to rabbit host: {factory.HostName}{factory.VirtualHost}:{_rabbitConfig.Value.Port}");
 
                 var timer = new System.Timers.Timer
                 {
@@ -99,11 +99,11 @@
 
         private static void Default_Unloading(AssemblyLoadContext obj)
         {
-            _logger.LogWarning($"Shutting down in response to SIGTERM.");
-            _Shutdown.Set();
-            _cancellationTokenSource.Cancel();
+            _logger?.LogWarning($"Shutting down in response to SIGTERM.");
+            _Shutdown?.Set();
+            _cancellationTokenSource?.Cancel();
             _connection?.Close(1, "Application Shutting down [SIGTERM received].");
-            _Complete.Wait();
+            _Complete?.Wait();
         }
     }
 }
