@@ -1,5 +1,12 @@
 ﻿[![Build status](https://ci.appveyor.com/api/projects/status/nnk28cpkyyh1tot4?svg=true)](https://ci.appveyor.com/project/Fazzani/synker2-fmqp0)
 
+```sh
+# run in docker
+docker run  -itd -e "ASPNETCORE_ENVIRONMENT=Production" \
+--mount type=bind,source="$(pwd)"/appsettings.Production.json,target=/app/appsettings.Production.json \
+--name batch  synker/batch:latest
+```
+
 ## Goals
 <pre>Créer un service système permettant la synchronisation entre des providers différents. 
 Il faut que ce soit modulable, configurable et autonome.

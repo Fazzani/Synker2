@@ -57,7 +57,7 @@
                 Password = _rabbitConfig.Value.Password,
                 //ContinuationTimeout = new TimeSpan(0, 0, 60),
                 RequestedConnectionTimeout = 90_000,
-                VirtualHost = Init.IsDev ? "/dev" : "/"
+                VirtualHost = _rabbitConfig.Value.VirtualHost
             };
 
             try
