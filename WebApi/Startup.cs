@@ -224,9 +224,11 @@ namespace hfa.WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, SynkerDbContext synkerDbContext)
         {
             app.UseResponseCompression();
+
+            synkerDbContext.Database.Migrate();
 
             //Chanllenge Let's Encrypt path
             app.UseStaticFiles(new StaticFileOptions
