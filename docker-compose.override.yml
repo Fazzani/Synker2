@@ -16,5 +16,5 @@ services:
   hfa.synker.batch:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-    volumes:
-      - SyncLibrary/appsettings.Production.json:/app/appsettings.Production.json
+    #volumes:
+    #  - SyncLibrary/appsettings.Production.json:/app/appsettings.Production.json
