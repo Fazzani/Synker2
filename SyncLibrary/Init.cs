@@ -67,12 +67,18 @@ namespace Hfa.SyncLibrary
             }
             else
             {
-                builder.AddJsonFile($"appsettings.{environment}.json", optional: false);
+                builder.AddJsonFile($"appsettings.{environment}.json", optional: true);
             }
 
             Configuration = builder.Build();
 
-            var loggerFactory = new LoggerFactory().AddSerilog();
+            Log.Logger = new LoggerConfiguration()
+              .ReadFrom.Configuration(Configuration)
+              .Enrich.FromLogContext()
+              .WriteTo.Console()
+              .CreateLogger();
+
+            var loggerFactory = new LoggerFactory().AddSerilog(Log.Logger);
 
             //Register Services IOC
             ServiceProvider = new ServiceCollection()
@@ -99,12 +105,6 @@ namespace Hfa.SyncLibrary
                 .AddSingleton<IWebGrabConfigService, WebGrabConfigService>()
                 .AddSingleton<ICommandService, CommandService>()
                 .BuildServiceProvider();
-
-            Log.Logger = new LoggerConfiguration()
-              .ReadFrom.Configuration(Configuration)
-              .Enrich.FromLogContext()
-              .WriteTo.Console()
-              .CreateLogger();
         }
 
         internal static void Build()

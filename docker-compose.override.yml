@@ -13,15 +13,8 @@ services:
     ports:
       - "80"
   
-#  hfa.notification.brokers:
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#    ports:
-#      - "80"
-#  
-#  hfa.synker.batch:
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#    ports:
-#      - "80"
-  
+  hfa.synker.batch:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volume:
+      - SyncLibrary/appsettings.Production.json:/app/appsettings.Production.json
