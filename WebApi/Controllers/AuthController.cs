@@ -16,11 +16,10 @@ using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace hfa.WebApi.Controllers
 {
     [Route("api/v1/[controller]")]
+    [ApiController]
     public class AuthController : BaseController
     {
         private IAuthentificationService _authentificationService;
@@ -62,7 +61,9 @@ namespace hfa.WebApi.Controllers
             }
 
             if (jwtReponse == null)
+            {
                 return new UnauthorizedResult();
+            }
 
             user.ConnectionState.LastConnection = DateTime.UtcNow;
 
@@ -103,7 +104,9 @@ namespace hfa.WebApi.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterModel user)
         {
             if (_dbContext.Users.Any(x => x.Email == user.Email) || _dbContext.Users.Any(x => x.ConnectionState.UserName == user.UserName))
+            {
                 return BadRequest($"The user {user.UserName} is already exist");
+            }
 
             user.Password = user.Password.HashPassword(_authentificationService.Salt);
             var result = await _dbContext.Users.AddAsync(user.Entity);
@@ -122,7 +125,9 @@ namespace hfa.WebApi.Controllers
         public async Task<IActionResult> Reset([FromBody] ResetModel user)
         {
             if (!_dbContext.Users.Any(x => x.ConnectionState.UserName == user.UserName))
+            {
                 return BadRequest($"The user {user.UserName} is not exist");
+            }
 
             var userEntity = _dbContext.Users
                 .Include(x => x.ConnectionState)
