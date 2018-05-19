@@ -1,5 +1,5 @@
 ARG arch=x64
-FROM microsoft/aspnetcore:2.0 AS base
+FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
 ARG arch
 LABEL maintainer="synker-team@synker.ovh" \
       description="WebClient Synker suite application" \
@@ -16,7 +16,7 @@ EXPOSE 56801
 HEALTHCHECK --interval=3m --timeout=1m CMD curl -f http://localhost:56801/ || exit 1
 
 ARG arch=x64
-FROM microsoft/aspnetcore-build:2.0 AS build
+FROM microsoft/dotnet:2.1-sdk AS build
 ARG arch
 ENV NODE_VERSION 8.9.4
 ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz
