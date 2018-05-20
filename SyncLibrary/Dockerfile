@@ -1,5 +1,5 @@
 ARG arch=x64
-FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
+FROM microsoft/aspnetcore:2.0 AS base
 ARG arch
 LABEL maintainer="synker-team@synker.ovh" \
       description="Batch Synker suite application" \
@@ -12,7 +12,7 @@ LABEL maintainer="synker-team@synker.ovh" \
 WORKDIR /app
 
 ARG arch=x64
-FROM microsoft/dotnet:2.1-sdk AS build
+FROM microsoft/aspnetcore-build:2.0 AS build
 ARG arch
 WORKDIR /src
 COPY Synker.sln ./
