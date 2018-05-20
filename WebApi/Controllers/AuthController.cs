@@ -19,7 +19,6 @@ using hfa.Synker.Service.Elastic;
 namespace hfa.WebApi.Controllers
 {
     [Route("api/v1/[controller]")]
-    [ApiController]
     public class AuthController : BaseController
     {
         private IAuthentificationService _authentificationService;

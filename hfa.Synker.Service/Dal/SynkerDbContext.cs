@@ -25,6 +25,7 @@ namespace hfa.Synker.Services.Dal
         public DbSet<Playlist> Playlist { get; set; }
 
         public DbSet<Host> Hosts { get; set; }
+
         public DbSet<WebGrabConfigDocker> WebGrabConfigDockers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
