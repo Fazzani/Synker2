@@ -32,8 +32,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hfa.WebApi.Controllers
 {
-    [Route("api/v1/[controller]")]
-    [Authorize]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     public class SitePackController : BaseController
     {
         const string PREFIX_WEBGRAB_FILENAME = "WebGrab";

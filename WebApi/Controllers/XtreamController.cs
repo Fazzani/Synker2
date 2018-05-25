@@ -15,8 +15,9 @@ using Microsoft.Extensions.Options;
 
 namespace hfa.WebApi.Controllers
 {
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     [Produces("application/json")]
-    [Route("api/v1/[controller]")]
     [Authorize]
     public class XtreamController : BaseController
     {

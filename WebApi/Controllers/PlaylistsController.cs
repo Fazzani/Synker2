@@ -36,7 +36,8 @@ using System.Threading.Tasks;
 
 namespace Hfa.WebApi.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     [Authorize]
     public class PlaylistsController : BaseController
     {

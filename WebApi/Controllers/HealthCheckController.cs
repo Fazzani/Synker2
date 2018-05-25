@@ -19,7 +19,8 @@ using System.Reflection;
 namespace hfa.WebApi.Controllers
 {
     [AllowAnonymous]
-    [Route("api/v1/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     public class HealthCheckController : BaseController
     {
         public HealthCheckController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 

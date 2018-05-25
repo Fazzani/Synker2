@@ -19,7 +19,8 @@ using hfa.Synker.Service.Elastic;
 namespace hfa.WebApi.Controllers
 {
     [Produces("application/json")]
-    [Route("api/v1/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     [Authorize]
     public class CommandController : BaseController
     {

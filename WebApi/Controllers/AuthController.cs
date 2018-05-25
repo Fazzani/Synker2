@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Hfa.WebApi.Controllers;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
-using hfa.WebApi.Common;
 using hfa.WebApi.Common.Filters;
 using Microsoft.EntityFrameworkCore;
 using hfa.WebApi.Models.Auth;
@@ -18,7 +17,8 @@ using hfa.Synker.Service.Elastic;
 
 namespace hfa.WebApi.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     public class AuthController : BaseController
     {
         private IAuthentificationService _authentificationService;

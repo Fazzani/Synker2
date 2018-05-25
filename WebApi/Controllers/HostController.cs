@@ -24,6 +24,7 @@ namespace hfa.WebApi.Controllers
     [Route("api/v1/[controller]")]
     [Authorize]
     [Authorize(Policy = AuthorizePolicies.ADMIN)]
+    [ApiVersion("1.0")]
     public class HostController : BaseController
     {
         private IAuthentificationService _authentificationService;

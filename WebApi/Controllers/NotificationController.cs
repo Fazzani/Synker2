@@ -23,6 +23,8 @@ namespace hfa.WebApi.Controllers
     [Produces("application/json")]
     [Route("api/v1/[controller]")]
     [Authorize]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     public class NotificationController : BaseController
     {
         private IMessageQueueService _notificationService;

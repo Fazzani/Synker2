@@ -164,6 +164,12 @@ namespace hfa.WebApi
                 }
             );
 
+            services.AddApiVersioning(o =>
+            {
+                o.AssumeDefaultVersionWhenUnspecified = true;
+                o.DefaultApiVersion = new ApiVersion(1, 0);
+            });
+
             //https://github.com/domaindrivendev/Swashbuckle.AspNetCore
             services.AddSwaggerGen(c =>
             {

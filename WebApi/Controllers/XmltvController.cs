@@ -27,9 +27,8 @@ using hfa.WebApi.Models.Xmltv;
 
 namespace Hfa.WebApi.Controllers
 {
-    //[ApiVersion("1.0")]
-    //[Route("api/v{version:apiVersion}/[controller]")]
-    [Route("api/v1/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     [Authorize]
     public class XmltvController : BaseController
     {
