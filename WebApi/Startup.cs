@@ -50,21 +50,36 @@ using System.IO;
 using Microsoft.Extensions.FileProviders;
 using hfa.WebApi.Common.Swagger;
 using Newtonsoft.Json.Converters;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace hfa.WebApi
 {
+    /// <summary>
+    /// Web api configuration entry
+    /// </summary>
     public class Startup
     {
         internal static IConfiguration Configuration;
 
+        /// <summary>
+        /// Assembly version
+        /// </summary>
         public static string AssemblyVersion = typeof(Startup).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
 
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="env"></param>
         public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.
@@ -92,10 +107,24 @@ namespace hfa.WebApi
 
             services.AddMemoryCache();
 
-            var serviceProvider = services.AddDbContext<SynkerDbContext>(options => options
-             .UseMySql(Configuration.GetConnectionString("PlDatabase"),
-                a => a.MigrationsAssembly("hfa.WebApi")))
-             .BuildServiceProvider();
+            var serviceProvider = services.AddDbContext<SynkerDbContext>(options =>
+            {
+                options.UseMySql(Configuration.GetConnectionString("PlDatabase"),
+                sqlOptions =>
+                {
+                    sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+                    //Configuring Connection Resiliency:
+                    sqlOptions.
+                    EnableRetryOnFailure(maxRetryCount: 3,
+                    maxRetryDelay: TimeSpan.FromSeconds(30),
+                    errorNumbersToAdd: null);
+                });
+
+                // Changing default behavior when client evaluation occurs to throw.
+                // Default in EFCore would be to log warning when client evaluation is done.
+                options.ConfigureWarnings(warnings => warnings.Throw(
+                RelationalEventId.QueryClientEvaluationWarning));
+            }).BuildServiceProvider();
 
             //var DB = serviceProvider.GetService<SynkerDbContext>();
             //DB.Database.EnsureCreated();
@@ -229,7 +258,13 @@ namespace hfa.WebApi
             #endregion
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        ///  This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
+        /// <param name="loggerFactory"></param>
+        /// <param name="synkerDbContext"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, SynkerDbContext synkerDbContext)
         {
             app.UseResponseCompression();

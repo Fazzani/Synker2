@@ -23,7 +23,7 @@ namespace hfa.WebApi.Controllers
     [ApiVersion("1.0")]
     public class HealthCheckController : BaseController
     {
-        public HealthCheckController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 
+        public HealthCheckController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
             SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
