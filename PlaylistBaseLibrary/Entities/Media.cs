@@ -3,6 +3,7 @@ using PlaylistBaseLibrary.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -97,6 +98,9 @@ namespace PlaylistManager.Entities
         public MediaType MediaType { get; set; }
 
         public MediaGroup MediaGroup { get; set; }
+
+        [NotMapped]
+        public string Group => MediaGroup?.Name;
 
         public string GetTrimedDisplayName() => Regex.Replace(DisplayName, @"\s+", "");
 

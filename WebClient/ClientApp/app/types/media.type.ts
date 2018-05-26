@@ -6,7 +6,9 @@
  * @export
  * @interface TvgMedia
  */
-export interface TvgMedia extends ISelectable {
+export class TvgMedia implements ISelectable {
+
+    selected: boolean;
     id: string;
     name: string;
     displayName: string;
@@ -19,6 +21,7 @@ export interface TvgMedia extends ISelectable {
     tvg?: Tvg;
     isValid: boolean;
     startLineHeader?: string;
+    group: string;
     mediaGroup: MediaGroup;
 }
 

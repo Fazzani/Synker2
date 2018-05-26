@@ -15,7 +15,7 @@ import { PagedResult } from '../../types/common.type';
 @Injectable()
 export class MessageService extends BaseService {
 
-    url: string = variables.BASE_API_URL + 'message/status/';
+    url: string = `${this.FullBaseUrl}/status/`;
 
     constructor(protected http: HttpClient) { super(http, 'message'); }
 

@@ -120,10 +120,10 @@ namespace hfa.WebApi
                     errorNumbersToAdd: null);
                 });
 
-                // Changing default behavior when client evaluation occurs to throw.
-                // Default in EFCore would be to log warning when client evaluation is done.
-                options.ConfigureWarnings(warnings => warnings.Throw(
-                RelationalEventId.QueryClientEvaluationWarning));
+                //// Changing default behavior when client evaluation occurs to throw.
+                //// Default in EFCore would be to log warning when client evaluation is done.
+                //options.ConfigureWarnings(warnings => warnings.Throw(
+                //RelationalEventId.QueryClientEvaluationWarning));
             }).BuildServiceProvider();
 
             //var DB = serviceProvider.GetService<SynkerDbContext>();

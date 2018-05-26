@@ -30,6 +30,7 @@ import { PlaylistTvgSitesDialog } from '../dialogs/playlistTvgSites/PlaylistTvgS
 import { PlaylistDiffDialog } from '../dialogs/playlistDiff/playlist.diff.component';
 import { GroupsDialog } from '../dialogs/group/groups.component';
 import { MatchTvgDialog } from '../dialogs/matchTvg/matchTvg.component';
+import { debug } from 'util';
 
 @Component({
     selector: 'playlist',
@@ -111,9 +112,16 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.dataSource.filterPredicate =
                     (data: TvgMedia, filter: string) => {
                         filter = filter.toLowerCase();
+                        //console.debug(`filter : ${filter}`);
+
                         let values = filter.split(":");
-                        if (values.length > 1 && data[values[0].trim()]) {
-                            return data[values[0].trim()].trim().toLowerCase().indexOf(values[1].toLowerCase().trim()) != -1;
+                        if (values.length > 1 && values[1] == "null" || values[1] == "undefined") {
+                            return data[values[0].trim()] == undefined || data[values[0].trim()] == null || data[values[0].trim()] == '';
+                        }
+                        else if (values.length > 1 && data[values[0].trim()]) {
+                            {
+                                return data[values[0].trim()].trim().toLowerCase().indexOf(values[1].toLowerCase().trim()) != -1;
+                            }
                         } else {
                             return data.name.toLowerCase().indexOf(filter) != -1;
                         }
