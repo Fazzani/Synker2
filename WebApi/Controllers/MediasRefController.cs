@@ -14,8 +14,6 @@ using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Entities.MediasRef;
 using hfa.WebApi.Models;
 using hfa.Synker.Service.Services.MediaRefs;
-using hfa.SyncLibrary.Global;
-using Hfa.WebApi.Common;
 using hfa.WebApi.Common.Filters;
 using Microsoft.Extensions.Caching.Memory;
 using hfa.WebApi.Models.Elastic;

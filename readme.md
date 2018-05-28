@@ -5,6 +5,8 @@
 | **Travis Develop** | [![](https://travis-ci.org/Fazzani/Synker2.svg?branch=Develop)](https://travis-ci.org/Fazzani/Synker2) |
 | **Release** | [![GitHub release](https://img.shields.io/github/release/Fazzani/Synker2.svg?style=for-the-badge)](https://github.com/Fazzani/Synker2/releases/latest) |
 
+[![codebeat badge](https://codebeat.co/badges/d1235125-1d3c-4471-b5a4-a5a75f525b58)](https://codebeat.co/projects/github-com-fazzani-synker2-master)
+
 [link SEO](https://github.com/angular/universal/tree/master/modules/aspnetcore-engine)
 
 ### linux env compatibility
