@@ -60,13 +60,13 @@ namespace Hfa.WebApi.Controllers
             IProviderFactory providerFactory)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
-            _playlistService = playlistService;
-            _mediaScraper = mediaScraper;
-            _memoryCache = memoryCache;
-            _sitePackService = sitePackService;
-            _globalOptions = globalOptions.Value;
-            _xtreamService = xtreamService;
-            _providerFactory = providerFactory;
+            _playlistService = playlistService ?? throw new ArgumentNullException(nameof(playlistService));
+            _mediaScraper = mediaScraper ?? throw new ArgumentNullException(nameof(mediaScraper));
+            _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+            _sitePackService = sitePackService ?? throw new ArgumentNullException(nameof(sitePackService));
+            _globalOptions = globalOptions.Value ?? throw new ArgumentNullException(nameof(globalOptions));
+            _xtreamService = xtreamService ?? throw new ArgumentNullException(nameof(xtreamService));
+            _providerFactory = providerFactory ?? throw new ArgumentNullException(nameof(providerFactory));
         }
 
         /// <summary>

@@ -34,7 +34,7 @@ namespace hfa.WebApi.Controllers
            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
            : base(config, loggerFactory, elasticConnectionClient, context)
         {
-            _notificationService = notificationService;
+            _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
         }
 
         /// <summary>

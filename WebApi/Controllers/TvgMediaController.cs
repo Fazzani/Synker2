@@ -34,7 +34,7 @@ namespace Hfa.WebApi.Controllers
             SynkerDbContext context, ISitePackService sitePackService)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
-            _sitePackService = sitePackService;
+            _sitePackService = sitePackService ?? throw new ArgumentNullException(nameof(sitePackService));
         }
 
         [HttpPost]

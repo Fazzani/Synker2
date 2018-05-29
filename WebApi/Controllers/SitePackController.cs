@@ -48,9 +48,9 @@ namespace Hfa.WebApi.Controllers
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IPasteBinService pasteBinService)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
-            _memoryCache = memoryCache;
-            _sitePackService = sitePackService;
-            _pasteBinService = pasteBinService;
+            _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+            _sitePackService = sitePackService ?? throw new ArgumentNullException(nameof(sitePackService));
+            _pasteBinService = pasteBinService ?? throw new ArgumentNullException(nameof(pasteBinService));
         }
 
         [HttpPost]

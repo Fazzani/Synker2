@@ -28,7 +28,7 @@ namespace hfa.WebApi.Controllers
           IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
           : base(config, loggerFactory, elasticConnectionClient, context)
         {
-            _xtreamService = xtreamService;
+            _xtreamService = xtreamService ?? throw new ArgumentNullException(nameof(xtreamService));
         }
 
         [HttpGet]

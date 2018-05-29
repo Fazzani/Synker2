@@ -38,7 +38,7 @@ namespace Hfa.WebApi.Controllers
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
-            _pasteBinService = pasteBinService;
+            _pasteBinService = pasteBinService ?? throw new ArgumentNullException(nameof(pasteBinService));
         }
 
         [HttpPost]

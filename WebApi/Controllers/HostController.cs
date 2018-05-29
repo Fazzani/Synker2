@@ -38,7 +38,7 @@ namespace hfa.WebApi.Controllers
             SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
-            _authentificationService = authentificationService;
+            _authentificationService = authentificationService ?? throw new ArgumentNullException(nameof(authentificationService));
         }
 
         /// <summary>

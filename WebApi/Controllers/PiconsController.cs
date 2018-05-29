@@ -37,9 +37,9 @@ namespace Hfa.WebApi.Controllers
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IMediaScraper mediaScraper, IOptions<GlobalOptions> globalOptions)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
-            _piconsService = piconsService;
-            _mediaScraper = mediaScraper;
-            _globalOptions = globalOptions.Value;
+            _piconsService = piconsService ?? throw new ArgumentNullException(nameof(piconsService));
+            _mediaScraper = mediaScraper ?? throw new ArgumentNullException(nameof(mediaScraper));
+            _globalOptions = globalOptions.Value ?? throw new ArgumentNullException(nameof(globalOptions));
         }
 
         [HttpPost]

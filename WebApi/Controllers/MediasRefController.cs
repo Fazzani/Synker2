@@ -37,9 +37,9 @@ namespace Hfa.WebApi.Controllers
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
-            _mediaRefService = mediaRefService;
-            _memoryCache = memoryCache;
-            _sitePackService = sitePackService;
+            _mediaRefService = mediaRefService ?? throw new ArgumentNullException(nameof(mediaRefService));
+            _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+            _sitePackService = sitePackService ?? throw new ArgumentNullException(nameof(sitePackService));
         }
 
         [HttpPost]
