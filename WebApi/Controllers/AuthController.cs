@@ -21,7 +21,7 @@ namespace hfa.WebApi.Controllers
     [ApiVersion("1.0")]
     public class AuthController : BaseController
     {
-        private IAuthentificationService _authentificationService;
+        private readonly IAuthentificationService _authentificationService;
 
         public AuthController(IAuthentificationService authentificationService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)

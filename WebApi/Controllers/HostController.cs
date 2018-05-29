@@ -29,7 +29,8 @@ namespace hfa.WebApi.Controllers
     [ApiVersion("1.0")]
     public class HostController : BaseController
     {
-        private IAuthentificationService _authentificationService;
+        private readonly IAuthentificationService _authentificationService;
+
         public HostController(IAuthentificationService authentificationService,
             IOptions<ElasticConfig> config,
             ILoggerFactory loggerFactory,

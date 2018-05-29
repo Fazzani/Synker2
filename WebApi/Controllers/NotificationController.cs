@@ -28,7 +28,7 @@ namespace hfa.WebApi.Controllers
     [ApiVersion("1.0")]
     public class NotificationController : BaseController
     {
-        private IMessageQueueService _notificationService;
+        private readonly IMessageQueueService _notificationService;
 
         public NotificationController(IMessageQueueService notificationService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)

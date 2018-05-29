@@ -22,7 +22,7 @@ namespace hfa.WebApi.Controllers
     [Authorize]
     public class XtreamController : BaseController
     {
-        private IXtreamService _xtreamService;
+        private readonly IXtreamService _xtreamService;
 
         public XtreamController(IXtreamService xtreamService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
           IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)

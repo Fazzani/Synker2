@@ -28,7 +28,7 @@ namespace Hfa.WebApi.Controllers
     [Authorize]
     public class TvgMediaController : BaseController
     {
-        private ISitePackService _sitePackService;
+        private readonly ISitePackService _sitePackService;
 
         public TvgMediaController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
             SynkerDbContext context, ISitePackService sitePackService)

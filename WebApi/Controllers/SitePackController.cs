@@ -40,8 +40,8 @@ namespace Hfa.WebApi.Controllers
         const string PREFIX_WEBGRAB_FILENAME = "WebGrab";
         const string URL_SITEPACK_PREFIX = "https://raw.githubusercontent.com/SilentButeo2/webgrabplus-siteinipack/master/siteini.pack/";
         const string Docker_WEBGRABBER_IMAGE_NAME = "synker/webgraboneshoturl:latest";
-        IMemoryCache _memoryCache;
-        private ISitePackService _sitePackService;
+        private readonly IMemoryCache _memoryCache;
+        private readonly ISitePackService _sitePackService;
         private readonly IPasteBinService _pasteBinService;
 
         public SitePackController(IMemoryCache memoryCache, ISitePackService sitePackService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,

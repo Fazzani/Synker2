@@ -28,9 +28,9 @@ namespace Hfa.WebApi.Controllers
     [ApiVersion("1.0")]
     public class MediasRefController : BaseController
     {
-        IMediaRefService _mediaRefService;
-        IMemoryCache _memoryCache;
-        private ISitePackService _sitePackService;
+        private readonly IMediaRefService _mediaRefService;
+        private readonly IMemoryCache _memoryCache;
+        private readonly ISitePackService _sitePackService;
 
         public MediasRefController(IMemoryCache memoryCache, IMediaRefService mediaRefService, ISitePackService sitePackService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)

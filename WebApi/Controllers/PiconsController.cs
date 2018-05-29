@@ -29,9 +29,9 @@ namespace Hfa.WebApi.Controllers
     [ApiVersion("1.0")]
     public class PiconsController : BaseController
     {
-        private IPiconsService _piconsService;
-        private IMediaScraper _mediaScraper;
-        GlobalOptions _globalOptions;
+        private readonly IPiconsService _piconsService;
+        private readonly IMediaScraper _mediaScraper;
+        private readonly GlobalOptions _globalOptions;
 
         public PiconsController(IPiconsService piconsService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IMediaScraper mediaScraper, IOptions<GlobalOptions> globalOptions)

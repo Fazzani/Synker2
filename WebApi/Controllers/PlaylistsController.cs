@@ -45,13 +45,13 @@ namespace Hfa.WebApi.Controllers
     [Authorize]
     public class PlaylistsController : BaseController
     {
-        private IPlaylistService _playlistService;
-        private IMediaScraper _mediaScraper;
-        private IMemoryCache _memoryCache;
-        private ISitePackService _sitePackService;
-        private GlobalOptions _globalOptions;
-        private IXtreamService _xtreamService;
-        private IProviderFactory _providerFactory;
+        private readonly IPlaylistService _playlistService;
+        private readonly IMediaScraper _mediaScraper;
+        private readonly IMemoryCache _memoryCache;
+        private readonly ISitePackService _sitePackService;
+        private readonly GlobalOptions _globalOptions;
+        private readonly IXtreamService _xtreamService;
+        private readonly IProviderFactory _providerFactory;
 
         private string UserCachePlaylistKey => $"{UserId}:{CacheKeys.PlaylistByUser}";
 
