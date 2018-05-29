@@ -19,6 +19,7 @@ using Microsoft.Extensions.Caching.Memory;
 using hfa.WebApi.Models.Elastic;
 using Hfa.WebApi.Commmon;
 using hfa.Synker.Service.Services;
+using System.Net;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Hfa.WebApi.Controllers
@@ -57,6 +58,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [Route("synk")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> SynkAsync(CancellationToken cancellationToken)
         {
             var result = await _mediaRefService.SynkAsync(cancellationToken);
@@ -69,6 +71,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [Route("synkpicons")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> SynkPiconsAsync(CancellationToken cancellationToken)
         {
             var result = await _mediaRefService.SynkPiconsAsync(cancellationToken);
@@ -92,6 +95,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [ValidateModel]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Save([FromBody]List<MediaRef> mediasRef, CancellationToken cancellationToken)
         {
             var response = await _mediaRefService.SaveAsync(mediasRef, cancellationToken);
@@ -103,6 +107,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpPost("merge")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Merge(CancellationToken cancellationToken)
         {
             var response = await _mediaRefService.RemoveDuplicatedMediaRefAsync(cancellationToken);
@@ -131,6 +136,7 @@ namespace Hfa.WebApi.Controllers
         [Route("groups")]
         [ValidateModel]
         [ResponseCache(CacheProfileName = "Long")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GroupsAsync([FromBody]ElasticQueryAggrRequest query, CancellationToken cancellationToken)
         {
             ISearchResponse<MediaRef> response = await _mediaRefService.GroupsAsync(query?.Filter, query?.Size, cancellationToken);
