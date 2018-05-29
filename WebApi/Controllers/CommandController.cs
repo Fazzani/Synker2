@@ -15,6 +15,7 @@ using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
+using System.Net;
 
 namespace hfa.WebApi.Controllers
 {
@@ -58,6 +59,7 @@ namespace hfa.WebApi.Controllers
         }
 
         [HttpGet("users/{userId}")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetCommandsByUser([FromRoute] int userId, [FromQuery] bool? all)
         {
             if (await _dbContext.Users.FindAsync(userId) == null)
@@ -85,6 +87,7 @@ namespace hfa.WebApi.Controllers
 
         [HttpGet("{id}")]
         [ValidateModel]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetCommand([FromRoute] int id)
         {
             var command = await _dbContext.Command.SingleOrDefaultAsync(m => m.Id == id);
@@ -98,6 +101,7 @@ namespace hfa.WebApi.Controllers
         }
 
         [HttpPut("{id}/status/{status}")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> PutCommandByStatus([FromRoute] int id, [FromRoute] CommandStatusEnum status)
         {
             var command = await _dbContext.Command.FindAsync(id);
@@ -113,6 +117,8 @@ namespace hfa.WebApi.Controllers
 
         [HttpPut("{id}")]
         [ValidateModel]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> PutCommand([FromRoute] int id, [FromBody] Command command)
         {
             if (id != command.Id)
@@ -143,6 +149,7 @@ namespace hfa.WebApi.Controllers
 
         [HttpPost]
         [ValidateModel]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> PostCommand([FromBody] Command command)
         {
             _dbContext.Command.Add(command);
@@ -153,6 +160,7 @@ namespace hfa.WebApi.Controllers
 
         [HttpDelete("{id}")]
         [ValidateModel]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> DeleteCommand([FromRoute] int id)
         {
             var command = await _dbContext.Command.SingleOrDefaultAsync(m => m.Id == id);

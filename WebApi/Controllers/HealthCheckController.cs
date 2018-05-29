@@ -30,6 +30,7 @@ namespace hfa.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetBy(HealthCheckEnum id)
         {
             switch (id)
@@ -58,10 +59,9 @@ namespace hfa.WebApi.Controllers
         }
 
         [HttpGet("/")]
-        public IActionResult Index()
-        {
-            return Ok($"Welcome to Synker Api : {typeof(Startup).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version}");
-        }
+        public IActionResult Index() => 
+            new RedirectResult("~/swagger");
+            //Ok($"Welcome to Synker Api : {typeof(Startup).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version}");
 
         [HttpGet("error")]
         public string GetError() =>

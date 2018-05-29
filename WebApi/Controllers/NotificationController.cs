@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,9 +40,11 @@ namespace hfa.WebApi.Controllers
         /// <summary>
         /// </summary>
         /// <param name="notification"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateModel]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> Post([FromBody] NotificationModel notification, CancellationToken cancellationToken)
         {
             if (notification.NotificationType == NotificationTypeEnum.Email)

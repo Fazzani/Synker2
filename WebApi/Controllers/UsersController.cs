@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using hfa.Synker.Service.Elastic;
@@ -9,6 +10,7 @@ using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Services.Dal;
 using hfa.WebApi.Common.Auth;
 using hfa.WebApi.Common.Filters;
+using hfa.WebApi.Models;
 using hfa.WebApi.Models.Admin;
 using Hfa.WebApi.Controllers;
 using Hfa.WebApi.Models;
@@ -42,6 +44,7 @@ namespace hfa.WebApi.Controllers
         [Route("{id}")]
         [ValidateModel]
         [Authorize(Policy = AuthorizePolicies.ADMIN)]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Put(int id, [FromBody] User userModel, CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users.FindAsync(new object[] { id }, cancellationToken: cancellationToken);
@@ -65,6 +68,7 @@ namespace hfa.WebApi.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet]
+        [ProducesResponseType(typeof(User), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Me(CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users
@@ -78,12 +82,14 @@ namespace hfa.WebApi.Controllers
         /// <summary>
         /// Update connected user
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="userModel"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPut]
         [ValidateModel]
         [Authorize(Policy = AuthorizePolicies.ADMIN)]
+        [ProducesResponseType(typeof(User), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Put([FromBody] User userModel, CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users.FindAsync(new object[] { UserId }, cancellationToken: cancellationToken);
@@ -104,11 +110,14 @@ namespace hfa.WebApi.Controllers
         /// <summary>
         /// Get user
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("{id}")]
         [Authorize(Policy = AuthorizePolicies.ADMIN)]
+        [ProducesResponseType(typeof(User), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users.FindAsync(new object[] { UserId.Value }, cancellationToken);
@@ -124,6 +133,8 @@ namespace hfa.WebApi.Controllers
         [HttpPost]
         [Route("search")]
         [Authorize(Policy = AuthorizePolicies.ADMIN)]
+        [ProducesResponseType(typeof(PagedResult<User>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public IActionResult List([FromBody] QueryListBaseModel query)
         {
             if (!ModelState.IsValid)
@@ -142,6 +153,8 @@ namespace hfa.WebApi.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Policy = AuthorizePolicies.ADMIN)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             var user = _dbContext.Users.FirstOrDefault(x => x.Id == id);

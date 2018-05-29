@@ -28,6 +28,7 @@ using hfa.WebApi.Services;
 using hfa.Synker.Service.Entities.Auth;
 using hfa.synker.entities;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Hfa.WebApi.Controllers
@@ -67,6 +68,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.Value.GetAsync(new DocumentPath<SitePackChannel>(id), null, cancellationToken);
@@ -80,6 +82,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [ValidateModel]
         [Route("save")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Save([FromBody]List<SitePackChannel> sitepacks, CancellationToken cancellationToken)
         {
             sitepacks.ForEach(x =>
@@ -99,6 +102,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPut("{id}")]
         [ValidateModel]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Put(string id, [FromBody]SitePackChannel value, CancellationToken cancellationToken)
         {
             var response = await _sitePackService.SaveAsync(new List<SitePackChannel> { value }, cancellationToken);

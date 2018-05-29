@@ -1,17 +1,20 @@
 ﻿using hfa.PlaylistBaseLibrary.Options;
 using hfa.PlaylistBaseLibrary.Providers;
 using hfa.Synker.Service.Elastic;
+using hfa.Synker.Service.Entities.MediaScraper;
 using hfa.Synker.Service.Entities.Playlists;
 using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Services.MediaRefs;
 using hfa.Synker.Service.Services.Playlists;
 using hfa.Synker.Service.Services.Scraper;
+using hfa.Synker.Service.Services.Xmltv;
 using hfa.Synker.Service.Services.Xtream;
 using hfa.Synker.Services.Dal;
 using hfa.WebApi.Common;
 using hfa.WebApi.Common.Exceptions;
 using hfa.WebApi.Common.Filters;
+using hfa.WebApi.Models;
 using hfa.WebApi.Models.Playlists;
 using Hfa.WebApi.Commmon;
 using Hfa.WebApi.Models;
@@ -29,6 +32,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -43,7 +47,7 @@ namespace Hfa.WebApi.Controllers
     {
         private IPlaylistService _playlistService;
         private IMediaScraper _mediaScraper;
-        IMemoryCache _memoryCache;
+        private IMemoryCache _memoryCache;
         private ISitePackService _sitePackService;
         private GlobalOptions _globalOptions;
         private IXtreamService _xtreamService;
@@ -71,6 +75,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost("search")]
         [ValidateModel]
+        [ProducesResponseType(typeof(PagedResult<PlaylistModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> ListAsync([FromBody] QueryListBaseModel query, CancellationToken cancellationToken, [FromQuery] bool light = true)
         {
             var plCacheKey = $"{UserCachePlaylistKey}_{query.GetHashCode()}_{light}";
@@ -105,6 +110,8 @@ namespace Hfa.WebApi.Controllers
 
         [HttpGet("{id}")]
         //[ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "id", "light" })]
+        [ProducesResponseType(typeof(PlaylistModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAsync(string id, CancellationToken cancellationToken, [FromQuery] bool light = true)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -118,6 +125,8 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPut("{id}")]
         [ValidateModel]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> PutAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -159,6 +168,8 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPut("light/{id}")]
         [ValidateModel]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> PutLightAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -198,6 +209,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -216,12 +228,12 @@ namespace Hfa.WebApi.Controllers
         /// <summary>
         /// Passe Handlers
         /// </summary>
-        /// <param name="playlistPostModel"></param>
-        /// <param name="providersOptions"></param>
+        /// <param name="tvgMedias"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("handlers")]
+        [ProducesResponseType(typeof(List<TvgMedia>), (int)HttpStatusCode.OK)]
         public IActionResult ExecuteHandlers([FromBody]List<TvgMedia> tvgMedias, CancellationToken cancellationToken)
         {
             var result = _playlistService.ExecuteHandlersAsync(tvgMedias, cancellationToken);
@@ -232,12 +244,12 @@ namespace Hfa.WebApi.Controllers
         /// Synk playlist from source url
         /// </summary>
         /// <param name="playlistPostModel"></param>
-        /// <param name="providersOptions"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("synk")]
         [ValidateModel]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> SynkAsync([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken)
         {
             //Vérifier si la playlist existe-elle avant 
@@ -275,12 +287,13 @@ namespace Hfa.WebApi.Controllers
         /// les médias qui n'existes plus
         /// </summary>
         /// <param name="playlistPostModel"></param>
-        /// <param name="providersOptions"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("diff")]
         [ValidateModel]
+        [ProducesResponseType(typeof(IEnumerable<TvgMedia>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> DiffAsync([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken)
         {
             //TODO: Déduire le provider from playlist (isXtream => xtreamProvider, m3u ou tvlist)
@@ -327,6 +340,8 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("matchfiltred/{id}")]
         [ValidateModel]
+        [ProducesResponseType(typeof(PlaylistModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> MatchFiltredByTvgSitesAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -374,11 +389,14 @@ namespace Hfa.WebApi.Controllers
         ///  Match playlist tvg (site pack directement)
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="onlyNotMatched"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("matchtvg/{id}")]
         [ValidateModel]
+        [ProducesResponseType(typeof(PlaylistModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> MatchTvgAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -424,9 +442,18 @@ namespace Hfa.WebApi.Controllers
             return Ok(PlaylistModel.ToModel(playlistEntity, Url));
         }
 
+        /// <summary>
+        /// Match videos
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="onlyNotMatched"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("matchvideos/{id}")]
         [ValidateModel]
+        [ProducesResponseType(typeof(PlaylistModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> MatchVideosByPlaylistAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -464,9 +491,17 @@ namespace Hfa.WebApi.Controllers
             return Ok(PlaylistModel.ToModel(playlistEntity, Url));
         }
 
+        /// <summary>
+        /// Media info for video
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("matchvideo/{name}")]
         [ValidateModel]
+        [ProducesResponseType(typeof(MediaInfo), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> MatchVideoAsync([FromRoute] string name, CancellationToken cancellationToken = default(CancellationToken))
         {
             var matched = await _mediaScraper.SearchAsync(name, _globalOptions.TmdbAPI, _globalOptions.TmdbPosterBaseUrl, cancellationToken);
@@ -482,6 +517,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("matchvideos")]
         [ValidateModel]
+        [ProducesResponseType(typeof(IEnumerable<TvgMedia>), (int)HttpStatusCode.OK)]
         public IActionResult MatchVideos([FromBody]List<TvgMedia> tvgmedias, CancellationToken cancellationToken = default(CancellationToken))
         {
             tvgmedias.AsParallel().WithCancellation(cancellationToken).ForAll(media =>
@@ -499,21 +535,32 @@ namespace Hfa.WebApi.Controllers
         /// <summary>
         ///  Match playlist tvg (site pack directement)
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="media"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("matchtvg/media")]
         [ValidateModel]
+        [ProducesResponseType(typeof(SitePackChannel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> MatchTvgByMedia([FromBody] TvgMedia media, CancellationToken cancellationToken = default(CancellationToken))
         {
             var sitePack = await _sitePackService.MatchMediaNameAndBySiteAsync(media.DisplayName, media.Tvg.TvgSource.Site, cancellationToken);
             return Ok(sitePack);
         }
 
+        /// <summary>
+        /// Get playlist file
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="provider"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [ResponseCache(CacheProfileName = "Long")]
         [AllowAnonymous]
         [HttpGet("files/{id:required}", Name = nameof(GetFile))]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(byte[]), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetFile(string id, [FromQuery] string provider = "m3u", CancellationToken cancellationToken = default(CancellationToken))
         {
             var idGuid = GetInternalPlaylistId(id);

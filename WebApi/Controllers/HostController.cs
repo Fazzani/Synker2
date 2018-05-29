@@ -17,6 +17,8 @@ using hfa.Synker.Service.Entities;
 using hfa.WebApi.Common.Auth;
 using System.Threading;
 using Hfa.WebApi.Models;
+using hfa.WebApi.Models;
+using System.Net;
 
 namespace hfa.WebApi.Controllers
 {
@@ -45,6 +47,8 @@ namespace hfa.WebApi.Controllers
         [HttpPost]
         [Route("search")]
         [Authorize(Policy = AuthorizePolicies.ADMIN)]
+        [ProducesResponseType(typeof(PagedResult<Host>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public IActionResult List([FromBody] QueryListBaseModel query)
         {
             if (!ModelState.IsValid)
@@ -59,6 +63,8 @@ namespace hfa.WebApi.Controllers
 
         [HttpGet("{id}")]
         [ValidateModel]
+        [ProducesResponseType(typeof(Host), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Get([FromRoute] int id, CancellationToken cancellationToken)
         {
             var host = await _dbContext.Hosts.SingleOrDefaultAsync(m => m.Id == id);
@@ -73,6 +79,9 @@ namespace hfa.WebApi.Controllers
 
         [HttpPut("{id}")]
         [ValidateModel]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Host host, CancellationToken cancellationToken)
         {
             if (id != host.Id)
@@ -103,6 +112,7 @@ namespace hfa.WebApi.Controllers
 
         [HttpPost]
         [ValidateModel]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> Post([FromBody] Host host, CancellationToken cancellationToken)
         {
             if (!string.IsNullOrEmpty(host.Authentication?.Password))
@@ -118,6 +128,8 @@ namespace hfa.WebApi.Controllers
 
         [HttpDelete("{id}")]
         [ValidateModel]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(Host), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
         {
             var host = await _dbContext.Hosts.SingleOrDefaultAsync(m => m.Id == id);

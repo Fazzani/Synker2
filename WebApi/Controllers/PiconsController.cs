@@ -18,6 +18,7 @@ using hfa.WebApi.Models.Elastic;
 using PlaylistManager.Entities;
 using hfa.Synker.Service.Services.Scraper;
 using hfa.WebApi.Common;
+using System.Net;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -57,6 +58,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpGet("{id}")]
         [ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "id" })]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.Value.GetAsync(new DocumentPath<Picon>(id), null, cancellationToken);
@@ -74,6 +76,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("synk")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Synk(CancellationToken cancellationToken)
         {
             var picons = await _piconsService.GetPiconsFromGithubRepoAsync(new SynkPiconConfig(), cancellationToken);
@@ -121,7 +124,6 @@ namespace Hfa.WebApi.Controllers
         /// Match mediaName and mediaNumber by picon
         /// </summary>
         /// <param name="mediaName"></param>
-        /// <param name="mediaNumber"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet]

@@ -19,6 +19,7 @@ using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 using hfa.WebApi.Models.Messages;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -59,6 +60,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPut("{id}")]
         [ValidateModel]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Put(int id, [FromBody] Message message, CancellationToken cancellationToken)
         {
             var messageEntity = _dbContext.Messages.FirstOrDefault(x => x.Id == id);
@@ -77,6 +79,7 @@ namespace Hfa.WebApi.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id:int}")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
         {
             var response = await _dbContext.Messages.FindAsync(id, cancellationToken);
@@ -123,6 +126,8 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             var message = _dbContext.Messages.FirstOrDefault(x => x.Id == id);
