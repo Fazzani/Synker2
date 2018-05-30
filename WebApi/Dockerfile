@@ -28,10 +28,10 @@ WORKDIR /src
 #COPY hfa.TvhLibrary/hfa.TvhLibrary.csproj hfa.TvhLibrary/
 COPY . .
 # TODO : TO Remove after updating 2.1.3 dotnet cli version
-RUN dotnet sln Synker.sln remove docker-compose.dcproj
+#RUN dotnet sln Synker.sln remove docker-compose.dcproj
 RUN dotnet restore -nowarn:msb3202,nu1503 Synker.sln
 WORKDIR /src/WebApi
-RUN dotnet build -c Release -o /app -r linux-$arch
+RUN dotnet build --no-restore -c Release -o /app -r linux-$arch
 
 ARG arch=x64
 FROM build AS publish

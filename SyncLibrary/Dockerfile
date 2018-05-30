@@ -15,17 +15,10 @@ ARG arch=x64
 FROM microsoft/dotnet:2.1-sdk AS build
 ARG arch
 WORKDIR /src
-COPY Synker.sln ./
-COPY SyncLibrary/hfa.Synker.batch.csproj SyncLibrary/
-COPY hfa.TvhLibrary/hfa.TvhLibrary.csproj hfa.TvhLibrary/
-COPY PlaylistBaseLibrary/hfa.PlaylistBaseLibrary.csproj PlaylistBaseLibrary/
-COPY hfa.Synker.Service/hfa.Synker.Service.csproj hfa.Synker.Service/
-COPY hfa.Notification.DTo/hfa.Brokers.Messages.csproj hfa.Notification.DTo/
-COPY hfa.synker.entities/hfa.synker.entities.csproj hfa.synker.entities/
-RUN dotnet restore -nowarn:msb3202,nu1503
 COPY . .
+RUN dotnet restore -nowarn:msb3202,nu1503 ./Synker.sln
 WORKDIR /src/SyncLibrary
-RUN dotnet build -c Release -o /app -r linux-$arch
+RUN dotnet build --no-restore  -c Release -o /app #-r linux-$arch
 
 ARG arch=x64
 FROM build AS publish

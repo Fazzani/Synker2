@@ -10,3 +10,4 @@ docker-compose.*.yml
 */obj
 node_modules
 */node_modules
+Dockerfile

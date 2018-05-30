@@ -42,7 +42,7 @@ COPY . .
 RUN dotnet sln Synker.sln remove docker-compose.dcproj
 RUN dotnet restore -nowarn:msb3202,nu1503 Synker.sln
 WORKDIR /src/WebClient
-RUN dotnet build -c Release -o /app -r linux-$arch 
+RUN dotnet build --no-restore -c Release -o /app -r linux-$arch 
 
 ARG arch=x64
 FROM build AS publish
