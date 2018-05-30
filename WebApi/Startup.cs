@@ -51,6 +51,7 @@ using Microsoft.Extensions.FileProviders;
 using hfa.WebApi.Common.Swagger;
 using Newtonsoft.Json.Converters;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace hfa.WebApi
 {
@@ -82,6 +83,9 @@ namespace hfa.WebApi
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionstring = Configuration.GetConnectionString("PlDatabase");
+            var isTestEnv = string.IsNullOrEmpty(connectionstring);
+
             services.
                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                .AddSingleton<IPasteBinService, PasteBinService>()
@@ -107,27 +111,38 @@ namespace hfa.WebApi
 
             services.AddMemoryCache();
 
-            var serviceProvider = services.AddDbContext<SynkerDbContext>(options =>
+            if (isTestEnv)
             {
-                options.UseMySql(Configuration.GetConnectionString("PlDatabase"),
-                sqlOptions =>
+                services.AddDbContext<SynkerDbContext>(options =>
                 {
-                    sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
-                    //Configuring Connection Resiliency:
-                    sqlOptions.
-                    EnableRetryOnFailure(maxRetryCount: 3,
-                    maxRetryDelay: TimeSpan.FromSeconds(30),
-                    errorNumbersToAdd: null);
+                    options.UseInMemoryDatabase("playlist");
+
                 });
+            }
+            else
+            {
+                var serviceProvider = services.AddDbContext<SynkerDbContext>(options =>
+                {
+                    options.UseMySql(Configuration.GetConnectionString("PlDatabase"),
+                    sqlOptions =>
+                    {
+                        sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+                        //Configuring Connection Resiliency:
+                        sqlOptions.
+                            EnableRetryOnFailure(maxRetryCount: 3,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null);
+                    });
 
-                //// Changing default behavior when client evaluation occurs to throw.
-                //// Default in EFCore would be to log warning when client evaluation is done.
-                //options.ConfigureWarnings(warnings => warnings.Throw(
-                //RelationalEventId.QueryClientEvaluationWarning));
-            }).BuildServiceProvider();
+                    //// Changing default behavior when client evaluation occurs to throw.
+                    //// Default in EFCore would be to log warning when client evaluation is done.
+                    //options.ConfigureWarnings(warnings => warnings.Throw(
+                    //RelationalEventId.QueryClientEvaluationWarning));
+                }).BuildServiceProvider();
 
-            //var DB = serviceProvider.GetService<SynkerDbContext>();
-            //DB.Database.EnsureCreated();
+                //var DB = serviceProvider.GetService<SynkerDbContext>();
+                //DB.Database.EnsureCreated();
+            }
 
             #region Compression
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
