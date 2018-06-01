@@ -41,7 +41,7 @@ namespace hfa.WebApi.Controllers
                     try
                     {
                         var connectionString = Startup.Configuration.GetSection("ConnectionStrings:PlDatabase")?.Value;
-                        using (var cnx = new MySql.Data.MySqlClient.MySqlConnection(connectionString))
+                        using (var cnx = new Npgsql.NpgsqlConnection(connectionString))
                         {
                             return Ok();
                         }

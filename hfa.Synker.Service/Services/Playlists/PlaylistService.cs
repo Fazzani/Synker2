@@ -71,7 +71,7 @@ namespace hfa.Synker.Service.Services.Playlists
 
                 if (sourceList.Any())
                 {
-                    playlistEntity.Medias = new JsonObject<List<TvgMedia>>(sourceList.Where(x => x.IsValid).ToList());
+                    playlistEntity.TvgMedias = sourceList.Where(x => x.IsValid).ToList();
                 }
 
                 UpdateIsXtreamTag(isXtreamPlaylist, playlistEntity);
@@ -86,16 +86,16 @@ namespace hfa.Synker.Service.Services.Playlists
 
         private static void UpdateIsXtreamTag(bool isXtreamPlaylist, Playlist playlistEntity)
         {
-            if (!playlistEntity.Tags.Object.Any(x => String.Equals(x.Key, PlaylistTags.IsXtream, StringComparison.InvariantCultureIgnoreCase)))
+            if (!playlistEntity.Tags.Any(x => String.Equals(x.Key, PlaylistTags.IsXtream, StringComparison.InvariantCultureIgnoreCase)))
             {
-                playlistEntity.Tags.Object.Add(PlaylistTags.IsXtream, isXtreamPlaylist.ToString());
+                playlistEntity.Tags.Add(PlaylistTags.IsXtream, isXtreamPlaylist.ToString());
 
             }
             else
             {
-                playlistEntity.Tags.Object[PlaylistTags.IsXtream] = isXtreamPlaylist.ToString();
+                playlistEntity.Tags[PlaylistTags.IsXtream] = isXtreamPlaylist.ToString();
             }
-            playlistEntity.Tags = JsonConvert.SerializeObject(playlistEntity.Tags.Object);
+            playlistEntity.Tags = playlistEntity.Tags;
         }
 
         /// <summary>

@@ -92,7 +92,7 @@ namespace Hfa.SyncLibrary
                 .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                 .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
                 .Configure<MailOptions>(Configuration.GetSection(nameof(MailOptions)))
-                .AddDbContext<SynkerDbContext>(options => options.UseMySql(Configuration.GetConnectionString("PlDatabase")))
+                .AddDbContext<SynkerDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("PlDatabase")))
                 .AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                 .AddSingleton<IMessageService>(s => new MessageService(Configuration.GetValue<string>($"{nameof(ApiOptions)}:Url"), loggerFactory))
                 .AddSingleton<IPlaylistService, PlaylistService>()

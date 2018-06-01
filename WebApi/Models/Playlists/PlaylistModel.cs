@@ -85,7 +85,7 @@ namespace hfa.WebApi.Models.Playlists
             TvgSites = pl.TvgSites,
             IsXtream = pl.IsXtreamTag,
             ImportProvider = pl.ImportProviderTag,
-            Tags = pl.Tags?.Object,
+            Tags = pl.Tags,
             NotifcationTypeInsertedMedia = pl.SynkConfig?.NotifcationTypeInsertedMedia
         };
 
@@ -105,7 +105,7 @@ namespace hfa.WebApi.Models.Playlists
             TvgSites = pl.TvgSites,
             IsXtream = pl.IsXtreamTag,
             ImportProvider = pl.ImportProviderTag,
-            Tags = pl.Tags?.Object,
+            Tags = pl.Tags,
             NotifcationTypeInsertedMedia = pl.SynkConfig?.NotifcationTypeInsertedMedia
         };
     }
