@@ -118,7 +118,6 @@ namespace hfa.WebApi
                 services.AddDbContext<SynkerDbContext>(options =>
                 {
                     options.UseInMemoryDatabase("playlist");
-
                 });
             }
             else
@@ -140,8 +139,8 @@ namespace hfa.WebApi
                     //RelationalEventId.QueryClientEvaluationWarning));
                 }).BuildServiceProvider();
 
-                //var DB = serviceProvider.GetService<SynkerDbContext>();
-                //DB.Database.EnsureCreated();
+                var DB = serviceProvider.GetService<SynkerDbContext>();
+                DB.Database.EnsureCreated();
             }
 
             #region Compression
