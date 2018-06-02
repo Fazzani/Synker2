@@ -50,23 +50,25 @@ namespace hfa.WebApi.Common.Auth
 
         private void InitializeRsa()
         {
-            using (var publicRsa = RSA.Create())
-            {
-                var publicKeyXml = File.ReadAllText(_securityOptions.RsaPublicKeyXML);
-                publicRsa.FromXmlString(publicKeyXml, true);
-                _issuerSigningKey = new RsaSecurityKey(publicRsa);
-            }
+            var publicRsa = RSA.Create();
+
+            var publicKeyXml = File.ReadAllText(_securityOptions.RsaPublicKeyXML);
+            publicRsa.FromXmlString(publicKeyXml, true);
+            _issuerSigningKey = new RsaSecurityKey(publicRsa);
+
+
             if (string.IsNullOrWhiteSpace(_securityOptions.RsaPrivateKeyXML))
             {
                 return;
             }
-            using (RSA privateRsa = RSA.Create())
-            {
-                var privateKeyXml = File.ReadAllText(_securityOptions.RsaPrivateKeyXML);
-                privateRsa.FromXmlString(privateKeyXml, true);
-                var privateKey = new RsaSecurityKey(privateRsa);
-                _signingCredentials = new SigningCredentials(privateKey, SecurityAlgorithms.RsaSha256);
-            }
+
+            var privateRsa = RSA.Create();
+
+            var privateKeyXml = File.ReadAllText(_securityOptions.RsaPrivateKeyXML);
+            privateRsa.FromXmlString(privateKeyXml, true);
+            var privateKey = new RsaSecurityKey(privateRsa);
+            _signingCredentials = new SigningCredentials(privateKey, SecurityAlgorithms.RsaSha256);
+
         }
 
         private void InitializeHmac()
@@ -109,11 +111,10 @@ namespace hfa.WebApi.Common.Auth
         /// Authenticate by refresh token
         /// </summary>
         /// <param name="refreshToken"></param>
+        /// <param name="user"></param>
         /// <returns></returns>
         public JwtReponse Authenticate(string refreshToken, User user)
         {
-            var jwtHandler = new JwtSecurityTokenHandler();
-
             try
             {
                 if (user != null && ValidateToken(user.ConnectionState.AccessToken))
@@ -144,6 +145,7 @@ namespace hfa.WebApi.Common.Auth
                 expires: Expiration,
                 signingCredentials: _signingCredentials
             );
+
             user.ConnectionState.AccessToken = new JwtSecurityTokenHandler().WriteToken(jwt);
             user.ConnectionState.LastConnection = DateTime.UtcNow;
             var jwtResponse = new JwtReponse(user.ConnectionState.AccessToken);
