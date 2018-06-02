@@ -26,6 +26,7 @@ namespace Hfa.WebApi.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
     [Authorize]
+    [ApiController]
     public class TvgMediaController : BaseController
     {
         private readonly ISitePackService _sitePackService;

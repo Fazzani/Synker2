@@ -26,6 +26,7 @@ namespace hfa.WebApi.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
     [Authorize]
+    [ApiController]
     public class UsersController : BaseController
     {
         public UsersController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)

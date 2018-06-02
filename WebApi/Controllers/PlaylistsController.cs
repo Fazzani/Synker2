@@ -42,6 +42,7 @@ namespace Hfa.WebApi.Controllers
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
+    //[ApiController]
     [Authorize]
     public class PlaylistsController : BaseController
     {
@@ -264,7 +265,7 @@ namespace Hfa.WebApi.Controllers
                 return BadRequest(ex.Message);
             }
 
-            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.Url) ?? new Playlist
+            var playlist = _dbContext.Playlist.AsNoTracking().FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.Url) ?? new Playlist
             {
                 UserId = UserId.Value,
                 Freindlyname = playlistPostModel.Freindlyname,

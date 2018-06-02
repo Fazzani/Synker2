@@ -27,6 +27,7 @@ namespace Hfa.WebApi.Controllers
     [Route("api/v1/[controller]")]
     [Authorize]
     [ApiVersion("1.0")]
+    [ApiController]
     public class MediasRefController : BaseController
     {
         private readonly IMediaRefService _mediaRefService;

@@ -27,6 +27,7 @@ namespace Hfa.WebApi.Controllers
 #endif
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
+    [ApiController]
     public class PiconsController : BaseController
     {
         private readonly IPiconsService _piconsService;

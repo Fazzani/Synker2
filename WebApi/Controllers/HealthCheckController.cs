@@ -23,6 +23,7 @@ namespace hfa.WebApi.Controllers
     [AllowAnonymous]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
+    [ApiController]
     public class HealthCheckController : BaseController
     {
         public HealthCheckController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,

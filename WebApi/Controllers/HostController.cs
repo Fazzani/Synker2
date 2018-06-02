@@ -23,10 +23,10 @@ using System.Net;
 namespace hfa.WebApi.Controllers
 {
     [Produces("application/json")]
-    [Route("api/v1/[controller]")]
-    [Authorize]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Authorize(Policy = AuthorizePolicies.ADMIN)]
     [ApiVersion("1.0")]
+    [ApiController]
     public class HostController : BaseController
     {
         private readonly IAuthentificationService _authentificationService;

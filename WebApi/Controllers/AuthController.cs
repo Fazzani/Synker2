@@ -19,6 +19,7 @@ namespace hfa.WebApi.Controllers
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
+    [ApiController]
     public class AuthController : BaseController
     {
         private readonly IAuthentificationService _authentificationService;

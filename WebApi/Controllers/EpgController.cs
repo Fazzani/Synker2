@@ -23,6 +23,7 @@ namespace Hfa.WebApi.Controllers
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
+    [ApiController]
     public class EpgController : BaseController
     {
         public EpgController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient, 

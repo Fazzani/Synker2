@@ -205,7 +205,7 @@ namespace hfa.WebApi
                     options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                     options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 }
-            );
+            ).SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             services.AddApiVersioning(o =>
             {

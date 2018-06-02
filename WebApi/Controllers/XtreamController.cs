@@ -20,6 +20,7 @@ namespace hfa.WebApi.Controllers
     [ApiVersion("1.0")]
     [Produces("application/json")]
     [Authorize]
+    [ApiController]
     public class XtreamController : BaseController
     {
         private readonly IXtreamService _xtreamService;

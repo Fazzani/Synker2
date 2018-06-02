@@ -34,10 +34,16 @@ namespace hfa.Synker.Service.Entities.Playlists
 
         public PlaylistStatus Status { get; set; }
 
+        private List<TvgMedia> _tvgMedias;
         [NotMapped]
         public List<TvgMedia> TvgMedias
         {
-            get { return Medias == null ? null : JsonConvert.DeserializeObject<List<TvgMedia>>(Medias); }
+            get
+            {
+                if (_tvgMedias == null)
+                    _tvgMedias = Medias == null ? null : JsonConvert.DeserializeObject<List<TvgMedia>>(Medias);
+                return _tvgMedias;
+            }
             set { Medias = JsonConvert.SerializeObject(value); }
         }
 
@@ -45,13 +51,19 @@ namespace hfa.Synker.Service.Entities.Playlists
         public string Medias { get; set; }
 
         [Column(name: nameof(Tags), TypeName = "jsonb")]
-        public string _Tags { get; set; }
+        public string TagsString { get; set; }
 
+        public Dictionary<string, string> _tags;
         [NotMapped]
-        public Dictionary<string,string> Tags
+        public Dictionary<string, string> Tags
         {
-            get { return _Tags == null ? null : JsonConvert.DeserializeObject<Dictionary<string, string>>(_Tags); }
-            set { _Tags = JsonConvert.SerializeObject(value); }
+            get
+            {
+                if (_tags == null)
+                    _tags = TagsString == null ? null : JsonConvert.DeserializeObject<Dictionary<string, string>>(TagsString);
+                return _tags;
+            }
+            set { TagsString = JsonConvert.SerializeObject(value); }
         }
 
         private List<String> _tvgSites { get; set; }
