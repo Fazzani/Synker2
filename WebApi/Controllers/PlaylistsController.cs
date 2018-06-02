@@ -142,7 +142,7 @@ namespace Hfa.WebApi.Controllers
             playlistEntity.SynkConfig.SynkEpg = playlist.SynkEpg;
             playlistEntity.SynkConfig.SynkGroup = playlist.SynkGroup;
             playlistEntity.SynkConfig.SynkLogos = playlist.SynkLogos;
-            playlistEntity.Medias = JsonConvert.SerializeObject(playlist.TvgMedias);
+            playlistEntity.TvgMedias = playlist.TvgMedias;
 
             if (playlist.Tags == null)
             {
@@ -150,14 +150,14 @@ namespace Hfa.WebApi.Controllers
                 {
                     { PlaylistTags.IsXtream, _xtreamService.IsXtreamPlaylist(playlist.Url).ToString() }
                 };
-                playlistEntity.Tags = JsonConvert.SerializeObject(playlist.Tags);
+                playlistEntity.Tags = playlist.Tags;
             }
             else
             {
                 //todo: à virer tout le bloc else
                 if (playlistEntity.ImportProviderTag == null && playlist.Tags.TryAdd(PlaylistTags.ImportProvider, "m3u"))
                 {
-                    playlistEntity.Tags = JsonConvert.SerializeObject(playlist.Tags);
+                    playlistEntity.Tags = playlist.Tags;
                 }
             }
 
@@ -192,14 +192,14 @@ namespace Hfa.WebApi.Controllers
                 {
                     { PlaylistTags.IsXtream, _xtreamService.IsXtreamPlaylist(playlist.Url).ToString() }
                 };
-                playlistEntity.Tags = JsonConvert.SerializeObject(playlist.Tags);
+                playlistEntity.Tags = playlist.Tags;
             }
             else
             {
                 //todo: à virer tout le bloc else
                 if (playlistEntity.ImportProviderTag == null && playlist.Tags.TryAdd(PlaylistTags.ImportProvider, "m3u"))
                 {
-                    playlistEntity.Tags = JsonConvert.SerializeObject(playlist.Tags);
+                    playlistEntity.Tags = playlist.Tags;
                 }
             }
 
@@ -643,7 +643,7 @@ namespace Hfa.WebApi.Controllers
                     Freindlyname = playlistName,
                     Status = PlaylistStatus.Enabled,
                     SynkConfig = null,
-                    Tags = new JsonObject<Dictionary<string, string>>(new Dictionary<string, string> { { PlaylistTags.ImportProvider, provider } })
+                    Tags = new  Dictionary<string, string> { { PlaylistTags.ImportProvider, provider } }
                 }, providerInstance, _xtreamService.IsXtreamPlaylist(playlistUrl), true, cancellationToken);
 
                 ClearCache();
@@ -686,7 +686,7 @@ namespace Hfa.WebApi.Controllers
                     Freindlyname = playlistPostModel.Freindlyname,
                     Status = PlaylistStatus.Enabled,
                     SynkConfig = new SynkConfig { Url = playlistPostModel.Url },
-                    Tags = new JsonObject<Dictionary<string, string>>(new Dictionary<string, string> { { PlaylistTags.ImportProvider, playlistPostModel.Provider } })
+                    Tags = new Dictionary<string, string> { { PlaylistTags.ImportProvider, playlistPostModel.Provider } }
                 }, providerInstance, _xtreamService.IsXtreamPlaylist(playlistPostModel.Url), cancellationToken: cancellationToken);
 
                 ClearCache();

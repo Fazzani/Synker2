@@ -61,6 +61,7 @@ namespace hfa.WebApi
     public class Startup
     {
         internal static IConfiguration Configuration;
+        readonly IHostingEnvironment CurrentEnvironment;
 
         /// <summary>
         /// Assembly version
@@ -75,6 +76,7 @@ namespace hfa.WebApi
         public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
+            CurrentEnvironment = env;
         }
 
         /// <summary>
@@ -84,7 +86,7 @@ namespace hfa.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             var connectionstring = Configuration.GetConnectionString("PlDatabase");
-            var isTestEnv = string.IsNullOrEmpty(connectionstring);
+            var isTestEnv = string.IsNullOrEmpty(connectionstring) || CurrentEnvironment.IsEnvironment("Testing");
 
             services.
                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
@@ -116,22 +118,19 @@ namespace hfa.WebApi
                 services.AddDbContext<SynkerDbContext>(options =>
                 {
                     options.UseInMemoryDatabase("playlist");
-
                 });
             }
             else
             {
                 var serviceProvider = services.AddDbContext<SynkerDbContext>(options =>
                 {
-                    options.UseMySql(Configuration.GetConnectionString("PlDatabase"),
+                    options.UseNpgsql(Configuration.GetConnectionString("PlDatabase"),
                     sqlOptions =>
                     {
                         sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
                         //Configuring Connection Resiliency:
                         sqlOptions.
-                            EnableRetryOnFailure(maxRetryCount: 3,
-                            maxRetryDelay: TimeSpan.FromSeconds(30),
-                            errorNumbersToAdd: null);
+                            EnableRetryOnFailure(3, TimeSpan.FromSeconds(30), null);
                     });
 
                     //// Changing default behavior when client evaluation occurs to throw.
@@ -140,8 +139,8 @@ namespace hfa.WebApi
                     //RelationalEventId.QueryClientEvaluationWarning));
                 }).BuildServiceProvider();
 
-                //var DB = serviceProvider.GetService<SynkerDbContext>();
-                //DB.Database.EnsureCreated();
+                var DB = serviceProvider.GetService<SynkerDbContext>();
+                DB.Database.EnsureCreated();
             }
 
             #region Compression

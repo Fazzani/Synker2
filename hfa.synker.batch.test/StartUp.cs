@@ -12,7 +12,7 @@ namespace hfa.synker.batch.test
         {
             WebHostBuilder = new WebHostBuilder()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseEnvironment("Development")
+                .UseEnvironment("Testing")
                 .UseStartup<Startup>();
 
             _testServer = new TestServer(WebHostBuilder);

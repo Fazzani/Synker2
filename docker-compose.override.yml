@@ -1,11 +1,11 @@
 version: '3.4'
 
 services:
-  hfa.webclient:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    ports:
-      - "80"
+  #hfa.webclient:
+  #  environment:
+  #    - ASPNETCORE_ENVIRONMENT=Development
+  #  ports:
+  #    - "80"
   
   hfa.webapi:
     environment:
@@ -13,8 +13,31 @@ services:
     ports:
       - "80"
   
-  hfa.synker.batch:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+  #hfa.synker.batch:
+  #  environment:
+  #    - ASPNETCORE_ENVIRONMENT=Development
     #volumes:
     #  - SyncLibrary/appsettings.Production.json:/app/appsettings.Production.json
+  synker_db:
+    image: postgres
+    networks:
+      mynetwork:
+        aliases:
+          - synker.ovh
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: pl
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      mynetwork:
+        aliases:
+          - adminer.ovh
+
+networks:
+  mynetwork:
+    driver: bridge

@@ -15,6 +15,8 @@ using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace hfa.WebApi.Controllers
 {
@@ -41,7 +43,7 @@ namespace hfa.WebApi.Controllers
                     try
                     {
                         var connectionString = Startup.Configuration.GetSection("ConnectionStrings:PlDatabase")?.Value;
-                        using (var cnx = new MySql.Data.MySqlClient.MySqlConnection(connectionString))
+                        using (var cnx = new Npgsql.NpgsqlConnection(connectionString))
                         {
                             return Ok();
                         }
@@ -59,13 +61,35 @@ namespace hfa.WebApi.Controllers
         }
 
         [HttpGet("/")]
-        public IActionResult Index() => 
+        public IActionResult Index() =>
             new RedirectResult("~/swagger");
-            //Ok($"Welcome to Synker Api : {typeof(Startup).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version}");
+        //Ok($"Welcome to Synker Api : {typeof(Startup).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version}");
 
         [HttpGet("error")]
         public string GetError() =>
             throw new BusinessException("Test exception");
+
+        ///// <summary>
+        ///// Sync database mysql => PostgresSQL
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpGet("syncdatabase")]
+        //[ProducesResponseType((int)HttpStatusCode.OK)]
+        //public async Task<IActionResult> GetSyncDataBases(CancellationToken cancellationToken)
+        //{
+        //    using (var mysqlDb = new SynkerDbContext(new DbContextOptionsBuilder().UseMySql("server=synker.ovh;user id=pl;pwd=password;port=8889;database=playlist;").Options))
+        //    {
+        //        await _dbContext.ConnectionState.AddRangeAsync(mysqlDb.ConnectionState, cancellationToken);
+        //        await _dbContext.Hosts.AddRangeAsync(mysqlDb.Hosts, cancellationToken);
+        //        await _dbContext.Roles.AddRangeAsync(mysqlDb.Roles, cancellationToken);
+        //        await _dbContext.Users.AddRangeAsync(mysqlDb.Users, cancellationToken);
+        //        await _dbContext.Playlist.AddRangeAsync(mysqlDb.Playlist, cancellationToken);
+        //        await _dbContext.Command.AddRangeAsync(mysqlDb.Command, cancellationToken);
+        //        //await _dbContext.Messages.AddRangeAsync(mysqlDb.Messages, cancellationToken);
+        //        await _dbContext.SaveChangesAsync(cancellationToken);
+        //    }
+        //    return Ok();
+        //}
 
     }
 }
