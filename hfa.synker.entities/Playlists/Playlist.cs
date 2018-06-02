@@ -1,14 +1,11 @@
 ﻿using hfa.Synker.Service.Entities.Auth;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using PlaylistManager.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace hfa.Synker.Service.Entities.Playlists
 {
@@ -19,7 +16,6 @@ namespace hfa.Synker.Service.Entities.Playlists
             SynkConfig = new SynkConfig();
             Favorite = false;
             _tvgSites = new List<string>();
-            Tags = new Dictionary<string, string>();
         }
 
         [Required]
@@ -38,9 +34,25 @@ namespace hfa.Synker.Service.Entities.Playlists
 
         public PlaylistStatus Status { get; set; }
 
-        public List<TvgMedia> TvgMedias { get; set; }
+        [NotMapped]
+        public List<TvgMedia> TvgMedias
+        {
+            get { return Medias == null ? null : JsonConvert.DeserializeObject<List<TvgMedia>>(Medias); }
+            set { Medias = JsonConvert.SerializeObject(value); }
+        }
 
-        public Dictionary<string, string> Tags { get; set; }
+        [Column(TypeName = "jsonb")]
+        public string Medias { get; set; }
+
+        [Column(name: nameof(Tags), TypeName = "jsonb")]
+        public string _Tags { get; set; }
+
+        [NotMapped]
+        public Dictionary<string,string> Tags
+        {
+            get { return _Tags == null ? null : JsonConvert.DeserializeObject<Dictionary<string, string>>(_Tags); }
+            set { _Tags = JsonConvert.SerializeObject(value); }
+        }
 
         private List<String> _tvgSites { get; set; }
 
