@@ -91,7 +91,7 @@ namespace hfa.WebApi
             services.
                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                .AddSingleton<IPasteBinService, PasteBinService>()
-               .AddSingleton<IAuthentificationService, AuthentificationService>()
+               .AddScoped<IAuthentificationService, AuthentificationService>()
                .AddSingleton<IProviderFactory, ProviderFactory>()
                .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
                .AddScoped<IXmltvService, XmltvService>()
