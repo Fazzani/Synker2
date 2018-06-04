@@ -1,0 +1,28 @@
+<div class="addnewplaylist">
+    <form>
+        <mat-form-field>
+            <input matInput [(ngModel)]="playlist.freindlyname" placeholder="Name..." name="freindlyname" required maxlength="100">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="playlist.url" placeholder="Url Source..." name="url" required>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="playlist.cron" placeholder="Cron..." name="cron" maxlength="20">
+        </mat-form-field>
+        <mat-checkbox [(ngModel)]="playlist.status" name="status">Enabled</mat-checkbox>
+        <mat-form-field>
+            <mat-select placeholder="Providers" [(ngModel)]="playlist.provider" name="provider">
+                <mat-option *ngFor="let provider of providers" [value]="provider">
+                    {{provider}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-checkbox [(ngModel)]="playlist.synkEpg" name="synkEpg">Synchronize EPG</mat-checkbox>
+        <mat-checkbox [(ngModel)]="playlist.synkLogos" name="synkLogos">Synchronize picons</mat-checkbox>
+        <mat-checkbox [(ngModel)]="playlist.synkGroup" name="synkGroup">Synchronize groups</mat-checkbox>
+        <mat-action-row class="action-row-bottom">
+            <button mat-raised-button (click)="dialogRef.close()">Close</button>
+            <button mat-raised-button (click)="create()">Add</button>
+        </mat-action-row>
+        </form>
+</div>

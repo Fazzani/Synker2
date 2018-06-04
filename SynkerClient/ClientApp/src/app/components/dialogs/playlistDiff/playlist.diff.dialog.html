@@ -1,0 +1,28 @@
+<div class="dialog-container">
+    <mat-tab-group class="tab-group">
+        <mat-tab>
+            <ng-template mat-tab-label>
+                New medias ({{newMedias?.length}})
+            </ng-template>
+            <div class="tab-content">
+                <ul>
+                    <li *ngFor="let m of newMedias">{{m.displayName}} <br /><small>{{m.url}}</small></li>
+                </ul>
+            </div>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                Removed medias ({{removedMedias?.length}})
+            </ng-template>
+            <div class="tab-content">
+                <ul>
+                    <li *ngFor="let m of removedMedias">{{m.displayName}} <br /><small>{{m.url}}</small></li>
+                </ul>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+    <mat-action-row>
+        <button mat-raised-button (click)="dialogRef.close()">Close</button>
+        <button mat-raised-button (click)="acceptMerge()">Accept Merge</button>
+    </mat-action-row>
+</div>

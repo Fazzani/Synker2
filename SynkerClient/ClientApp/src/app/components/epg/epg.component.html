@@ -1,0 +1,54 @@
+﻿<div class="site-container">
+    <mat-toolbar color="custom">
+        <mat-form-field floatPlaceholder="never">
+            <input matInput #filter placeholder="Filter medias...">
+        </mat-form-field>
+        <span class="spacer"></span>
+        <a mat-icon-button>
+            <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">favorite</mat-icon>
+        </a>
+        <a mat-icon-button>
+            <mat-icon class="mat-24" aria-label="Example icon-button with a heart icon">delete</mat-icon>
+        </a>
+    </mat-toolbar>
+    <mat-table #table [dataSource]="dataSource" matSort>
+        <!-- icon Column -->
+        <ng-container matColumnDef="icon">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> icon </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <img [src]="row.icon?.src" class="logo-grid" />
+            </mat-cell>
+        </ng-container>
+        <!-- displayname Column -->
+        <ng-container matColumnDef="displayname">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> DisplayName </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.displayname}} </mat-cell>
+        </ng-container>
+
+        <!-- id Column -->
+        <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Id </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.id}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <button mat-icon-button color="warn" (click)="openDialog(row)">
+                        <mat-icon class="mat-24" aria-label="Edit">edit</mat-icon>
+                      </button>
+                <button mat-icon-button color="primary" (click)="update(row)">
+                        <mat-icon class="mat-24" aria-label="">favorite</mat-icon>
+                      </button>
+                <button mat-icon-button color="accent" (click)="update(row)">
+                        <mat-icon class="mat-24" aria-label="">favorite</mat-icon>
+                      </button>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator [length]="dataSource.paginator.length" [pageIndex]="dataSource.paginator.pageIndex" [pageSize]="dataSource.paginator.pageSize"
+        [pageSizeOptions]="dataSource.paginator.pageSizeOptions">
+    </mat-paginator>
+</div>

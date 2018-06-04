@@ -1,0 +1,42 @@
+<div class="match-tvg-dialog dialog">
+    <mat-horizontal-stepper linear>
+        <mat-step>
+            <ng-template matStepLabel>Fill out your Tvg Configuration</ng-template>
+            <mat-card class="result">
+                <mat-card-content>
+                    <mat-form-field>
+                        <mat-select placeholder="Match tvg type" [(ngModel)]="matchTvgFormModel.matchingTvgSiteType" name="MatchingTvgSiteType" [compareWith]="compareFn">
+                            <mat-option *ngFor="let matchTvgSiteType of matchingTvgSiteTypes | keys" [value]="matchTvgSiteType.value">
+                                {{matchTvgSiteType.key}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-checkbox [(ngModel)]="matchTvgFormModel.overrideTvg" name="overrideTvg">Override Tvg</mat-checkbox>
+                    <mat-checkbox [(ngModel)]="matchTvgFormModel.matchAll" name="matchAll">Match all medias</mat-checkbox>
+                    <mat-checkbox [(ngModel)]="matchTvgFormModel.matchCountry" name="matchCountry">Match Country</mat-checkbox>
+                </mat-card-content>
+            </mat-card>
+            <mat-card class="result">
+                <mat-card-content>
+                    <h2 class="example-h2">Min score</h2>
+                    <mat-slider min="0" max="1" step="0.1" tick-interval="auto" thumbLabel aria-label="Min Score" [(ngModel)]="matchTvgFormModel.minScore" style="width:400px"></mat-slider>
+                </mat-card-content>
+            </mat-card>
+            <div>
+                <button mat-button matStepperNext type="button">Next</button>
+            </div>
+        </mat-step>
+        <mat-step>
+            <ng-template matStepLabel>Launch the tvg matching</ng-template>
+            <mat-card class="result">
+                <mat-card-content>
+                    <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
+                </mat-card-content>
+            </mat-card>
+            <div>
+                <button mat-button matStepperPrevious type="button">Back</button>
+                <button mat-button matStepperNext (click)="matchTvg()">Match Tvg</button>
+            </div>
+        </mat-step>
+    </mat-horizontal-stepper>
+</div>

@@ -1,0 +1,120 @@
+﻿<div fxLayout="column" style="margin-top:56px">
+    <mat-toolbar color="custom" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlexFill>
+        <div style="display:flex; flex:1">
+            <mat-form-field floatPlaceholder="never">
+                <input matInput #filter placeholder="Filter medias...">
+                <!--<mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let option of options" [value]="option">
+                        {{ option }}
+                    </mat-option>
+                </mat-autocomplete>-->
+            </mat-form-field>
+        </div>
+        <div fxLayout="row">
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Update" matTooltip="Update" (click)="reload()">cached</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Save" matTooltip="Save" (click)="save()">save</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Mes TvgSites" matTooltip="Mes TvgSites" (click)="openUpdateTvgSite()">style</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Groups" matTooltip="Groups" (click)="openGroupsDialog()">folder</mat-icon>
+            </a>
+            <a mat-icon-button *ngIf="(atLeastOneSelected|async) > 0">
+                <mat-icon class="mat-24" aria-label="Bulk Update" matTooltip="Bulk Update" (click)="openBulkUpdateDialog()">done</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Organize" matTooltip="Organize medias" (click)="organizeMedias()">reorder</mat-icon>
+            </a>
+            <a mat-icon-button *ngIf="(atLeastOneSelected|async) > 0">
+                <mat-icon class="mat-24" aria-label="switch Position Desc" matTooltip="switch Position Up" (click)="moveUp()">keyboard_arrow_up</mat-icon>
+            </a>
+            <a mat-icon-button *ngIf="(atLeastOneSelected|async) > 0">
+                <mat-icon class="mat-24" aria-label="switch Position Down" matTooltip="switch Position Down" (click)="moveDown()">keyboard_arrow_down</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Select All" matTooltip="Select All" (click)="selectAll()">select_all</mat-icon>
+            </a>
+            <a mat-icon-button>
+                <mat-icon class="mat-24" aria-label="Synchronize picons global" matTooltip="Synchronize picons global (from github)" (click)="synkPiconsGlobal()">add_a_photo</mat-icon>
+            </a>
+            <!-- Menu -->
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+        </div>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="deleteSelected()" *ngIf="(atLeastOneSelected|async) > 0">
+                <mat-icon class="mat-12">delete_sweep</mat-icon>
+                <span>Delete all selected items</span>
+            </button>
+            <button mat-menu-item (click)="reset()">
+                <mat-icon class="mat-12" aria-label="Force reset from source" matTooltip="Force reset from source">autorenew</mat-icon>
+                <span>Force reset from source</span>
+            </button>
+            <button mat-menu-item (click)="openMatchTvgDialog()">
+                <mat-icon class="mat-12" aria-label="Match tvg" matTooltip="Match tvg">settings_ethernet</mat-icon>
+                <span>Match tvg</span>
+            </button>
+            <button mat-menu-item (click)="executeHandlers()" *ngIf="(atLeastOneSelected | async) > 0">
+                <mat-icon class="mat-12" aria-label="Execute Handlers" matTooltip="Execute Handlers">pan_tool</mat-icon>
+                <span>Execute Handlers</span>
+            </button>
+            <button mat-menu-item (click)="matchPicons()" *ngIf="(atLeastOneSelected | async) > 0">
+                <mat-icon class="mat-12" aria-label="Match picons" matTooltip="Match picons">format_paint</mat-icon>
+                <span>Match picons</span>
+            </button>
+            <button mat-menu-item (click)="matchVideos()">
+                <mat-icon class="mat-12" aria-label="Match videos" matTooltip="Match videos">video_call</mat-icon>
+                <span>Match videos</span>
+            </button>
+            <button mat-menu-item (click)="openDiffPlaylist()">
+                <mat-icon class="mat-12" aria-label="Diff with source" matTooltip="Diff with source">compare_arrows</mat-icon>
+                <span>Diff with source</span>
+            </button>
+        </mat-menu>
+
+    </mat-toolbar>
+    <mat-table #table [dataSource]="dataSource" matSort class="noselect grid-wide" [trackBy]="trackByPosition">
+        <!-- Generic column definition -->
+        <ng-container *ngFor="let column of columnDefs" [matColumnDef]="column.columnDef">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.header }} </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <span *ngIf="!column.isImage">{{ column.cell(row) }}</span>
+                <img [src]="column.cell(row)" class="logo-grid" *ngIf="column.isImage" />
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <button mat-icon-button color="primary" (click)="openDialog(row)" matTooltip="Edit">
+                    <mat-icon class="mat-24" aria-label="Edit">edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="delete(row.id)" matTooltip="Remove">
+                    <mat-icon class="mat-24" aria-label="">delete</mat-icon>
+                </button>
+                <button mat-icon-button color="primary" (click)="matchVideo(row)" matTooltip="Match VOD">
+                    <mat-icon class="mat-24" aria-label="">video_label</mat-icon>
+                </button>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" (mousedown)="onSelectionStart(row.position)"
+                 (mouseenter)="onSelection(row.position)" (mouseup)="onSelectionEnd()" (click)="toggleSelected(row, $event)" [class.active]="row.selected" [class.disabled]="!row.enabled" class="noselect"></mat-row>
+    </mat-table>
+    <div class="container footer" fxLayout="row">
+        <div class="page-select" fxLayout="row" fxShow="false" fxShow.gt-sm>
+            <span *ngIf="(atLeastOneSelected | async) > 0">{{atLeastOneSelected | async}} selected items</span>
+            <mat-form-field floatPlaceholder="never">
+                <input matInput [(ngModel)]="paginator.pageIndex" placeholder="Page..." type="number" (ngModelChange)="updateManualPage($event)">
+            </mat-form-field>
+        </div>
+        <mat-paginator fxLayoutAlign="end center" fxFlex #paginator [length]="dataSource.paginator.length" [pageIndex]="dataSource.paginator.pageIndex" [pageSize]="dataSource.paginator.pageSize"
+                       [pageSizeOptions]="dataSource.paginator.pageSizeOptions" class="noselect">
+        </mat-paginator>
+
+    </div>
+</div>

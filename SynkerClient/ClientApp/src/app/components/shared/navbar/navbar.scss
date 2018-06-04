@@ -1,0 +1,63 @@
+@import '../../../../assets/styles/_variables';
+
+.navbar {
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 8px 16px;
+    background: $primary-color-bg;
+
+    > .mat-button {
+        color: $primary-color-font;
+
+        &:last-child {
+            margin-left: auto;
+        }
+    }
+
+    img {
+        color: red;
+        fill: red;
+    }
+
+    .profile-image {
+        height: 35px;
+        border-radius: 50%;
+    }
+
+    .docs-angular-logo {
+        height: 26px;
+        margin: 0 4px 3px 0;
+        vertical-align: middle;
+    }
+
+    .docs-github-logo {
+        height: 21px;
+        margin: 0 7px 2px 0;
+        vertical-align: middle;
+    }
+
+    .notif-number {
+        position: absolute;
+        top: 18px;
+        left: 14px;
+        color: #f44336;
+        font-weight: bold;
+        font-size: 13px;
+    }
+}
+
+.profile-image-menu {
+    img {
+        border-radius: 15%;
+        border: 1px solid $primary-color-font;
+        height: 30px;
+    }
+    span{
+        vertical-align:11px;
+    }
+    
+}
