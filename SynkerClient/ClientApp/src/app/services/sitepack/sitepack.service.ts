@@ -4,10 +4,11 @@ import { BaseService } from '../base/base.service';
 import { ElasticQuery, ElasticResponse, ElasticAggregations, SimpleQueryElastic } from "../../types/elasticQuery.type";
 
 // All the RxJS stuff we need
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/RX';
 import { map } from 'rxjs/operators';
 import * as variables from '../../variables';
 import { sitePackChannel } from '../../types/sitepackchannel.type';
+import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class SitePackService extends BaseService {
@@ -17,16 +18,16 @@ export class SitePackService extends BaseService {
     }
 
     get(id: string): Observable<ElasticResponse<sitePackChannel>> {
-      return this.http.get(variables.BASE_API_URL + `${this.BaseUrl}/${id}`).map(this.handleSuccess)
+      return this.http.get(environment.base_api_url + `${this.BaseUrl}/${id}`).map(this.handleSuccess)
             .catch(this.handleError);
     }
 
     list(query: ElasticQuery): Observable<ElasticResponse<sitePackChannel>> {
-      return this.http.post(variables.BASE_API_URL + 'sitepack/_search', query).map(this.handleSuccess).catch(this.handleError);
+      return this.http.post(environment.base_api_url + 'sitepack/_search', query).map(this.handleSuccess).catch(this.handleError);
     }
 
     save(...sitePacks: sitePackChannel[]): Observable<ElasticResponse<sitePackChannel>> {
-      return this.http.post(`${variables.BASE_API_URL}${this.BaseUrl}/save`, sitePacks).map(this.handleSuccess).catch(this.handleError);
+      return this.http.post(`${environment.base_api_url}${this.BaseUrl}/save`, sitePacks).map(this.handleSuccess).catch(this.handleError);
     }
 
     /**
@@ -36,7 +37,7 @@ export class SitePackService extends BaseService {
    */
     countries(filter?: string): Observable<string[]> {
         let f = filter ? filter : "_all";
-      return this.http.get(`${variables.BASE_API_URL}${this.BaseUrl}/countries?filter=${f}`).map(this.handleSuccess).catch(this.handleError);
+      return this.http.get(`${environment.base_api_url}${this.BaseUrl}/countries?filter=${f}`).map(this.handleSuccess).catch(this.handleError);
     }
 
     /**
@@ -46,7 +47,7 @@ export class SitePackService extends BaseService {
      * @returns
      */
     matchTvgByMedia(mediaName: string, site?: string): Observable<sitePackChannel> {
-      return this.http.get(`${variables.BASE_API_URL}${this.BaseUrl}/matchtvg/name/${mediaName}?site=${site}`)
+      return this.http.get(`${environment.base_api_url}${this.BaseUrl}/matchtvg/name/${mediaName}?site=${site}`)
         .map(this.handleSuccess)
         .catch(this.handleError);
     }
@@ -56,7 +57,7 @@ export class SitePackService extends BaseService {
      * @returns
      */
   tvgSites(): Observable<sitePackChannel[]> {
-    return this.http.get(`${variables.BASE_API_URL}${this.BaseUrl}/tvgsites`).map(this.handleSuccess).catch(this.handleError);
+    return this.http.get(`${environment.base_api_url}${this.BaseUrl}/tvgsites`).map(this.handleSuccess).catch(this.handleError);
     }
 
     /**
@@ -64,13 +65,13 @@ export class SitePackService extends BaseService {
      * @returns
      */
     sitePacks(filter: string): Observable<sitePackChannel[]> {
-        return this.http.get<sitePackChannel[]>(`${variables.BASE_API_URL}${this.BaseUrl}/sitepacks?filter=${filter}`).map(res => {
+        return this.http.get<sitePackChannel[]>(`${environment.base_api_url}${this.BaseUrl}/sitepacks?filter=${filter}`).map(res => {
             return res;
         }, err => this.handleError(err));
     }
 
     delete(id: string): Observable<number> {
-      return this.http.delete(variables.BASE_API_URL + `${this.BaseUrl}?id=${id}`).map(this.handleSuccess).catch(this.handleError);
+      return this.http.delete(environment.base_api_url + `${this.BaseUrl}?id=${id}`).map(this.handleSuccess).catch(this.handleError);
     }
 
     /**
@@ -78,7 +79,7 @@ export class SitePackService extends BaseService {
      * @returns
      */
     syncCountries(): Observable<number> {
-      return this.http.post(variables.BASE_API_URL + `${this.BaseUrl}/countries`, null).map(this.handleSuccess).catch(this.handleError);
+      return this.http.post(environment.base_api_url + `${this.BaseUrl}/countries`, null).map(this.handleSuccess).catch(this.handleError);
     }
 
     /**
@@ -86,7 +87,7 @@ export class SitePackService extends BaseService {
      * @returns
      */
     synkWebgrab(): Observable<any> {
-        return this.http.post(variables.BASE_API_URL + `${this.BaseUrl}/synk/webgrab`, null).map(res => {
+        return this.http.post(environment.base_api_url + `${this.BaseUrl}/synk/webgrab`, null).map(res => {
             return res;
         }).catch(this.handleError);
     }

@@ -1,4 +1,4 @@
-import { Subject, Observer, Observable } from 'rxjs';
+import { Subject, Observer, Observable } from 'rxjs/Rx';
 import { WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/observable/dom/WebSocketSubject';
 
 /// we inherit from the ordinary Subject

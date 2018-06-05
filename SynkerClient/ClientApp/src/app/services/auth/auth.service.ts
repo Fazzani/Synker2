@@ -1,14 +1,14 @@
-﻿import { Injectable, Inject } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BaseService } from '../base/base.service';
 import { AuthResponse, User, RegisterUser, Login, AuthModel } from '../../types/auth.type';
 // All the RxJS stuff we need
 import { JwtHelper, tokenNotExpired } from 'angular2-jwt';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable, BehaviorSubject } from 'rxjs/Rx';
 import { map, catchError, switchMap } from 'rxjs/operators';
 import * as variables from "../../variables";
+import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class AuthService extends BaseService {
@@ -47,9 +47,9 @@ export class AuthService extends BaseService {
      */
     constructor(protected http: HttpClient, private router: Router) {
         super(http, 'auth');
-        this.REGISTER_ENDPONT = variables.BASE_API_URL + 'auth/register';
-        this.TOKEN_ENDPOINT = variables.BASE_API_URL + 'auth/token';
-        this.REVOCATION_ENDPOINT = variables.BASE_API_URL + 'auth/revoketoken';
+        this.REGISTER_ENDPONT = environment.base_api_url + 'auth/register';
+        this.TOKEN_ENDPOINT = environment.base_api_url + 'auth/token';
+        this.REVOCATION_ENDPOINT = environment.base_api_url + 'auth/revoketoken';
         this.authenticated = new BehaviorSubject(false);
         this.user = new BehaviorSubject(null);
     }
@@ -90,7 +90,7 @@ export class AuthService extends BaseService {
      * @param loginModel 
      * @memberof AuthService
      */
-    public Signin(loginModel: Login): Observable<AuthResponse> {
+  public Signin(loginModel: Login): Observable<AuthResponse> {
         return this.http.post(this.TOKEN_ENDPOINT, loginModel)
             .map((res: AuthResponse) => {
 

@@ -6,7 +6,7 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 
 
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+//import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -43,10 +43,10 @@ import { SitePackService } from './services/sitepack/sitepack.service';
 import { SitePackComponent, SitePackModifyDialog } from './components/sitepack/sitepack.component';
 import { KeysPipe } from './pipes/enumKey.pipe';
 import { JwtInterceptor } from './infrastructure/JwtInterceptor';
-import { ToastModule } from 'ng2-toastr/ng2-toastr';
+import { ToastrModule  } from 'ngx-toastr'
 import { PushNotificationsModule } from 'ng-push';
 import { ClipboardModule } from 'ngx-clipboard';
-import { BASE_URL, BASE_API_URL, BASE_WS_URL } from './variables';
+//import { BASE_URL, BASE_API_URL, BASE_WS_URL } from './variables';
 //import { NgHttpLoaderModule } from 'ng-http-loader/ng-http-loader.module';
 import { PlaylistTvgSitesDialog } from './components/dialogs/playlistTvgSites/PlaylistTvgSitesDialog';
 import { PlaylistBulkUpdate } from './components/dialogs/playlistBulkUpdate/playlistBulkUpdate';
@@ -72,7 +72,7 @@ import { HostsComponent } from './components/admin/hosts/hosts.component';
 
 @NgModule({
   declarations: [
-    BrowserModule,
+   // BrowserModule,
     AppComponent,
     HomeComponent,
     MediaComponent,
@@ -106,10 +106,14 @@ import { HostsComponent } from './components/admin/hosts/hosts.component';
     KeysPipe
   ],
   imports: [
-    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    //BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     BrowserAnimationsModule,
     PushNotificationsModule,
-    ToastModule.forRoot(),
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+      timeOut: 4000
+    }),
     CommonModule,
     HttpClientModule,
     FormsModule,

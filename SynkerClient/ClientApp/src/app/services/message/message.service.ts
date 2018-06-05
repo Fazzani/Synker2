@@ -5,7 +5,7 @@ import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
 import { Message, MessageQueryModel } from "../../types/message.type";
 
 // All the RxJS stuff we need
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs/RX';
 import { map, catchError } from 'rxjs/operators';
 import { RequestOptions } from "@angular/http/http";
 import { HttpHeaders } from "@angular/common/http";

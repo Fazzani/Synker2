@@ -55,19 +55,89 @@
     <None Remove="ClientApp\src\app\types\xmltv.type.ts" />
     <None Remove="ClientApp\src\app\types\xtream.type.ts" />
     <None Remove="ClientApp\src\app\variables.ts" />
-    <None Remove="ClientApp\src\assets\styles\global.scss" />
-    <None Remove="ClientApp\src\assets\styles\style.scss" />
-    <None Remove="ClientApp\src\assets\styles\_variables.scss" />
+    <None Remove="ClientApp\src\assets\img\bubbles2.svg" />
+    <None Remove="ClientApp\src\assets\img\file-video.svg" />
+    <None Remove="ClientApp\src\assets\img\Logomakr_35fXLN.png" />
+    <None Remove="ClientApp\src\assets\img\Logomakr_4958qa (1).png" />
+    <None Remove="ClientApp\src\assets\img\Logomakr_96izw0.png" />
+    <None Remove="ClientApp\src\assets\img\magic-wand.svg" />
+    <None Remove="ClientApp\src\assets\img\Mj2wCGp6m8.svg" />
+    <None Remove="ClientApp\src\assets\img\redo2.svg" />
+    <None Remove="ClientApp\src\assets\img\spinner2.svg" />
+    <None Remove="ClientApp\src\assets\img\spinner9.svg" />
+    <None Remove="ClientApp\src\assets\img\synker-144x144.png" />
+    <None Remove="ClientApp\src\assets\img\synker-192x192.png" />
+    <None Remove="ClientApp\src\assets\img\synker-826x875.png" />
+    <None Remove="ClientApp\src\assets\img\synker-96x96.png" />
+    <None Remove="ClientApp\src\assets\img\undo2.svg" />
+    <None Remove="ClientApp\src\assets\img\zoom-in.svg" />
+    <None Remove="ClientApp\src\assets\img\zoom-out.svg" />
+    <None Remove="ClientApp\src\favicon.ico" />
+    <None Remove="ClientApp\src\styles\global.scss" />
+    <None Remove="ClientApp\src\styles\style.scss" />
+    <None Remove="ClientApp\src\styles\_variables.scss" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="ClientApp\src\assets\styles\global.scss">
+    <Content Include="ClientApp\src\assets\img\bubbles2.svg">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="ClientApp\src\assets\styles\style.scss">
+    <Content Include="ClientApp\src\assets\img\file-video.svg">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="ClientApp\src\assets\styles\_variables.scss">
+    <Content Include="ClientApp\src\assets\img\Logomakr_35fXLN.png">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\Logomakr_4958qa (1).png" />
+    <Content Include="ClientApp\src\assets\img\Logomakr_96izw0.png">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\magic-wand.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\Mj2wCGp6m8.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\redo2.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\spinner2.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\spinner9.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\synker-144x144.png">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\synker-192x192.png">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\synker-826x875.png">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\synker-96x96.png">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\undo2.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\zoom-in.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\zoom-out.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\favicon.ico">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\styles\global.scss">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\styles\style.scss">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\styles\_variables.scss">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
@@ -107,6 +177,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="ClientApp\src\assets\img\Logomakr_4958qa %281%29.png">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="wwwroot\favicon.ico">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

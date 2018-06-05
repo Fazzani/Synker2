@@ -41,3 +41,9 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+*.log
+
+# FAKE - F# Make
+.fake/
+
+npm-debug.log.*$
