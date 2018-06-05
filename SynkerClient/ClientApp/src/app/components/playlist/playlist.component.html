@@ -1,5 +1,5 @@
-﻿<div fxLayout="column" style="margin-top:56px">
-    <mat-toolbar color="custom" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlexFill>
+<div fxLayout="column" style="margin-top:56px">
+    <mat-toolbar color="primary" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlexFill>
         <div style="display:flex; flex:1">
             <mat-form-field floatPlaceholder="never">
                 <input matInput #filter placeholder="Filter medias...">
@@ -78,7 +78,7 @@
         </mat-menu>
 
     </mat-toolbar>
-    <mat-table #table [dataSource]="dataSource" matSort class="noselect grid-wide" [trackBy]="trackByPosition">
+    <mat-table #table [dataSource]="dataSource" matSort class="noselect grid-wide" [trackBy]="trackByPosition" color="primary">
         <!-- Generic column definition -->
         <ng-container *ngFor="let column of columnDefs" [matColumnDef]="column.columnDef">
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.header }} </mat-header-cell>
@@ -105,7 +105,7 @@
         <mat-row *matRowDef="let row; columns: displayedColumns;" (mousedown)="onSelectionStart(row.position)"
                  (mouseenter)="onSelection(row.position)" (mouseup)="onSelectionEnd()" (click)="toggleSelected(row, $event)" [class.active]="row.selected" [class.disabled]="!row.enabled" class="noselect"></mat-row>
     </mat-table>
-    <div class="container footer" fxLayout="row">
+    <div class="container footer mat-app-background" fxLayout="row">
         <div class="page-select" fxLayout="row" fxShow="false" fxShow.gt-sm>
             <span *ngIf="(atLeastOneSelected | async) > 0">{{atLeastOneSelected | async}} selected items</span>
             <mat-form-field floatPlaceholder="never">

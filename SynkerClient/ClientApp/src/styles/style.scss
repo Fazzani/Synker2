@@ -1,8 +1,9 @@
 @import '_variables';
 
-body {
+/*body {
   background-color: $primary-color-bg-dark;
-}
+}*/
+
 
 .docs-button {
     &[mat-button],
@@ -201,7 +202,7 @@ mat-dialog-container {
     display: flex;
     flex-direction: row;
     width: 100%;
-    background: $primary-color-bg-dark !important;
+    /*background: $primary-color-bg-dark !important;*/
     justify-content: flex-end;
 
     .page-select {
@@ -234,7 +235,7 @@ mat-dialog-container {
     width: 180px;
 }
 
-/*.mat-grid-tile {
+.mat-grid-tile {
     .mat-figure {
         justify-content: flex-start !important;
         color: $primary-color-font;
@@ -250,7 +251,7 @@ mat-dialog-container {
             color: inherit;
         }
     }
-}*/
+}
 
 .fill-remaining-space {
     flex: 1 1 auto;

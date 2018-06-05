@@ -1,8 +1,71 @@
 @import '~@angular/material/theming';
+@import '../_variables.scss';
 
-$dark-theme-primary: mat-palette($mat-red, A700, 600, 900);
-$dark-theme-accent: mat-palette($mat-red, A700, 600, 900);
-$dark-theme-warn: mat-palette($mat-deep-orange);
+// custom background and foreground palettes
+$my-dark-theme-background: (
+  status-bar: green,
+  app-bar: map_get($mat-teal, 900),
+  background: $primary-color-bg-dark,
+  hover: rgba(white, 0.04),
+  card: map_get($mat-teal, 800),
+  dialog: $primary-color-bg-dark, 
+  disabled-button: $white-12-opacity,
+  raised-button: map-get($mat-grey, 800),
+  focused-button: $white-6-opacity,
+  selected-button: map_get($mat-teal, 900),
+  selected-disabled-button: map_get($mat-grey, 800),
+  disabled-button-toggle: black,
+  unselected-chip: map_get($mat-grey, 700),
+  disabled-list-option: black, );
 
+$my-dark-theme-foreground: (
+  base: yellow,
+  divider: $white-12-opacity,
+  dividers: $white-12-opacity,
+  disabled: rgba(white, 0.3),
+  disabled-button: rgba(white, 0.3),
+  disabled-text: rgba(white, 0.3),
+  hint-text: rgba(white, 0.3),
+  secondary-text: rgba(white, 0.7),
+  icon: white,
+  icons: white,
+  text: yellow,
+  slider-min: white,
+  slider-off: rgba(white, 0.3),
+  slider-off-active: rgba(white, 0.3), );
+
+// instead of creating a theme with mat-light-theme like a sane person, we will create our own theme-creating function that lets us apply our own foreground and background palettes.
+@function create-wonky-theme($primary, $accent, $warn: mat-palette($mat-red)) {
+  @return (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn,
+    is-dark: true,
+    foreground: $my-dark-theme-foreground,
+    background: $my-dark-theme-background, );
+}
+
+$theme-primary: mat-palette($mat-yellow);
+$theme-accent: mat-palette($mat-amber, A400, A100, A700);
+$theme-warn: mat-palette($mat-red);
 // create theme (use mat-dark-theme for themes with dark backgrounds)
-$dark-theme: mat-dark-theme( $dark-theme-primary, $dark-theme-accent, $dark-theme-warn );
+$dark-theme: create-wonky-theme( $theme-primary, $theme-accent, $theme-warn );
+
+.active[role="row"] {
+  background-color: mat-color($theme-accent, 900);
+  //color: $primary-color-bg-dark !important;
+  transition: ease-in all 0.3s;
+
+  .mat-cell {
+    color: inherit !important;
+  }
+}
+
+.disabled[role="row"] {
+  color: mat-color($theme-primary, 100);
+  transition: ease-in color 0.3s;
+
+  .mat-cell {
+    color: inherit !important;
+  }
+}

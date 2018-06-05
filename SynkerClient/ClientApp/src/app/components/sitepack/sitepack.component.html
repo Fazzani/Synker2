@@ -1,5 +1,5 @@
-﻿<div fxLayout="column" style="margin-top:56px">
-    <mat-toolbar color="custom" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlexFill>
+<div fxLayout="column" style="margin-top:56px">
+    <mat-toolbar color="accent" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlexFill>
         <div style="display:flex; flex:1">
             <mat-form-field floatPlaceholder="never">
                 <input matInput #filter placeholder="Filter site packs...">
@@ -36,7 +36,7 @@
             </a>
         </div>
     </mat-toolbar>
-    <mat-table #table [dataSource]="dataSource" matSort class="noselect grid-wide">
+    <mat-table #table [dataSource]="dataSource" matSort class="noselect grid-wide" color="primary">
         <!-- logo -->
         <ng-container matColumnDef="logo">
             <mat-header-cell *matHeaderCellDef> Logo </mat-header-cell>
@@ -93,7 +93,7 @@
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected" class="noselect"></mat-row>
     </mat-table>
-    <div class="container footer" fxLayout="row">
+    <div class="container footer mat-app-background" fxLayout="row">
         <div class="page-select" fxLayout="row" fxShow="false" fxShow.gt-sm>
             <mat-form-field floatPlaceholder="never">
                 <input matInput [(ngModel)]="paginator.pageIndex" placeholder="Page..." type="number" (ngModelChange)="updateManualPage($event)">

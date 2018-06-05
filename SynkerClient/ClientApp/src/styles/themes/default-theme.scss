@@ -1,8 +1,28 @@
 @import '~@angular/material/theming';
+@import '../_variables.scss';
 
-$dark-theme-primary: mat-palette($mat-indigo);
-$dark-theme-accent: mat-palette($mat-red, A700, 600, 900);
-$dark-theme-warn: mat-palette($mat-deep-orange);
+$theme-primary: mat-palette($mat-indigo);
+$theme-accent: mat-palette($mat-red, A700, 600, 900);
+$theme-warn: mat-palette($mat-deep-orange);
 
 // create theme (use mat-dark-theme for themes with dark backgrounds)
-$default-theme: mat-dark-theme( $dark-theme-primary, $dark-theme-accent, $dark-theme-warn );
+$default-theme: mat-dark-theme( $theme-primary, $theme-accent, $theme-warn );
+
+.active[role="row"] {
+  background-color: mat-color($theme-accent, 900);
+  //color: $primary-color-bg-dark !important;
+  transition: ease-in all 0.3s;
+
+  .mat-cell {
+    color: inherit !important;
+  }
+}
+
+.disabled[role="row"] {
+  color: mat-color($theme-primary, 100);
+  transition: ease-in color 0.3s;
+
+  .mat-cell {
+    color: inherit !important;
+  }
+}

@@ -72,16 +72,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
   setTheme(theme: string): void {
     this.componentCssClass = theme;
-    this.overlayContainer.getContainerElement().classList.add(this.componentCssClass);
-
-    //// remove old theme class and add new theme class
-    //// we're removing any css class that contains '-theme' string but your theme classes can follow any pattern
-    //const overlayContainerClasses = this.overlayContainer.getContainerElement().classList;
-    //const themeClassesToRemove = Array.from(classList).filter((item: string) => item.includes('-theme'));
-    //if (themeClassesToRemove.length) {
-    //  overlayContainerClasses.remove(...themeClassesToRemove);
-    //}
-    //overlayContainerClasses.add(newThemeClass);
+    const overlayContainerClasses = this.overlayContainer.getContainerElement().classList;
+    const classList = ["default-theme", "dark-theme", "light-theme"];
+    const themeClassesToRemove: string[] = Array.from(classList).filter((item: string) => item.includes('-theme'));
+    if (themeClassesToRemove.length) {
+      overlayContainerClasses.remove(...themeClassesToRemove);
+    }
+    overlayContainerClasses.add(theme);
   }
 
   ngOnDestroy(): void {
