@@ -1,4 +1,4 @@
-import { Component, NgModule, OnInit, Inject, OnDestroy } from '@angular/core';
+import { Component, NgModule, OnInit, Inject, OnDestroy, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatMenuModule, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatDialog } from '@angular/material';
@@ -14,6 +14,7 @@ import { MessageService } from '../../../services/message/message.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Message, MessageStatus } from '../../../types/message.type';
 import { PagedResult } from '../../../types/common.type';
+import { OverlayContainer } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-navbar',
@@ -42,6 +43,10 @@ export class NavBar implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  onSetTheme(theme) {
+    //TODO: fire event themechanged
   }
 
   signout(): void {

@@ -1,13 +1,15 @@
-<nav class="navbar">
-    <a mat-button class="docs-button" routerLink="/" aria-label="Synker">
+<div class="navbar navbar-inverse" color="primary">
+    <a mat-button routerLink="/" aria-label="Synker">
         <span>Synker beta</span>
     </a>
     <!-- This fills the remaining space of the current row -->
     <div fxLayout="row" fxShow="false" fxShow.gt-sm>
-      <a mat-button class="docs-button" routerLink="/epg">Tv guide</a>
-      <a mat-button class="docs-button" routerLink="/sitepack">Sites Pack</a>
-      <a mat-button class="docs-button" routerLink="/admin">Admin</a>
-      
+      <a mat-button routerLink="/epg">Tv guide</a>
+      <a mat-button routerLink="/sitepack">Sites Pack</a>
+      <a mat-button routerLink="/admin">Admin</a>
+      <button mat-raised-button color="primary" (click)="onSetTheme('default-theme')">Default</button>
+      <button mat-raised-button color="primary" (click)="onSetTheme('dark-theme')">Dark</button>
+      <button mat-raised-button color="primary" (click)="onSetTheme('light-theme')">Light</button>
     </div>
     <span class="fill-remaining-space"></span>
     <a mat-icon-button *ngIf="(isAuthenticated | async)" aria-hidden="true" routerLink="/messages">
@@ -23,7 +25,7 @@
         <mat-icon>more_vert</mat-icon>
     </a>
 
-    <mat-menu x-position="before" #menu="matMenu">
+    <mat-menu x-position="before" #menu="matMenu" color="primary">
 
         <button mat-menu-item *ngIf="(isAuthenticated | async)" class="profile-image-menu">
             <img [src]="(user | async)?.photo" class="img-circle">
@@ -56,4 +58,4 @@
             <span>Sign out</span>
         </button>
     </mat-menu>
-</nav>
+</div>

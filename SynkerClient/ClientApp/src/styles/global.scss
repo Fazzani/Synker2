@@ -1,7 +1,4 @@
-/*@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import url('https://fonts.googleapis.com/icon?family=Roboto');*/
 @import '_variables';
-//@import '../../assets/materialize-v0.100.2/sass/materialize.scss';
 
 body {
     margin: 0 !important;
@@ -14,9 +11,6 @@ app {
     bottom: 0;
     left: 0;
     right: 0;
-    /*display: -webkit-box;*/
-    /*display: -ms-flexbox;*/
-    /*display: flex;*/
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
     -ms-flex-direction: column;
@@ -45,8 +39,6 @@ app:empty + .loading > h1 {
     color: $primary-color-font;
     margin-bottom: 50px;
 }
-
-
 
 mat-toolbar-row {
     justify-content: space-between;

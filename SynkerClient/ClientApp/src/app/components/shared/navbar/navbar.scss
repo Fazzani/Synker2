@@ -8,10 +8,10 @@
     -ms-flex-align: center;
     align-items: center;
     padding: 8px 16px;
-    background: $primary-color-bg;
+   // background: $primary-color-bg;
 
     > .mat-button {
-        color: $primary-color-font;
+       // color: $primary-color-font;
 
         &:last-child {
             margin-left: auto;
@@ -53,7 +53,7 @@
 .profile-image-menu {
     img {
         border-radius: 15%;
-        border: 1px solid $primary-color-font;
+       // border: 1px solid $primary-color-font;
         height: 30px;
     }
     span{

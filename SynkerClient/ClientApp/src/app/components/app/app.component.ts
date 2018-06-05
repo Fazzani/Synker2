@@ -33,6 +33,8 @@ export class AppComponent implements OnInit, OnDestroy {
       error => console.warn(error));
   }
 
+  //TODO: catch event onThemeChanged
+
   onSetTheme(theme) {
     this.overlayContainer.getContainerElement().classList.add(theme);
     this.componentCssClass = theme;
@@ -40,7 +42,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.componentCssClass = "default-theme";
+    this.componentCssClass = "dark-theme";
     this.overlayContainer.getContainerElement().classList.add(this.componentCssClass);
 
     //// remove old theme class and add new theme class
