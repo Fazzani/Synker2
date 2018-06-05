@@ -1,14 +1,8 @@
 @import '~@angular/material/theming';
 
-// define a real custom palette (using http://mcg.mbitson.com)
-$md-brand: (50: #63a8db, 100: #2e84c4, 200 : #236697, 300 : #163e5d, 400 : #102e44, 500 : #0a1d2b, 600 : #040c12, 700 : #000000, 800 : #000000, 900 : #000000, A100 : #3da8f7, A200 : #0875c6, A400 : #0c3a5c, A700 : #0d2b42, contrast: ( 50 : #000000, 100 : #ffffff, 200 : #ffffff, 300 : #ffffff, 400 : #ffffff, 500 : #ffffff, 600 : #ffffff, 700 : #ffffff, 800 : #ffffff, 900 : #ffffff, A100 : #000000, A200 : #ffffff, A400 : #ffffff, A700 : #ffffff, ) );
+$dark-theme-primary: mat-palette($mat-indigo);
+$dark-theme-accent: mat-palette($mat-red, A700, 600, 900);
+$dark-theme-warn: mat-palette($mat-deep-orange);
 
-/* For use in src/lib/core/theming/_palette.scss */
-$md-orange: ( 50 : #ffffff, 100 : #fdf7e3, 200 : #f9e7ae, 300 : #f5d36b, 400 : #f3cb4f, 500 : #f1c232, 600 : #efb915, 700 : #d7a60f, 800 : #ba900d, 900 : #9e7a0b, A100 : #ffffff, A200 : #ffefbd, A400 : #ffd657, A700 : #f7cc45, contrast: ( 50 : #000000, 100 : #000000, 200 : #000000, 300 : #000000, 400 : #000000, 500 : #000000, 600 : #000000, 700 : #000000, 800 : #000000, 900 : #ffffff, A100 : #000000, A200 : #000000, A400 : #000000, A700 : #000000, ) );
-
-// mandatory stuff for theming
-$default-palette-primary: mat-palette($md-brand);
-$default-palette-accent: mat-palette($md-orange);
-
-// include the custom theme components into a theme object
-$default-theme: mat-dark-theme($default-palette-primary, $default-palette-accent);
+// create theme (use mat-dark-theme for themes with dark backgrounds)
+$default-theme: mat-dark-theme( $dark-theme-primary, $dark-theme-accent, $dark-theme-warn );

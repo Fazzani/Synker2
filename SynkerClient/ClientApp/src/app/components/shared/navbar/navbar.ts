@@ -1,4 +1,4 @@
-import { Component, NgModule, OnInit, Inject, OnDestroy, HostBinding } from '@angular/core';
+import { Component, NgModule, OnInit, Inject, OnDestroy, HostBinding, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatMenuModule, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatDialog } from '@angular/material';
@@ -27,6 +27,7 @@ export class NavBar implements OnInit, OnDestroy {
   user: BehaviorSubject<User>;
   userSubscription: Subscription;
   messages: PagedResult<Message>;
+  @Output() onThemeChanged = new EventEmitter();
 
   constructor(private authService: AuthService, private messageService: MessageService) {
     this.isAuthenticated = this.authService.authenticated;
@@ -46,7 +47,7 @@ export class NavBar implements OnInit, OnDestroy {
   }
 
   onSetTheme(theme) {
-    //TODO: fire event themechanged
+    this.onThemeChanged.emit(theme);
   }
 
   signout(): void {

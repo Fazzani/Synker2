@@ -1,5 +1,5 @@
 <mat-progress-bar mode="indeterminate" style="position:fixed;top:0;z-index:99" color="warn" *ngIf="objLoaderStatus">></mat-progress-bar>
-<app-navbar class="mat-elevation-z6 primary">
+<app-navbar class="mat-elevation-z6 primary" (onThemeChanged)="handleThemeChanged($event)">
 </app-navbar>
 
 <router-outlet></router-outlet>

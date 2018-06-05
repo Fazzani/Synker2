@@ -33,26 +33,9 @@ export class AppComponent implements OnInit, OnDestroy {
       error => console.warn(error));
   }
 
-  //TODO: catch event onThemeChanged
-
-  onSetTheme(theme) {
-    this.overlayContainer.getContainerElement().classList.add(theme);
-    this.componentCssClass = theme;
-  }
-
   ngOnInit() {
 
-    this.componentCssClass = "dark-theme";
-    this.overlayContainer.getContainerElement().classList.add(this.componentCssClass);
-
-    //// remove old theme class and add new theme class
-    //// we're removing any css class that contains '-theme' string but your theme classes can follow any pattern
-    //const overlayContainerClasses = this.overlayContainer.getContainerElement().classList;
-    //const themeClassesToRemove = Array.from(classList).filter((item: string) => item.includes('-theme'));
-    //if (themeClassesToRemove.length) {
-    //  overlayContainerClasses.remove(...themeClassesToRemove);
-    //}
-    //overlayContainerClasses.add(newThemeClass);
+    this.setTheme("dark-theme");
 
     this.authService
       .isAuthenticated()
@@ -72,6 +55,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
 
+
     this.commonService.loaderStatus.distinctUntilChanged().debounceTime(2000).subscribe((val: boolean) => {
       console.log('new loader data : ', val);
       this.objLoaderStatus = val;
@@ -80,6 +64,24 @@ export class AppComponent implements OnInit, OnDestroy {
     this.commonService.error.distinctUntilChanged().filter(err => err != null).subscribe((err: Exception) => {
       this.commonService.displayError(err.message, err.title);
     });
+  }
+
+  handleThemeChanged(event): void {
+    this.setTheme(event);
+  }
+
+  setTheme(theme: string): void {
+    this.componentCssClass = theme;
+    this.overlayContainer.getContainerElement().classList.add(this.componentCssClass);
+
+    //// remove old theme class and add new theme class
+    //// we're removing any css class that contains '-theme' string but your theme classes can follow any pattern
+    //const overlayContainerClasses = this.overlayContainer.getContainerElement().classList;
+    //const themeClassesToRemove = Array.from(classList).filter((item: string) => item.includes('-theme'));
+    //if (themeClassesToRemove.length) {
+    //  overlayContainerClasses.remove(...themeClassesToRemove);
+    //}
+    //overlayContainerClasses.add(newThemeClass);
   }
 
   ngOnDestroy(): void {
