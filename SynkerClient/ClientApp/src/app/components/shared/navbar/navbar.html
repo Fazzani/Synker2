@@ -7,7 +7,6 @@
     <a mat-button routerLink="/epg">Tv guide</a>
     <a mat-button routerLink="/sitepack">Sites Pack</a>
     <a mat-button routerLink="/admin">Admin</a>
-   
   </div>
   <span class="fill-remaining-space"></span>
   <a mat-icon-button *ngIf="(isAuthenticated | async)" aria-hidden="true" routerLink="/messages">
@@ -50,7 +49,7 @@
       <mat-icon>settings</mat-icon>
       <span>Admin</span>
     </button>
-    <button mat-menu-item [matMenuTriggerFor]="subMenuTheme">Theme</button>
+    <button mat-menu-item [matMenuTriggerFor]="subMenuTheme">Themes</button>
 
     <!-- Logout -->
     <button mat-menu-item (click)="signout()" *ngIf="(isAuthenticated | async)">
@@ -58,10 +57,10 @@
       <span>Sign out</span>
     </button>
   </mat-menu>
-
+  <!-- Themes submenu -->
   <mat-menu #subMenuTheme="matMenu">
-    <button mat-menu-item color="primary" (click)="onSetTheme('default-theme')">Default</button>
-    <button mat-menu-item color="primary" (click)="onSetTheme('dark-theme')">Dark</button>
-    <button mat-menu-item color="primary" (click)="onSetTheme('light-theme')">Light</button>
+    <button mat-menu-item (click)="onSetTheme('default-theme')">Default</button>
+    <button mat-menu-item (click)="onSetTheme('dark-theme')">Dark</button>
+    <button mat-menu-item (click)="onSetTheme('light-theme')">Light</button>
   </mat-menu>
 </div>
