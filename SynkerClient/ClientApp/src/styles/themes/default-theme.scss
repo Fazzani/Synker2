@@ -7,8 +7,8 @@ $md-brand: (50: #63a8db, 100: #2e84c4, 200 : #236697, 300 : #163e5d, 400 : #102e
 $md-orange: ( 50 : #ffffff, 100 : #fdf7e3, 200 : #f9e7ae, 300 : #f5d36b, 400 : #f3cb4f, 500 : #f1c232, 600 : #efb915, 700 : #d7a60f, 800 : #ba900d, 900 : #9e7a0b, A100 : #ffffff, A200 : #ffefbd, A400 : #ffd657, A700 : #f7cc45, contrast: ( 50 : #000000, 100 : #000000, 200 : #000000, 300 : #000000, 400 : #000000, 500 : #000000, 600 : #000000, 700 : #000000, 800 : #000000, 900 : #ffffff, A100 : #000000, A200 : #000000, A400 : #000000, A700 : #000000, ) );
 
 // mandatory stuff for theming
-$bv-palette-primary: mat-palette($md-brand);
-$bv-palette-accent: mat-palette($md-orange);
+$default-palette-primary: mat-palette($md-brand);
+$default-palette-accent: mat-palette($md-orange);
 
 // include the custom theme components into a theme object
-$default-theme: mat-dark-theme($bv-palette-primary, $bv-palette-accent);
+$default-theme: mat-dark-theme($default-palette-primary, $default-palette-accent);
