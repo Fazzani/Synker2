@@ -1,4 +1,7 @@
 <mat-progress-bar mode="indeterminate" style="position:fixed;top:0;z-index:99" color="warn" *ngIf="objLoaderStatus">></mat-progress-bar>
 <app-navbar class="mat-elevation-z6">
 </app-navbar>
+<button mat-raised-button color="primary" (click)="onSetTheme('default-theme')">Default</button>
+<button mat-raised-button color="primary" (click)="onSetTheme('dark-theme')">Dark</button>
+<button mat-raised-button color="primary" (click)="onSetTheme('light-theme')">Light</button>
 <router-outlet></router-outlet>

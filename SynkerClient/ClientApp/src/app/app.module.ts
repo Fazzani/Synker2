@@ -31,7 +31,7 @@ import { MessageService } from './services/message/message.service';
 import { CommonService } from './services/common/common.service';
 import { BaseService } from './services/base/base.service';
 import { NavBarModule } from './components/shared/navbar/navbar';
-
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { TokenInterceptor } from './services/auth/token.interceptor';
 import { DefaultHttpInterceptor } from './infrastructure/DefaultHttpInterceptor'
 import { MediaRefService } from './services/mediaref/mediaref.service';
@@ -69,6 +69,7 @@ import { AppRoutingModule } from './app.module.routing';
 import { LoaderComponent } from './components/shared/loader/loader.component';
 import { HostsService } from './services/admin/hosts.service';
 import { HostsComponent } from './components/admin/hosts/hosts.component';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 @NgModule({
   declarations: [
@@ -109,6 +110,7 @@ import { HostsComponent } from './components/admin/hosts/hosts.component';
     //BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     BrowserAnimationsModule,
     PushNotificationsModule,
+    FlexLayoutModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-right',
       preventDuplicates: true,
@@ -121,7 +123,8 @@ import { HostsComponent } from './components/admin/hosts/hosts.component';
     NavBarModule,
     ReactiveFormsModule,
     ClipboardModule,
-    AppRoutingModule
+    AppRoutingModule,
+    OverlayModule
   ],
   entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, PlaylistBulkUpdate,
     PlaylistTvgSitesDialog, PlaylistAddDialog, PlaylistUpdateDialog, PlaylistDiffDialog, SitePackModifyDialog, GroupsDialog,

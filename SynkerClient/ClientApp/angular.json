@@ -22,13 +22,11 @@
               "src/favicon.ico"
             ],
             "styles": [
-              {
-                "input": "node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
-              },
               "node_modules/ngx-toastr/toastr.css",
               "src/styles/style.scss",
               "src/styles/global.scss",
-              "src/styles/_variables.scss"
+              "src/styles/_variables.scss",
+              "src/styles/themes/themes.scss"
             ],
             "scripts": []
           },

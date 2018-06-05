@@ -1,0 +1,25 @@
+@import '../_variables';
+@import '~@angular/material/theming';
+
+// always include only once per project
+@include mat-core();
+
+// import our custom theme
+@import 'default-theme.scss';
+@import 'dark-theme.scss';
+@import 'light-theme.scss';
+
+.default-theme {
+  // use our theme with angular-material-theme mixin
+  @include angular-material-theme($default-theme);
+}
+
+.dark-theme {
+  // use our theme with angular-material-theme mixin
+  @include angular-material-theme($dark-theme);
+}
+
+.light-theme {
+  // use our theme with angular-material-theme mixin
+  @include angular-material-theme($light-theme);
+}

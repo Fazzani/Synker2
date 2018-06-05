@@ -1,5 +1,9 @@
 @import '_variables';
 
+body {
+  background-color: $primary-color-bg-dark;
+}
+
 .docs-button {
     &[mat-button],
     &[mat-raised-button] {
@@ -50,16 +54,16 @@ img {
     }
 }
 
-.mat-toolbar {
+/*.mat-toolbar {
     &.mat-custom {
         background: $primary-color-bg-dark;
         color: $primary-color-font;
     }
-}
+}*/
 
-.mat-table, .primary, .mat-stepper-horizontal, .mat-stepper-vertical {
+/*.mat-table, .primary, .mat-stepper-horizontal, .mat-stepper-vertical {
     background: $primary-color-bg !important;
-}
+}*/
 
 .site-container {
 
@@ -86,7 +90,7 @@ img {
     justify-content: center;
 }
 
-app-navbar {
+/*app-navbar {
     color: rgba(255, 255, 255, 0.87);
     position: relative;
     z-index: 10;
@@ -96,18 +100,12 @@ app-navbar {
     left: 0;
 }
 
-
-
-body {
-    background-color: $primary-color-bg-dark;
-}
-
 // Add this to your global stylesheet after your theme setup
 .myapp-no-padding-dialog .mat-dialog-container {
     padding: 0;
-}
+}*/
 
-.mat-card,
+/*.mat-card,
 .mat-menu-panel,
 .mat-dialog-container,
 .mat-fab,
@@ -118,7 +116,7 @@ body {
 .mat-expansion-panel,
 .mat-select-panel-done-animating {
     background: $primary-color-bg !important;
-}
+}*/
 
 .active[role="row"] {
     background-color: $primary-color-font;
@@ -177,12 +175,12 @@ body {
 
 .global-fab-button {
     color: aliceblue !important;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
 }
 
-mat-dialog-container {
+/*mat-dialog-container {
     .addnewplaylist, .mat-dialog-container {
         form {
             display: flex;
@@ -205,7 +203,7 @@ mat-dialog-container {
         flex-direction: column;
         text-align: left;
     }
-}
+}*/
 
 .mat-snack-bar-container {
     background-color: $primary-color-font;
@@ -285,7 +283,7 @@ mat-dialog-container {
     flex-wrap: nowrap;
 }
 
-.mat-card {
+/*.mat-card {
     opacity: 0.7;
     transform: scale(0.95);
 
@@ -305,8 +303,12 @@ mat-dialog-container {
     mat-card-content {
         outline: none;
     }
-}
-
+}*/
+/*mat-card {
+    &.readed {
+        color: $primary-color-font-disabled !important;
+    }
+}*/
 .small-text {
     font-size: 10px;
     color: aliceblue;
@@ -322,11 +324,7 @@ messages {
         margin-top:85px;
     }
 }
-mat-card {
-    &.readed {
-        color: $primary-color-font-disabled !important;
-    }
-}
+
 .disabled {
     color: $primary-color-font-disabled !important;
 }

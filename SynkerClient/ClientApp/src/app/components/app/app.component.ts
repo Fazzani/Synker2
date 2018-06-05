@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewContainerRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewContainerRef, HostBinding } from '@angular/core';
 import 'hammerjs';
 import './app.component.css'
 import { NotificationService } from '../../services/notification/notification.service';
@@ -8,6 +8,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { Exception } from '../../types/common.type';
 import * as variables from "../../variables";
+import { OverlayContainer } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app',
@@ -15,11 +16,12 @@ import * as variables from "../../variables";
 })
 export class AppComponent implements OnInit, OnDestroy {
 
+  @HostBinding('class') componentCssClass;
   color = 'primary';
   objLoaderStatus: boolean;
 
   constructor(private notifService: NotificationService, public snackBar: MatSnackBar, private commonService: CommonService,
-    private authService: AuthService, private router: Router, vcr: ViewContainerRef) {
+    private authService: AuthService, private router: Router, vcr: ViewContainerRef, private overlayContainer: OverlayContainer) {
 
     this.objLoaderStatus = false;
 
@@ -31,7 +33,24 @@ export class AppComponent implements OnInit, OnDestroy {
       error => console.warn(error));
   }
 
+  onSetTheme(theme) {
+    this.overlayContainer.getContainerElement().classList.add(theme);
+    this.componentCssClass = theme;
+  }
+
   ngOnInit() {
+
+    this.componentCssClass = "default-theme";
+    this.overlayContainer.getContainerElement().classList.add(this.componentCssClass);
+
+    //// remove old theme class and add new theme class
+    //// we're removing any css class that contains '-theme' string but your theme classes can follow any pattern
+    //const overlayContainerClasses = this.overlayContainer.getContainerElement().classList;
+    //const themeClassesToRemove = Array.from(classList).filter((item: string) => item.includes('-theme'));
+    //if (themeClassesToRemove.length) {
+    //  overlayContainerClasses.remove(...themeClassesToRemove);
+    //}
+    //overlayContainerClasses.add(newThemeClass);
 
     this.authService
       .isAuthenticated()
