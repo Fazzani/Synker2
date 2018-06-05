@@ -1,9 +1,5 @@
 @import '~@angular/material/theming';
 
-// Be sure that you only ever include 'mat-core' mixin once!
-// it should not be included for each theme.
-@include mat-core();
-
 // define a real custom palette (using http://mcg.mbitson.com)
 $md-brand: (50: #63a8db, 100: #2e84c4, 200 : #236697, 300 : #163e5d, 400 : #102e44, 500 : #0a1d2b, 600 : #040c12, 700 : #000000, 800 : #000000, 900 : #000000, A100 : #3da8f7, A200 : #0875c6, A400 : #0c3a5c, A700 : #0d2b42, contrast: ( 50 : #000000, 100 : #ffffff, 200 : #ffffff, 300 : #ffffff, 400 : #ffffff, 500 : #ffffff, 600 : #ffffff, 700 : #ffffff, 800 : #ffffff, 900 : #ffffff, A100 : #000000, A200 : #ffffff, A400 : #ffffff, A700 : #ffffff, ) );
 
