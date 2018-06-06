@@ -4,10 +4,7 @@ import { HttpClient } from "@angular/common/http";
 // All the RxJS stuff we need
 import { Observable } from "rxjs/Rx";
 import { map, catchError } from "rxjs/operators";
-import {
-  ElasticResponse,
-  SimpleQueryElastic
-} from "../../types/elasticQuery.type";
+import { ElasticResponse, SimpleQueryElastic } from "../../types/elasticQuery.type";
 import * as variables from "../../variables";
 import { environment } from "../../../environments/environment";
 
@@ -24,10 +21,7 @@ export class BaseService {
       .catch(this.handleError);
   }
 
-  simpleSearch<T>(
-    query: string,
-    indexName: string
-  ): Observable<ElasticResponse<T>> {
+  simpleSearch<T>(query: string, indexName: string): Observable<ElasticResponse<T>> {
     return this.http
       .post(`${this.FullBaseUrl}/_searchstring`, <SimpleQueryElastic>{
         From: 0,

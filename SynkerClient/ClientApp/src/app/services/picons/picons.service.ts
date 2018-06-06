@@ -1,17 +1,11 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
-import {
-  ElasticQuery,
-  ElasticResponse,
-  ElasticAggregations,
-  SimpleQueryElastic
-} from "../../types/elasticQuery.type";
+import { ElasticQuery, ElasticResponse, SimpleQueryElastic } from "../../types/elasticQuery.type";
 
 // All the RxJS stuff we need
 import { Observable } from "rxjs/Rx";
 import { map } from "rxjs/operators";
-import * as variables from "../../variables";
 import { picon } from "../../types/picon.type";
 import { TvgMedia } from "../../types/media.type";
 import { environment } from "../../../environments/environment";
@@ -56,18 +50,9 @@ export class PiconService extends BaseService {
       .catch(this.handleError);
   }
 
-  match(
-    model: TvgMedia[],
-    distance: number = 90,
-    shouldMatchChannelNumber: boolean = true
-  ): Observable<TvgMedia[]> {
+  match(model: TvgMedia[], distance: number = 90, shouldMatchChannelNumber: boolean = true): Observable<TvgMedia[]> {
     return this.http
-      .post(
-        `${environment.base_api_url}${
-          this.BaseUrl
-        }/match?distance=${distance}&shouldMatchChannelNumber=${shouldMatchChannelNumber}`,
-        model
-      )
+      .post(`${environment.base_api_url}${this.BaseUrl}/match?distance=${distance}&shouldMatchChannelNumber=${shouldMatchChannelNumber}`, model)
       .map(this.handleSuccess)
       .catch(this.handleError);
   }

@@ -1,39 +1,38 @@
-﻿import { HttpRequest, HttpInterceptor, HttpEvent, HttpResponse, HttpErrorResponse, HttpHandler } from '@angular/common/http';
-import { AuthService } from '../services/auth/auth.service';
-import { Observable } from 'rxjs/Observable';
-import { Router } from '@angular/router';
-import { Injectable, Injector } from '@angular/core';
-import { CommonService } from '../services/common/common.service';
+﻿import { HttpRequest, HttpInterceptor, HttpEvent, HttpResponse, HttpErrorResponse, HttpHandler } from "@angular/common/http";
+import { Observable } from "rxjs/Rx";
+import { Router } from "@angular/router";
+import { Injectable, Injector } from "@angular/core";
+import { CommonService } from "../services/common/common.service";
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-    private authService: AuthService
-    private commonService: CommonService;
+  private commonService: CommonService;
 
-    constructor(private injector: Injector, private router: Router) {
-    }
+  constructor(private injector: Injector, private router: Router) {}
 
-    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        this.authService = this.injector.get(AuthService);
-        this.commonService = this.injector.get(CommonService);
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    this.commonService = this.injector.get(CommonService);
 
-        this.commonService.displayLoader(true)
+    this.commonService.displayLoader(true);
 
-        return next.handle(request).do((event: HttpEvent<any>) => {
-
-            console.log('IN JwtInterceptor', event);
-            if (event instanceof HttpResponse) {
-                // do stuff with response if you want
-            }
-        }, (err: any) => {
-            console.log('error in JwtInterceptor', err);
-            if (err instanceof HttpErrorResponse) {
-                let e = err as HttpErrorResponse;
-                if (e.status == 401)
-                    this.commonService.displayError(err.statusText, "Unauthorized User");
-                else
-                    this.commonService.displayError(err.statusText, typeof err.error === "string" ? err.error : err.error.Message);
-            }
-        }).finally(() => this.commonService.displayLoader(false));
-    }
+    return next
+      .handle(request)
+      .do(
+        (event: HttpEvent<any>) => {
+          console.log("IN JwtInterceptor", event);
+          if (event instanceof HttpResponse) {
+            // do stuff with response if you want
+          }
+        },
+        (err: any) => {
+          console.log("error in JwtInterceptor", err);
+          if (err instanceof HttpErrorResponse) {
+            let e = err as HttpErrorResponse;
+            if (e.status == 401) this.commonService.displayError(err.statusText, "Unauthorized User");
+            else this.commonService.displayError(err.statusText, typeof err.error === "string" ? err.error : err.error.Message);
+          }
+        }
+      )
+      .finally(() => this.commonService.displayLoader(false));
+  }
 }

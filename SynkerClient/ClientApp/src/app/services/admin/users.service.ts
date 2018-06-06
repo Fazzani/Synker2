@@ -5,8 +5,6 @@ import { BaseService } from "../base/base.service";
 // All the RxJS stuff we need
 import { Observable } from "rxjs/Rx";
 import { map, catchError } from "rxjs/operators";
-import { RequestOptions } from "@angular/http/http";
-import { HttpHeaders } from "@angular/common/http";
 import { User } from "../../types/auth.type";
 import { PagedResult, QueryListBaseModel } from "../../types/common.type";
 

@@ -6,22 +6,25 @@ import { SitePackService } from "../../../services/sitepack/sitepack.service";
 import { PlaylistModel } from "../../../types/playlist.type";
 
 @Component({
-  selector: 'tvgsites-list-modify-dialog',
-  templateUrl: './tvgsites.list.dialog.html'
+  selector: "tvgsites-list-modify-dialog",
+  templateUrl: "./tvgsites.list.dialog.html"
 })
 export class PlaylistTvgSitesDialog implements OnInit, OnDestroy {
   public tvgSites: sitePackChannel[] = [];
   public query: string;
 
-  constructor(private playlistService: PlaylistService, private sitePackService: SitePackService,
+  constructor(
+    private playlistService: PlaylistService,
+    private sitePackService: SitePackService,
     public dialogRef: MatDialogRef<PlaylistTvgSitesDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: PlaylistModel) {
-  }
+    @Inject(MAT_DIALOG_DATA) public data: PlaylistModel
+  ) {}
 
   ngOnInit(): void {
-    this.sitePackService.tvgSites()
+    this.sitePackService
+      .tvgSites()
       .flatMap(m => m)
-      .do(x => x.selected = this.data.tvgSites.findIndex(f => f == x.site) >= 0)
+      .do(x => (x.selected = this.data.tvgSites.findIndex(f => f == x.site) >= 0))
       .subscribe(m => {
         this.tvgSites.push(m);
         this.tvgSites.sort(this.compareFn);
@@ -29,18 +32,16 @@ export class PlaylistTvgSitesDialog implements OnInit, OnDestroy {
   }
 
   save(): void {
-    console.log('Saving TvgSites');
+    console.log("Saving TvgSites");
     this.data.tvgSites = this.tvgSites.filter(x => x.selected).map(x => x.site);
     this.playlistService.updateLight(this.data).subscribe(ok => this.dialogRef.close());
   }
 
-  compareFn = (a: sitePackChannel, b: sitePackChannel) =>
-    (a.selected === b.selected) ? 0 : a.selected ? -1 : 1;
+  compareFn = (a: sitePackChannel, b: sitePackChannel) => (a.selected === b.selected ? 0 : a.selected ? -1 : 1);
 
   onNoClick(): void {
     this.dialogRef.close();
   }
 
-  ngOnDestroy(): void {
-  }
+  ngOnDestroy(): void {}
 }

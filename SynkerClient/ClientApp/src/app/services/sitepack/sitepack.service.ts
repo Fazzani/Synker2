@@ -1,17 +1,11 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
-import {
-  ElasticQuery,
-  ElasticResponse,
-  ElasticAggregations,
-  SimpleQueryElastic
-} from "../../types/elasticQuery.type";
+import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
 
 // All the RxJS stuff we need
 import { Observable } from "rxjs/Rx";
 import { map } from "rxjs/operators";
-import * as variables from "../../variables";
 import { sitePackChannel } from "../../types/sitepackchannel.type";
 import { environment } from "../../../environments/environment";
 
@@ -35,9 +29,7 @@ export class SitePackService extends BaseService {
       .catch(this.handleError);
   }
 
-  save(
-    ...sitePacks: sitePackChannel[]
-  ): Observable<ElasticResponse<sitePackChannel>> {
+  save(...sitePacks: sitePackChannel[]): Observable<ElasticResponse<sitePackChannel>> {
     return this.http
       .post(`${environment.base_api_url}${this.BaseUrl}/save`, sitePacks)
       .map(this.handleSuccess)
@@ -63,16 +55,9 @@ export class SitePackService extends BaseService {
    * @param {string} site?
    * @returns
    */
-  matchTvgByMedia(
-    mediaName: string,
-    site?: string
-  ): Observable<sitePackChannel> {
+  matchTvgByMedia(mediaName: string, site?: string): Observable<sitePackChannel> {
     return this.http
-      .get(
-        `${environment.base_api_url}${
-          this.BaseUrl
-        }/matchtvg/name/${mediaName}?site=${site}`
-      )
+      .get(`${environment.base_api_url}${this.BaseUrl}/matchtvg/name/${mediaName}?site=${site}`)
       .map(this.handleSuccess)
       .catch(this.handleError);
   }
@@ -93,16 +78,12 @@ export class SitePackService extends BaseService {
    * @returns
    */
   sitePacks(filter: string): Observable<sitePackChannel[]> {
-    return this.http
-      .get<sitePackChannel[]>(
-        `${environment.base_api_url}${this.BaseUrl}/sitepacks?filter=${filter}`
-      )
-      .map(
-        res => {
-          return res;
-        },
-        err => this.handleError(err)
-      );
+    return this.http.get<sitePackChannel[]>(`${environment.base_api_url}${this.BaseUrl}/sitepacks?filter=${filter}`).map(
+      res => {
+        return res;
+      },
+      err => this.handleError(err)
+    );
   }
 
   delete(id: string): Observable<number> {

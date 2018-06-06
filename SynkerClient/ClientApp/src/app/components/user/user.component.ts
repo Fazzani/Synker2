@@ -1,23 +1,22 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonService } from '../../services/common/common.service';
-import { MatSnackBar } from '@angular/material';
-import { UsersService } from '../../services/admin/users.service';
-import { AuthService } from '../../services/auth/auth.service';
-import { User } from '../../types/auth.type';
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { MatSnackBar } from "@angular/material";
+import { UsersService } from "../../services/admin/users.service";
+import { AuthService } from "../../services/auth/auth.service";
+import { User } from "../../types/auth.type";
 
 @Component({
-  selector: 'user',
-  templateUrl: './user.component.html'
+  selector: "user",
+  templateUrl: "./user.component.html"
 })
 export class UserComponent implements OnInit, OnDestroy {
-  genders: { value: number; viewValue: string; }[];
+  genders: { value: number; viewValue: string }[];
 
   user: User = <User>{};
-  constructor(private commonService: CommonService, private authService: AuthService, private usersService: UsersService, private snackBar: MatSnackBar) { }
+  constructor(private authService: AuthService, private usersService: UsersService, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.genders = User.GENDERS;
-    this.usersService.me().subscribe(x => this.user = x);
+    this.usersService.me().subscribe(x => (this.user = x));
   }
 
   save(): void {
@@ -32,12 +31,11 @@ export class UserComponent implements OnInit, OnDestroy {
     var file: File = inputValue.files[0];
     var myReader: FileReader = new FileReader();
 
-    myReader.onloadend = (e) => {
+    myReader.onloadend = e => {
       this.user.photo = myReader.result;
-    }
+    };
     myReader.readAsDataURL(file);
   }
 
-  ngOnDestroy() {
-  }
+  ngOnDestroy() {}
 }

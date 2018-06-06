@@ -6,9 +6,7 @@ import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
 // All the RxJS stuff we need
 import { Observable } from "rxjs/Rx";
 import { map, catchError } from "rxjs/operators";
-import { RequestOptions } from "@angular/http/http";
 import { HttpHeaders } from "@angular/common/http";
-import * as variables from "../../variables";
 import { TvgMedia } from "../../types/media.type";
 import { MatchTvgPostModel } from "../../types/matchTvgPostModel";
 import { sitePackChannel } from "../../types/sitepackchannel.type";
@@ -54,10 +52,7 @@ export class TvgMediaService extends BaseService {
 
   matchTvg(matchTvgPostModel: MatchTvgPostModel): Observable<sitePackChannel> {
     return this.http
-      .post(
-        `${environment.base_api_url}${this.BaseUrl}/matchtvg`,
-        matchTvgPostModel
-      )
+      .post(`${environment.base_api_url}${this.BaseUrl}/matchtvg`, matchTvgPostModel)
       .map(this.handleSuccess)
       .catch(this.handleError);
   }

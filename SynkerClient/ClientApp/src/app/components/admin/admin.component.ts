@@ -1,9 +1,9 @@
-﻿import { Component, EventEmitter, Output } from '@angular/core';
+﻿import { Component, EventEmitter, Output } from "@angular/core";
 
 @Component({
-    selector: 'admin',
-    templateUrl: './admin.component.html'
+  selector: "admin",
+  templateUrl: "./admin.component.html"
 })
 export class AdminComponent {
-    @Output() sidenavNotif: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() sidenavNotif: EventEmitter<boolean> = new EventEmitter<boolean>();
 }

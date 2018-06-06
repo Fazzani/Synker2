@@ -5,16 +5,7 @@ import { BaseService } from "../base/base.service";
 // All the RxJS stuff we need
 import { Observable } from "rxjs/Rx";
 import { map, catchError } from "rxjs/operators";
-import { RequestOptions } from "@angular/http/http";
-import { HttpHeaders } from "@angular/common/http";
-import { PagedResult } from "../../types/common.type";
-import {
-  Epg_Listings,
-  Channels,
-  Live,
-  XtreamPanel,
-  PlayerApi
-} from "../../types/xtream.type";
+import { Epg_Listings, Channels, Live, XtreamPanel, PlayerApi } from "../../types/xtream.type";
 
 @Injectable()
 export class XtreamService extends BaseService {
@@ -40,10 +31,7 @@ export class XtreamService extends BaseService {
       .map(this.handleSuccess)
       .catch(this.handleError);
   }
-  public getLiveStreamsByCategories(
-    playlistId: string,
-    catId: number
-  ): Observable<Channels[]> {
+  public getLiveStreamsByCategories(playlistId: string, catId: number): Observable<Channels[]> {
     return this.http
       .get(`${this.FullBaseUrl}/livestreams/playlist/${playlistId}}/${catId}`)
       .map(this.handleSuccess)
@@ -55,10 +43,7 @@ export class XtreamService extends BaseService {
       .map(this.handleSuccess)
       .catch(this.handleError);
   }
-  public getShortEpgForStream(
-    playlistId: string,
-    streamId: number
-  ): Observable<Epg_Listings[]> {
+  public getShortEpgForStream(playlistId: string, streamId: number): Observable<Epg_Listings[]> {
     return this.http
       .get(`${this.FullBaseUrl}/panel/playlist/${playlistId}/${streamId}`)
       .map(this.handleSuccess)

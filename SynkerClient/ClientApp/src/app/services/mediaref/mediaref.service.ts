@@ -1,17 +1,11 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
-import {
-  ElasticQuery,
-  ElasticResponse,
-  ElasticAggregations,
-  SimpleQueryElastic
-} from "../../types/elasticQuery.type";
+import { ElasticQuery, ElasticResponse, ElasticAggregations } from "../../types/elasticQuery.type";
 
 // All the RxJS stuff we need
 import { Observable } from "rxjs/Rx";
 import { map } from "rxjs/operators";
-import * as variables from "../../variables";
 import { mediaRef } from "../../types/mediaref.type";
 import { sitePackChannel } from "../../types/sitepackchannel.type";
 import { environment } from "../../../environments/environment";
@@ -87,14 +81,12 @@ export class MediaRefService extends BaseService {
    * @returns
    */
   tvgSites(): Observable<sitePackChannel[]> {
-    return this.http
-      .get<sitePackChannel[]>(environment.base_api_url + "sitepack/tvgsites")
-      .map(
-        res => {
-          return res;
-        },
-        err => this.handleError(err)
-      );
+    return this.http.get<sitePackChannel[]>(environment.base_api_url + "sitepack/tvgsites").map(
+      res => {
+        return res;
+      },
+      err => this.handleError(err)
+    );
   }
 
   /**
@@ -102,15 +94,11 @@ export class MediaRefService extends BaseService {
    * @returns
    */
   sitePacks(filter: string): Observable<sitePackChannel[]> {
-    return this.http
-      .get<sitePackChannel[]>(
-        environment.base_api_url + "mediasref/sitepacks?filter=" + filter
-      )
-      .map(
-        res => {
-          return res;
-        },
-        err => this.handleError(err)
-      );
+    return this.http.get<sitePackChannel[]>(environment.base_api_url + "mediasref/sitepacks?filter=" + filter).map(
+      res => {
+        return res;
+      },
+      err => this.handleError(err)
+    );
   }
 }

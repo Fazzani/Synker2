@@ -17,50 +17,51 @@ import { UserComponent } from "./components/user/user.component";
 import { HostsComponent } from "./components/admin/hosts/hosts.component";
 
 const appRoutes: Routes = [
-    { path: 'home', component: HomeComponent, canActivate: [LoginRouteGuard] },
-    { path: 'tvgmedia', component: MediaComponent, canActivate: [LoginRouteGuard] },
-    { path: 'epg', component: EpgComponent, canActivate: [LoginRouteGuard] },
-    { path: 'xmltv', component: XmltvComponent, canActivate: [LoginRouteGuard] },
-    { path: 'sitepack', component: SitePackComponent, canActivate: [LoginRouteGuard] },
-    { path: 'playlist/:id', component: PlaylistComponent, canActivate: [LoginRouteGuard] },
-    { path: 'messages', component: MessagesComponent, canActivate: [LoginRouteGuard] },
-    { path: 'me', component: UserComponent, canActivate: [LoginRouteGuard] },
-    { path: 'signin', component: DialogComponent },
-    { path: 'register', component: RegisterComponent },
-    {
-        path: 'admin', component: AdminComponent, canActivate: [LoginRouteGuard],
+  { path: "home", component: HomeComponent, canActivate: [LoginRouteGuard] },
+  { path: "tvgmedia", component: MediaComponent, canActivate: [LoginRouteGuard] },
+  { path: "epg", component: EpgComponent, canActivate: [LoginRouteGuard] },
+  { path: "xmltv", component: XmltvComponent, canActivate: [LoginRouteGuard] },
+  { path: "sitepack", component: SitePackComponent, canActivate: [LoginRouteGuard] },
+  { path: "playlist/:id", component: PlaylistComponent, canActivate: [LoginRouteGuard] },
+  { path: "messages", component: MessagesComponent, canActivate: [LoginRouteGuard] },
+  { path: "me", component: UserComponent, canActivate: [LoginRouteGuard] },
+  { path: "signin", component: DialogComponent },
+  { path: "register", component: RegisterComponent },
+  {
+    path: "admin",
+    component: AdminComponent,
+    canActivate: [LoginRouteGuard],
+    children: [
+      {
+        path: "",
         children: [
-            {
-                path: '',
-                children: [
-                    {
-                        path: 'users',
-                        component: UsersComponent
-                    }, {
-                        path: 'hosts',
-                        component: HostsComponent
-                    }, {
-                        path: '',
-                        component: AdminDashboardComponent 
-                    }
-                ]
-            }
+          {
+            path: "users",
+            component: UsersComponent
+          },
+          {
+            path: "hosts",
+            component: HostsComponent
+          },
+          {
+            path: "",
+            component: AdminDashboardComponent
+          }
         ]
-    },
-    { path: '', redirectTo: '/home', pathMatch: 'full' },
-    { path: '**', redirectTo: '/home' }
+      }
+    ]
+  },
+  { path: "", redirectTo: "/home", pathMatch: "full" },
+  { path: "**", redirectTo: "/home" }
 ];
 
 @NgModule({
-    imports: [
-        RouterModule.forRoot(
-            appRoutes,
-            { enableTracing: false } // <-- debugging purposes only
-        )
-    ],
-    exports: [
-        RouterModule
-    ]
+  imports: [
+    RouterModule.forRoot(
+      appRoutes,
+      { enableTracing: false } // <-- debugging purposes only
+    )
+  ],
+  exports: [RouterModule]
 })
-export class AppRoutingModule  {
-}
+export class AppRoutingModule {}

@@ -1,101 +1,99 @@
-﻿import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs';
-import { MatchTvgPostModel, MatchTvgFormModel, MatchingTvgSiteTypeEnum } from '../../../types/matchTvgPostModel';
-import { TvgMediaService } from '../../../services/tvgmedia/tvgmedia.service';
-import { CommonService } from '../../../services/common/common.service';
-import { TvgMedia } from '../../../types/media.type';
-import { sitePackChannel } from '../../../types/sitepackchannel.type';
+﻿import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
+import { BehaviorSubject } from "rxjs";
+import { MatchTvgPostModel, MatchTvgFormModel, MatchingTvgSiteTypeEnum } from "../../../types/matchTvgPostModel";
+import { TvgMediaService } from "../../../services/tvgmedia/tvgmedia.service";
+import { TvgMedia } from "../../../types/media.type";
+import { sitePackChannel } from "../../../types/sitepackchannel.type";
 
 /**
-*  url tests
+ *  url tests
  * http://www.m3uliste.pw/
  */
 @Component({
-    selector: 'matchtvg-dialog',
-    templateUrl: './matchtvg.dialog.html'
+  selector: "matchtvg-dialog",
+  templateUrl: "./matchtvg.dialog.html"
 })
 export class MatchTvgDialog implements OnInit, OnDestroy {
-    tvgSites: string[];
-    medias: TvgMedia[];
-    matchTvgFormModel: MatchTvgFormModel = new MatchTvgFormModel();
-    progress: number = 0;
-    matchingTvgSiteTypes: typeof MatchingTvgSiteTypeEnum;
-    compareFn: ((f1: any, f2: any) => boolean) | null = this.compareByValue;
+  tvgSites: string[];
+  medias: TvgMedia[];
+  matchTvgFormModel: MatchTvgFormModel = new MatchTvgFormModel();
+  progress: number = 0;
+  matchingTvgSiteTypes: typeof MatchingTvgSiteTypeEnum;
+  compareFn: ((f1: any, f2: any) => boolean) | null = this.compareByValue;
 
-    obs: BehaviorSubject<TvgMedia> = new BehaviorSubject<TvgMedia>(null);
+  obs: BehaviorSubject<TvgMedia> = new BehaviorSubject<TvgMedia>(null);
 
-    constructor(
-        public dialogRef: MatDialogRef<MatchTvgDialog>, @Inject(MAT_DIALOG_DATA) public tup: [TvgMedia[], string[]],
-        private tvgMediaService: TvgMediaService, private commonService: CommonService) {
-        this.matchingTvgSiteTypes = MatchingTvgSiteTypeEnum;
-        [this.medias, this.tvgSites] = tup;
-    }
+  constructor(
+    public dialogRef: MatDialogRef<MatchTvgDialog>,
+    @Inject(MAT_DIALOG_DATA) public tup: [TvgMedia[], string[]],
+    private tvgMediaService: TvgMediaService
+  ) {
+    this.matchingTvgSiteTypes = MatchingTvgSiteTypeEnum;
+    [this.medias, this.tvgSites] = tup;
+  }
 
-    ngOnInit(): void {
-    }
+  ngOnInit(): void {}
 
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 
-    compareByValue(f1: any, f2: any) {
-        return f1 != null && f2 != null && f1 == f2;
-    }
+  compareByValue(f1: any, f2: any) {
+    return f1 != null && f2 != null && f1 == f2;
+  }
 
-    /**
-    * Try match tvg with Sites defined in media
-    */
-    matchTvg(): void {
+  /**
+   * Try match tvg with Sites defined in media
+   */
+  matchTvg(): void {
+    let model: MatchTvgPostModel = <MatchTvgPostModel>{
+      minScore: this.matchTvgFormModel.minScore
+    };
+    let mediasToMatch = this.medias.filter((v, i) => v.selected || this.matchTvgFormModel.matchAll);
+    if (!this.matchTvgFormModel.overrideTvg) mediasToMatch = mediasToMatch.filter(x => x.tvg == null || x.tvg.id == "");
 
-        let model: MatchTvgPostModel = <MatchTvgPostModel>{ minScore: this.matchTvgFormModel.minScore };
-        let mediasToMatch = this.medias.filter((v, i) => v.selected || this.matchTvgFormModel.matchAll);
-        if (!this.matchTvgFormModel.overrideTvg)
-            mediasToMatch = mediasToMatch.filter(x => x.tvg == null || x.tvg.id == '');
+    let index = 0;
 
-        let index = 0;
+    mediasToMatch.forEach((x, i) => {
+      model.mediaName = x.displayName;
 
-        mediasToMatch.forEach((x, i) => {
+      if (this.matchTvgFormModel.matchCountry) model.country = x.lang;
 
-            model.mediaName = x.displayName;
+      switch (this.matchTvgFormModel.matchingTvgSiteType) {
+        case MatchingTvgSiteTypeEnum.TvgSiteInMedia:
+          model.tvgSites = [x.tvg.tvgSource.site];
+          break;
+        case MatchingTvgSiteTypeEnum.TvgSitePlaylist:
+          model.tvgSites = this.tvgSites;
+          break;
+      }
 
-            if (this.matchTvgFormModel.matchCountry)
-                model.country = x.lang;
+      this.tvgMediaService.matchTvg(model).subscribe((res: sitePackChannel) => {
+        this.progress = (++index / mediasToMatch.length) * 100;
+        console.log(this.progress);
+        if (res != null) {
+          console.log(`media was ${x} matched with sitepack ${res}`);
+          x.tvg.id = res.xmltv_id;
+          x.tvg.name = res.channel_name;
+          x.tvg.tvgSource.site = res.site;
+          x.tvg.tvgSource.code = res.site_id;
+          x.tvg.tvgSource.country = res.country;
+          x.tvg.tvgIdentify = res.site_id;
+        }
+        this.obs.next(x);
+        if (i == mediasToMatch.length - 1) this.obs.complete();
+      });
+    });
 
-            switch (this.matchTvgFormModel.matchingTvgSiteType) {
-                case MatchingTvgSiteTypeEnum.TvgSiteInMedia:
-                    model.tvgSites = [x.tvg.tvgSource.site];
-                    break;
-                case MatchingTvgSiteTypeEnum.TvgSitePlaylist:
-                    model.tvgSites = this.tvgSites;
-                    break;
-            }
+    this.obs.subscribe(
+      x => {
+        console.log(x);
+      },
+      err => {},
+      () => this.dialogRef.close(this.medias)
+    );
+  }
 
-            this.tvgMediaService.matchTvg(model).subscribe((res: sitePackChannel) => {
-
-                this.progress = (++index / mediasToMatch.length) * 100;
-                console.log(this.progress);
-                if (res != null) {
-                    console.log(`media was ${x} matched with sitepack ${res}`);
-                    x.tvg.id = res.xmltv_id;
-                    x.tvg.name = res.channel_name;
-                    x.tvg.tvgSource.site = res.site;
-                    x.tvg.tvgSource.code = res.site_id;
-                    x.tvg.tvgSource.country = res.country;
-                    x.tvg.tvgIdentify = res.site_id;
-                }
-                this.obs.next(x);
-                if (i == (mediasToMatch.length - 1))
-                    this.obs.complete();
-            });
-        });
-
-        this.obs.subscribe(x => {
-            console.log(x);
-        }, err => { }, () => this.dialogRef.close(this.medias));
-    }
-
-    ngOnDestroy() {
-    }
+  ngOnDestroy() {}
 }

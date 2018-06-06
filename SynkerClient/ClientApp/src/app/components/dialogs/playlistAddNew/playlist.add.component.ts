@@ -1,42 +1,39 @@
-﻿import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
-import { PlaylistService } from '../../../services/playlists/playlist.service';
-import { CommonService } from '../../../services/common/common.service';
-import { PlaylistPostModel, PlaylistStatus, Providers } from '../../../types/playlist.type';
+﻿import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
+import { MatDialogRef } from "@angular/material";
+import { PlaylistService } from "../../../services/playlists/playlist.service";
+import { PlaylistPostModel, PlaylistStatus, Providers } from "../../../types/playlist.type";
 
 /**
-*  url tests
+ *  url tests
  * http://www.m3uliste.pw/
  */
 @Component({
-    selector: 'playlist-add-dialog',
-    templateUrl: './playlist.add.dialog.html'
+  selector: "playlist-add-dialog",
+  templateUrl: "./playlist.add.dialog.html"
 })
 export class PlaylistAddDialog implements OnInit, OnDestroy {
-    providers: string[];
+  providers: string[];
 
-    playlist: PlaylistPostModel;
-    
-    constructor(
-        public dialogRef: MatDialogRef<PlaylistAddDialog>, private playlistService: PlaylistService, private commonService: CommonService) { }
+  playlist: PlaylistPostModel;
 
-    ngOnInit(): void {
-        this.playlist = new PlaylistPostModel();
-        this.playlist.status = PlaylistStatus.enabled;
-        this.playlist.provider = "m3u";
-        this.providers = Object.keys(Providers);
-    }
+  constructor(public dialogRef: MatDialogRef<PlaylistAddDialog>, private playlistService: PlaylistService) {}
 
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
+  ngOnInit(): void {
+    this.playlist = new PlaylistPostModel();
+    this.playlist.status = PlaylistStatus.enabled;
+    this.playlist.provider = "m3u";
+    this.providers = Object.keys(Providers);
+  }
 
-    create(): void {
-        this.playlistService.addByUrl(this.playlist).subscribe(ok => {
-            this.dialogRef.close();
-        });
-    }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 
-    ngOnDestroy() {
-    }
+  create(): void {
+    this.playlistService.addByUrl(this.playlist).subscribe(ok => {
+      this.dialogRef.close();
+    });
+  }
+
+  ngOnDestroy() {}
 }

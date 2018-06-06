@@ -1,15 +1,11 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
-import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
 import { Message, MessageQueryModel } from "../../types/message.type";
 
 // All the RxJS stuff we need
 import { Observable } from "rxjs/Rx";
 import { map, catchError } from "rxjs/operators";
-import { RequestOptions } from "@angular/http/http";
-import { HttpHeaders } from "@angular/common/http";
-import * as variables from "../../variables";
 import { PagedResult } from "../../types/common.type";
 
 @Injectable()
@@ -41,11 +37,7 @@ export class MessageService extends BaseService {
       .catch(this.handleError);
   }
 
-  public listByStatus(
-    status: number[],
-    page: number,
-    pageSize: number
-  ): Observable<PagedResult<Message>> {
+  public listByStatus(status: number[], page: number, pageSize: number): Observable<PagedResult<Message>> {
     return this.http
       .post(`${this.FullBaseUrl}/search/status`, <MessageQueryModel>{
         MessageStatus: status,
