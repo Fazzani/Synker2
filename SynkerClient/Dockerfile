@@ -21,9 +21,14 @@ RUN curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-lin
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 WORKDIR /src
-COPY . .
-WORKDIR /src/SynkerClient
-RUN npm i webpack --save-dev
+# copy csproj and restore as distinct layers
+COPY ./SynkerClient/*.csproj ./
+COPY ./SynkerClient/ClientApp/package.json ./
+RUN dotnet restore --verbosity quiet
+RUN npm install
+
+# copy everything else and build
+COPY ./SynkerClient ./
 RUN dotnet publish -c Release -o /app
 
 FROM base AS final
