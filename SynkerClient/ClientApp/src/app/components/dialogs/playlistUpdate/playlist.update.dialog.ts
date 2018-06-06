@@ -1,4 +1,4 @@
-﻿import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material";
 import { Inject, Component } from "@angular/core";
 import { PlaylistModel } from "../../../types/playlist.type";
 
@@ -10,7 +10,7 @@ export class PlaylistUpdateDialog {
 
     constructor(
         public dialogRef: MatDialogRef<PlaylistUpdateDialog>,
-        @Inject(MAT_DIALOG_DATA) public data: PlaylistModel[]) { }
+        @Inject(MAT_DIALOG_DATA) public data: PlaylistModel) { }
 
     onNoClick(): void {
         this.dialogRef.close();

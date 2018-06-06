@@ -1,13 +1,11 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 
 import { XmltvService } from '../../services/xmltv/xmltv.service';
 import { CommonService, Constants } from '../../services/common/common.service';
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs/Rx";
 import { ElasticQuery } from "../../types/elasticQuery.type";
 import 'rxjs/add/observable/fromEvent';
 import { distinctUntilChanged, merge, debounceTime } from 'rxjs/operators';
@@ -19,7 +17,6 @@ import { snakbar_duration } from '../../variables';
     templateUrl: './xmltv.component.html',
     providers: [XmltvService, CommonService]
 })
-/** media component*/
 export class XmltvComponent implements OnInit, OnDestroy {
     subscriptionTableEvent: Subscription;
 

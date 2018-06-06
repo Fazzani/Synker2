@@ -1,26 +1,21 @@
 @import '~@angular/material/theming';
 @import '../_variables.scss';
-
 // Light theme
-$theme-primary: mat-palette($mat-grey, 200, 500, 300);
-$theme-accent: mat-palette($mat-brown, 200);
-$theme-warn: mat-palette($mat-deep-orange, 200);
-
-$light-theme: mat-light-theme($theme-primary, $theme-accent, $theme-warn);
-
+$theme-light-primary: mat-palette($mat-grey, 200, 500, 300);
+$theme-light-accent: mat-palette($mat-blue, 200);
+$theme-light-warn: mat-palette($mat-deep-orange, 200);
+$light-theme: mat-light-theme($theme-light-primary, $theme-light-accent, $theme-light-warn);
 .active[role="row"] {
-  background-color: mat-color($theme-accent, 900);
+  background-color: mat-color($theme-light-accent, 900);
   transition: ease-in all 0.3s;
-
   .mat-cell {
     color: inherit !important;
   }
 }
 
 .disabled[role="row"] {
-  color: mat-color($theme-primary, 100);
+  color: mat-color($theme-light-primary, 100);
   transition: ease-in color 0.3s;
-
   .mat-cell {
     color: inherit !important;
   }

@@ -1,55 +1,32 @@
-# build time image
 ARG arch=x64
 FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
 ARG arch
 LABEL maintainer="synker-team@synker.ovh" \
-      description="WebClient Synker suite application" \
-      system.dist="linux" system.arch="$arch" multi.name="Synker WebClient"
+  description="WebClient Synker suite application" \
+  system.dist="linux" system.arch="$arch" multi.name="Synker WebClient"
 RUN apt-get -qq update && apt-get -y upgrade
-
-#setup node, this is only needed if you use Node both at runtime and build time. Some people may only need the build part.
-ENV NODE_VERSION 8.11.1
-ENV NODE_DOWNLOAD_SHA 0e20787e2eda4cc31336d8327556ebc7417e8ee0a6ba0de96a09b0ec2b841f60
-
-RUN curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz" --output nodejs.tar.gz \
-    && echo "$NODE_DOWNLOAD_SHA nodejs.tar.gz" | sha256sum -c - \
-    && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
-    && rm nodejs.tar.gz \
-    && ln -s /usr/local/bin/node /usr/local/bin/nodejs
-
-WORKDIR /app
-EXPOSE 60786
 EXPOSE 56801
 HEALTHCHECK --interval=3m --timeout=1m CMD curl -f http://localhost:56801/ || exit 1
 
-FROM microsoft/dotnet:2.1-sdk as build-env
-#setup node
+ARG arch=x64
+FROM microsoft/dotnet:2.1-sdk AS publish
+ARG arch
 ENV NODE_VERSION 8.11.1
 ENV NODE_DOWNLOAD_SHA 0e20787e2eda4cc31336d8327556ebc7417e8ee0a6ba0de96a09b0ec2b841f60
 
 RUN curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz" --output nodejs.tar.gz \
-    && echo "$NODE_DOWNLOAD_SHA nodejs.tar.gz" | sha256sum -c - \
-    && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
-    && rm nodejs.tar.gz \
-    && ln -s /usr/local/bin/node /usr/local/bin/nodejs
+  && echo "$NODE_DOWNLOAD_SHA nodejs.tar.gz" | sha256sum -c - \
+  && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
+  && rm nodejs.tar.gz \
+  && ln -s /usr/local/bin/node /usr/local/bin/nodejs
+
 WORKDIR /src
-
-# copy csproj and restore as distinct layers
-COPY SynkerClient/*.csproj ./
-COPY SynkerClient/ClientApp/package.json ./SynkerClient/
-#COPY NuGet.config ./
-RUN dotnet restore
-
+COPY . .
 WORKDIR /src/SynkerClient
-RUN npm install
+RUN npm i webpack --save-dev
+RUN dotnet publish -c Release -o /app
 
-# copy everything else and build
-COPY . ./
-WORKDIR /src/SynkerClient
-RUN ls
-RUN dotnet publish -c Release -o out
-
-# build runtime image
 FROM base AS final
-COPY --from=build-env /app/out .
+WORKDIR /app
+COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "SynkerClient.dll"]

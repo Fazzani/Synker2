@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Authentification response
  * @description Authentification response.
  */
@@ -33,7 +33,7 @@ export class User {
 export type roles =  "Default" | "Guest" | "Administrator";
 
 export interface RegisterUser extends User, Login {
-
+  confirmPassword: string;
 }
 
 /**

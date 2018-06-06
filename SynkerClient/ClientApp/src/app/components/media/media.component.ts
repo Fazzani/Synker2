@@ -95,7 +95,7 @@ export class TvgMediaModifyDialog implements OnInit, OnDestroy {
     mediaTypes: typeof MediaType;
     tvgMedias: Observable<sitePackChannel[]>;
     private searchTerms = new Subject<string>();
-    private filter: string;
+    public filter: string;
     compareFn: ((f1: any, f2: any) => boolean) | null = this.compareByValue;
 
     constructor(

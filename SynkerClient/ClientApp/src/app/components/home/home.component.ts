@@ -45,7 +45,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   copyPublicLink(link: string): void {
     if (this.clipboardService.isSupported)
-      this.clipboardService.copyFromContent(link, this.renderer);
+      this.clipboardService.copyFromContent(link);
   }
 
   delete(playlist: PlaylistModel): void {

@@ -8,6 +8,14 @@ docker-compose.yml
 docker-compose.*.yml
 */bin
 */obj
+*/*-lock.json
 node_modules
 */node_modules
+ClientApp/node_modules
+ClientApp/package-lock.json
 Dockerfile
+bin
+obj
+*/dist
+dist
+readme.md

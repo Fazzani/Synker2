@@ -6,9 +6,6 @@
         <mat-form-field>
             <input matInput [(ngModel)]="playlist.url" placeholder="Url Source..." name="url" required>
         </mat-form-field>
-        <mat-form-field>
-            <input matInput [(ngModel)]="playlist.cron" placeholder="Cron..." name="cron" maxlength="20">
-        </mat-form-field>
         <mat-checkbox [(ngModel)]="playlist.status" name="status">Enabled</mat-checkbox>
         <mat-form-field>
             <mat-select placeholder="Providers" [(ngModel)]="playlist.provider" name="provider">

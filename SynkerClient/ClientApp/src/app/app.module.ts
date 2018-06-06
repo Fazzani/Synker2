@@ -88,6 +88,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
     UsersComponent,
     HostsComponent,
     LoaderComponent,
+    NavMenuComponent,
     TvgMediaModifyDialog,
     EpgModifyDialog,
     DialogComponent,
@@ -103,6 +104,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
     PlaylistInfosDialog,
     GroupsDialog,
     MatchTvgDialog,
+    XmltvModifyDialog,
     SearchPipe,
     KeysPipe
   ],
@@ -128,7 +130,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
   ],
   entryComponents: [TvgMediaModifyDialog, EpgModifyDialog, LoginDialog, RegisterDialog, PlaylistBulkUpdate,
     PlaylistTvgSitesDialog, PlaylistAddDialog, PlaylistUpdateDialog, PlaylistDiffDialog, SitePackModifyDialog, GroupsDialog,
-    MatchTvgDialog, PlaylistInfosDialog],
+    MatchTvgDialog, PlaylistInfosDialog, XmltvModifyDialog],
   providers: [
     CommonService,
     TvgMediaService,

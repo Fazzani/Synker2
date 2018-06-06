@@ -1,4 +1,4 @@
-﻿import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatSnackBar, MatDialogConfig } from "@angular/material";
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatSnackBar, MatDialogConfig } from "@angular/material";
 import { Inject, Component, OnInit } from "@angular/core";
 import { AuthService } from "../../../services/auth/auth.service";
 import { CommonService } from "../../../services/common/common.service";
@@ -11,16 +11,18 @@ import { ActivatedRoute, Router } from "@angular/router";
 })
 export class RegisterDialog {
     photo: any;
+    public registerUser: RegisterUser;
 
     constructor( @Inject(MAT_DIALOG_DATA) public data: RegisterUser, public dialogRef: MatDialogRef<RegisterDialog>, private authService: AuthService
-        , private commonService: CommonService) {
+      , private commonService: CommonService) {
+      this.registerUser = data || <RegisterUser>{};
     }
 
     genders = User.GENDERS;
 
     register(registerUser: RegisterUser): void {
-        if (registerUser != null)
-            this.authService.Register(registerUser).subscribe(res => {
+        if (this.registerUser != null)
+            this.authService.Register(this.registerUser).subscribe(res => {
                 //console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
                 this.dialogRef.close(true);
             },

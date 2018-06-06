@@ -44,7 +44,7 @@
         </mat-form-field>
         <button mat-raised-button [disabled]="!UserRegister.form.valid" (click)="save()">Save</button>
     </form>
-    <ng-template>
-        <loader #loading></loader>
+    <ng-template #loading>
+        <loader></loader>
     </ng-template>
 </div>

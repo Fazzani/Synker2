@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
 import { PlaylistService } from '../../../services/playlists/playlist.service';
 import { PlaylistModel, PlaylistPostModel, Providers, PlaylistStatus, SynkGroupEnum } from '../../../types/playlist.type';
@@ -28,7 +28,9 @@ export class PlaylistInfosDialog implements OnInit, OnDestroy {
 
     constructor(
         public dialogRef: MatDialogRef<PlaylistInfosDialog>, private playlistService: PlaylistService, private commonService: CommonService,
-        @Inject(MAT_DIALOG_DATA) public playlist: PlaylistModel, private xtreamService: XtreamService, private snackBar: MatSnackBar) { }
+      @Inject(MAT_DIALOG_DATA) public playlist: PlaylistModel, private xtreamService: XtreamService, private snackBar: MatSnackBar) {
+      this.playlist = this.playlist || <PlaylistModel>{};
+    }
 
     ngOnInit(): void {
         console.log(this.playlist);

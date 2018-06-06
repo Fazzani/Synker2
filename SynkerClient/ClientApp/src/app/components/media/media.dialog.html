@@ -46,7 +46,7 @@
         <!-- AutoComplte tvgMedia -->
         <mat-form-field class="full-width">
             <input matInput #filterTvg [matAutocomplete]="auto" aria-label="tvg" [(ngModel)]="filter" placeholder="Tvg..." name="mediaAndTvgSites[0].tvg" (keyup)="search(filter)">
-            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="tvgSelectionChange($event, tvgmedia)" class="primary">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="tvgSelectionChange($event)" class="primary">
                 <mat-option *ngFor="let tvgmedia of tvgMedias | async" [value]="tvgmedia">
                     {{tvgmedia.xmltv_id}} <small>  {{tvgmedia.site }}</small>
                 </mat-option>

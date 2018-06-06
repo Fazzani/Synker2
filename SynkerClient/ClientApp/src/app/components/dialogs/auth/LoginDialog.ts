@@ -13,13 +13,14 @@ import { debug } from "util";
 })
 export class LoginDialog implements OnInit, OnDestroy {
 
+  public user: Login = <Login>{};
 
   constructor(public dialogRef: MatDialogRef<LoginDialog>, private authService: AuthService, private router: Router, private commonService: CommonService) {
   }
 
-  login(user: Login): void {
-    if (user != null) {
-      this.authService.Signin(user).subscribe(res => {
+  login(): void {
+    if (this.user != null) {
+      this.authService.Signin(this.user).subscribe(res => {
         //console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
         this.dialogRef.close(true);
         this.router.navigateByUrl(this.authService.redirectUrl);
