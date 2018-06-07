@@ -32,10 +32,15 @@
       <mat-icon>notifications_off</mat-icon>
       <span>Disable alerts</span>
     </button>
-    <a mat-button href="https://github.com/Fazzani/Synker2" aria-label="GitHub Repository" *ngIf="(isAuthenticated | async)">
+    <button mat-menu-item routerLink="/sitepack" *ngIf="(isAuthenticated | async)" fxHide.gt-sm>
+      <mat-icon>description</mat-icon>
+      <span>Sites Pack</span>
+    </button>
+
+    <button mat-menu-item *ngIf="(isAuthenticated | async)" onClick="window.open('//github.com/Fazzani/Synker2')">
       <mat-icon>notifications_off</mat-icon>
       <span>Github</span>
-    </a>
+    </button>
     <!-- Mobile actions Menu-->
     <button mat-menu-item routerLink="/epg" *ngIf="(isAuthenticated | async)" fxHide.gt-sm>
       <mat-icon>event</mat-icon>

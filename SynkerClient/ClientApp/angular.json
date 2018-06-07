@@ -26,7 +26,7 @@
               "src/styles/style.scss",
               "src/styles/global.scss",
               "src/styles/_variables.scss",
-              "src/styles/themes/themes.scss"
+              "src/styles/themes.scss"
             ],
             "scripts": []
           },
@@ -41,12 +41,10 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ]
+              "fileReplacements": [{
+                "replace": "src/environments/environment.ts",
+                "with": "src/environments/environment.prod.ts"
+              }]
             }
           }
         },
@@ -75,8 +73,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "scripts": [],
-            "styles": [
-              {
+            "styles": [{
                 "input": "node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
               },
               "node_modules/bootstrap/dist/css/bootstrap.min.css",

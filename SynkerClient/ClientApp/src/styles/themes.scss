@@ -1,0 +1,104 @@
+@import '_variables';
+@import '~@angular/material/theming';
+// always include only once per project
+@include mat-core();
+// Styles for the docs app that are based on the current theme.
+@mixin app-theme($theme) {
+  // $primary: map-get($theme, primary);
+  // $accent: map-get($theme, accent);
+  // $warn: map-get($theme, warn);
+  $background: map-get($theme, background); // $foreground: map-get($theme, foreground);
+  .app-background {
+    background-color: mat-color($background, background);
+  } // .docs-primary-header {
+  //   background: mat-color($primary);
+  //   h1 {
+  //     color: mat-color($primary, default-contrast);
+  //   }
+  // }
+  // .docs-footer {
+  //   background: mat-color($primary);
+  //   color: mat-color($primary, default-contrast);
+  // }
+  // @include nav-bar-theme($theme);
+  // @include home-theme($theme);
+}
+
+.default-theme {
+  $theme-primary: mat-palette($mat-indigo);
+  $theme-accent: mat-palette($mat-red, A700, 600, 900);
+  $theme-warn: mat-palette($mat-deep-orange); // create theme (use mat-dark-theme for themes with dark backgrounds)
+  $default-theme: mat-dark-theme( $theme-primary, $theme-accent, $theme-warn);
+  .active[role="row"] {
+    background-color: mat-color($theme-primary, 900); //color: $primary-color-bg-dark !important;
+    transition: ease-in all 0.3s;
+    .mat-cell {
+      color: inherit !important;
+    }
+  }
+  .disabled[role="row"] {
+    color: mat-color($theme-primary, 100);
+    transition: ease-in color 0.3s;
+    .mat-cell {
+      color: inherit !important;
+    }
+  }
+  $background: map-get($default-theme, background); // $foreground: map-get($theme, foreground);
+  background-color: mat-color($background, background);
+  @include angular-material-theme($default-theme);
+}
+
+.dark-theme {
+  // instead of creating a theme with mat-light-theme like a sane person, we will create our own theme-creating function that lets us apply our own foreground and background palettes.
+  @function create-wonky-theme($primary, $accent, $warn: mat-palette($mat-red)) {
+    @return ( primary: $primary, accent: $accent, warn: $warn, is-dark: true, foreground: $my-dark-theme-foreground, background: $my-dark-theme-background, );
+  }
+  $theme-primary: mat-palette($mat-blue-grey, 900);
+  $theme-accent: mat-palette($mat-yellow, A400, A100, A700);
+  $theme-warn: mat-palette($mat-red); // custom background and foreground palettes
+  $my-dark-theme-background: ( status-bar: rgb(57, 66, 116), app-bar: map_get($mat-teal, 900), background: map-get($theme-primary, darker), hover: rgba(white, 0.04), card: map_get($mat-teal, 800), dialog: $primary-color-bg-dark, disabled-button: $white-12-opacity, raised-button: map-get($mat-grey, 800), focused-button: $white-6-opacity, selected-button: map_get($mat-teal, 900), selected-disabled-button: map_get($mat-grey, 800), disabled-button-toggle: black, unselected-chip: map_get($mat-grey, 700), disabled-list-option: black);
+  $my-dark-theme-foreground: ( base: yellow, divider: $white-12-opacity, dividers: $white-12-opacity, disabled: rgba(white, 0.3), disabled-button: rgba(white, 0.3), disabled-text: rgba(white, 0.3), hint-text: rgba(white, 0.3), secondary-text: rgba(white, 0.7), icon: white, icons: white, text: yellow, slider-min: white, slider-off: rgba(white, 0.3), slider-off-active: rgba(white, 0.3), ); // create theme (use mat-dark-theme for themes with dark backgrounds)
+  $dark-theme: create-wonky-theme( $theme-primary, $theme-accent, $theme-warn);
+  .active[role="row"] {
+    background-color: mat-color($theme-primary, 900); //color: $primary-color-bg-dark !important;
+    transition: ease-in all 0.3s;
+    .mat-cell {
+      color: inherit !important;
+    }
+  }
+  .disabled[role="row"] {
+    color: mat-color($theme-primary, 100);
+    transition: ease-in color 0.3s;
+    .mat-cell {
+      color: inherit !important;
+    }
+  }
+  $background: map-get($dark-theme, background); // $foreground: map-get($theme, foreground);
+  background-color: mat-color($background, background);
+  @include angular-material-theme($dark-theme);
+}
+
+.light-theme {
+  // Light theme
+  $theme-primary: mat-palette($mat-grey, 200, 500, 300);
+  $theme-accent: mat-palette($mat-blue, 200);
+  $theme-warn: mat-palette($mat-deep-orange, 200);
+  $light-theme: mat-light-theme($theme-primary, $theme-accent, $theme-warn);
+  .active[role="row"] {
+    background-color: mat-color($theme-accent, 900);
+    transition: ease-in all 0.3s;
+    .mat-cell {
+      color: inherit !important;
+    }
+  }
+  .disabled[role="row"] {
+    color: mat-color($theme-primary, 100);
+    transition: ease-in color 0.3s;
+    .mat-cell {
+      color: inherit !important;
+    }
+  }
+  $background: map-get($light-theme, background); // $foreground: map-get($theme, foreground);
+  background-color: mat-color($background, background);
+  @include angular-material-theme($light-theme); // use our theme with angular-material-theme mixin
+}
