@@ -39,6 +39,7 @@ import { OverlayModule } from "@angular/cdk/overlay";
 import { PlatformModule } from "@angular/cdk/platform";
 import { ObserversModule } from "@angular/cdk/observers";
 import { PortalModule } from "@angular/cdk/portal";
+import { FlexLayoutModule } from "@angular/flex-layout";
 
 /**
  * NgModule that includes all Material modules that are required to serve the demo-app.
@@ -83,8 +84,8 @@ import { PortalModule } from "@angular/cdk/portal";
     ObserversModule,
     OverlayModule,
     PlatformModule,
-    PortalModule
-    //FlexLayoutModule
+    PortalModule,
+    FlexLayoutModule
   ]
 })
 export class AppModuleMaterialModule {}

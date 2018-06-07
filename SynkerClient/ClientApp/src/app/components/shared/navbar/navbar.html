@@ -1,4 +1,4 @@
-<div class="navbar mat-app-background" color="primary">
+<div class="navbar mat-app-background">
   <a mat-button routerLink="/" aria-label="Synker">
     <span>Synker beta</span>
   </a>
@@ -22,7 +22,7 @@
     <mat-icon>more_vert</mat-icon>
   </a>
 
-  <mat-menu x-position="before" #menu="matMenu" color="primary">
+  <mat-menu x-position="before" #menu="matMenu">
 
     <button mat-menu-item *ngIf="(isAuthenticated | async)" class="profile-image-menu">
       <img [src]="(user | async)?.photo" class="img-circle">
