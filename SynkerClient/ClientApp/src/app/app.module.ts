@@ -1,5 +1,4 @@
 //import { AppComponent } from './app.component';
-import { NavMenuComponent } from "./nav-menu/nav-menu.component";
 //import { HomeComponent } from './home/home.component';
 //import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -8,7 +7,6 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
-import { RouterModule, Routes } from "@angular/router";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AppModuleMaterialModule } from "./app.module.material.module";
 
@@ -27,7 +25,6 @@ import { EpgService } from "./services/epg/epg.service";
 import { XmltvService } from "./services/xmltv/xmltv.service";
 import { MessageService } from "./services/message/message.service";
 import { CommonService } from "./services/common/common.service";
-import { BaseService } from "./services/base/base.service";
 import { NavBarModule } from "./components/shared/navbar/navbar";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { TokenInterceptor } from "./services/auth/token.interceptor";
@@ -86,7 +83,6 @@ import { OverlayModule } from "@angular/cdk/overlay";
     UsersComponent,
     HostsComponent,
     LoaderComponent,
-    NavMenuComponent,
     TvgMediaModifyDialog,
     EpgModifyDialog,
     DialogComponent,

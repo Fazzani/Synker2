@@ -15,7 +15,6 @@ using hfa.WebApi.Models.Admin;
 using Hfa.WebApi.Controllers;
 using Hfa.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -23,6 +22,7 @@ using Microsoft.Extensions.Options;
 
 namespace hfa.WebApi.Controllers
 {
+    [Produces("application/json")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
     [Authorize]
@@ -38,7 +38,8 @@ namespace hfa.WebApi.Controllers
         /// <summary>
         /// Update user
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="id"></param>
+        /// <param name="userModel"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPut]
@@ -122,9 +123,7 @@ namespace hfa.WebApi.Controllers
         public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users.FindAsync(new object[] { UserId.Value }, cancellationToken);
-            if (user == null)
-                return NotFound(id);
-            return Ok(user);
+            return user == null ? NotFound(id) : (IActionResult)Ok(user);
         }
 
         /// <summary>
@@ -152,19 +151,25 @@ namespace hfa.WebApi.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Delete user by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize(Policy = AuthorizePolicies.ADMIN)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteAsync(int id, CancellationToken cancellationToken)
         {
-            var user = _dbContext.Users.FirstOrDefault(x => x.Id == id);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
             if (user == null)
                 return NotFound(user);
 
             _dbContext.Users.Remove(user);
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(cancellationToken);
             return NoContent();
         }
     }
