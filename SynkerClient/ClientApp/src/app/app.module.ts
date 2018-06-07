@@ -65,6 +65,7 @@ import { LoaderComponent } from "./components/shared/loader/loader.component";
 import { HostsService } from "./services/admin/hosts.service";
 import { HostsComponent } from "./components/admin/hosts/hosts.component";
 import { OverlayModule } from "@angular/cdk/overlay";
+import { AuthorizedRouteGuard } from "./services/auth/authorizedRouteGuard.service";
 
 @NgModule({
   declarations: [
@@ -139,13 +140,14 @@ import { OverlayModule } from "@angular/cdk/overlay";
     XmltvModifyDialog
   ],
   providers: [
+    LoginRouteGuard,
+    AuthorizedRouteGuard,
     CommonService,
     TvgMediaService,
     MessageService,
     NotificationService,
     XmltvService,
     AuthService,
-    LoginRouteGuard,
     MediaRefService,
     PlaylistService,
     PiconService,

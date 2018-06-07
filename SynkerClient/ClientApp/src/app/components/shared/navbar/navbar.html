@@ -6,7 +6,7 @@
   <div fxLayout="row" fxShow="false" fxShow.gt-sm>
     <a mat-button routerLink="/epg">Tv guide</a>
     <a mat-button routerLink="/sitepack">Sites Pack</a>
-    <a mat-button routerLink="/admin">Admin</a>
+    <a mat-button *ngIf="(authorizedGuard.canActivate(null,null) | async)" routerLink="/admin">Admin</a>
   </div>
   <span class="fill-remaining-space"></span>
   <a mat-icon-button *ngIf="(isAuthenticated | async)" aria-hidden="true" routerLink="/messages">

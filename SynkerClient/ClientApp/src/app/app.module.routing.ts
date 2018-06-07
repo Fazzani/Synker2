@@ -15,6 +15,7 @@ import { AdminComponent } from "./components/admin/admin.component";
 import { AdminDashboardComponent } from "./components/admin/dashboard/admin.dashboard.component";
 import { UserComponent } from "./components/user/user.component";
 import { HostsComponent } from "./components/admin/hosts/hosts.component";
+import { AuthorizedRouteGuard } from "./services/auth/authorizedRouteGuard.service";
 
 const appRoutes: Routes = [
   { path: "home", component: HomeComponent, canActivate: [LoginRouteGuard] },
@@ -30,7 +31,7 @@ const appRoutes: Routes = [
   {
     path: "admin",
     component: AdminComponent,
-    canActivate: [LoginRouteGuard],
+    canActivate: [LoginRouteGuard, AuthorizedRouteGuard],
     children: [
       {
         path: "",

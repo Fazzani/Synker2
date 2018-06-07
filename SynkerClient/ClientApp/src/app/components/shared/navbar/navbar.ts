@@ -12,6 +12,7 @@ import { MessageService } from "../../../services/message/message.service";
 import { Subscription } from "rxjs/Subscription";
 import { Message, MessageStatus } from "../../../types/message.type";
 import { PagedResult } from "../../../types/common.type";
+import { AuthorizedRouteGuard } from "../../../services/auth/authorizedRouteGuard.service";
 
 @Component({
   selector: "app-navbar",
@@ -25,7 +26,7 @@ export class NavBar implements OnInit, OnDestroy {
   messages: PagedResult<Message>;
   @Output() onThemeChanged = new EventEmitter();
 
-  constructor(private authService: AuthService, private messageService: MessageService) {
+  constructor(private authService: AuthService, private messageService: MessageService, public authorizedGuard: AuthorizedRouteGuard) {
     this.isAuthenticated = this.authService.authenticated;
     this.user = this.authService.user;
     this.authService.connect();

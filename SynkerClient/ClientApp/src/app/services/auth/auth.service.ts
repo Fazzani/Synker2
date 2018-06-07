@@ -63,6 +63,14 @@ export class AuthService extends BaseService {
     return localStorage.getItem("accessToken");
   }
 
+  public isAuthorized(role: string): Observable<boolean> {
+    let accessToken: string | null = localStorage.getItem("accessToken");
+    if (accessToken == null) return Observable.of(false);
+    return this.ConvertTokenToUser(accessToken).map(user => {
+      if (user.roles == undefined) return false;
+      return user.roles.indexOf(role) != -1;
+    });
+  }
   /**
    * Update Authenticated field
    *
@@ -254,14 +262,16 @@ export class AuthService extends BaseService {
 
   private mapTokenToUserModel(userToken: any) {
     console.log(`${userToken.photo}`);
-    return <User>{
+    let user = <User>{
       birthday: userToken.birthdate,
       lastName: userToken.family_name,
       firstName: userToken.given_name,
       photo: userToken.photo,
       email: userToken.email,
-      gender: userToken.gender
+      gender: userToken.gender,
+      roles: userToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
     };
+    return user;
   }
   /**
    * Stores access token & refresh token.
