@@ -31,13 +31,13 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {
     this.objLoaderStatus = false;
 
-    this.notifService.messages.subscribe(
-      m => {
-        console.log("new message ", m);
-        this.commonService.info(`New message ${m.messageType}`, m.content);
-      },
-      error => console.warn(error)
-    );
+    // this.notifService.messages.subscribe(
+    //   m => {
+    //     console.log("new message ", m);
+    //     this.commonService.info(`New message ${m.messageType}`, m.content);
+    //   },
+    //   error => console.warn(error)
+    // );
   }
 
   ngOnInit() {
