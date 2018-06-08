@@ -1,3 +1,7 @@
+
+import {interval as observableInterval} from 'rxjs';
+
+import {share, takeWhile, distinctUntilChanged} from 'rxjs/operators';
 import { Subject, Observer, Observable } from "rxjs/Rx";
 import { WebSocketSubject, WebSocketSubjectConfig } from "rxjs/observable/dom/WebSocketSubject";
 
@@ -33,9 +37,9 @@ export class RxWebsocketSubject<T> extends Subject<T> {
     /// connection status
     this.connectionStatus = new Observable(observer => {
       this.connectionObserver = observer;
-    })
-      .share()
-      .distinctUntilChanged();
+    }).pipe(
+      share(),
+      distinctUntilChanged(),);
 
     if (!resultSelector) {
       this.resultSelector = this.defaultResultSelector;
@@ -87,9 +91,9 @@ export class RxWebsocketSubject<T> extends Subject<T> {
 
   /// WebSocket Reconnect handling
   reconnect(): void {
-    this.reconnectionObservable = Observable.interval(this.reconnectInterval).takeWhile((v, index) => {
+    this.reconnectionObservable = observableInterval(this.reconnectInterval).pipe(takeWhile((v, index) => {
       return index < this.reconnectAttempts && !this.socket;
-    });
+    }));
     this.reconnectionObservable.subscribe(
       () => {
         this.connect();

@@ -1,10 +1,11 @@
+
+import { catchError, map } from 'rxjs/operators';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
 
 // All the RxJS stuff we need
-import { Observable } from "rxjs/Rx";
-import { map, catchError } from "rxjs/operators";
+import { Observable } from "rxjs";
 import { User } from "../../types/auth.type";
 import { PagedResult, QueryListBaseModel } from "../../types/common.type";
 
@@ -16,29 +17,29 @@ export class UsersService extends BaseService {
 
   update(user: User): Observable<User> {
     return this.http
-      .put(`${this.FullBaseUrl}/${user.id}`, user)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .put(`${this.FullBaseUrl}/${user.id}`, user).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   public me(): Observable<User> {
     return this.http
-      .get(`${this.FullBaseUrl}`)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .get(`${this.FullBaseUrl}`).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   public get(id: number): Observable<User> {
     return this.http
-      .get(`${this.FullBaseUrl}/${id}`)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .get(`${this.FullBaseUrl}/${id}`).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   public list(queryModel: QueryListBaseModel): Observable<PagedResult<User>> {
     return this.http
-      .post(`${this.FullBaseUrl}/search`, queryModel)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(`${this.FullBaseUrl}/search`, queryModel).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 }

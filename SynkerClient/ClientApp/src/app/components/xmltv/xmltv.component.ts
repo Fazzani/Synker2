@@ -1,14 +1,11 @@
+import { fromEvent as observableFromEvent,  BehaviorSubject, Subscription, Observable } from 'rxjs';
+import { distinctUntilChanged, debounceTime, merge, map } from 'rxjs/operators';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from "@angular/core";
 import { DataSource } from "@angular/cdk/collections";
 import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from "@angular/material";
-import { BehaviorSubject, Subscription } from "rxjs";
-
 import { XmltvService } from "../../services/xmltv/xmltv.service";
 import { CommonService, Constants } from "../../services/common/common.service";
-import { Observable } from "rxjs/Rx";
 import { ElasticQuery } from "../../types/elasticQuery.type";
-import "rxjs/add/observable/fromEvent";
-import { distinctUntilChanged, merge, debounceTime } from "rxjs/operators";
 import { sitePackChannel } from "../../types/sitepackchannel.type";
 import { snakbar_duration } from "../../variables";
 
@@ -44,10 +41,10 @@ export class XmltvComponent implements OnInit, OnDestroy {
     this.dataSource = new XmltvDataSource(this.xmltvService, this.paginator);
 
     this.subscriptionTableEvent = this.paginator.page
-      .asObservable()
-      .merge(Observable.fromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup"))
-      .debounceTime(1000)
-      .distinctUntilChanged()
+      .asObservable().pipe(
+      merge(observableFromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup")),
+      debounceTime(1000),
+      distinctUntilChanged(),)
       .subscribe(x => {
         if (!this.dataSource) {
           return;
@@ -123,9 +120,9 @@ export class XmltvDataSource extends DataSource<sitePackChannel> {
     super();
 
     this.paginator = mdPaginator;
-    this._filterChange
-      .merge(this._paginator)
-      .debounceTime(300)
+    this._filterChange.pipe(
+      merge(this._paginator),
+      debounceTime(300),)
       //.distinctUntilChanged()
       .subscribe(x => this.getData());
   }
@@ -153,11 +150,11 @@ export class XmltvDataSource extends DataSource<sitePackChannel> {
       query.query = this.filter;
     }
     localStorage.setItem(Constants.LS_MediaQueryKey, JSON.stringify(query));
-    let res = this.xmltvService.listSitePack(query).map((v, i) => {
+    let res = this.xmltvService.listSitePack(query).pipe(map((v, i) => {
       console.log("recup epg ", v);
       this._paginator.value.length = v.total;
       return v.result;
-    });
+    }));
     res.subscribe(x => {
       this.medias.next(x);
     });

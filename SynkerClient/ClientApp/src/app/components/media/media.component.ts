@@ -1,3 +1,7 @@
+
+import { merge as observableMerge, of as observableOf, fromEvent as observableFromEvent,  BehaviorSubject, Subject, Subscription ,  Observable } from 'rxjs';
+
+import { catchError, merge, startWith, map, switchMap, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import {
   Component,
   OnInit,
@@ -16,21 +20,9 @@ import {
   MatSnackBar,
   MatAutocompleteSelectedEvent
 } from "@angular/material";
-import { BehaviorSubject, Subject, Subscription } from "rxjs";
 import { TvgMediaService } from "../../services/tvgmedia/tvgmedia.service";
 import { CommonService, Constants } from "../../services/common/common.service";
-import { Observable } from "rxjs/Observable";
 import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
-import "rxjs/add/observable/fromEvent";
-import {
-  map,
-  catchError,
-  merge,
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  startWith
-} from "rxjs/operators";
 import { TvgMedia, Tvg, TvgSource, MediaType } from "../../types/media.type";
 import { snakbar_duration } from "../../variables";
 import { SitePackService } from "../../services/sitepack/sitepack.service";
@@ -91,12 +83,12 @@ export class MediaComponent implements OnInit, OnDestroy {
       this.sort
     );
 
-    this.subscriptionTableEvent = Observable.fromEvent<KeyboardEvent>(
+    this.subscriptionTableEvent = observableFromEvent<KeyboardEvent>(
       this.filter.nativeElement,
       "keyup"
-    )
-      .debounceTime(1000)
-      .distinctUntilChanged()
+    ).pipe(
+      debounceTime(1000),
+      distinctUntilChanged(),)
       .subscribe(x => {
         if (!this.dataSource) {
           return;
@@ -163,24 +155,24 @@ export class TvgMediaModifyDialog implements OnInit, OnDestroy {
       .map(x => `\"${x}\"`)
       .reduce((p, c) => `${p} OR ${c}`);
 
-    this.tvgMedias = this.searchTerms
-      .debounceTime(1000)
-      .distinctUntilChanged()
-      .switchMap(
+    this.tvgMedias = this.searchTerms.pipe(
+      debounceTime(1000),
+      distinctUntilChanged(),
+      switchMap(
         term =>
           term
             ? this.sitePackService
                 .simpleSearch<sitePackChannel>(
                   `site : ${term}*^5 OR xmltv_id: ${term}`,
                   "sitepack"
-                )
-                .map(x => x.result)
-            : Observable.of<sitePackChannel[]>([])
-      )
-      .catch(error => {
+                ).pipe(
+                map(x => x.result))
+            : observableOf<sitePackChannel[]>([])
+      ),
+      catchError(error => {
         console.log(error);
-        return Observable.of<sitePackChannel[]>([]);
-      });
+        return observableOf<sitePackChannel[]>([]);
+      }),);
   }
 
   compareByValue(f1: any, f2: any) {
@@ -252,14 +244,14 @@ export class MediaDataSource extends DataSource<TvgMedia> {
       this.MatPaginator.pageSize
     ];
 
-    return this._filterChange
-      .merge(Observable.merge(...displayDataChanges))
-      .startWith(null)
-      .switchMap(() => {
+    return this._filterChange.pipe(
+      merge(observableMerge(...displayDataChanges)),
+      startWith(null),
+      switchMap(() => {
         this.isLoadingResults = true;
         return this.getData();
-      })
-      .map(data => {
+      }),
+      map(data => {
         console.dir(data);
         // Flip flag to show that loading has finished.
         this.isLoadingResults = false;
@@ -269,12 +261,12 @@ export class MediaDataSource extends DataSource<TvgMedia> {
         this.total = data.total;
 
         return data.result;
-      })
-      .catch(() => {
+      }),
+      catchError(() => {
         this.isLoadingResults = false;
         // Catch if the GitHub API has reached its rate limit. Return empty data.
-        return Observable.of([]);
-      });
+        return observableOf([]);
+      }),);
   }
   /**
    * Get medias list from webapi

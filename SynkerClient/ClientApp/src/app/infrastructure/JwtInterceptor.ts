@@ -1,4 +1,6 @@
-﻿import { HttpRequest, HttpInterceptor, HttpEvent, HttpResponse, HttpErrorResponse, HttpHandler } from "@angular/common/http";
+
+import {finalize, tap} from 'rxjs/operators';
+import { HttpRequest, HttpInterceptor, HttpEvent, HttpResponse, HttpErrorResponse, HttpHandler } from "@angular/common/http";
 import { Observable } from "rxjs/Rx";
 import { Router } from "@angular/router";
 import { Injectable, Injector } from "@angular/core";
@@ -16,8 +18,8 @@ export class JwtInterceptor implements HttpInterceptor {
     this.commonService.displayLoader(true);
 
     return next
-      .handle(request)
-      .do(
+      .handle(request).pipe(
+      tap(
         (event: HttpEvent<any>) => {
           console.log("IN JwtInterceptor", event);
           if (event instanceof HttpResponse) {
@@ -32,7 +34,7 @@ export class JwtInterceptor implements HttpInterceptor {
             else this.commonService.displayError(err.statusText, typeof err.error === "string" ? err.error : err.error.Message);
           }
         }
-      )
-      .finally(() => this.commonService.displayLoader(false));
+      ),
+      finalize(() => this.commonService.displayLoader(false)),);
   }
 }

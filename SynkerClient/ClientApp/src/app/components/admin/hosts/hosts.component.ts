@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from "@angular/core";
 import { MatSnackBar, MatTableDataSource, MatPaginator, MatSort } from "@angular/material";
-import { Observable } from "rxjs/Rx";
+import { Observable } from "rxjs";
 import { QueryListBaseModel } from "../../../types/common.type";
 import { Host } from "../../../types/host.type";
 import { HostsService } from "../../../services/admin/hosts.service";

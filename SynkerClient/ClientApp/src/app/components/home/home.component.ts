@@ -1,3 +1,7 @@
+
+import {of as observableOf} from 'rxjs';
+
+import {switchMap, filter} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { PlaylistService } from "../../services/playlists/playlist.service";
 import { MatDialog, MatSnackBar } from "@angular/material";
@@ -45,9 +49,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   delete(playlist: PlaylistModel): void {
     const confirm = window.confirm(`Do you really want to delete this playlist ${playlist.freindlyname}?`);
 
-    Observable.of(playlist.publicId)
-      .filter(() => confirm)
-      .switchMap(x => this.playlistService.delete(x))
+    observableOf(playlist.publicId).pipe(
+      filter(() => confirm),
+      switchMap(x => this.playlistService.delete(x)),)
       .subscribe(res => {
         this.snackBar.open("Playlist deleted successfully");
         this.ngOnInit();

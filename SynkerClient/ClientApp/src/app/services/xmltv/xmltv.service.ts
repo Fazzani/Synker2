@@ -1,11 +1,10 @@
+import { Observable } from "rxjs";
+import { map, catchError } from 'rxjs/operators';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
 import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
 import { sitePackChannel } from "../../types/sitepackchannel.type";
-// All the RxJS stuff we need
-import { Observable } from "rxjs/Rx";
-import { map, catchError } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
 
 @Injectable()
@@ -21,9 +20,9 @@ export class XmltvService extends BaseService {
    */
   getSitePackChannel(id: string): Observable<ElasticResponse<sitePackChannel>> {
     return this.http
-      .get(environment.base_api_url + "xmltv/channels/" + id)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .get(environment.base_api_url + "xmltv/channels/" + id).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   /**
@@ -33,9 +32,9 @@ export class XmltvService extends BaseService {
    */
   listSitePack(query: ElasticQuery): Observable<ElasticResponse<sitePackChannel>> {
     return this.http
-      .post(environment.base_api_url + "xmltv/channels/_search", query)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(environment.base_api_url + "xmltv/channels/_search", query).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   /**
@@ -45,8 +44,8 @@ export class XmltvService extends BaseService {
    */
   webgrab(xmltv_id: string[]) {
     return this.http
-      .post(environment.base_api_url + "xmltv/channels/webgrab", xmltv_id)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(environment.base_api_url + "xmltv/channels/webgrab", xmltv_id).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 }

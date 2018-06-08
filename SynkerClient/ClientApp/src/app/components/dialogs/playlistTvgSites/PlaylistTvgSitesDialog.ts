@@ -1,3 +1,5 @@
+
+import {tap, mergeMap} from 'rxjs/operators';
 import { OnInit, OnDestroy, Inject, Component } from "@angular/core";
 import { sitePackChannel } from "../../../types/sitepackchannel.type";
 import { PlaylistService } from "../../../services/playlists/playlist.service";
@@ -22,9 +24,9 @@ export class PlaylistTvgSitesDialog implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.sitePackService
-      .tvgSites()
-      .flatMap(m => m)
-      .do(x => (x.selected = this.data.tvgSites.findIndex(f => f == x.site) >= 0))
+      .tvgSites().pipe(
+      mergeMap(m => m),
+      tap(x => (x.selected = this.data.tvgSites.findIndex(f => f == x.site) >= 0)),)
       .subscribe(m => {
         this.tvgSites.push(m);
         this.tvgSites.sort(this.compareFn);

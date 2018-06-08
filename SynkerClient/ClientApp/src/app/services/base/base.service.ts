@@ -1,11 +1,9 @@
-import { Injectable, Inject, Optional } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
 
-// All the RxJS stuff we need
-import { Observable } from "rxjs/Rx";
-import { map, catchError } from "rxjs/operators";
+import { throwError as observableThrowError, Observable } from 'rxjs';
+import {map, catchError } from 'rxjs/operators';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
 import { ElasticResponse, SimpleQueryElastic } from "../../types/elasticQuery.type";
-import * as variables from "../../variables";
 import { environment } from "../../../environments/environment";
 
 @Injectable()
@@ -16,9 +14,9 @@ export class BaseService {
 
   search<T>(query: SimpleQueryElastic): Observable<ElasticResponse<T>> {
     return this.http
-      .post(`${this.FullBaseUrl}/_searchstring`, query)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(`${this.FullBaseUrl}/_searchstring`, query).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   simpleSearch<T>(query: string, indexName: string): Observable<ElasticResponse<T>> {
@@ -28,16 +26,16 @@ export class BaseService {
         Size: 30,
         IndexName: indexName,
         Query: query
-      })
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      }).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   delete(id: string): Observable<number> {
     return this.http
-      .delete(`${this.FullBaseUrl}/${id}`)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .delete(`${this.FullBaseUrl}/${id}`).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   handleSuccess = (response: Response | any) => {
@@ -54,7 +52,7 @@ export class BaseService {
     // logError(error);
 
     // This returns another Observable for the observer to subscribe to
-    return Observable.throw(errorMessage);
+    return observableThrowError(errorMessage);
   }
 
   // This method parses the data to JSON

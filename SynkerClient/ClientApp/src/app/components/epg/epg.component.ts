@@ -1,15 +1,14 @@
+
+import { fromEvent as observableFromEvent,  BehaviorSubject, Subscription , Observable } from 'rxjs';
+import { distinctUntilChanged, debounceTime, merge, map  } from 'rxjs/operators';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from "@angular/core";
 import { DataSource } from "@angular/cdk/collections";
 import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from "@angular/material";
-import { BehaviorSubject, Subscription } from "rxjs";
 
 import { EpgService } from "../../services/epg/epg.service";
 import { CommonService, Constants } from "../../services/common/common.service";
-import { Observable } from "rxjs/Observable";
 import { ElasticQuery } from "../../types/elasticQuery.type";
 import { tvChannel } from "../../types/xmltv.type";
-import "rxjs/add/observable/fromEvent";
-import { map, catchError, merge, debounceTime, distinctUntilChanged } from "rxjs/operators";
 import { snakbar_duration } from "../../variables";
 
 @Component({
@@ -45,10 +44,10 @@ export class EpgComponent implements OnInit, OnDestroy {
     this.dataSource = new EpgDataSource(this.epgService, this.paginator);
 
     this.subscriptionTableEvent = this.paginator.page
-      .asObservable()
-      .merge(Observable.fromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup"))
-      .debounceTime(1000)
-      .distinctUntilChanged()
+      .asObservable().pipe(
+      merge(observableFromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup")),
+      debounceTime(1000),
+      distinctUntilChanged(),)
       .subscribe(x => {
         if (!this.dataSource) {
           return;
@@ -122,9 +121,9 @@ export class EpgDataSource extends DataSource<tvChannel> {
     super();
 
     this.paginator = mdPaginator;
-    this._filterChange
-      .merge(this._paginator)
-      .debounceTime(300)
+    this._filterChange.pipe(
+      merge(this._paginator),
+      debounceTime(300),)
       //.distinctUntilChanged()
       .subscribe(x => this.getData());
   }
@@ -152,11 +151,11 @@ export class EpgDataSource extends DataSource<tvChannel> {
       query.query = this.filter;
     }
     localStorage.setItem(Constants.LS_MediaQueryKey, JSON.stringify(query));
-    let res = this.epgService.list(query).map((v, i) => {
+    let res = this.epgService.list(query).pipe(map((v, i) => {
       console.log("recup epg ", v);
       this._paginator.value.length = v.total;
       return v.result;
-    });
+    }));
     res.subscribe(x => {
       this.medias.next(x);
     });

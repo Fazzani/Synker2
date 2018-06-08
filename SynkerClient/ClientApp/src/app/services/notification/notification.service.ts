@@ -1,6 +1,7 @@
+import {map, retry, share} from 'rxjs/operators';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs/Rx";
+import { Observable } from "rxjs";
 import { RxWebsocketSubject } from "../../types/wsReconnectionSubject.type";
 import { Message } from "../../types/message.type";
 import { BaseService } from "../base/base.service";
@@ -15,8 +16,8 @@ export class NotificationService extends BaseService {
 
     let subject = new RxWebsocketSubject(environment.base_api_url);
 
-    this.messages = subject
-      .map(
+    this.messages = subject.pipe(
+      map(
         (response: MessageEvent | string): Message => {
           console.log("new message event ", response);
           if (this.IsJsonString((<MessageEvent>response).data)) {
@@ -29,10 +30,10 @@ export class NotificationService extends BaseService {
             return <Message>{ content: <string>response };
           }
         }
-      )
-      .share();
+      ),
+      share(),);
 
-    subject.retry().subscribe(
+    subject.pipe(retry()).subscribe(
       function(e) {
         console.log(`Message from server: "${e}"`);
       },

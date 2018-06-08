@@ -1,3 +1,5 @@
+
+import {catchError, map } from 'rxjs/operators';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
@@ -5,7 +7,6 @@ import { Message, MessageQueryModel } from "../../types/message.type";
 
 // All the RxJS stuff we need
 import { Observable } from "rxjs/Rx";
-import { map, catchError } from "rxjs/operators";
 import { PagedResult } from "../../types/common.type";
 
 @Injectable()
@@ -18,23 +19,23 @@ export class MessageService extends BaseService {
 
   public get(id: string): Observable<PagedResult<Message>> {
     return this.http
-      .get(this.url + id)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .get(this.url + id).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   public update(message: Message): Observable<number> {
     return this.http
-      .put(`${this.FullBaseUrl}/${message.id}`, message)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .put(`${this.FullBaseUrl}/${message.id}`, message).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   public list(): Observable<PagedResult<Message>> {
     return this.http
-      .get(this.url)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .get(this.url).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   public listByStatus(status: number[], page: number, pageSize: number): Observable<PagedResult<Message>> {
@@ -43,8 +44,8 @@ export class MessageService extends BaseService {
         MessageStatus: status,
         pageNumber: page,
         pageSize: pageSize
-      })
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      }).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 }

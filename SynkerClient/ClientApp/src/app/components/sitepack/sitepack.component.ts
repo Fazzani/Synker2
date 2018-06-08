@@ -1,13 +1,11 @@
+import { of as observableOf, fromEvent as observableFromEvent,  BehaviorSubject, Subscription, Observable } from 'rxjs';
+import { debounceTime, switchMap, distinctUntilChanged, map, filter, tap, merge } from 'rxjs/operators';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from "@angular/core";
 import { DataSource } from "@angular/cdk/collections";
 import { MatPaginator, PageEvent, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from "@angular/material";
-import { BehaviorSubject, Subscription } from "rxjs";
 import { ENTER, COMMA } from "@angular/cdk/keycodes";
 import { MatChipInputEvent } from "@angular/material";
 import { CommonService, Constants } from "../../services/common/common.service";
-import { Observable } from "rxjs/Rx";
-import "rxjs/add/observable/fromEvent";
-import { distinctUntilChanged, merge, debounceTime, map } from "rxjs/operators";
 import { picon } from "../../types/picon.type";
 import { snakbar_duration } from "../../variables";
 import { PiconService } from "../../services/picons/picons.service";
@@ -52,10 +50,10 @@ export class SitePackComponent implements OnInit, OnDestroy {
     this.dataSource.filter = this.filter.nativeElement.value = storedQuery.Query;
 
     this.subscriptionTableEvent = this.paginator.page
-      .asObservable()
-      .merge(Observable.fromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup"))
-      .debounceTime(1500)
-      .distinctUntilChanged()
+      .asObservable().pipe(
+      merge(observableFromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup")),
+      debounceTime(1500),
+      distinctUntilChanged(),)
       .subscribe(x => {
         if (!this.dataSource) {
           return;
@@ -128,9 +126,9 @@ export class SitePackComponent implements OnInit, OnDestroy {
   delete(id: string): void {
     const confirm = window.confirm("Do you really want to delete this media ref?");
 
-    Observable.of(id)
-      .filter(() => confirm)
-      .switchMap(x => this.sitePackService.delete(x))
+    observableOf(id).pipe(
+      filter(() => confirm),
+      switchMap(x => this.sitePackService.delete(x)),)
       .subscribe(res => {
         this.snackBar.open("Medias referentiel was deleted");
         this.dataSource.getData();
@@ -207,9 +205,9 @@ export class SitePackModifyDialog implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    Observable.fromEvent<KeyboardEvent>(this.filterPicon.nativeElement, "keyup")
-      .debounceTime(1000)
-      .distinctUntilChanged()
+    observableFromEvent<KeyboardEvent>(this.filterPicon.nativeElement, "keyup").pipe(
+      debounceTime(1000),
+      distinctUntilChanged(),)
       .subscribe((x: KeyboardEvent) => {
         let query = <SimpleQueryElastic>{
           From: 0,
@@ -218,9 +216,9 @@ export class SitePackModifyDialog implements OnInit, OnDestroy {
           Size: 10
         };
         this.piconsFilter = this.piconService
-          .search(query)
-          .map(x => x.result)
-          .do(x => console.log(x));
+          .search(query).pipe(
+          map(x => x.result),
+          tap(x => console.log(x)),);
       });
   }
 
@@ -290,9 +288,9 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
     super();
 
     this.paginator = this.mdPaginator;
-    this._filterChange
-      .merge(this._paginator)
-      .debounceTime(300)
+    this._filterChange.pipe(
+      merge(this._paginator),
+      debounceTime(300),)
       //.distinctUntilChanged()
       .subscribe(x => this.getData());
   }
@@ -316,11 +314,11 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
 
     localStorage.setItem(Constants.LS_SiteQueryKey, JSON.stringify(query));
 
-    let res = this.sitePackService.search<sitePackChannel>(query).map((v, i) => {
+    let res = this.sitePackService.search<sitePackChannel>(query).pipe(map((v, i) => {
       console.log("Getting sitepacks ", v);
       this._paginator.value.length = v.total;
       return v.result;
-    });
+    }));
 
     res.subscribe(x => {
       this.medias.next(x);
@@ -342,10 +340,10 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
     };
 
     this.sitePackService
-      .search<sitePackChannel>(query)
-      .map(v => {
+      .search<sitePackChannel>(query).pipe(
+      map(v => {
         this.sitePackService.save(...v.result).subscribe();
-      })
+      }))
       .subscribe(x => console.log(x));
   }
 

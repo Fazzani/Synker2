@@ -1,10 +1,11 @@
+
+import {distinct, tap, filter, map, debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import { OnInit, OnDestroy, Component, ViewChild, Inject } from "@angular/core";
 import { MediaType, TvgMedia, TvgSource, Tvg } from "../../../types/media.type";
 import { sitePackChannel } from "../../../types/sitepackchannel.type";
-import { Subject } from "rxjs";
+import { Subject ,  Observable } from "rxjs";
 import { MatAutocompleteTrigger, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 import { SitePackService } from "../../../services/sitepack/sitepack.service";
-import { Observable } from "rxjs/Observable";
 
 @Component({
   selector: "tvgmedia.list.dialog",
@@ -40,24 +41,24 @@ export class PlaylistBulkUpdate implements OnInit, OnDestroy {
     this.mediaTypes = MediaType;
 
     // AutoComplete sitepacks
-    const subscription = this.keyUpSitePack
-      .map(event => "*" + event.target.value + "*")
-      .debounceTime(500)
-      .distinctUntilChanged()
+    const subscription = this.keyUpSitePack.pipe(
+      map(event => "*" + event.target.value + "*"),
+      debounceTime(500),
+      distinctUntilChanged(),)
       .subscribe(search => sitePackService.sitePacks(search).subscribe(res => (this.sitePacks = res)));
 
     //AutoComplete groups
     if (this.group != null && this.group.length > 0) {
-      this.searchGroups$
-        .filter(x => x.keyCode != 13)
-        .debounceTime(500)
-        .map(m => m.key)
-        .distinctUntilChanged()
-        .do(() => {
+      this.searchGroups$.pipe(
+        filter(x => x.keyCode != 13),
+        debounceTime(500),
+        map(m => m.key),
+        distinctUntilChanged(),
+        tap(() => {
           this.groupsfiltred = [];
-        })
-        .map(m => this.groups.filter(f => f.toLowerCase().indexOf(this.group.toLowerCase()) >= 0))
-        .distinct()
+        }),
+        map(m => this.groups.filter(f => f.toLowerCase().indexOf(this.group.toLowerCase()) >= 0)),
+        distinct(),)
         .subscribe(x => {
           console.log(x);
           this.groupsfiltred = x;

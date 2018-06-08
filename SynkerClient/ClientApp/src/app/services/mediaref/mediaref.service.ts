@@ -1,11 +1,9 @@
+import { Observable } from "rxjs";
+import { catchError, map } from 'rxjs/operators';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
 import { ElasticQuery, ElasticResponse, ElasticAggregations } from "../../types/elasticQuery.type";
-
-// All the RxJS stuff we need
-import { Observable } from "rxjs/Rx";
-import { map } from "rxjs/operators";
 import { mediaRef } from "../../types/mediaref.type";
 import { sitePackChannel } from "../../types/sitepackchannel.type";
 import { environment } from "../../../environments/environment";
@@ -18,37 +16,37 @@ export class MediaRefService extends BaseService {
 
   get(id: string): Observable<ElasticResponse<mediaRef>> {
     return this.http
-      .get(environment.base_api_url + `${this.BaseUrl}/${id}`)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .get(environment.base_api_url + `${this.BaseUrl}/${id}`).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   list(query: ElasticQuery): Observable<ElasticResponse<mediaRef>> {
     return this.http
-      .post(environment.base_api_url + "mediasref/_search", query)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(environment.base_api_url + "mediasref/_search", query).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   synk(): Observable<ElasticResponse<mediaRef>> {
     return this.http
-      .post(environment.base_api_url + "mediasref/synk", null)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(environment.base_api_url + "mediasref/synk", null).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   synkPicons(): Observable<ElasticResponse<mediaRef>> {
     return this.http
-      .post(environment.base_api_url + "mediasref/synkpicons", null)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(environment.base_api_url + "mediasref/synkpicons", null).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   save(...medias: mediaRef[]): Observable<ElasticResponse<mediaRef>> {
     return this.http
-      .post(environment.base_api_url + this.BaseUrl, medias)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(environment.base_api_url + this.BaseUrl, medias).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   /**
@@ -58,9 +56,9 @@ export class MediaRefService extends BaseService {
    */
   groups(filter: string): Observable<ElasticAggregations> {
     return this.http
-      .post(environment.base_api_url + "mediasref/groups", filter)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(environment.base_api_url + "mediasref/groups", filter).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   /**
@@ -71,9 +69,9 @@ export class MediaRefService extends BaseService {
   cultures(filter?: string): Observable<string[]> {
     let f = filter ? filter : "_all";
     return this.http
-      .get(environment.base_api_url + "mediasref/cultures?filter=" + f)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .get(environment.base_api_url + "mediasref/cultures?filter=" + f).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   /**
@@ -81,12 +79,12 @@ export class MediaRefService extends BaseService {
    * @returns
    */
   tvgSites(): Observable<sitePackChannel[]> {
-    return this.http.get<sitePackChannel[]>(environment.base_api_url + "sitepack/tvgsites").map(
+    return this.http.get<sitePackChannel[]>(environment.base_api_url + "sitepack/tvgsites").pipe(map(
       res => {
         return res;
       },
       err => this.handleError(err)
-    );
+    ));
   }
 
   /**
@@ -94,11 +92,11 @@ export class MediaRefService extends BaseService {
    * @returns
    */
   sitePacks(filter: string): Observable<sitePackChannel[]> {
-    return this.http.get<sitePackChannel[]>(environment.base_api_url + "mediasref/sitepacks?filter=" + filter).map(
+    return this.http.get<sitePackChannel[]>(environment.base_api_url + "mediasref/sitepacks?filter=" + filter).pipe(map(
       res => {
         return res;
       },
       err => this.handleError(err)
-    );
+    ));
   }
 }

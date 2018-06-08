@@ -1,3 +1,5 @@
+
+import {catchError, map } from 'rxjs/operators';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
@@ -6,7 +8,6 @@ import { tvChannel } from "../../types/xmltv.type";
 
 // All the RxJS stuff we need
 import { Observable } from "rxjs/Rx";
-import { map, catchError } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
 
 @Injectable()
@@ -17,15 +18,15 @@ export class EpgService extends BaseService {
 
   get(id: string): Observable<ElasticResponse<tvChannel>> {
     return this.http
-      .get(environment.base_api_url + `${this.BaseUrl}/${id}`)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .get(environment.base_api_url + `${this.BaseUrl}/${id}`).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   list(query: ElasticQuery): Observable<ElasticResponse<tvChannel>> {
     return this.http
-      .post(environment.base_api_url + "epg/_search/", query)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(environment.base_api_url + "epg/_search/", query).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 }

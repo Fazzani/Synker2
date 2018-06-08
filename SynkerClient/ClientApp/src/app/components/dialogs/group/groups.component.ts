@@ -1,10 +1,7 @@
-﻿import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
-import {
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-  MatSelectionListChange
-} from "@angular/material";
-import { Observable } from "rxjs/Rx";
+import { from as observableFrom, Observable } from 'rxjs';
+import { mergeMap, reduce, map, groupBy, toArray } from 'rxjs/operators';
+import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
+import { MatDialogRef, MAT_DIALOG_DATA, MatSelectionListChange } from "@angular/material";
 import { PlaylistModel } from "../../../types/playlist.type";
 import { TvgMedia } from "../../../types/media.type";
 
@@ -13,9 +10,7 @@ import { TvgMedia } from "../../../types/media.type";
   templateUrl: "./groups.dialog.html"
 })
 export class GroupsDialog implements OnInit, OnDestroy {
-  groupMedias$: Observable<
-    { title: string; medias: TvgMedia[]; count: number; selected: boolean }[]
-  >;
+  groupMedias$: Observable<{ title: string; medias: TvgMedia[]; count: number; selected: boolean }[]>;
 
   constructor(
     public dialogRef: MatDialogRef<GroupsDialog>,
@@ -23,22 +18,22 @@ export class GroupsDialog implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.groupMedias$ = Observable.from(this.playlist.tvgMedias)
-      .groupBy(x => x.mediaGroup.name)
-      .mergeMap(group =>
-        group
-          .reduce((acc, tvgmedia) => {
+    this.groupMedias$ = observableFrom(this.playlist.tvgMedias).pipe(
+      groupBy(x => x.mediaGroup.name),
+      mergeMap(group =>
+        group.pipe(
+          reduce((acc:any, tvgmedia) => {
             acc.push(tvgmedia);
             return acc;
-          }, [])
-          .map(tvgmedias => ({
+          }),
+          map(tvgmedias => ({
             title: group.key || "Untitled",
             medias: tvgmedias,
             count: tvgmedias.length,
             selected: tvgmedias ? !tvgmedias[0].mediaGroup.disabled : true
-          }))
-      )
-      .toArray();
+          })),)
+      ),
+      toArray(),);
   }
 
   onSelectedOptionsChange(selectedOptionChanged: MatSelectionListChange): void {

@@ -1,11 +1,9 @@
+import { Observable } from "rxjs";
+import { catchError, map } from 'rxjs/operators';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
 import { ElasticQuery, ElasticResponse, SimpleQueryElastic } from "../../types/elasticQuery.type";
-
-// All the RxJS stuff we need
-import { Observable } from "rxjs/Rx";
-import { map } from "rxjs/operators";
 import { picon } from "../../types/picon.type";
 import { TvgMedia } from "../../types/media.type";
 import { environment } from "../../../environments/environment";
@@ -22,38 +20,38 @@ export class PiconService extends BaseService {
 
   get(id: string): Observable<ElasticResponse<picon>> {
     return this.http
-      .get(`${environment.base_api_url}${this.BaseUrl}/${id}`)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .get(`${environment.base_api_url}${this.BaseUrl}/${id}`).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   list(field: string, filter: string): Observable<ElasticResponse<picon>> {
     let q = ElasticQuery.Match(field, filter);
 
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/_search`, q)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(`${environment.base_api_url}${this.BaseUrl}/_search`, q).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   delete(id: string): Observable<number> {
     return this.http
-      .delete(`${environment.base_api_url}${this.BaseUrl}/${id}`)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .delete(`${environment.base_api_url}${this.BaseUrl}/${id}`).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   synk(): Observable<ElasticResponse<picon>> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/synk`, null)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(`${environment.base_api_url}${this.BaseUrl}/synk`, null).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   match(model: TvgMedia[], distance: number = 90, shouldMatchChannelNumber: boolean = true): Observable<TvgMedia[]> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/match?distance=${distance}&shouldMatchChannelNumber=${shouldMatchChannelNumber}`, model)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(`${environment.base_api_url}${this.BaseUrl}/match?distance=${distance}&shouldMatchChannelNumber=${shouldMatchChannelNumber}`, model).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 }

@@ -1,6 +1,9 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {switchMap, filter} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from "@angular/core";
 import { MatSnackBar, MatTableDataSource, MatPaginator, MatSort } from "@angular/material";
-import { Observable } from "rxjs/Observable";
 import { PagedResult, QueryListBaseModel } from "../../../types/common.type";
 import { User } from "../../../types/auth.type";
 import { UsersService } from "../../../services/admin/users.service";
@@ -55,9 +58,9 @@ export class UsersComponent implements OnInit, OnDestroy {
     let userIndex = this.dataSource.data.findIndex(x => x.id == id);
     const confirm = window.confirm(`Do you really want to delete ${this.dataSource.data[userIndex].lastName}?`);
 
-    Observable.of(id)
-      .filter(() => confirm)
-      .switchMap(x => this.usersService.delete(x.toString()))
+    observableOf(id).pipe(
+      filter(() => confirm),
+      switchMap(x => this.usersService.delete(x.toString())),)
       .subscribe(res => this.snackBar.open("The user deleted successfully"));
   }
 

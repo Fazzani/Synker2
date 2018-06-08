@@ -1,3 +1,7 @@
+
+import {throwError as observableThrowError, of as observableOf } from 'rxjs';
+
+import {switchMap, map, catchError } from 'rxjs/operators';
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
@@ -6,7 +10,6 @@ import { AuthResponse, User, RegisterUser, Login, AuthModel } from "../../types/
 // All the RxJS stuff we need
 import { JwtHelper, tokenNotExpired } from "angular2-jwt";
 import { Observable, BehaviorSubject } from "rxjs/Rx";
-import { map, catchError, switchMap } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
 
 @Injectable()
@@ -65,11 +68,11 @@ export class AuthService extends BaseService {
 
   public isAuthorized(role: string): Observable<boolean> {
     let accessToken: string | null = localStorage.getItem("accessToken");
-    if (accessToken == null) return Observable.of(false);
-    return this.ConvertTokenToUser(accessToken).map(user => {
+    if (accessToken == null) return observableOf(false);
+    return this.ConvertTokenToUser(accessToken).pipe(map(user => {
       if (user.roles == undefined) return false;
       return user.roles.indexOf(role) != -1;
-    });
+    }));
   }
   /**
    * Update Authenticated field
@@ -87,7 +90,7 @@ export class AuthService extends BaseService {
     }
 
     this.decodeToken();
-    return Observable.of(res);
+    return observableOf(res);
   }
 
   /**
@@ -97,7 +100,7 @@ export class AuthService extends BaseService {
    * @memberof AuthService
    */
   public Signin(loginModel: Login): Observable<AuthResponse> {
-    return this.http.post(this.TOKEN_ENDPOINT, loginModel).map((res: AuthResponse) => {
+    return this.http.post(this.TOKEN_ENDPOINT, loginModel).pipe(map((res: AuthResponse) => {
       // Sign in successful if there's an access token in the response.
       if (typeof res.accessToken !== "undefined") {
         console.log(`Stores access token & refresh token.  `);
@@ -107,7 +110,7 @@ export class AuthService extends BaseService {
         this.router.navigateByUrl(this.redirectUrl);
       }
       return res;
-    });
+    }));
   }
 
   /**
@@ -118,9 +121,9 @@ export class AuthService extends BaseService {
    * @memberof AuthService
    */
   public Register(user: RegisterUser): Observable<any> {
-    return this.http.post(this.REGISTER_ENDPONT, user).switchMap((res: any) => {
+    return this.http.post(this.REGISTER_ENDPONT, user).pipe(switchMap((res: any) => {
       return this.Signin(<Login>{ username: user.username, password: user.password });
-    });
+    }));
   }
 
   /**
@@ -254,9 +257,9 @@ export class AuthService extends BaseService {
   private ConvertTokenToUser(token: any): Observable<User> {
     try {
       let jwtHelper: JwtHelper = new JwtHelper();
-      return Observable.of(this.mapTokenToUserModel(jwtHelper.decodeToken(token)));
+      return observableOf(this.mapTokenToUserModel(jwtHelper.decodeToken(token)));
     } catch (e) {
-      Observable.throw(e);
+      observableThrowError(e);
     }
   }
 

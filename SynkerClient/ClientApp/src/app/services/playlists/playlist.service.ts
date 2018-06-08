@@ -1,10 +1,11 @@
+
+import {catchError, map } from 'rxjs/operators';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
 
 // All the RxJS stuff we need
-import { Observable } from "rxjs/Rx";
-import { map, catchError } from "rxjs/operators";
+import { Observable } from "rxjs";
 import { HttpHeaders, HttpParams } from "@angular/common/http";
 import { PlaylistModel, PlaylistPostModel } from "../../types/playlist.type";
 import { QueryListBaseModel, PagedResult } from "../../types/common.type";
@@ -24,51 +25,51 @@ export class PlaylistService extends BaseService {
     return this.http
       .get(`${environment.base_api_url}${this.BaseUrl}/${id}`, {
         params: params
-      })
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      }).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   list(query: QueryListBaseModel): Observable<PagedResult<PlaylistModel>> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/search`, query)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(`${environment.base_api_url}${this.BaseUrl}/search`, query).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   synk(model: PlaylistPostModel): Observable<PlaylistModel> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/synk`, model)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(`${environment.base_api_url}${this.BaseUrl}/synk`, model).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   executeHandlers(model: TvgMedia[]): Observable<TvgMedia[]> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/handlers`, model)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(`${environment.base_api_url}${this.BaseUrl}/handlers`, model).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   match(id: string): Observable<PlaylistModel> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/match/$${id}`, null)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(`${environment.base_api_url}${this.BaseUrl}/match/$${id}`, null).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   matchtvg(id: string, onlyNotMatched: boolean = true): Observable<PlaylistModel> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/matchtvg/${id}?onlyNotMatched=${onlyNotMatched}`, null)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(`${environment.base_api_url}${this.BaseUrl}/matchtvg/${id}?onlyNotMatched=${onlyNotMatched}`, null).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   matchFiltredTvgSites(id: string, onlyNotMatched: boolean = true): Observable<PlaylistModel> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/matchfiltred/${id}?onlyNotMatched=${onlyNotMatched}`, null)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(`${environment.base_api_url}${this.BaseUrl}/matchfiltred/${id}?onlyNotMatched=${onlyNotMatched}`, null).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   /**
@@ -78,9 +79,9 @@ export class PlaylistService extends BaseService {
    */
   matchVideosByPlaylist(id: string): Observable<PlaylistModel> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/matchvideos/${id}`, null)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(`${environment.base_api_url}${this.BaseUrl}/matchvideos/${id}`, null).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   /**
@@ -90,9 +91,9 @@ export class PlaylistService extends BaseService {
    */
   matchVideos(...medias: TvgMedia[]): Observable<TvgMedia[]> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/matchvideos`, medias)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(`${environment.base_api_url}${this.BaseUrl}/matchvideos`, medias).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   /**
@@ -102,9 +103,9 @@ export class PlaylistService extends BaseService {
    */
   matchVideo(mediaName: string): Observable<any> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/matchvideo/${mediaName}`, null)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(`${environment.base_api_url}${this.BaseUrl}/matchvideo/${mediaName}`, null).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   //export(fromType: string, toType: string, ): Observable<any> {
@@ -115,9 +116,9 @@ export class PlaylistService extends BaseService {
 
   diff(model: PlaylistPostModel): Observable<PlaylistModel> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/diff`, model)
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      .post(`${environment.base_api_url}${this.BaseUrl}/diff`, model).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   addByUrl(p: PlaylistPostModel): Observable<PlaylistModel> {
@@ -125,9 +126,9 @@ export class PlaylistService extends BaseService {
       .post(`${environment.base_api_url}${this.BaseUrl}/create`, p, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
-      })
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      }).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   addByStream(p: PlaylistPostModel): Observable<PlaylistModel> {
@@ -135,9 +136,9 @@ export class PlaylistService extends BaseService {
       .post(`${environment.base_api_url}${this.BaseUrl}/create/m3u`, p, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
-      })
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      }).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   update(p: PlaylistModel): Observable<PlaylistModel> {
@@ -145,9 +146,9 @@ export class PlaylistService extends BaseService {
       .put(`${environment.base_api_url}${this.BaseUrl}/${p.publicId}`, p, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
-      })
-      .map(this.handleSuccess)
-      .catch(this.handleError);
+      }).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError),);
   }
 
   updateLight(p: PlaylistModel): Observable<any> {
@@ -155,7 +156,7 @@ export class PlaylistService extends BaseService {
       .put(`${environment.base_api_url}${this.BaseUrl}/light/${p.publicId}`, p, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
-      })
-      .catch(this.handleError);
+      }).pipe(
+      catchError(this.handleError));
   }
 }
