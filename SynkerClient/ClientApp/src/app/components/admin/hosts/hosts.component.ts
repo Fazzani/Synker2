@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from "@angular/core";
 import { MatSnackBar, MatTableDataSource, MatPaginator, MatSort } from "@angular/material";
-import { Observable } from "rxjs";
+import { of as observableOf } from "rxjs";
+import { switchMap, filter} from 'rxjs/operators';
 import { QueryListBaseModel } from "../../../types/common.type";
 import { Host } from "../../../types/host.type";
 import { HostsService } from "../../../services/admin/hosts.service";
@@ -81,10 +82,13 @@ export class HostsComponent implements OnInit, OnDestroy {
     let hostIndex = this.dataSource.data.findIndex(x => x.id == id);
     const confirm = window.confirm(`Do you really want to delete ${this.dataSource.data[hostIndex].name}?`);
 
-    Observable.of(id)
-      .filter(() => confirm)
-      .switchMap(x => this.hostsService.delete(x.toString()))
-      .subscribe(res => this.snackBar.open("The Host deleted successfully"));
+    observableOf(id).pipe(
+      filter(() => confirm),
+      switchMap(x => this.hostsService.delete(x.toString())),)
+      .subscribe(res => {
+        this.snackBar.open("The Host deleted successfully");
+        this.ngOnInit();
+      });
   }
 
   ngOnDestroy() {}

@@ -1,19 +1,17 @@
-
-import {throwError as observableThrowError, of as observableOf } from 'rxjs';
-
-import {switchMap, map, catchError } from 'rxjs/operators';
+import { throwError as observableThrowError, of as observableOf, Observable, BehaviorSubject } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
 import { AuthResponse, User, RegisterUser, Login, AuthModel } from "../../types/auth.type";
 // All the RxJS stuff we need
-import { JwtHelper, tokenNotExpired } from "angular2-jwt";
-import { Observable, BehaviorSubject } from "rxjs/Rx";
 import { environment } from "../../../environments/environment";
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable()
 export class AuthService extends BaseService {
+  jwtHelper = new JwtHelperService();
   /**
    * Is user authenticated
    *
@@ -82,11 +80,11 @@ export class AuthService extends BaseService {
   public isAuthenticated(): Observable<boolean> {
     // return a boolean reflecting
     // whether or not the token is expired
-    let res = tokenNotExpired("accessToken");
+    let res = this.jwtHelper.isTokenExpired("accessToken");
     if (!res) {
       console.log("Try to refresh it");
       this.getNewToken();
-      res = tokenNotExpired("accessToken");
+      res = this.jwtHelper.isTokenExpired("accessToken");
     }
 
     this.decodeToken();
@@ -240,12 +238,12 @@ export class AuthService extends BaseService {
    * @memberof AuthService
    */
   private decodeToken(): void {
-    if (tokenNotExpired("accessToken")) {
+    if (this.jwtHelper.isTokenExpired("accessToken")) {
       let token: string = this.getToken();
 
-      let jwtHelper: JwtHelper = new JwtHelper();
+      //let jwtHelper: JwtHelper = new JwtHelper();
       this.authenticated.next(true);
-      this.user.next(this.mapTokenToUserModel(jwtHelper.decodeToken(token)));
+      this.user.next(this.mapTokenToUserModel(this.jwtHelper.decodeToken(token)));
     }
   }
 
@@ -256,8 +254,7 @@ export class AuthService extends BaseService {
    */
   private ConvertTokenToUser(token: any): Observable<User> {
     try {
-      let jwtHelper: JwtHelper = new JwtHelper();
-      return observableOf(this.mapTokenToUserModel(jwtHelper.decodeToken(token)));
+      return observableOf(this.mapTokenToUserModel(this.jwtHelper.decodeToken(token)));
     } catch (e) {
       observableThrowError(e);
     }

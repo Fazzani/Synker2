@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>Register</h2>
-<form #UserRegister="ngForm" (ngSubmit)="register(UserRegister.form.value)" novalidate>
+<form #UserRegister="ngForm" (ngSubmit)="register()" novalidate>
     <mat-dialog-content fxLayout="column">
         <div fxLayout="row">
             <mat-select placeholder="Gender..." [(ngModel)]="registerUser.gender" name="gender">

@@ -1,7 +1,6 @@
-
+import { Observable } from "rxjs";
 import {finalize, tap} from 'rxjs/operators';
 import { HttpRequest, HttpInterceptor, HttpEvent, HttpResponse, HttpErrorResponse, HttpHandler } from "@angular/common/http";
-import { Observable } from "rxjs/Rx";
 import { Router } from "@angular/router";
 import { Injectable, Injector } from "@angular/core";
 import { CommonService } from "../services/common/common.service";

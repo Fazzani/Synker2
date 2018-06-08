@@ -1,8 +1,7 @@
+import { Observable } from "rxjs";
 import { Router, CanActivate, CanActivateChild, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { Injectable } from "@angular/core";
 import { AuthService } from "./auth.service";
-import { Observable } from "rxjs/Rx";
-import "rxjs/add/operator/map";
 
 @Injectable()
 export class AuthorizedRouteGuard implements CanActivate, CanActivateChild {

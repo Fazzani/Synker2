@@ -1,14 +1,11 @@
-
-import {of as observableOf} from 'rxjs';
-
-import {switchMap, filter} from 'rxjs/operators';
+import { of as observableOf } from 'rxjs';
+import { switchMap, filter } from 'rxjs/operators';
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { PlaylistService } from "../../services/playlists/playlist.service";
 import { MatDialog, MatSnackBar } from "@angular/material";
 import { PlaylistModel } from "../../types/playlist.type";
 import { QueryListBaseModel, PagedResult } from "../../types/common.type";
 import { ClipboardService } from "ngx-clipboard";
-import { Observable } from "rxjs/Rx";
 import { PlaylistAddDialog } from "../dialogs/playlistAddNew/playlist.add.component";
 import { PlaylistInfosDialog } from "../dialogs/playlistInfos/playlist.infos.component";
 

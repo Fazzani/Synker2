@@ -1,12 +1,9 @@
-
-import {catchError, map } from 'rxjs/operators';
+import { Observable } from "rxjs";
+import { catchError, map } from 'rxjs/operators';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
 import { Message, MessageQueryModel } from "../../types/message.type";
-
-// All the RxJS stuff we need
-import { Observable } from "rxjs/Rx";
 import { PagedResult } from "../../types/common.type";
 
 @Injectable()
