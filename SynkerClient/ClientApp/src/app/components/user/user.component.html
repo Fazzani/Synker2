@@ -1,0 +1,50 @@
+<div class="site-container">
+    <form #UserRegister="ngForm" novalidate *ngIf="user; else loading" fxLayout="column">
+        <mat-select placeholder="Gender..." [(ngModel)]="user.gender" name="gender">
+            <mat-option *ngFor="let gender of genders" [value]="gender.value">
+                {{ gender.viewValue }}
+            </mat-option>
+        </mat-select>
+        <mat-form-field>
+            <input matInput [(ngModel)]="user.firstName" name="firstName" placeholder="Firstname..." required #firstnameControl="ngModel">
+            <mat-error *ngIf="firstnameControl.touched && firstnameControl.invalid">
+                <span *ngIf="firstnameControl.errors.required">firstname is required </span>
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput [(ngModel)]="user.lastName" name="lastName" placeholder="Lastname..." required #lastnameControl="ngModel">
+            <mat-error *ngIf="lastnameControl.touched && lastnameControl.invalid">
+                <span *ngIf="lastnameControl.errors.required">lastname is required </span>
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="user.email" name="email" placeholder="Email..." required #emailControl="ngModel">
+            <mat-error *ngIf="emailControl.touched && emailControl.invalid">
+                <span *ngIf="emailControl.errors.required">email is required </span>
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [matDatepicker]="picker" [(ngModel)]="user.birthDay" name="birthDay" placeholder="Birthday...">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <img [src]="photo" class="logo-medium" />
+        <input type="hidden" [(ngModel)]="user.photo" name="photo" />
+        <button type="button" mat-button (click)="imgFileInput.click()">Add a photo</button>
+        <input hidden type="file" #imgFileInput accept="image/*" (change)="changeListener($event)" name="image" />
+        <mat-form-field>
+            <input matInput [value]="user.connectionState.userName" name="username" placeholder="Username..." readonly>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [value]="user.createdDate | date:'medium'" name="createdDate" readonly>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [value]="user.updatedDate | date:'medium'" name="updatedDate" readonly>
+        </mat-form-field>
+        <button mat-raised-button [disabled]="!UserRegister.form.valid" (click)="save()">Save</button>
+    </form>
+    <ng-template #loading>
+        <loader></loader>
+    </ng-template>
+</div>

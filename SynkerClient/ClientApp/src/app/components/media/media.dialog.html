@@ -1,0 +1,88 @@
+<form class="form-popin">
+    <!-- position -->
+    <mat-form-field>
+        <input matInput [(ngModel)]="mediaAndTvgSites[0].position" placeholder="Position..." name="media.position">
+    </mat-form-field>
+    <!-- name -->
+    <mat-form-field>
+        <input matInput [(ngModel)]="mediaAndTvgSites[0].name" placeholder="Name..." name="media.name">
+    </mat-form-field>
+    <!-- displayName -->
+    <mat-form-field>
+        <input matInput [(ngModel)]="mediaAndTvgSites[0].displayName" placeholder="DisplayName..." name="media.displayName">
+    </mat-form-field>
+    <!-- Lang -->
+    <mat-form-field>
+        <input matInput [(ngModel)]="mediaAndTvgSites[0].lang" placeholder="Lang..." name="media.lang">
+    </mat-form-field>
+    <!-- Group -->
+    <mat-form-field>
+        <input matInput [(ngModel)]="mediaAndTvgSites[0].mediaGroup.name" placeholder="Group..." name="media.mediaGroup.name">
+    </mat-form-field>
+    <!-- Url -->
+    <mat-form-field>
+        <input matInput [(ngModel)]="mediaAndTvgSites[0].url" placeholder="Url..." name="media.url" class="full-width">
+    </mat-form-field>
+    <!-- Media type -->
+    <mat-form-field>
+        <mat-select placeholder="Media Type" [(ngModel)]="mediaAndTvgSites[0].mediaType" name="media.mediatype" [compareWith]="compareFn">
+            <mat-option *ngFor="let mediatype of mediaTypes | keys" [value]="mediatype.value">
+                {{mediatype.key}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <!-- Enabled -->
+    <mat-checkbox [(ngModel)]="mediaAndTvgSites[0].enabled" name="media.enabled">Enabled</mat-checkbox>
+    <!-- Tvg informations -->
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Tvg
+            </mat-panel-title>
+            <mat-panel-description>
+                Media tvg informations
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <!-- AutoComplte tvgMedia -->
+        <mat-form-field class="full-width">
+            <input matInput #filterTvg [matAutocomplete]="auto" aria-label="tvg" [(ngModel)]="filter" placeholder="Tvg..." name="mediaAndTvgSites[0].tvg" (keyup)="search(filter)">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="tvgSelectionChange($event)" class="primary">
+                <mat-option *ngFor="let tvgmedia of tvgMedias | async" [value]="tvgmedia">
+                    {{tvgmedia.xmltv_id}} <small>  {{tvgmedia.site }}</small>
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+        <img [src]="mediaAndTvgSites[0].tvg.logo" class="logo-medium" />
+        <mat-form-field>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.id" placeholder="Tvg Id" name="mediaAndTvgSites[0].media.tvg.id">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.name" placeholder="Tvg Name" name="mediaAndTvgSites[0].media.tvg.name">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.tvgIdentify" placeholder="Tvg identifier" name="mediaAndTvgSites[0].media.tvg.tvgIdentify" readonly>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.shift" placeholder="Tvg Shift" name="mediaAndTvgSites[0].media.tvg.shift">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.audio_track" placeholder="Tvg Audio track" name="mediaAndTvgSites[0].media.tvg.audio_track">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.aspect_ratio" placeholder="Tvg Aspect ratio" name="mediaAndTvgSites[0].media.tvg.aspect_ratio">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.tvgSource.site" placeholder="Tvg Source" name="mediaAndTvgSites[0].media.tvg.tvgSource.site">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.tvgSource.code" placeholder="Tvg code" name="mediaAndTvgSites[0].media.tvg.tvgSource.code" readonly>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [(ngModel)]="mediaAndTvgSites[0].tvg.tvgSource.country" placeholder="Tvg country" name="mediaAndTvgSites[0].media.tvg.tvgSource.country">
+        </mat-form-field>
+
+    </mat-expansion-panel>
+    <mat-action-row>
+        <button mat-raised-button (click)="dialogRef.close()">Close</button>
+    </mat-action-row>
+</form>

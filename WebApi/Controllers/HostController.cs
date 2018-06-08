@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Hfa.WebApi.Controllers;
@@ -24,7 +23,7 @@ namespace hfa.WebApi.Controllers
 {
     [Produces("application/json")]
     [Route("api/v{version:apiVersion}/[controller]")]
-    [Authorize(Policy = AuthorizePolicies.ADMIN)]
+    [Authorize]
     [ApiVersion("1.0")]
     [ApiController]
     public class HostController : BaseController

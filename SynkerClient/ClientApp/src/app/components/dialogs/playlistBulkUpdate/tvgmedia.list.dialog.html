@@ -1,0 +1,90 @@
+<h2 mat-dialog-title>Update bulk</h2>
+<mat-dialog-content>
+    <mat-accordion>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Cultures and Groups
+                </mat-panel-title>
+                <mat-panel-description>
+                    Cultures and Groups
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <!-- Lang -->
+            <mat-form-field>
+                <mat-select placeholder="Lang" [(ngModel)]="selectedLang" (ngModelChange)="onChangeLang($event)" name="data.lang">
+                    <mat-option *ngFor="let cult of cultures" [value]="cult">
+                        {{cult}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <!-- MadiaType -->
+            <mat-form-field>
+                <mat-select placeholder="Media Type" [(ngModel)]="selectedMediaType" (ngModelChange)="onChangeMediaType(selectedMediaType)" name="data.mediatype">
+                    <mat-option *ngFor="let mediatype of mediaTypes | keys" [value]="mediatype.value">
+                        {{mediatype.key}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <!-- Groups -->
+            <mat-form-field floatPlaceholder="never">
+                <input matInput placeholder="Groups..." [(ngModel)]="group" [matAutocomplete]="autoGroup" (keyup)="searchGroups$.next($event)" (blur)="onBlurGroup()">
+                <mat-autocomplete #autoGroup="matAutocomplete">
+                    <mat-option *ngFor="let g of groupsfiltred" [value]="g" (onSelectionChange)="onChangeGroup(g)">
+                        <span>{{ g }}</span>
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            <!-- Enabled -->
+            <mat-slide-toggle [(ngModel)]="enabled" name="media.enabled" (ngModelChange)="onChangeEnabled(enabled)">
+                Enabled
+            </mat-slide-toggle>
+        </mat-expansion-panel>
+        <!-- Fix channel names -->
+        <mat-expansion-panel (opened)="panelOpenState = true"
+                             (closed)="panelOpenState = false">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Channels name
+                </mat-panel-title>
+                <mat-panel-description>
+                    Fix channel names
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-form-field floatPlaceholder="never">
+                <input matInput placeholder="Regex..." [(ngModel)]="filterChannelName">
+            </mat-form-field>
+            <mat-form-field floatPlaceholder="never">
+                <input matInput #replaceInput placeholder="Replace..." [(ngModel)]="replace">
+            </mat-form-field>
+            <button mat-raised-button color="primary" (click)="applyFixChannelName(replaceInput.value)">Apply</button>
+        </mat-expansion-panel>
+
+        <!-- TvgSource -->
+        <mat-expansion-panel (opened)="panelOpenState = true"
+                             (closed)="panelOpenState = false">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Tvg Source
+                </mat-panel-title>
+                <mat-panel-description>
+                    Map to Tvg Source
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-form-field class="example-full-width">
+                <input matInput placeholder="Filter tvg sites..." aria-label="TvgSource Site" [matAutocomplete]="auto" (keyup)="keyUpSitePack.next($event)">
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let sitePack of sitePacks" [value]="sitePack.site" (onSelectionChange)="onChangeTvgSourceSite(sitePack)">
+                        <span>{{ sitePack.site }}</span>
+                        <small style="color:aqua">{{ sitePack.country }}</small>
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>
+<mat-action-row>
+    <button mat-raised-button (click)="dialogRef.close()">Close</button>
+    <button mat-raised-button (click)="dialogRef.close()">Save</button>
+</mat-action-row>

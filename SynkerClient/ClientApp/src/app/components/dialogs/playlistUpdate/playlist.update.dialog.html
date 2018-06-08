@@ -1,0 +1,17 @@
+<mat-form-field>
+    <input matInput [(ngModel)]="data.freindlyname" placeholder="Name...">
+</mat-form-field>
+<mat-form-field>
+    <input matInput [(ngModel)]="data.url" placeholder="Url Source...">
+</mat-form-field>
+<mat-form-field>
+    <!--<input matInput [(ngModel)]="data.importProviderTag" readonly>-->
+    <input matInput [(ngModel)]="data.createdDate" placeholder="Created date" readonly>
+    <input matInput [(ngModel)]="data.updatedDate" placeholder="Updated date" readonly>
+</mat-form-field>
+<mat-checkbox formControlName="data.synkEpg">Synchronize EPG</mat-checkbox>
+<mat-checkbox formControlName="data.synkLogos">Synchronize picons</mat-checkbox>
+<mat-checkbox formControlName="data.synkGroup">Synchronize groups</mat-checkbox>
+<mat-action-row>
+    <button mat-raised-button (click)="dialogRef.close()">Close</button>
+</mat-action-row>

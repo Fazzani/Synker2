@@ -1,0 +1,114 @@
+<div class="dialog-container">
+    <mat-tab-group class="tab-group">
+        <mat-tab>
+            <ng-template mat-tab-label>
+                Playlist informations
+            </ng-template>
+            <div class="tab-content">
+                <div class="addnewplaylist">
+                    <form>
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="playlist.freindlyname" placeholder="Name..." name="freindlyname" required maxlength="100">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="playlist.url" placeholder="Url Source..." name="url" required>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-select placeholder="Providers" [(ngModel)]="playlist.importProvider" name="provider">
+                                <mat-option *ngFor="let provider of providersEnum" [value]="provider">
+                                    {{provider}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-select placeholder="synkGroup" [(ngModel)]="playlist.synkGroup" name="synkGroup" [compareWith]="compareFn">
+                                <mat-option *ngFor="let synkGroup of SynkGroupEnumValues | keys" [value]="synkGroup.value">
+                                    {{synkGroup.key}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-select placeholder="Status" [(ngModel)]="playlist.status" name="status" [compareWith]="compareFn">
+                                <mat-option *ngFor="let status of PlaylistStatusVaLues | keys" [value]="status.value">
+                                    {{status.key}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="playlist.importProvider" readonly name="ImportProvider" placeholder="Import provider...">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="playlist.createdDate" placeholder="Created date..." readonly name="createdDate">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="playlist.updatedDate" placeholder="Updated date..." readonly name="updatedDate">
+                        </mat-form-field>
+                        <mat-checkbox [(ngModel)]="playlist.synkEpg" name="synkEpg">Synchronize EPG</mat-checkbox>
+                        <mat-checkbox [(ngModel)]="playlist.synkLogos" name="synkLogos">Synchronize picons</mat-checkbox>
+                    </form>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab *ngIf="playlist.isXtream">
+            <ng-template mat-tab-label>
+                User informations
+            </ng-template>
+            <div class="tab-content">
+                <mat-list dense>
+                    <mat-list-item>
+                        <h3 matLine> Status </h3> <span> {{playlist.xtreamPlayerApi?.user_info.status }} </span>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h3 matLine> Is trial </h3> <span> {{playlist.xtreamPlayerApi?.user_info.isTrial }} </span>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h3 matLine> Status </h3> <span> {{playlist.xtreamPlayerApi?.user_info.status }} </span>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h3 matLine> Active </h3> <span> {{playlist.xtreamPlayerApi?.user_info.active }} </span>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h3 matLine> Timezone </h3> <span> {{playlist.xtreamPlayerApi?.user_info.timezone }} </span>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h3 matLine> Created date </h3><span> {{playlist.xtreamPlayerApi?.user_info.createdDate | date:'medium' }} </span>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h3 matLine> Expiration date </h3> <span> {{playlist.xtreamPlayerApi?.user_info.expirationDate | date:'medium' }} </span>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h3 matLine> Max connections </h3> <span> {{playlist.xtreamPlayerApi?.user_info.max_connections }} </span>
+                    </mat-list-item>
+                </mat-list>
+            </div>
+        </mat-tab>
+        <mat-tab *ngIf="playlist.isXtream">
+            <ng-template mat-tab-label>
+                Server informations
+            </ng-template>
+            <div class="tab-content">
+                <mat-list dense>
+                    <mat-list-item>
+                        <h3 matLine> Url </h3> <span> {{ playlist.xtreamPlayerApi?.server_info.url }} </span>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h3 matLine> Port </h3> <span> {{ playlist.xtreamPlayerApi?.server_info.port }} </span>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h3 matLine> Rtmp port </h3> <span> {{ playlist.xtreamPlayerApi?.server_info.rtmp_port }} </span>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h3 matLine> Timezone </h3> <span> {{ playlist.xtreamPlayerApi?.server_info.timezone }} </span>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <h3 matLine> Time now </h3> <span> {{ playlist.xtreamPlayerApi?.server_info.time_now | date:'medium' }} </span>
+                    </mat-list-item>
+                </mat-list>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+    <mat-action-row>
+        <button mat-raised-button (click)="dialogRef.close()">Close</button>
+        <button mat-raised-button (click)="save()">Save</button>
+    </mat-action-row>
+</div>

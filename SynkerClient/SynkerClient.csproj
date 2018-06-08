@@ -1,0 +1,219 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <IsPackable>false</IsPackable>
+    <SpaRoot>ClientApp\</SpaRoot>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+
+    <!-- Set this to true if you enable server-side prerendering -->
+    <BuildServerSideRenderer>false</BuildServerSideRenderer>
+    <DockerTargetOS>Linux</DockerTargetOS>
+    <UserSecretsId>42364d1f-9983-4e3b-b07d-ae00852e72c1</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="0.2.1686908" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Content Remove="$(SpaRoot)**" />
+    <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="ClientApp\src\app\app.module.routing.ts" />
+    <None Remove="ClientApp\src\app\components\admin\admin.component.ts" />
+    <None Remove="ClientApp\src\app\components\admin\dashboard\admin.dashboard.component.ts" />
+    <None Remove="ClientApp\src\app\components\dialogs\auth\LoginDialog.ts" />
+    <None Remove="ClientApp\src\app\components\dialogs\auth\RegisterDialog.ts" />
+    <None Remove="ClientApp\src\app\components\dialogs\playlistBulkUpdate\playlistBulkUpdate.ts" />
+    <None Remove="ClientApp\src\app\components\dialogs\playlistTvgSites\PlaylistTvgSitesDialog.ts" />
+    <None Remove="ClientApp\src\app\components\dialogs\playlistUpdate\playlist.update.dialog.ts" />
+    <None Remove="ClientApp\src\app\infrastructure\DefaultHttpInterceptor.ts" />
+    <None Remove="ClientApp\src\app\infrastructure\JwtInterceptor.ts" />
+    <None Remove="ClientApp\src\app\pipes\enumKey.pipe.ts" />
+    <None Remove="ClientApp\src\app\pipes\search.pipe.ts" />
+    <None Remove="ClientApp\src\app\services\auth\auth.service.spec.ts" />
+    <None Remove="ClientApp\src\app\services\auth\auth.service.ts" />
+    <None Remove="ClientApp\src\app\services\auth\loginRouteGuard.service.ts" />
+    <None Remove="ClientApp\src\app\services\base\base.service.spec.ts" />
+    <None Remove="ClientApp\src\app\services\common\common.service.spec.ts" />
+    <None Remove="ClientApp\src\app\services\common\common.service.ts" />
+    <None Remove="ClientApp\src\app\services\epg\epg.service.spec.ts" />
+    <None Remove="ClientApp\src\app\services\notification\notification.service.ts" />
+    <None Remove="ClientApp\src\app\services\tvgmedia\tvgmedia.service.spec.ts" />
+    <None Remove="ClientApp\src\app\types\auth.type.ts" />
+    <None Remove="ClientApp\src\app\types\common.type.ts" />
+    <None Remove="ClientApp\src\app\types\elasticQuery.type.ts" />
+    <None Remove="ClientApp\src\app\types\host.type.ts" />
+    <None Remove="ClientApp\src\app\types\matchTvgPostModel.ts" />
+    <None Remove="ClientApp\src\app\types\media.type.ts" />
+    <None Remove="ClientApp\src\app\types\picon.type.ts" />
+    <None Remove="ClientApp\src\app\types\xmltv.type.ts" />
+    <None Remove="ClientApp\src\app\types\xtream.type.ts" />
+    <None Remove="ClientApp\src\app\variables.ts" />
+    <None Remove="ClientApp\src\assets\img\bubbles2.svg" />
+    <None Remove="ClientApp\src\assets\img\file-video.svg" />
+    <None Remove="ClientApp\src\assets\img\Logomakr_35fXLN.png" />
+    <None Remove="ClientApp\src\assets\img\Logomakr_4958qa (1).png" />
+    <None Remove="ClientApp\src\assets\img\Logomakr_96izw0.png" />
+    <None Remove="ClientApp\src\assets\img\magic-wand.svg" />
+    <None Remove="ClientApp\src\assets\img\Mj2wCGp6m8.svg" />
+    <None Remove="ClientApp\src\assets\img\redo2.svg" />
+    <None Remove="ClientApp\src\assets\img\spinner2.svg" />
+    <None Remove="ClientApp\src\assets\img\spinner9.svg" />
+    <None Remove="ClientApp\src\assets\img\synker-144x144.png" />
+    <None Remove="ClientApp\src\assets\img\synker-192x192.png" />
+    <None Remove="ClientApp\src\assets\img\synker-826x875.png" />
+    <None Remove="ClientApp\src\assets\img\synker-96x96.png" />
+    <None Remove="ClientApp\src\assets\img\undo2.svg" />
+    <None Remove="ClientApp\src\assets\img\zoom-in.svg" />
+    <None Remove="ClientApp\src\assets\img\zoom-out.svg" />
+    <None Remove="ClientApp\src\favicon.ico" />
+    <None Remove="ClientApp\src\styles\global.scss" />
+    <None Remove="ClientApp\src\styles\style.scss" />
+    <None Remove="ClientApp\src\styles\_variables.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="ClientApp\src\assets\img\bubbles2.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\file-video.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\Logomakr_35fXLN.png">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\Logomakr_4958qa (1).png" />
+    <Content Include="ClientApp\src\assets\img\Logomakr_96izw0.png">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\magic-wand.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\Mj2wCGp6m8.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\redo2.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\spinner2.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\spinner9.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\synker-144x144.png">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\synker-192x192.png">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\synker-826x875.png">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\synker-96x96.png">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\undo2.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\zoom-in.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\assets\img\zoom-out.svg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\favicon.ico">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\styles\global.scss">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\styles\style.scss">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="ClientApp\src\styles\_variables.scss">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\app.module.routing.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\admin\admin.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\admin\dashboard\admin.dashboard.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\auth\LoginDialog.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\auth\RegisterDialog.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\playlistBulkUpdate\playlistBulkUpdate.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\playlistTvgSites\PlaylistTvgSitesDialog.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\playlistUpdate\playlist.update.dialog.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\infrastructure\DefaultHttpInterceptor.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\infrastructure\JwtInterceptor.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pipes\enumKey.pipe.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pipes\search.pipe.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\auth\auth.service.spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\auth\auth.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\auth\loginRouteGuard.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\base\base.service.spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\common\common.service.spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\common\common.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\epg\epg.service.spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\notification\notification.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\tvgmedia\tvgmedia.service.spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\types\auth.type.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\types\common.type.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\types\elasticQuery.type.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\types\host.type.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\types\matchTvgPostModel.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\types\media.type.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\types\picon.type.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\types\xmltv.type.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\types\xtream.type.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\variables.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="ClientApp\src\assets\img\Logomakr_4958qa %281%29.png">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\favicon.ico">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+    <!-- Ensure Node.js is installed -->
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+  </Target>
+
+  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+    <!-- As part of publishing, ensure the JS resources are freshly built in production mode npm cache verify-->
+	
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+	<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build --prod" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:ssr --prod" Condition=" '$(BuildServerSideRenderer)' == 'true' " />
+
+    <!-- Include the newly-built files in the publish output -->
+    <ItemGroup>
+      <DistFiles Include="$(SpaRoot)dist\**; $(SpaRoot)dist-server\**" />
+      <DistFiles Include="$(SpaRoot)node_modules\**" Condition="'$(BuildServerSideRenderer)' == 'true'" />
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>%(DistFiles.Identity)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+
+</Project>

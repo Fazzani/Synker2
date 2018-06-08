@@ -6,7 +6,7 @@ services:
     image: synker/webclient:${version:-latest}
     build:
       context: .
-      dockerfile: WebClient/Dockerfile
+      dockerfile: SynkerClient/Dockerfile
   
   hfa.webapi:
     image: synker/webapi:${version:-latest}

@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>Playlist groups</h2>
+<mat-dialog-content>
+  <mat-selection-list #groups (selectionChange)="onSelectedOptionsChange($event)">
+    <mat-list-option *ngFor="let group of groupMedias$ | async" [selected]="group.selected" [value]="group" [ngClass]="{'disabled':!group.selected}">
+      <mat-icon matListIcon>folder</mat-icon>
+      <div class="mat-list-text" style="flex-direction:column !important; align-items:flex-start; margin-left:2px">
+        <h4 matLine>{{group.title}}</h4>
+        <p matLine>{{group.count}} medias</p>
+      </div>
+    </mat-list-option>
+  </mat-selection-list>
+</mat-dialog-content>
+<mat-action-row class="action-row-bottom">
+  <button mat-raised-button (click)="dialogRef.close()">Close</button>
+  <button mat-raised-button (click)="toggleSelectionAll(true)">Select all</button>
+  <button mat-raised-button (click)="toggleSelectionAll(false)">Deselect all</button>
+</mat-action-row>
