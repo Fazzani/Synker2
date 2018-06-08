@@ -65,7 +65,7 @@ export class AuthService extends BaseService {
   }
 
   public isAuthorized(role: string): Observable<boolean> {
-    let accessToken: string | null = localStorage.getItem("accessToken");
+    let accessToken: string | null = this.getToken();
     if (accessToken == null) return observableOf(false);
     return this.ConvertTokenToUser(accessToken).pipe(map(user => {
       if (user.roles == undefined) return false;
@@ -80,11 +80,11 @@ export class AuthService extends BaseService {
   public isAuthenticated(): Observable<boolean> {
     // return a boolean reflecting
     // whether or not the token is expired
-    let res = this.jwtHelper.isTokenExpired("accessToken");
+    let res = this.jwtHelper.isTokenExpired(this.getToken());
     if (!res) {
       console.log("Try to refresh it");
       this.getNewToken();
-      res = this.jwtHelper.isTokenExpired("accessToken");
+      res = this.jwtHelper.isTokenExpired(this.getToken());
     }
 
     this.decodeToken();
@@ -238,7 +238,7 @@ export class AuthService extends BaseService {
    * @memberof AuthService
    */
   private decodeToken(): void {
-    if (this.jwtHelper.isTokenExpired("accessToken")) {
+    if (!this.jwtHelper.isTokenExpired(this.getToken())) {
       let token: string = this.getToken();
 
       //let jwtHelper: JwtHelper = new JwtHelper();
