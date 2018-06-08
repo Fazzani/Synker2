@@ -2,28 +2,7 @@
 @import '~@angular/material/theming';
 // always include only once per project
 @include mat-core();
-// Styles for the docs app that are based on the current theme.
-@mixin app-theme($theme) {
-  // $primary: map-get($theme, primary);
-  // $accent: map-get($theme, accent);
-  // $warn: map-get($theme, warn);
-  $background: map-get($theme, background); // $foreground: map-get($theme, foreground);
-  .app-background {
-    background-color: mat-color($background, background);
-  } // .docs-primary-header {
-  //   background: mat-color($primary);
-  //   h1 {
-  //     color: mat-color($primary, default-contrast);
-  //   }
-  // }
-  // .docs-footer {
-  //   background: mat-color($primary);
-  //   color: mat-color($primary, default-contrast);
-  // }
-  // @include nav-bar-theme($theme);
-  // @include home-theme($theme);
-}
-
+$md-mcgpalette0: ( 50: #ffffff, 100: #facada, 200: #f597b7, 300: #ee568a, 400: #ec3a76, 500: #e91e63, 600: #d41556, 700: #b8124a, 800: #9c0f3f, 900: #800d34, A100: #ffffff, A200: #ffa1c1, A400: #fc3e7e, A700: #f13071, contrast: ( 50: #000000, 100: #000000, 200: #000000, 300: #000000, 400: #ffffff, 500: #ffffff, 600: #ffffff, 700: #ffffff, 800: #ffffff, 900: #ffffff, A100: #000000, A200: #000000, A400: #ffffff, A700: #ffffff, ));
 .default-theme {
   $theme-primary: mat-palette($mat-indigo);
   $theme-accent: mat-palette($mat-red, A700, 600, 900);
@@ -43,8 +22,8 @@
       color: inherit !important;
     }
   }
-  $background: map-get($default-theme, background); // $foreground: map-get($theme, foreground);
-  background-color: mat-color($background, background);
+  $background: map-get($default-theme, primary); // $foreground: map-get($theme, foreground);
+  background-color: mat-color($background, 500, 0.5);
   @include angular-material-theme($default-theme);
 }
 
@@ -53,10 +32,10 @@
   @function create-wonky-theme($primary, $accent, $warn: mat-palette($mat-red)) {
     @return ( primary: $primary, accent: $accent, warn: $warn, is-dark: true, foreground: $my-dark-theme-foreground, background: $my-dark-theme-background, );
   }
-  $theme-primary: mat-palette($mat-blue-grey, 900);
+  $theme-primary: mat-palette($mat-blue-grey);
   $theme-accent: mat-palette($mat-yellow, A400, A100, A700);
   $theme-warn: mat-palette($mat-red); // custom background and foreground palettes
-  $my-dark-theme-background: ( status-bar: rgb(57, 66, 116), app-bar: map_get($mat-teal, 900), background: map-get($theme-primary, darker), hover: rgba(white, 0.04), card: map_get($mat-teal, 800), dialog: $primary-color-bg-dark, disabled-button: $white-12-opacity, raised-button: map-get($mat-grey, 800), focused-button: $white-6-opacity, selected-button: map_get($mat-teal, 900), selected-disabled-button: map_get($mat-grey, 800), disabled-button-toggle: black, unselected-chip: map_get($mat-grey, 700), disabled-list-option: black);
+  $my-dark-theme-background: ( status-bar: rgb(57, 66, 116), app-bar: map_get($mat-teal, 900), background: map-get($theme-primary, 100), hover: rgba(white, 0.04), card: map_get($mat-teal, 800), dialog: map_get($md-mcgpalette0, 900), disabled-button: $white-12-opacity, raised-button: map-get($mat-grey, 800), focused-button: $white-6-opacity, selected-button: map_get($mat-teal, 900), selected-disabled-button: map_get($mat-grey, 800), disabled-button-toggle: black, unselected-chip: map_get($mat-grey, 700), disabled-list-option: black);
   $my-dark-theme-foreground: ( base: yellow, divider: $white-12-opacity, dividers: $white-12-opacity, disabled: rgba(white, 0.3), disabled-button: rgba(white, 0.3), disabled-text: rgba(white, 0.3), hint-text: rgba(white, 0.3), secondary-text: rgba(white, 0.7), icon: white, icons: white, text: yellow, slider-min: white, slider-off: rgba(white, 0.3), slider-off-active: rgba(white, 0.3), ); // create theme (use mat-dark-theme for themes with dark backgrounds)
   $dark-theme: create-wonky-theme( $theme-primary, $theme-accent, $theme-warn);
   .active[role="row"] {
@@ -73,8 +52,8 @@
       color: inherit !important;
     }
   }
-  $background: map-get($dark-theme, background); // $foreground: map-get($theme, foreground);
-  background-color: mat-color($background, background);
+  $background: map-get($dark-theme, primary); // $foreground: map-get($theme, foreground);
+  background-color: mat-color($background, 500, 0.5);
   @include angular-material-theme($dark-theme);
 }
 
@@ -98,7 +77,7 @@
       color: inherit !important;
     }
   }
-  $background: map-get($light-theme, background); // $foreground: map-get($theme, foreground);
-  background-color: mat-color($background, background);
+  $background: map-get($light-theme, primary); // $foreground: map-get($theme, foreground);
+  background-color: mat-color($background, 500, 0.5);
   @include angular-material-theme($light-theme); // use our theme with angular-material-theme mixin
 }

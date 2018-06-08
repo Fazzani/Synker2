@@ -90,12 +90,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   setTheme(theme: string): void {
     this.componentCssClass = theme;
-    // const overlayContainerClasses = this.overlayContainer.getContainerElement().classList;
-    // const themeClassesToRemove: string[] = Array.from(Constants.ThemesList).filter((item: string) => item.includes("-theme"));
-    // if (themeClassesToRemove.length) {
-    //   overlayContainerClasses.remove(...themeClassesToRemove);
-    // }
-    // overlayContainerClasses.add(theme);
+    const overlayContainerClasses = this.overlayContainer.getContainerElement().classList;
+    const themeClassesToRemove: string[] = Array.from(Constants.ThemesList).filter((item: string) => item.includes("-theme"));
+    if (themeClassesToRemove.length) {
+      overlayContainerClasses.remove(...themeClassesToRemove);
+    }
+    overlayContainerClasses.add(theme);
   }
 
   ngOnDestroy(): void {}
