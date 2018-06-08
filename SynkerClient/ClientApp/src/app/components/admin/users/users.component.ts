@@ -1,7 +1,6 @@
 
-import {of as observableOf,  Observable } from 'rxjs';
-
-import {switchMap, filter} from 'rxjs/operators';
+import { of as observableOf } from 'rxjs';
+import { switchMap, filter} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from "@angular/core";
 import { MatSnackBar, MatTableDataSource, MatPaginator, MatSort } from "@angular/material";
 import { PagedResult, QueryListBaseModel } from "../../../types/common.type";
