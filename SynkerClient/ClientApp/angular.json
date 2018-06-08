@@ -22,11 +22,11 @@
               "src/favicon.ico"
             ],
             "styles": [
+              "src/styles/loader.scss",
               "node_modules/ngx-toastr/toastr.css",
-              "src/styles/style.scss",
-              "src/styles/global.scss",
               "src/styles/_variables.scss",
-              "src/styles/themes.scss"
+              "src/styles/themes.scss",
+              "src/styles/style.scss"
             ],
             "scripts": []
           },
@@ -79,7 +79,7 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/ngx-toastr/toastr.css",
               "src/styles/style.scss",
-              "src/styles/global.scss",
+              "src/styles/loader.scss",
               "src/styles/_variables.scss"
             ],
             "assets": [
