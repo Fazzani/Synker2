@@ -1,4 +1,4 @@
-import { JwtModule } from '@auth0/angular-jwt';
+import { JwtModule } from "@auth0/angular-jwt";
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -60,6 +60,11 @@ import { HostsComponent } from "./components/admin/hosts/hosts.component";
 import { OverlayModule } from "@angular/cdk/overlay";
 import { AuthorizedRouteGuard } from "./services/auth/authorizedRouteGuard.service";
 
+export function tokenGetter() {
+  return localStorage.getItem('access_token');
+}
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -116,11 +121,9 @@ import { AuthorizedRouteGuard } from "./services/auth/authorizedRouteGuard.servi
     OverlayModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: () => {
-          return localStorage.getItem('access_token');
-        },
-        whitelistedDomains: ['localhost:56800', 'api.synker.ovh'],
-        blacklistedRoutes: ['']
+        tokenGetter: tokenGetter,
+        whitelistedDomains: ["localhost:56800", "api.synker.ovh"],
+        blacklistedRoutes: [""]
       }
     })
   ],
