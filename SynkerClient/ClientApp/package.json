@@ -1,11 +1,11 @@
 {
   "name": "SynkerClient",
-  "version": "0.0.0",
+  "version": "0.0.70",
   "license": "MIT",
   "scripts": {
     "clean:install": "npm run clean && rimraf ./node_modules ./bin ./obj ./package-lock.json && dotnet restore && npm i",
     "ng": "ng",
-    "start": "ng serve --port=5000",
+    "start": "ng serve --port=56801",
     "build": "ng build",
     "build:ssr": "npm run build -- --app=ssr --output-hashing=media",
     "test": "ng test",
