@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -76,7 +76,6 @@
     <None Remove="ClientApp\src\assets\img\zoom-in.svg" />
     <None Remove="ClientApp\src\assets\img\zoom-out.svg" />
     <None Remove="ClientApp\src\favicon.ico" />
-    <None Remove="ClientApp\src\styles\global.scss" />
     <None Remove="ClientApp\src\styles\style.scss" />
     <None Remove="ClientApp\src\styles\_variables.scss" />
   </ItemGroup>
@@ -132,9 +131,6 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Include="ClientApp\src\favicon.ico">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="ClientApp\src\styles\global.scss">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Include="ClientApp\src\styles\style.scss">
