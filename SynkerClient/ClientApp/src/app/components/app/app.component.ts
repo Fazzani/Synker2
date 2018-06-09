@@ -1,5 +1,4 @@
-
-import {filter, distinctUntilChanged, debounceTime} from 'rxjs/operators';
+import { filter, distinctUntilChanged, debounceTime } from "rxjs/operators";
 import { Component, OnInit, OnDestroy, HostBinding } from "@angular/core";
 import "hammerjs";
 import "./app.component.css";
@@ -31,21 +30,23 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {
     this.objLoaderStatus = false;
 
-    // this.notifService.messages.subscribe(
-    //   m => {
-    //     console.log("new message ", m);
-    //     this.commonService.info(`New message ${m.messageType}`, m.content);
-    //   },
-    //   error => console.warn(error)
-    // );
+    this.notifService.messages.subscribe(
+      m => {
+        if (m != null) {
+          console.log("new message ", m);
+          this.commonService.info(`New message ${m.messageType}`, m.content);
+        }
+      },
+      error => console.warn(error)
+    );
   }
 
   ngOnInit() {
     this.setTheme(localStorage.getItem(Constants.ThemeKey) || "dark-theme");
 
     this.authService
-      .isAuthenticated().pipe(
-      distinctUntilChanged())
+      .isAuthenticated()
+      .pipe(distinctUntilChanged())
       .subscribe(isAuth => {
         console.log(
           `----------- JwtInterceptor 401 isAuth = ${isAuth} current url ${this.router.routerState.snapshot.url} this.authService.redirectUrl: ${
@@ -69,17 +70,21 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.commonService.loaderStatus.pipe(
-      distinctUntilChanged(),
-      debounceTime(2000),)
+    this.commonService.loaderStatus
+      .pipe(
+        distinctUntilChanged(),
+        debounceTime(2000)
+      )
       .subscribe((val: boolean) => {
         console.log("new loader data : ", val);
         this.objLoaderStatus = val;
       });
 
-    this.commonService.error.pipe(
-      distinctUntilChanged(),
-      filter(err => err != null),)
+    this.commonService.error
+      .pipe(
+        distinctUntilChanged(),
+        filter(err => err != null)
+      )
       .subscribe((err: Exception) => {
         this.commonService.displayError(err.message, err.title);
       });
