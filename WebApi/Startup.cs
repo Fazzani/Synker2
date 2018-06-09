@@ -52,6 +52,8 @@ using hfa.WebApi.Common.Swagger;
 using Newtonsoft.Json.Converters;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using hfa.WebApi.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace hfa.WebApi
 {
@@ -270,6 +272,8 @@ namespace hfa.WebApi
                 WebHookAction = genericHookAction
             });
             #endregion
+
+            services.AddSignalR();
         }
 
         /// <summary>
@@ -314,19 +318,6 @@ namespace hfa.WebApi
                     app.UseMiddleware<ByPassAuthMiddleware>();
                 }
 
-                //app.UseBasicAuthentication();
-
-                #region WebSockets
-
-                app.UseWebSockets(new WebSocketOptions
-                {
-                    KeepAliveInterval = TimeSpan.FromSeconds(120),
-                    ReceiveBufferSize = 4 * 1024
-                });
-
-                app.UseMiddleware<MessageWebSocketMiddleware>();
-                #endregion
-
                 #region Swagger
 
                 app.UseSwagger();
@@ -361,6 +352,11 @@ namespace hfa.WebApi
                     routes.MapRoute(
                         name: "default",
                         template: "{controller=HealthCheck}/{action=Index}");
+                });
+
+                app.UseSignalR(routes =>
+                {
+                    routes.MapHub<NotificationHub>("/notification");
                 });
             }
             catch (Exception ex)
@@ -438,6 +434,7 @@ namespace hfa.WebApi
         {
             CancellationToken ct = context.RequestAborted;
             var logger = context.RequestServices?.GetService<ILogger>();
+            var notifHub = context.RequestServices?.GetService<IHubContext<NotificationHub>>();
             try
             {
                 var messageJson = string.Empty;
@@ -453,16 +450,9 @@ namespace hfa.WebApi
                     logger?.LogInformation($"New WebSoket hook Message {nameof(GithubWebHookMessage)} : {messageJson}");
                 }
 
-                //Send to WebSocket
-                using (var socket = new ClientWebSocket())
+                if (notifHub != null)
                 {
-                    context.Response.ContentType = "application/json";
-                    context.Response.StatusCode = StatusCodes.Status200OK;
-                    await context.Response.WriteAsync(messageJson, ct);
-
-                    await socket.ConnectAsync(new Uri($"ws://{context.Request.Host}/ws"), ct);
-                    await MessageWebSocketMiddleware.SendStringAsync(socket, messageJson);
-                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", ct);
+                    await notifHub.Clients.All.SendAsync(messageJson, ct);
                 }
             }
             catch (WebSocketException wsex)

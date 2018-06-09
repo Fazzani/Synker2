@@ -176,12 +176,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="ClientApp\src\assets\img\Logomakr_4958qa %281%29.png">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\favicon.ico">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
@@ -198,7 +193,7 @@
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode npm cache verify-->
 	
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-	<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build --prod" />
+	  <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build --prod" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:ssr --prod" Condition=" '$(BuildServerSideRenderer)' == 'true' " />
 
     <!-- Include the newly-built files in the publish output -->
@@ -211,5 +206,11 @@
       </ResolvedFileToPublish>
     </ItemGroup>
   </Target>
-
+  <Target Name="CleanDist" AfterTargets="Clean">
+    <ItemGroup>
+      <FilesToDelete Include="$(SpaRoot)dist\**; $(SpaRoot)dist-server\**" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+    <RemoveDir Directories="$(SpaRoot)\dist; $(SpaRoot)\dist-server" />
+  </Target>
 </Project>
