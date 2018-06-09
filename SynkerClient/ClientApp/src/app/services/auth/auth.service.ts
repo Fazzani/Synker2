@@ -11,7 +11,6 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable()
 export class AuthService extends BaseService {
-  jwtHelper = new JwtHelperService();
   /**
    * Is user authenticated
    *
@@ -44,7 +43,7 @@ export class AuthService extends BaseService {
    * @param {Router} router
    * @memberof AuthService
    */
-  constructor(protected http: HttpClient, private router: Router) {
+  constructor(protected http: HttpClient, private router: Router, private jwtHelper: JwtHelperService) {
     super(http, "auth");
     this.REGISTER_ENDPONT = environment.base_api_url + "auth/register";
     this.TOKEN_ENDPOINT = environment.base_api_url + "auth/token";
@@ -61,7 +60,7 @@ export class AuthService extends BaseService {
    */
   public getToken(): string {
     // get the token
-    return localStorage.getItem("accessToken");
+    return localStorage.getItem("access_token");
   }
 
   public isAuthorized(role: string): Observable<boolean> {
@@ -78,17 +77,15 @@ export class AuthService extends BaseService {
    * @memberof AuthService
    */
   public isAuthenticated(): Observable<boolean> {
-    // return a boolean reflecting
-    // whether or not the token is expired
     let res = this.jwtHelper.isTokenExpired(this.getToken());
-    if (!res) {
+    if (res) {
       console.log("Try to refresh it");
       this.getNewToken();
       res = this.jwtHelper.isTokenExpired(this.getToken());
     }
 
     this.decodeToken();
-    return observableOf(res);
+    return observableOf(true);
   }
 
   /**
@@ -131,7 +128,7 @@ export class AuthService extends BaseService {
    */
   public getNewToken(): void {
     let refreshToken: string | null = localStorage.getItem("refreshToken");
-    let accessToken: string | null = localStorage.getItem("accessToken");
+    let accessToken: string | null = localStorage.getItem("access_token");
 
     if (refreshToken != null && accessToken != null) {
       // Token endpoint & params.
@@ -173,9 +170,9 @@ export class AuthService extends BaseService {
 
       this.http.post(revocationEndpoint, { token: token }).subscribe(
         () => {
-          localStorage.removeItem("accessToken");
+          localStorage.removeItem("access_token");
         },
-        err => localStorage.removeItem("accessToken")
+        err => localStorage.removeItem("access_token")
       );
     }
   }
@@ -280,7 +277,7 @@ export class AuthService extends BaseService {
    */
   private store(body: AuthResponse): void {
     // Stores access token in local storage to keep user signed in.
-    localStorage.setItem("accessToken", body.accessToken);
+    localStorage.setItem("access_token", body.accessToken);
     // Stores refresh token in local storage.
     localStorage.setItem("refreshToken", body.refreshToken);
 

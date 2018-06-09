@@ -1,9 +1,5 @@
-//import { AppComponent } from './app.component';
-//import { HomeComponent } from './home/home.component';
-//import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { JwtModule } from '@auth0/angular-jwt';
 import { NgModule } from "@angular/core";
-//import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
@@ -27,7 +23,6 @@ import { MessageService } from "./services/message/message.service";
 import { CommonService } from "./services/common/common.service";
 import { NavBarModule } from "./components/shared/navbar/navbar";
 import { FlexLayoutModule } from "@angular/flex-layout";
-import { TokenInterceptor } from "./services/auth/token.interceptor";
 import { DefaultHttpInterceptor } from "./infrastructure/DefaultHttpInterceptor";
 import { MediaRefService } from "./services/mediaref/mediaref.service";
 import { PlaylistService } from "./services/playlists/playlist.service";
@@ -41,8 +36,6 @@ import { JwtInterceptor } from "./infrastructure/JwtInterceptor";
 import { ToastrModule } from "ngx-toastr";
 import { PushNotificationsModule } from "ng-push";
 import { ClipboardModule } from "ngx-clipboard";
-//import { BASE_URL, BASE_API_URL, BASE_WS_URL } from './variables';
-//import { NgHttpLoaderModule } from 'ng-http-loader/ng-http-loader.module';
 import { PlaylistTvgSitesDialog } from "./components/dialogs/playlistTvgSites/PlaylistTvgSitesDialog";
 import { PlaylistBulkUpdate } from "./components/dialogs/playlistBulkUpdate/playlistBulkUpdate";
 import { PlaylistAddDialog } from "./components/dialogs/playlistAddNew/playlist.add.component";
@@ -69,7 +62,6 @@ import { AuthorizedRouteGuard } from "./services/auth/authorizedRouteGuard.servi
 
 @NgModule({
   declarations: [
-    // BrowserModule,
     AppComponent,
     HomeComponent,
     MediaComponent,
@@ -121,7 +113,16 @@ import { AuthorizedRouteGuard } from "./services/auth/authorizedRouteGuard.servi
     ReactiveFormsModule,
     ClipboardModule,
     AppRoutingModule,
-    OverlayModule
+    OverlayModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: () => {
+          return localStorage.getItem('access_token');
+        },
+        whitelistedDomains: ['localhost:56800', 'api.synker.ovh'],
+        blacklistedRoutes: ['']
+      }
+    })
   ],
   entryComponents: [
     TvgMediaModifyDialog,
@@ -159,11 +160,6 @@ import { AuthorizedRouteGuard } from "./services/auth/authorizedRouteGuard.servi
     {
       provide: HTTP_INTERCEPTORS,
       useClass: DefaultHttpInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: TokenInterceptor,
       multi: true
     },
     {
