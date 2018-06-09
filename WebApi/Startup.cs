@@ -52,6 +52,7 @@ using hfa.WebApi.Common.Swagger;
 using Newtonsoft.Json.Converters;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using hfa.WebApi.Hubs;
 
 namespace hfa.WebApi
 {
@@ -174,7 +175,7 @@ namespace hfa.WebApi
                 options.UseCaseSensitivePaths = true;
                 options.MaximumBodySize = 1024;
             });
-
+            
             //MVC
             services.AddMvc(config =>
             {
@@ -270,6 +271,8 @@ namespace hfa.WebApi
                 WebHookAction = genericHookAction
             });
             #endregion
+
+            services.AddSignalR();
         }
 
         /// <summary>
@@ -348,6 +351,11 @@ namespace hfa.WebApi
                     routes.MapRoute(
                         name: "default",
                         template: "{controller=HealthCheck}/{action=Index}");
+                });
+
+                app.UseSignalR(routes =>
+                {
+                    routes.MapHub<NotificationHub>("/notification");
                 });
             }
             catch (Exception ex)
@@ -441,16 +449,16 @@ namespace hfa.WebApi
                 }
 
                 //Send to WebSocket
-                using (var socket = new ClientWebSocket())
-                {
-                    context.Response.ContentType = "application/json";
-                    context.Response.StatusCode = StatusCodes.Status200OK;
-                    await context.Response.WriteAsync(messageJson, ct);
+                //using (var socket = new ClientWebSocket())
+                //{
+                //    context.Response.ContentType = "application/json";
+                //    context.Response.StatusCode = StatusCodes.Status200OK;
+                //    await context.Response.WriteAsync(messageJson, ct);
 
-                    await socket.ConnectAsync(new Uri($"ws://{context.Request.Host}/ws"), ct);
-                    await MessageWebSocketMiddleware.SendStringAsync(socket, messageJson);
-                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", ct);
-                }
+                //    await socket.ConnectAsync(new Uri($"ws://{context.Request.Host}/ws"), ct);
+                //    await MessageWebSocketMiddleware.SendStringAsync(socket, messageJson);
+                //    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", ct);
+                //}
             }
             catch (WebSocketException wsex)
             {

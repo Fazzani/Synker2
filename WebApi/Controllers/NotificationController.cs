@@ -14,7 +14,6 @@ using hfa.WebApi.Common.Filters;
 using hfa.WebApi.Models.Notifications;
 using Hfa.WebApi.Controllers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -22,10 +21,9 @@ using Microsoft.Extensions.Options;
 namespace hfa.WebApi.Controllers
 {
     [Produces("application/json")]
-    [Route("api/v1/[controller]")]
+    [ApiVersion("1.0")]
     [Authorize]
     [Route("api/v{version:apiVersion}/[controller]")]
-    [ApiVersion("1.0")]
     [ApiController]
     public class NotificationController : BaseController
     {
