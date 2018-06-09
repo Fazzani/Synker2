@@ -314,19 +314,6 @@ namespace hfa.WebApi
                     app.UseMiddleware<ByPassAuthMiddleware>();
                 }
 
-                //app.UseBasicAuthentication();
-
-                #region WebSockets
-
-                app.UseWebSockets(new WebSocketOptions
-                {
-                    KeepAliveInterval = TimeSpan.FromSeconds(120),
-                    ReceiveBufferSize = 4 * 1024
-                });
-
-                app.UseMiddleware<MessageWebSocketMiddleware>();
-                #endregion
-
                 #region Swagger
 
                 app.UseSwagger();
