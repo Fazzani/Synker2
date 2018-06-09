@@ -50,10 +50,10 @@ using System.IO;
 using Microsoft.Extensions.FileProviders;
 using hfa.WebApi.Common.Swagger;
 using Newtonsoft.Json.Converters;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using hfa.WebApi.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using hfa.PlaylistBaseLibrary.Common;
 
 namespace hfa.WebApi
 {
@@ -285,10 +285,23 @@ namespace hfa.WebApi
         /// <param name="synkerDbContext"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, SynkerDbContext synkerDbContext)
         {
+            var log = loggerFactory.CreateLogger<Startup>();
             app.UseResponseCompression();
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
             app.Map("/liveness", lapp => lapp.Run(async ctx => ctx.Response.StatusCode = 200));
+            var appAbout = JsonConvert.SerializeObject(new ApplicationAbout
+            {
+                Author = "Synker corporation",
+                ApplicationName = "Synker",
+            });
+            app.Map("/about", lapp => lapp.Run(async ctx =>
+            {
+                log.LogDebug("about");
+                ctx.Response.ContentType = "application/json";
+                ctx.Response.StatusCode = 200;
+                await ctx.Response.WriteAsync(appAbout);
+            }));
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
             synkerDbContext.Database.Migrate();
@@ -307,7 +320,6 @@ namespace hfa.WebApi
                 loggerFactory.AddConsole(Configuration.GetSection("Logging"));
                 loggerFactory.AddDebug();
             }
-            var log = loggerFactory.CreateLogger<Startup>();
 
             try
             {

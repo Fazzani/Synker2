@@ -3,7 +3,6 @@
   "version": "0.0.70",
   "license": "MIT",
   "scripts": {
-    "clean:install": "npm run clean && rimraf ./node_modules ./bin ./obj ./package-lock.json && dotnet restore && npm i",
     "ng": "ng",
     "start": "ng serve --port=56801",
     "build": "ng build",
@@ -11,6 +10,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
+    "clean:install": "npm run clean && rimraf ./node_modules ./bin ./obj ./package-lock.json && dotnet restore && npm i",
     "clean": "rimraf wwwroot/dist clientapp/dist"
   },
   "private": true,

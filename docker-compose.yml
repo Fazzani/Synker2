@@ -7,15 +7,21 @@ services:
     build:
       context: .
       dockerfile: SynkerClient/Dockerfile
+      args:
+      - version:${version}
   
   hfa.webapi:
     image: synker/webapi:${version:-latest}
     build:
       context: .
       dockerfile: WebApi/Dockerfile
+      args:
+      - version:${version}
   
   hfa.synker.batch:
     image: synker/batch:${version:-latest}
     build:
       context: .
       dockerfile: SyncLibrary/Dockerfile
+      args:
+      - version:${version}

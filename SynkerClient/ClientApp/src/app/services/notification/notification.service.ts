@@ -2,7 +2,6 @@ import { BehaviorSubject } from "rxjs";
 import { map, retry, share } from "rxjs/operators";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-// import { RxWebsocketSubject } from "../../types/wsReconnectionSubject.type";
 import { Message } from "../../types/message.type";
 import { BaseService } from "../base/base.service";
 import { environment } from "../../../environments/environment";
@@ -13,11 +12,13 @@ import { CommonService } from "../common/common.service";
 export class NotificationService extends BaseService {
   public messages: BehaviorSubject<Message> = new BehaviorSubject<Message>(null);
   private hubConnection: HubConnection;
+  readonly  hubName: string = 'notification';
 
   constructor(protected http: HttpClient, private commonService: CommonService) {
     super(http, "");
-    this.hubConnection = new HubConnectionBuilder().withUrl(`${environment.base_hub_url}notification`).build();
+    this.hubConnection = new HubConnectionBuilder().withUrl(`${environment.base_hub_url}${this.hubName}`).build();
 
+    //TODO: retry when failed // see implementation in this file history
     this.hubConnection
       .start()
       .then(() => this.commonService.info("Hub connection", "Connecté au hub"))

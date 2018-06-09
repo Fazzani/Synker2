@@ -1,6 +1,9 @@
 ARG arch=x64
+ARG version=1.0.0
 FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
 ARG arch
+ARG version
+ENV VERSION=$version
 LABEL maintainer="synker-team@synker.ovh" \
       description="WebApi Synker suite application" \
       system.dist="linux" system.arch="$arch" multi.name="Synker WebClient"
