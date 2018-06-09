@@ -53,6 +53,7 @@ using Newtonsoft.Json.Converters;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using hfa.WebApi.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace hfa.WebApi
 {
@@ -175,7 +176,7 @@ namespace hfa.WebApi
                 options.UseCaseSensitivePaths = true;
                 options.MaximumBodySize = 1024;
             });
-            
+
             //MVC
             services.AddMvc(config =>
             {
@@ -433,6 +434,7 @@ namespace hfa.WebApi
         {
             CancellationToken ct = context.RequestAborted;
             var logger = context.RequestServices?.GetService<ILogger>();
+            var notifHub = context.RequestServices?.GetService<IHubContext<NotificationHub>>();
             try
             {
                 var messageJson = string.Empty;
@@ -448,17 +450,10 @@ namespace hfa.WebApi
                     logger?.LogInformation($"New WebSoket hook Message {nameof(GithubWebHookMessage)} : {messageJson}");
                 }
 
-                //Send to WebSocket
-                //using (var socket = new ClientWebSocket())
-                //{
-                //    context.Response.ContentType = "application/json";
-                //    context.Response.StatusCode = StatusCodes.Status200OK;
-                //    await context.Response.WriteAsync(messageJson, ct);
-
-                //    await socket.ConnectAsync(new Uri($"ws://{context.Request.Host}/ws"), ct);
-                //    await MessageWebSocketMiddleware.SendStringAsync(socket, messageJson);
-                //    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", ct);
-                //}
+                if (notifHub != null)
+                {
+                    await notifHub.Clients.All.SendAsync(messageJson, ct);
+                }
             }
             catch (WebSocketException wsex)
             {

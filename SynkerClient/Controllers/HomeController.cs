@@ -12,7 +12,7 @@ namespace SynkerClient.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            return Ok();
         }
 
         public IActionResult Error()
