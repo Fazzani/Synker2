@@ -5,7 +5,6 @@ import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
 import { AuthResponse, User, RegisterUser, Login, AuthModel } from "../../types/auth.type";
-// All the RxJS stuff we need
 import { environment } from "../../../environments/environment";
 import { JwtHelperService } from '@auth0/angular-jwt';
 
