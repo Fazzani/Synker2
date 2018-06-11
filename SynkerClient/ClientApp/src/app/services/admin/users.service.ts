@@ -1,10 +1,7 @@
-
 import { catchError, map } from 'rxjs/operators';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
-
-// All the RxJS stuff we need
 import { Observable } from "rxjs";
 import { User } from "../../types/auth.type";
 import { PagedResult, QueryListBaseModel } from "../../types/common.type";

@@ -10,10 +10,10 @@ namespace SynkerClient.Controllers
     //[Route("api/[controller]")]
     public class HomeController : Controller
     {
-        public IActionResult Index()
-        {
-            return Ok();
-        }
+        //public IActionResult Index()
+        //{
+        //    return Ok();
+        //}
 
         public IActionResult Error()
         {

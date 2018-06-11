@@ -11,13 +11,12 @@
     <!-- Set this to true if you enable server-side prerendering -->
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
     <DockerTargetOS>Linux</DockerTargetOS>
-    <UserSecretsId>42364d1f-9983-4e3b-b07d-ae00852e72c1</UserSecretsId>
+    <UserSecretsId>f934f0be-ac10-4dd6-b82f-d7aecb08f04b</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.1.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="0.2.1686908" />
   </ItemGroup>
 
   <ItemGroup>

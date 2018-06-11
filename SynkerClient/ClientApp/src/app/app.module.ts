@@ -1,5 +1,5 @@
 import { JwtModule } from "@auth0/angular-jwt";
-import { NgModule } from "@angular/core";
+import { NgModule, APP_INITIALIZER } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
@@ -20,7 +20,7 @@ import { TvgMediaService } from "./services/tvgmedia/tvgmedia.service";
 import { EpgService } from "./services/epg/epg.service";
 import { XmltvService } from "./services/xmltv/xmltv.service";
 import { MessageService } from "./services/message/message.service";
-import { CommonService } from "./services/common/common.service";
+import { CommonService, Constants } from "./services/common/common.service";
 import { NavBarModule } from "./components/shared/navbar/navbar";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { DefaultHttpInterceptor } from "./infrastructure/DefaultHttpInterceptor";
@@ -59,11 +59,16 @@ import { HostsService } from "./services/admin/hosts.service";
 import { HostsComponent } from "./components/admin/hosts/hosts.component";
 import { OverlayModule } from "@angular/cdk/overlay";
 import { AuthorizedRouteGuard } from "./services/auth/authorizedRouteGuard.service";
+import { BrowserModule } from "@angular/platform-browser";
+import { InitAppService } from "./services/initApp/InitAppService";
 
 export function tokenGetter() {
-  return localStorage.getItem('access_token');
+  return localStorage.getItem("access_token");
 }
 
+export function getAboutApplication(initService: InitAppService) {
+  return () => initService.getAboutApplication();
+}
 
 @NgModule({
   declarations: [
@@ -101,7 +106,7 @@ export function tokenGetter() {
     KeysPipe
   ],
   imports: [
-    //BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    BrowserModule.withServerTransition({ appId: "ng-cli-universal" }),
     BrowserAnimationsModule,
     PushNotificationsModule,
     FlexLayoutModule,
@@ -159,6 +164,7 @@ export function tokenGetter() {
     XtreamService,
     SitePackService,
     HostsService,
+    InitAppService,
     EpgService,
     {
       provide: HTTP_INTERCEPTORS,
@@ -169,6 +175,12 @@ export function tokenGetter() {
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptor,
       multi: true
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: getAboutApplication,
+      multi: true,
+      deps: [InitAppService]
     }
   ],
   bootstrap: [AppComponent]

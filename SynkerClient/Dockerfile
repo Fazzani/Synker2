@@ -9,7 +9,7 @@ LABEL maintainer="synker-team@synker.ovh" \
   system.dist="linux" system.arch="$arch" multi.name="Synker WebClient"
 RUN apt-get -qq update && apt-get -y upgrade
 EXPOSE 56801
-HEALTHCHECK --interval=3m --timeout=1m CMD curl -f http://localhost:56801/ || exit 1
+HEALTHCHECK --interval=3m --timeout=1m CMD curl -f http://localhost:56801/liveness || exit 1
 
 ARG arch=x64
 FROM microsoft/dotnet:2.1-sdk AS publish

@@ -1,5 +1,9 @@
 <mat-progress-bar mode="indeterminate" style="position:fixed;top:0;z-index:99" color="warn" *ngIf="objLoaderStatus">></mat-progress-bar>
 <app-navbar class="mat-elevation-z6 primary" (onThemeChanged)="handleThemeChanged($event)">
 </app-navbar>
-
+<div class="loading" [hidden]="!loading">
+  <svg class="svg">
+    <use xlink:href="/assets/img/Mj2wCGp6m8.svg#svg4619"></use>
+  </svg>
+</div>
 <router-outlet></router-outlet>

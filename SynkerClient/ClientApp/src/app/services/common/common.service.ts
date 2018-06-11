@@ -5,13 +5,12 @@ import { ToastrService } from "ngx-toastr";
 
 @Injectable()
 export class CommonService {
-  public loaderStatus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-  public error: BehaviorSubject<Exception> = new BehaviorSubject<Exception>(null);
-
   /**
    * @constructor
    */
   constructor(private toastyService: ToastrService) {}
+  public loaderStatus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  public error: BehaviorSubject<Exception> = new BehaviorSubject<Exception>(null);
 
   info(title: string, message: string): void {
     this.toastyService.info(message, title);
@@ -87,6 +86,7 @@ export class Constants {
   static LS_EpgQueryKey: string = "epgQuery";
   static LS_MediaRefQueryKey: string = "mediaRefQuery";
   static LS_SiteQueryKey: string = "SitePackQuery";
+  static LS_ABOUT_APP_KEY: string = "LS_ABOUT_APP_KEY";
   static MediaPageListKey: string = "mediaPageList";
   static ThemeKey: string = "theme";
   static ThemesList = ["default-theme", "dark-theme", "light-theme"];

@@ -1,12 +1,12 @@
+import { Component, OnInit, OnDestroy, HostBinding , AfterViewInit } from '@angular/core';
 import { filter, distinctUntilChanged, debounceTime } from "rxjs/operators";
-import { Component, OnInit, OnDestroy, HostBinding } from "@angular/core";
+import { Router, NavigationStart, NavigationCancel, NavigationEnd } from '@angular/router';
 import "hammerjs";
 import "./app.component.css";
 import { NotificationService } from "../../services/notification/notification.service";
 import { MatSnackBar } from "@angular/material";
 import { CommonService, Constants } from "../../services/common/common.service";
 import { AuthService } from "../../services/auth/auth.service";
-import { Router } from "@angular/router";
 import { Exception } from "../../types/common.type";
 import * as variables from "../../variables";
 import { OverlayContainer } from "@angular/cdk/overlay";
@@ -19,6 +19,7 @@ export class AppComponent implements OnInit, OnDestroy {
   @HostBinding("class") componentCssClass;
   color = "primary";
   objLoaderStatus: boolean;
+  loading:boolean;
 
   constructor(
     private notifService: NotificationService,
@@ -29,7 +30,6 @@ export class AppComponent implements OnInit, OnDestroy {
     private overlayContainer: OverlayContainer
   ) {
     this.objLoaderStatus = false;
-
     this.notifService.messages.subscribe(
       m => {
         if (m != null) {
@@ -39,6 +39,7 @@ export class AppComponent implements OnInit, OnDestroy {
       },
       error => console.warn(error)
     );
+    this.loading = true;
   }
 
   ngOnInit() {
@@ -106,4 +107,21 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {}
+
+  ngAfterViewInit() {
+    this.router.events
+        .subscribe((event) => {
+            if(event instanceof NavigationStart) {
+                this.loading = true;
+            }
+            else if (
+                event instanceof NavigationEnd ||
+                event instanceof NavigationCancel
+                ) {
+                  setTimeout(() => { // here
+                    this.loading = false;
+                  }, 2000);
+            }
+        });
+}
 }

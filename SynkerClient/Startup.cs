@@ -61,9 +61,10 @@ namespace SynkerClient
                 Author = "Synker corporation",
                 ApplicationName = "Synker",
             });
+
             app.Map("/about", lapp => lapp.Run(async ctx =>
             {
-                log.LogDebug("about");
+                log.LogDebug("Requesting About client application...");
                 ctx.Response.ContentType = "application/json";
                 ctx.Response.StatusCode = 200;
                 await ctx.Response.WriteAsync(appAbout);
@@ -79,6 +80,10 @@ namespace SynkerClient
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
+
+                routes.MapSpaFallbackRoute(
+                  name: "spa-fallback",
+                  defaults: new { controller = "Home", action = "Index" });
             });
 
             app.UseSpa(spa =>
@@ -87,34 +92,32 @@ namespace SynkerClient
                 // see https://go.microsoft.com/fwlink/?linkid=864501
                 spa.Options.SourcePath = "ClientApp";
 
-                spa.UseSpaPrerendering(options =>
-                 {
-                     //TODO: inject to typescript
-                     options.SupplyData = (context, data) =>
-                     {
-                         // Creates a new value called isHttpsRequest that's passed to TypeScript code
-                         data["about"] = JsonConvert.SerializeObject(new ApplicationAbout
-                         {
-                             Author = "Synker corporation",
-                             ApplicationName = "Synker",
-                         });
-                     };
+                //spa.UseSpaPrerendering(options =>
+                // {
+                //     //TODO: inject to typescript
+                //     options.SupplyData = (context, data) =>
+                //     {
+                //         // Creates a new value called isHttpsRequest that's passed to TypeScript code
+                //         data["about"] = JsonConvert.SerializeObject(new ApplicationAbout
+                //         {
+                //             Author = "Synker corporation",
+                //             ApplicationName = "Synker",
+                //         });
+                //     };
 
-                     options.BootModulePath = $"{spa.Options.SourcePath}/dist-server/main.bundle.js";
-                     options.BootModuleBuilder = env.IsDevelopment()
-                         ? new AngularCliBuilder(npmScript: "build:ssr")
-                         : null;
-                     options.ExcludeUrls = new[] { "/sockjs-node", "/liveness", "/about" };
-                 });
+                //     options.BootModulePath = $"{spa.Options.SourcePath}/dist-server/main.bundle.js";
+                //     options.BootModuleBuilder = env.IsDevelopment()
+                //         ? new AngularCliBuilder(npmScript: "build:ssr")
+                //         : null;
+                //     options.ExcludeUrls = new[] { "/sockjs-node", "/liveness", "/about" };
+                // });
 
                 if (env.IsDevelopment())
                 {
-                    // spa.UseAngularCliServer(npmScript: "start");
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:56801");
+                    //spa.UseAngularCliServer(npmScript: "start");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:56810");
                 }
             });
-
-
         }
     }
 }
