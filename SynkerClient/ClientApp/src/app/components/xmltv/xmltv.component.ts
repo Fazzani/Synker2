@@ -1,4 +1,4 @@
-import { fromEvent as observableFromEvent,  BehaviorSubject, Subscription, Observable } from 'rxjs';
+import { fromEvent,  BehaviorSubject, Subscription, Observable } from 'rxjs';
 import { distinctUntilChanged, debounceTime, merge, map } from 'rxjs/operators';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from "@angular/core";
 import { DataSource } from "@angular/cdk/collections";
@@ -42,7 +42,7 @@ export class XmltvComponent implements OnInit, OnDestroy {
 
     this.subscriptionTableEvent = this.paginator.page
       .asObservable().pipe(
-      merge(observableFromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup")),
+      merge(fromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup")),
       debounceTime(1000),
       distinctUntilChanged(),)
       .subscribe(x => {

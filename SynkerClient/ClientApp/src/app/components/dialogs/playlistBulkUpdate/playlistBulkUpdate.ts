@@ -3,7 +3,7 @@ import {distinct, tap, filter, map, debounceTime, distinctUntilChanged} from 'rx
 import { OnInit, OnDestroy, Component, ViewChild, Inject } from "@angular/core";
 import { MediaType, TvgMedia, TvgSource, Tvg } from "../../../types/media.type";
 import { sitePackChannel } from "../../../types/sitepackchannel.type";
-import { Subject ,  Observable } from "rxjs";
+import { Subject, Observable } from "rxjs";
 import { MatAutocompleteTrigger, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 import { SitePackService } from "../../../services/sitepack/sitepack.service";
 

@@ -1,4 +1,4 @@
-import { of as observableOf, fromEvent as observableFromEvent,  BehaviorSubject, Subscription, Observable } from 'rxjs';
+import { of, fromEvent,  BehaviorSubject, Subscription, Observable } from 'rxjs';
 import { debounceTime, switchMap, distinctUntilChanged, map, filter, tap, merge } from 'rxjs/operators';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from "@angular/core";
 import { DataSource } from "@angular/cdk/collections";
@@ -51,7 +51,7 @@ export class SitePackComponent implements OnInit, OnDestroy {
 
     this.subscriptionTableEvent = this.paginator.page
       .asObservable().pipe(
-      merge(observableFromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup")),
+      merge(fromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup")),
       debounceTime(1500),
       distinctUntilChanged(),)
       .subscribe(x => {
@@ -126,7 +126,7 @@ export class SitePackComponent implements OnInit, OnDestroy {
   delete(id: string): void {
     const confirm = window.confirm("Do you really want to delete this media ref?");
 
-    observableOf(id).pipe(
+    of(id).pipe(
       filter(() => confirm),
       switchMap(x => this.sitePackService.delete(x)),)
       .subscribe(res => {
@@ -205,7 +205,7 @@ export class SitePackModifyDialog implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    observableFromEvent<KeyboardEvent>(this.filterPicon.nativeElement, "keyup").pipe(
+    fromEvent<KeyboardEvent>(this.filterPicon.nativeElement, "keyup").pipe(
       debounceTime(1000),
       distinctUntilChanged(),)
       .subscribe((x: KeyboardEvent) => {

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostBinding , AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
 import { filter, distinctUntilChanged, debounceTime } from "rxjs/operators";
 import { Router, NavigationStart, NavigationCancel, NavigationEnd } from '@angular/router';
 import "hammerjs";

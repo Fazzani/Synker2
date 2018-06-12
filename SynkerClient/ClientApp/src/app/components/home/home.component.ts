@@ -1,4 +1,4 @@
-import { of as observableOf } from 'rxjs';
+import { of } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { PlaylistService } from "../../services/playlists/playlist.service";
@@ -46,7 +46,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   delete(playlist: PlaylistModel): void {
     const confirm = window.confirm(`Do you really want to delete this playlist ${playlist.freindlyname}?`);
 
-    observableOf(playlist.publicId).pipe(
+    of(playlist.publicId).pipe(
       filter(() => confirm),
       switchMap(x => this.playlistService.delete(x)),)
       .subscribe(res => {

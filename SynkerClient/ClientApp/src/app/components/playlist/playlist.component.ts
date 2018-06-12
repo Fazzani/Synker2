@@ -1,5 +1,5 @@
 
-import { of as observableOf, from as observableFrom, fromEvent as observableFromEvent,  Subscription, BehaviorSubject } from 'rxjs';
+import { of, from, fromEvent,  Subscription, BehaviorSubject } from 'rxjs';
 import { toArray, distinct, map, tap, mergeMap, filter, merge, debounceTime, distinctUntilChanged, switchMap, groupBy } from 'rxjs/operators';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, AfterViewInit } from "@angular/core";
 import { MatPaginator, PageEvent, MatSort, MatDialog, MatSnackBar, MatTableDataSource } from "@angular/material";
@@ -189,7 +189,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.subscriptionTableEvent = this.paginator.page
       .asObservable().pipe(
-      merge(observableFromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup")),
+      merge(fromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup")),
       debounceTime(1000),
       distinctUntilChanged(),)
       .subscribe(x => {
@@ -330,7 +330,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     this.commonService.displayLoader(true);
 
     let counter: number = 1;
-    observableFrom(this.dataSource.data).pipe(
+    from(this.dataSource.data).pipe(
       groupBy(x => x.mediaGroup.name),
       mergeMap(x => x.pipe(toArray(),map(m => m.sort((a, b) => (a.displayName === b.displayName ? 0 : a.displayName > b.displayName ? 1 : -1))),)),
       mergeMap(x => x),
@@ -352,7 +352,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
       width: "550px",
       data: [
         this.dataSource.data.filter((v, i) => v.selected),
-        observableFrom(this.dataSource.data.filter(f => f.mediaGroup.name != null).map(x => x.mediaGroup.name)).pipe(
+        from(this.dataSource.data.filter(f => f.mediaGroup.name != null).map(x => x.mediaGroup.name)).pipe(
           distinct(),
           toArray(),)
       ]
@@ -448,7 +448,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
   deleteSelected(): void {
     const confirm = window.confirm("Do you really want to delete all selected medias?");
-    observableOf("").pipe(
+    of("").pipe(
       filter(() => confirm),
       switchMap(x => {
         this.dataSource.data = this.dataSource.data.filter(x => !x.selected);
@@ -462,7 +462,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     const confirm = window.confirm("Do you really want to delete this media?");
     let mediaIndex = this.dataSource.data.findIndex(x => x.id == id);
     console.log(`media ${id} with index ${mediaIndex} removed`);
-    observableOf(id).pipe(
+    of(id).pipe(
       filter(() => confirm),
       switchMap(x => {
         this.dataSource.data.splice(mediaIndex, 1);
@@ -573,7 +573,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
    * Group medias
    */
   groupMedias(): void {
-    observableFrom(this.dataSource.data).pipe(
+    from(this.dataSource.data).pipe(
       groupBy(x => x.mediaGroup.name),
       mergeMap(group => group.pipe(toArray())),);
   }

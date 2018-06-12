@@ -1,5 +1,5 @@
 
-import { of as observableOf } from 'rxjs';
+import { of } from 'rxjs';
 import { switchMap, filter} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from "@angular/core";
 import { MatSnackBar, MatTableDataSource, MatPaginator, MatSort } from "@angular/material";
@@ -57,7 +57,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     let userIndex = this.dataSource.data.findIndex(x => x.id == id);
     const confirm = window.confirm(`Do you really want to delete ${this.dataSource.data[userIndex].lastName}?`);
 
-    observableOf(id).pipe(
+    of(id).pipe(
       filter(() => confirm),
       switchMap(x => this.usersService.delete(x.toString())),)
       .subscribe(res => this.snackBar.open("The user deleted successfully"));

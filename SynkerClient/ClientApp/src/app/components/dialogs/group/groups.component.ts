@@ -1,4 +1,4 @@
-import { from as observableFrom, Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { mergeMap, reduce, map, groupBy, toArray } from 'rxjs/operators';
 import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA, MatSelectionListChange } from "@angular/material";
@@ -18,7 +18,7 @@ export class GroupsDialog implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.groupMedias$ = observableFrom(this.playlist.tvgMedias).pipe(
+    this.groupMedias$ = from(this.playlist.tvgMedias).pipe(
       groupBy(x => x.mediaGroup.name),
       mergeMap(group =>
         group.pipe(

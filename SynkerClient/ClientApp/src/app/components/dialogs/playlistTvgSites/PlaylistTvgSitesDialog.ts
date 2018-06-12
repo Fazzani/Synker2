@@ -1,5 +1,4 @@
-
-import {tap, mergeMap} from 'rxjs/operators';
+import { tap, mergeMap } from 'rxjs/operators';
 import { OnInit, OnDestroy, Inject, Component } from "@angular/core";
 import { sitePackChannel } from "../../../types/sitepackchannel.type";
 import { PlaylistService } from "../../../services/playlists/playlist.service";

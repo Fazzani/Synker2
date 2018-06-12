@@ -1,25 +1,8 @@
-
-import { merge as observableMerge, of as observableOf, fromEvent as observableFromEvent,  BehaviorSubject, Subject, Subscription ,  Observable } from 'rxjs';
-
-import { catchError, merge, startWith, map, switchMap, distinctUntilChanged, debounceTime } from 'rxjs/operators';
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  ElementRef,
-  OnDestroy,
-  Inject
-} from "@angular/core";
+import { of, fromEvent, BehaviorSubject, Subject, Subscription, Observable } from "rxjs";
+import { catchError, merge, startWith, map, switchMap, distinctUntilChanged, debounceTime } from "rxjs/operators";
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from "@angular/core";
 import { DataSource } from "@angular/cdk/collections";
-import {
-  MatPaginator,
-  MatSort,
-  MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-  MatSnackBar,
-  MatAutocompleteSelectedEvent
-} from "@angular/material";
+import { MatPaginator, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatAutocompleteSelectedEvent } from "@angular/material";
 import { TvgMediaService } from "../../services/tvgmedia/tvgmedia.service";
 import { CommonService, Constants } from "../../services/common/common.service";
 import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
@@ -44,32 +27,16 @@ export class MediaComponent implements OnInit, OnDestroy {
   currentItem: TvgMedia | null;
 
   /** media ctor */
-  constructor(
-    private tvgMediaService: TvgMediaService,
-    private commonService: CommonService,
-    public dialog: MatDialog,
-    public snackBar: MatSnackBar
-  ) {}
+  constructor(private tvgMediaService: TvgMediaService, private commonService: CommonService, public dialog: MatDialog, public snackBar: MatSnackBar) {}
 
   /** Called by Angular after media component initialized */
   ngOnInit(): void {
-    let storedQuery = this.commonService.JsonToObject<ElasticQuery>(
-      localStorage.getItem(Constants.LS_MediaQueryKey)
-    );
+    let storedQuery = this.commonService.JsonToObject<ElasticQuery>(localStorage.getItem(Constants.LS_MediaQueryKey));
     console.log("storedQuery ", storedQuery);
-    this.paginator.pageIndex =
-      storedQuery != null ? Math.floor(storedQuery.from / storedQuery.size) : 0;
+    this.paginator.pageIndex = storedQuery != null ? Math.floor(storedQuery.from / storedQuery.size) : 0;
     this.paginator.pageSizeOptions = [50, 100, 250, 1000];
-    this.paginator.pageSize =
-      storedQuery != null
-        ? storedQuery.size
-        : this.paginator.pageSizeOptions[0];
-    this.filter.nativeElement.value =
-      storedQuery != null &&
-      storedQuery.query != null &&
-      storedQuery.query != {}
-        ? JSON.stringify(storedQuery.query)
-        : "";
+    this.paginator.pageSize = storedQuery != null ? storedQuery.size : this.paginator.pageSizeOptions[0];
+    this.filter.nativeElement.value = storedQuery != null && storedQuery.query != null && storedQuery.query != {} ? JSON.stringify(storedQuery.query) : "";
 
     if (storedQuery != null && storedQuery.sort !== undefined) {
       this.sort.active = Object.keys(storedQuery.sort)[0];
@@ -77,29 +44,21 @@ export class MediaComponent implements OnInit, OnDestroy {
     }
     storedQuery = null;
 
-    this.dataSource = new MediaDataSource(
-      this.tvgMediaService,
-      this.paginator,
-      this.sort
-    );
+    this.dataSource = new MediaDataSource(this.tvgMediaService, this.paginator, this.sort);
 
-    this.subscriptionTableEvent = observableFromEvent<KeyboardEvent>(
-      this.filter.nativeElement,
-      "keyup"
-    ).pipe(
-      debounceTime(1000),
-      distinctUntilChanged(),)
+    this.subscriptionTableEvent = fromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup")
+      .pipe(
+        debounceTime(1000),
+        distinctUntilChanged()
+      )
       .subscribe(x => {
         if (!this.dataSource) {
           return;
         }
-        let objectQuery = this.commonService.JsonToObject(
-          this.filter.nativeElement.value
-        );
+        let objectQuery = this.commonService.JsonToObject(this.filter.nativeElement.value);
         console.log("objectQuery => ", objectQuery);
         this.paginator.pageIndex = 0;
-        this.dataSource.filter =
-          objectQuery != null ? objectQuery : this.filter.nativeElement.value;
+        this.dataSource.filter = objectQuery != null ? objectQuery : this.filter.nativeElement.value;
       });
   }
 
@@ -151,9 +110,7 @@ export class TvgMediaModifyDialog implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    let res = this.mediaAndTvgSites[1]
-      .map(x => `\"${x}\"`)
-      .reduce((p, c) => `${p} OR ${c}`);
+    let res = this.mediaAndTvgSites[1].map(x => `\"${x}\"`).reduce((p, c) => `${p} OR ${c}`);
 
     this.tvgMedias = this.searchTerms.pipe(
       debounceTime(1000),
@@ -161,18 +118,14 @@ export class TvgMediaModifyDialog implements OnInit, OnDestroy {
       switchMap(
         term =>
           term
-            ? this.sitePackService
-                .simpleSearch<sitePackChannel>(
-                  `site : ${term}*^5 OR xmltv_id: ${term}`,
-                  "sitepack"
-                ).pipe(
-                map(x => x.result))
-            : observableOf<sitePackChannel[]>([])
+            ? this.sitePackService.simpleSearch<sitePackChannel>(`site : ${term}*^5 OR xmltv_id: ${term}`, "sitepack").pipe(map(x => x.result))
+            : of<sitePackChannel[]>([])
       ),
       catchError(error => {
         console.log(error);
-        return observableOf<sitePackChannel[]>([]);
-      }),);
+        return of<sitePackChannel[]>([]);
+      })
+    );
   }
 
   compareByValue(f1: any, f2: any) {
@@ -223,11 +176,7 @@ export class MediaDataSource extends DataSource<TvgMedia> {
     this._filterChange.next(filter);
   }
 
-  constructor(
-    private tvgMediaService: TvgMediaService,
-    private MatPaginator: MatPaginator,
-    private _sort: MatSort
-  ) {
+  constructor(private tvgMediaService: TvgMediaService, private MatPaginator: MatPaginator, private _sort: MatSort) {
     super();
 
     // this._filterChange
@@ -238,14 +187,10 @@ export class MediaDataSource extends DataSource<TvgMedia> {
   }
 
   connect(): Observable<TvgMedia[]> {
-    const displayDataChanges = [
-      this._sort.sortChange,
-      this.MatPaginator.page,
-      this.MatPaginator.pageSize
-    ];
+    const displayDataChanges = [this._sort.sortChange, this.MatPaginator.page, this.MatPaginator.pageSize];
 
     return this._filterChange.pipe(
-      merge(observableMerge(...displayDataChanges)),
+      merge(merge(...displayDataChanges)),
       startWith(null),
       switchMap(() => {
         this.isLoadingResults = true;
@@ -265,8 +210,9 @@ export class MediaDataSource extends DataSource<TvgMedia> {
       catchError(() => {
         this.isLoadingResults = false;
         // Catch if the GitHub API has reached its rate limit. Return empty data.
-        return observableOf([]);
-      }),);
+        return of([]);
+      })
+    );
   }
   /**
    * Get medias list from webapi
@@ -285,17 +231,11 @@ export class MediaDataSource extends DataSource<TvgMedia> {
     let typeProp = typeof defaultObjectTvgMedia[this._sort.active];
 
     let sortField = this._sort.active;
-    if (typeof defaultObjectTvgMedia[this._sort.active] === "string")
-      sortField += ".keyword";
+    if (typeof defaultObjectTvgMedia[this._sort.active] === "string") sortField += ".keyword";
 
-    let sortObject = JSON.parse(
-      '{"' + sortField + '" : {"order":"' + this._sort.direction + '"}}'
-    );
+    let sortObject = JSON.parse('{"' + sortField + '" : {"order":"' + this._sort.direction + '"}}');
 
-    let pageSize =
-      this.MatPaginator.pageSize === undefined
-        ? 25
-        : this.MatPaginator.pageSize;
+    let pageSize = this.MatPaginator.pageSize === undefined ? 25 : this.MatPaginator.pageSize;
     let query = <ElasticQuery>{
       from: pageSize * this.MatPaginator.pageIndex,
       size: pageSize,
