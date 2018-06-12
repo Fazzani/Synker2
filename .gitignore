@@ -277,3 +277,4 @@ log/
 *docker-elk-serilog-*-buffer-*.json
 *docker-elk-serilog-*-buffer-*.json
 WebClient/app/
+/SynkerClient/ClientApp/package-lock.json
