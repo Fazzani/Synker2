@@ -10,7 +10,12 @@ echo $id
 token=eldMP66rbB3lYO-pNF94AA
 body='{
 "request": {
-"branch":"master"
+"branch":"master",
+"config": {
+   "env": {
+        "version": "${2}"
+   }
+ }
 }}'
 
 curl -s -X POST \

@@ -4,7 +4,7 @@
 trigger(){
 
   if [ -f ./trigger-build.sh ]; then
-    . ./trigger-build.sh $1
+    . ./trigger-build.sh $1 $2
   fi
 }
 
@@ -54,11 +54,11 @@ if [[ "$DOCKER_BUILD" == true ]]; then
   docker-compose push
 
   # build image with latest tag version
-  export version="latest"
+  export version=$TRAVIS_TAG
   docker-compose build
   docker-compose push
   
-  trigger "Fazzani/synker-docker"
+  trigger "Fazzani/synker-docker" $TRAVIS_TAG
   
   exit 0
 fi
