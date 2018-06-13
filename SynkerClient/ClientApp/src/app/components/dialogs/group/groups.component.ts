@@ -1,5 +1,5 @@
-import { from, Observable } from 'rxjs';
-import { mergeMap, reduce, map, groupBy, toArray } from 'rxjs/operators';
+import { from, Observable, GroupedObservable } from "rxjs";
+import { mergeMap, reduce, map, groupBy, toArray } from "rxjs/operators";
 import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA, MatSelectionListChange } from "@angular/material";
 import { PlaylistModel } from "../../../types/playlist.type";
@@ -12,38 +12,33 @@ import { TvgMedia } from "../../../types/media.type";
 export class GroupsDialog implements OnInit, OnDestroy {
   groupMedias$: Observable<{ title: string; medias: TvgMedia[]; count: number; selected: boolean }[]>;
 
-  constructor(
-    public dialogRef: MatDialogRef<GroupsDialog>,
-    @Inject(MAT_DIALOG_DATA) public playlist: PlaylistModel
-  ) {}
+  constructor(public dialogRef: MatDialogRef<GroupsDialog>, @Inject(MAT_DIALOG_DATA) public playlist: PlaylistModel) {}
 
   ngOnInit(): void {
     this.groupMedias$ = from(this.playlist.tvgMedias).pipe(
       groupBy(x => x.mediaGroup.name),
       mergeMap(group =>
         group.pipe(
-          reduce((acc:any, tvgmedia) => {
+          reduce((acc: any, tvgmedia:GroupedObservable<string, TvgMedia>) => {
             acc.push(tvgmedia);
             return acc;
-          }),
+          },[]),
           map(tvgmedias => ({
             title: group.key || "Untitled",
             medias: tvgmedias,
             count: tvgmedias.length,
             selected: tvgmedias ? !tvgmedias[0].mediaGroup.disabled : true
-          })),)
+          }))
+        )
       ),
-      toArray(),);
+      toArray()
+    );
   }
 
   onSelectedOptionsChange(selectedOptionChanged: MatSelectionListChange): void {
-    let value = <
-      { title: string; medias: TvgMedia[]; count: number; selected: boolean }
-    >selectedOptionChanged.option.value;
+    let value = <{ title: string; medias: TvgMedia[]; count: number; selected: boolean }>selectedOptionChanged.option.value;
     value.selected = !value.selected;
-    value.medias.forEach(
-      x => (x.mediaGroup.disabled = !selectedOptionChanged.option.selected)
-    );
+    value.medias.forEach(x => (x.mediaGroup.disabled = !selectedOptionChanged.option.selected));
   }
 
   toggleSelectionAll(selected: boolean): void {

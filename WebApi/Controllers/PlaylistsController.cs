@@ -120,6 +120,41 @@ namespace Hfa.WebApi.Controllers
             if (playlist == null)
                 return NotFound(id);
 
+            //var tmp = playlist.TvgMedias.Where(x => x.Name.Contains("SPORTS MAX") && x.Group.Equals("beIN SPORTS"));
+
+            //foreach (var item in tmp)
+            //{
+            //    if (item.Name.Contains('1'))
+            //    {
+            //        item.Tvg.Id = "max1";
+            //        item.Tvg.Name = "max1";
+            //        item.Tvg.TvgIdentify = "mena_sports/max1";
+            //        item.Tvg.TvgSiteSource = "Bein.net";
+            //    }
+            //    else if (item.Name.Contains('2'))
+            //    {
+            //        item.Tvg.Id = "max2";
+            //        item.Tvg.Name = "max2";
+            //        item.Tvg.TvgIdentify = "mena_sports/max2";
+            //        item.Tvg.TvgSiteSource = "Bein.net";
+            //    }
+            //    else if (item.Name.Contains('3'))
+            //    {
+            //        item.Tvg.Id = "max3";
+            //        item.Tvg.Name = "max3";
+            //        item.Tvg.TvgIdentify = "mena_sports/max3";
+            //        item.Tvg.TvgSiteSource = "Bein.net";
+            //    }
+            //    else if (item.Name.Contains('4'))
+            //    {
+            //        item.Tvg.Id = "max4";
+            //        item.Tvg.Name = "max4";
+            //        item.Tvg.TvgIdentify = "mena_sports/max4";
+            //        item.Tvg.TvgSiteSource = "Bein.net";
+            //    }
+            //}
+            //await _dbContext.SaveChangesAsync(cancellationToken);
+
             var res = light ? Ok(PlaylistModel.ToLightModel(playlist, Url)) : Ok(PlaylistModel.ToModel(playlist, Url));
             return res;
         }

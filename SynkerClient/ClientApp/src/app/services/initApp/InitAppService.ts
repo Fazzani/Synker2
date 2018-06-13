@@ -1,10 +1,18 @@
 import { AboutApplication } from "../../types/aboutApplication.type";
 import { Injectable } from "@angular/core";
 import { Constants } from "../common/common.service";
-
+import { environment } from "../../../environments/environment";
+const aboutDefault: AboutApplication = <AboutApplication>{
+  ApplicationName: "Synker",
+  Author: "Synker",
+  LastUpdate: new Date().toLocaleTimeString(),
+  License: "MIT",
+  Version: "1.0.0-beta"
+};
 @Injectable()
 export class InitAppService {
   about: AboutApplication;
+
   /**
    * @constructor
    */
@@ -25,7 +33,13 @@ export class InitAppService {
           console.log(`About: ${this.about}`);
           resolve(this.about);
         } else if (xhr.readyState === XMLHttpRequest.DONE) {
-          reject();
+          if (environment.production) {
+            reject();
+          } else {
+            localStorage.setItem(Constants.LS_ABOUT_APP_KEY, JSON.stringify(aboutDefault));
+            this.about = aboutDefault;
+            resolve(this.about);
+          }
         }
       });
 
