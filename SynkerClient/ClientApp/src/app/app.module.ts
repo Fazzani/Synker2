@@ -46,6 +46,10 @@ import { OverlayModule } from "@angular/cdk/overlay";
 import { BrowserModule } from "@angular/platform-browser";
 import { InitAppService } from "./services/initApp/InitAppService";
 import { GroupComponent } from "./components/group/group.component";
+import { PlaylistDetailResolver } from "./components/playlist/playlist.resolver";
+import { MessagesResolver } from "./components/messages/messages.resolver";
+import { UsersResolver } from "./components/admin/users/users.resolver";
+import { HostsResolver } from "./components/admin/hosts/hosts.resolver";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -150,7 +154,11 @@ export function getAboutApplication(initService: InitAppService) {
       useFactory: getAboutApplication,
       multi: true,
       deps: [InitAppService]
-    }
+    },
+    PlaylistDetailResolver,
+    MessagesResolver,
+    HostsResolver,
+    UsersResolver
   ],
   bootstrap: [AppComponent]
 })

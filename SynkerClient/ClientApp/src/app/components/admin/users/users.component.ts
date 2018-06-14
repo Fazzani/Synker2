@@ -6,6 +6,7 @@ import { MatSnackBar, MatTableDataSource, MatPaginator, MatSort } from "@angular
 import { PagedResult, QueryListBaseModel } from "../../../types/common.type";
 import { User } from "../../../types/auth.type";
 import { UsersService } from "../../../services/admin/users.service";
+import { ActivatedRoute } from '@angular/router';
 //import { slideInDownAnimation } from '../../animations';
 
 @Component({
@@ -34,17 +35,14 @@ export class UsersComponent implements OnInit, OnDestroy {
   users: PagedResult<User>;
   query: QueryListBaseModel;
 
-  constructor(public snackBar: MatSnackBar, private usersService: UsersService) {}
+  constructor(private route: ActivatedRoute, public snackBar: MatSnackBar, private usersService: UsersService) {}
 
   ngOnInit(): void {
     this.dataSource = new MatTableDataSource<User>([]);
     this.paginator.pageSizeOptions = [50, 100, 250];
 
     this.query = <QueryListBaseModel>{ getAll: true };
-
-    this.usersService.list(this.query).subscribe(res => {
-      this.dataSource = new MatTableDataSource<User>(res.results);
-    });
+    this.dataSource = <MatTableDataSource<User>>this.route.snapshot.data.data;
   }
 
   trackById = (index, item) => +item.id;

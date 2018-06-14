@@ -5,6 +5,7 @@ import { switchMap, filter} from 'rxjs/operators';
 import { QueryListBaseModel } from "../../../types/common.type";
 import { Host } from "../../../types/host.type";
 import { HostsService } from "../../../services/admin/hosts.service";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "hosts",
@@ -60,16 +61,14 @@ export class HostsComponent implements OnInit, OnDestroy {
   @ViewChild("filter") filter: ElementRef;
   query: QueryListBaseModel;
 
-  constructor(private hostsService: HostsService, public snackBar: MatSnackBar) {}
+  constructor(private route: ActivatedRoute, private hostsService: HostsService, public snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.dataSource = new MatTableDataSource<Host>([]);
     this.paginator.pageSizeOptions = [50, 100, 250];
     this.query = <QueryListBaseModel>{ getAll: true };
 
-    this.hostsService.list(this.query).subscribe(res => {
-      this.dataSource = new MatTableDataSource<Host>(res.results);
-    });
+    this.dataSource = <MatTableDataSource<Host>>this.route.snapshot.data.data;
   }
 
   trackById = (index, item) => +item.id;

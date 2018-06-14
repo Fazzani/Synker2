@@ -3,6 +3,7 @@ import { MatSnackBar } from "@angular/material";
 import { PagedResult } from "../../types/common.type";
 import { MessageService } from "../../services/message/message.service";
 import { Message, MessageStatus, MessageTypeEnum } from "../../types/message.type";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "messages",
@@ -12,12 +13,10 @@ export class MessagesComponent implements OnInit, OnDestroy {
   messages: PagedResult<Message>;
   messageTypes = MessageTypeEnum;
 
-  constructor(public snackBar: MatSnackBar, private messageService: MessageService) {}
+  constructor(private route: ActivatedRoute, public snackBar: MatSnackBar, private messageService: MessageService) {}
 
   ngOnInit(): void {
-    this.messageService.listByStatus([MessageStatus.None, MessageStatus.NotReaded], 0, 10).subscribe(res => {
-      this.messages = res;
-    });
+    this.messages = <PagedResult<Message>>this.route.snapshot.data.data;
   }
 
   markAsRead(message: Message): void {

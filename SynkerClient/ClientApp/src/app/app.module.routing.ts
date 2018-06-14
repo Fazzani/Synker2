@@ -17,6 +17,10 @@ import { UserComponent } from "./components/user/user.component";
 import { HostsComponent } from "./components/admin/hosts/hosts.component";
 import { AuthorizedRouteGuard } from "./services/auth/authorizedRouteGuard.service";
 import { GroupComponent } from "./components/group/group.component";
+import { PlaylistDetailResolver } from "./components/playlist/playlist.resolver";
+import { MessagesResolver } from "./components/messages/messages.resolver";
+import { UsersResolver } from "./components/admin/users/users.resolver";
+import { HostsResolver } from "./components/admin/hosts/hosts.resolver";
 
 const appRoutes: Routes = [
   { path: "home", component: HomeComponent, canActivate: [LoginRouteGuard] },
@@ -24,9 +28,9 @@ const appRoutes: Routes = [
   { path: "epg", component: EpgComponent, canActivate: [LoginRouteGuard] },
   { path: "xmltv", component: XmltvComponent, canActivate: [LoginRouteGuard] },
   { path: "sitepack", component: SitePackComponent, canActivate: [LoginRouteGuard] },
-  { path: "playlist/:id", component: PlaylistComponent, canActivate: [LoginRouteGuard] },
+  { path: "playlist/:id", component: PlaylistComponent, canActivate: [LoginRouteGuard], resolve: {data: PlaylistDetailResolver },
   { path: "playlist/:id/groups", component: GroupComponent, canActivate: [LoginRouteGuard] },
-  { path: "messages", component: MessagesComponent, canActivate: [LoginRouteGuard] },
+  { path: "messages", component: MessagesComponent, canActivate: [LoginRouteGuard], resolve:{data: MessagesResolver },
   { path: "me", component: UserComponent, canActivate: [LoginRouteGuard] },
   { path: "signin", component: DialogComponent },
   { path: "register", component: RegisterComponent },
@@ -40,11 +44,13 @@ const appRoutes: Routes = [
         children: [
           {
             path: "users",
-            component: UsersComponent
+            component: UsersComponent,
+            resolve:{data: UsersResolver}
           },
           {
             path: "hosts",
-            component: HostsComponent
+            component: HostsComponent,
+            resolve: {data:HostsResolver}
           },
           {
             path: "",

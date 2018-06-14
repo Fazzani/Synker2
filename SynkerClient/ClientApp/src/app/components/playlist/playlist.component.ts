@@ -1,6 +1,5 @@
-
-import { of, from, fromEvent,  Subscription, BehaviorSubject } from 'rxjs';
-import { toArray, distinct, map, tap, mergeMap, filter, merge, debounceTime, distinctUntilChanged, switchMap, groupBy } from 'rxjs/operators';
+import { of, from, fromEvent, Subscription, BehaviorSubject } from "rxjs";
+import { toArray, distinct, map, tap, mergeMap, filter, merge, debounceTime, distinctUntilChanged, switchMap, groupBy } from "rxjs/operators";
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, AfterViewInit } from "@angular/core";
 import { MatPaginator, PageEvent, MatSort, MatDialog, MatSnackBar, MatTableDataSource } from "@angular/material";
 import { CommonService, Constants } from "../../services/common/common.service";
@@ -152,11 +151,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log("pagelistState => ", this.pagelistState);
 
       this.initPaginator();
-
-      // In a real app: dispatch action to load the details here.
-      this.playlistService.get(this.playlistId, false).subscribe(x => {
-        this.playlistBS.next(x);
-      });
+      this.playlistBS.next(<PlaylistModel>this.route.snapshot.data.data);
     });
 
     this.playlistBS.subscribe(x => {
@@ -188,10 +183,12 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.subscriptionTableEvent = this.paginator.page
-      .asObservable().pipe(
-      merge(fromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup")),
-      debounceTime(1000),
-      distinctUntilChanged(),)
+      .asObservable()
+      .pipe(
+        merge(fromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup")),
+        debounceTime(1000),
+        distinctUntilChanged()
+      )
       .subscribe(x => {
         if (!this.dataSource) {
           return;
@@ -330,15 +327,22 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     this.commonService.displayLoader(true);
 
     let counter: number = 1;
-    from(this.dataSource.data).pipe(
-      groupBy(x => x.mediaGroup.name),
-      mergeMap(x => x.pipe(toArray(),map(m => m.sort((a, b) => (a.displayName === b.displayName ? 0 : a.displayName > b.displayName ? 1 : -1))),)),
-      mergeMap(x => x),
-      tap(x => console.log(x.mediaGroup.name)),
-      map((t, i) => {
-        t.position = counter++;
-        return t;
-      }),)
+    from(this.dataSource.data)
+      .pipe(
+        groupBy(x => x.mediaGroup.name),
+        mergeMap(x =>
+          x.pipe(
+            toArray(),
+            map(m => m.sort((a, b) => (a.displayName === b.displayName ? 0 : a.displayName > b.displayName ? 1 : -1)))
+          )
+        ),
+        mergeMap(x => x),
+        tap(x => console.log(x.mediaGroup.name)),
+        map((t, i) => {
+          t.position = counter++;
+          return t;
+        })
+      )
       .subscribe(x => this.commonService.displayLoader(false));
   }
 
@@ -354,7 +358,8 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.dataSource.data.filter((v, i) => v.selected),
         from(this.dataSource.data.filter(f => f.mediaGroup.name != null).map(x => x.mediaGroup.name)).pipe(
           distinct(),
-          toArray(),)
+          toArray()
+        )
       ]
     });
 
@@ -448,13 +453,15 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
   deleteSelected(): void {
     const confirm = window.confirm("Do you really want to delete all selected medias?");
-    of("").pipe(
-      filter(() => confirm),
-      switchMap(x => {
-        this.dataSource.data = this.dataSource.data.filter(x => !x.selected);
-        this.playlistBS.next(this.playlistBS.value);
-        return x;
-      }),)
+    of("")
+      .pipe(
+        filter(() => confirm),
+        switchMap(x => {
+          this.dataSource.data = this.dataSource.data.filter(x => !x.selected);
+          this.playlistBS.next(this.playlistBS.value);
+          return x;
+        })
+      )
       .subscribe(res => this.snackBar.open("Selected Media was deleted"));
   }
 
@@ -462,13 +469,15 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     const confirm = window.confirm("Do you really want to delete this media?");
     let mediaIndex = this.dataSource.data.findIndex(x => x.id == id);
     console.log(`media ${id} with index ${mediaIndex} removed`);
-    of(id).pipe(
-      filter(() => confirm),
-      switchMap(x => {
-        this.dataSource.data.splice(mediaIndex, 1);
-        this.playlistBS.next(this.playlistBS.value);
-        return x;
-      }),)
+    of(id)
+      .pipe(
+        filter(() => confirm),
+        switchMap(x => {
+          this.dataSource.data.splice(mediaIndex, 1);
+          this.playlistBS.next(this.playlistBS.value);
+          return x;
+        })
+      )
       .subscribe(res => this.snackBar.open("Media was deleted"));
   }
 
@@ -575,7 +584,8 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
   groupMedias(): void {
     from(this.dataSource.data).pipe(
       groupBy(x => x.mediaGroup.name),
-      mergeMap(group => group.pipe(toArray())),);
+      mergeMap(group => group.pipe(toArray()))
+    );
   }
 
   /**

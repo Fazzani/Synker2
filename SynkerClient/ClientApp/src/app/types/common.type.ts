@@ -90,12 +90,6 @@ export class Exception {
   message: string;
 }
 
-/** Flat node with expandable and level information */
-export class DynamicFlatNode {
-  constructor(public item: string, public level: number = 1, public expandable: boolean = false,
-              public isLoading: boolean = false) {}
-}
-
 /** Nested node */
 export class LoadmoreNode<T> {
   childrenChange: BehaviorSubject<LoadmoreNode<T>[]> = new BehaviorSubject<LoadmoreNode<T>[]>([]);

@@ -1,7 +1,7 @@
 import { Component, OnInit, Injectable } from "@angular/core";
 import { FlatTreeControl } from "@angular/cdk/tree";
 import { BehaviorSubject, Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { map, tap } from "rxjs/operators";
 import { LoadmoreNode, LoadmoreFlatNode } from "../../types/common.type";
 import { PlaylistService } from "../../services/playlists/playlist.service";
 import { TvgMedia, MediaGroup } from "../../types/media.type";
@@ -18,11 +18,10 @@ const LOAD_MORE = "LOAD_MORE";
 export class LoadmoreDatabase {
   constructor(private playlistService: PlaylistService) {}
   batchNumber = 5;
-  dataChange: BehaviorSubject<LoadmoreNode<MediaGroup>[]> = new BehaviorSubject<LoadmoreNode<MediaGroup>[]>([]);
-  nodeMap: Map<MediaGroup, LoadmoreNode<MediaGroup>> = new Map<MediaGroup, LoadmoreNode<MediaGroup>>();
+  dataChange: BehaviorSubject<LoadmoreNode<any>[]> = new BehaviorSubject<LoadmoreNode<any>[]>([]);
+  nodeMap: Map<MediaGroup, LoadmoreNode<any>> = new Map<MediaGroup, LoadmoreNode<any>>();
 
   /** The data */
-  rootLevelNodes = ["Vegetables", "Fruits"];
   dataMap = new Map([
     ["Fruits", ["Apple", "Orange", "Banana"]],
     ["Vegetables", ["Tomato", "Potato", "Onion"]],
@@ -33,12 +32,18 @@ export class LoadmoreDatabase {
   initialize(id: string) {
     this.playlistService
       .groups(id)
-      .pipe(map(media => media.map(m => new LoadmoreNode<MediaGroup>(m, true))))
-      .subscribe(x => this.dataChange.next(x));
+      .pipe(
+        map(medias => medias.map(m => new LoadmoreNode<MediaGroup>(m, true))),
+        tap(x => console.log(x))
+      )
+      .subscribe(x => {
+        return this.dataChange.next(x);
+      });
   }
 
   /** Expand a node whose children are not loaded */
-  loadMore(item: MediaGroup, onlyFirstTime: boolean = false) {
+  loadMore(item: any, onlyFirstTime: boolean = false) {
+    debugger;
     if (!this.nodeMap.has(item) || !this.dataMap.has(item.name)) {
       return;
     }
@@ -75,11 +80,10 @@ export class LoadmoreDatabase {
   providers: [LoadmoreDatabase]
 })
 export class GroupComponent implements OnInit {
-
   playlistId: string;
-  nodeMap: Map<string, LoadmoreFlatNode<MediaGroup>> = new Map<string, LoadmoreFlatNode<MediaGroup>>();
-  treeControl: FlatTreeControl<LoadmoreFlatNode<MediaGroup>>;
-  treeFlattener: MatTreeFlattener<LoadmoreNode<MediaGroup>, LoadmoreFlatNode<MediaGroup>>;
+  nodeMap: Map<any, LoadmoreFlatNode<TvgMedia>> = new Map<any, LoadmoreFlatNode<TvgMedia>>();
+  treeControl: FlatTreeControl<LoadmoreFlatNode<any>>;
+  treeFlattener: MatTreeFlattener<LoadmoreNode<any>, LoadmoreFlatNode<MediaGroup>>;
   // Flat tree data source
   dataSource: MatTreeFlatDataSource<LoadmoreNode<MediaGroup>, LoadmoreFlatNode<MediaGroup>>;
   routeSub: any;
@@ -107,37 +111,37 @@ export class GroupComponent implements OnInit {
     return node.childrenChange;
   };
 
-  transformer = (node: LoadmoreNode<MediaGroup>, level: number) => {
-    if (this.nodeMap.has(node.item.name)) {
-      return this.nodeMap.get(node.item.name)!;
+  transformer = (node: LoadmoreNode<any>, level: number) => {
+    if (this.nodeMap.has(node.item)) {
+      return this.nodeMap.get(node.item)!;
     }
     let newNode = new LoadmoreFlatNode(node.item, level, node.hasChildren, node.loadMoreParentItem);
-    this.nodeMap.set(node.item.name, newNode);
+    this.nodeMap.set(node.item, newNode);
     return newNode;
   };
 
-  getLevel = (node: LoadmoreFlatNode<MediaGroup>) => {
+  getLevel = (node: LoadmoreFlatNode<any>) => {
     return node.level;
   };
 
-  isExpandable = (node: LoadmoreFlatNode<MediaGroup>) => {
+  isExpandable = (node: LoadmoreFlatNode<any>) => {
     return node.expandable;
   };
 
-  hasChild = (_: number, _nodeData: LoadmoreFlatNode<MediaGroup>) => {
+  hasChild = (_: number, _nodeData: LoadmoreFlatNode<any>) => {
     return _nodeData.expandable;
   };
 
-  isLoadMore = (_: number, _nodeData: LoadmoreFlatNode<MediaGroup>) => {
+  isLoadMore = (_: number, _nodeData: LoadmoreFlatNode<any>) => {
     return _nodeData.item === null;
   };
 
   /** Load more nodes from data source */
-  loadMore(item: MediaGroup) {
+  loadMore(item: any) {
     this.database.loadMore(item);
   }
 
-  loadChildren(node: LoadmoreFlatNode<MediaGroup>) {
+  loadChildren(node: LoadmoreFlatNode<any>) {
     this.database.loadMore(node.item, true);
   }
 }
