@@ -1,5 +1,5 @@
-import { of } from 'rxjs';
-import { switchMap, filter } from 'rxjs/operators';
+import { of } from "rxjs";
+import { switchMap, filter } from "rxjs/operators";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { PlaylistService } from "../../services/playlists/playlist.service";
 import { MatDialog, MatSnackBar } from "@angular/material";
@@ -8,6 +8,7 @@ import { QueryListBaseModel, PagedResult } from "../../types/common.type";
 import { ClipboardService } from "ngx-clipboard";
 import { PlaylistAddDialog } from "../dialogs/playlistAddNew/playlist.add.component";
 import { PlaylistInfosDialog } from "../dialogs/playlistInfos/playlist.infos.component";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "home",
@@ -19,15 +20,17 @@ export class HomeComponent implements OnInit, OnDestroy {
   };
   query: QueryListBaseModel;
 
-  constructor(private playlistService: PlaylistService, public dialog: MatDialog, public snackBar: MatSnackBar, private clipboardService: ClipboardService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private playlistService: PlaylistService,
+    public dialog: MatDialog,
+    public snackBar: MatSnackBar,
+    private clipboardService: ClipboardService
+  ) {}
 
   ngOnInit(): void {
-    this.query = new QueryListBaseModel();
-    this.query.pageNumber = 0;
-    this.query.pageSize = 20;
-    this.playlistService.list(this.query).subscribe(x => {
-      this.playlists = x;
-    });
+    this.query = <QueryListBaseModel>{ pageNumber: 0, pageSize: 20 };
+    this.playlists = <PagedResult<PlaylistModel>>this.route.snapshot.data.data;
   }
 
   openPlaylistInfosDialog(playlist: PlaylistModel): void {
@@ -46,9 +49,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   delete(playlist: PlaylistModel): void {
     const confirm = window.confirm(`Do you really want to delete this playlist ${playlist.freindlyname}?`);
 
-    of(playlist.publicId).pipe(
-      filter(() => confirm),
-      switchMap(x => this.playlistService.delete(x)),)
+    of(playlist.publicId)
+      .pipe(
+        filter(() => confirm),
+        switchMap(x => this.playlistService.delete(x))
+      )
       .subscribe(res => {
         this.snackBar.open("Playlist deleted successfully");
         this.ngOnInit();

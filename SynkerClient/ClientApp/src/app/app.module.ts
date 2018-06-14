@@ -50,6 +50,7 @@ import { PlaylistDetailResolver } from "./components/playlist/playlist.resolver"
 import { MessagesResolver } from "./components/messages/messages.resolver";
 import { UsersResolver } from "./components/admin/users/users.resolver";
 import { HostsResolver } from "./components/admin/hosts/hosts.resolver";
+import { HomeResolver } from "./components/home/home.resolver";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -158,7 +159,8 @@ export function getAboutApplication(initService: InitAppService) {
     PlaylistDetailResolver,
     MessagesResolver,
     HostsResolver,
-    UsersResolver
+    UsersResolver,
+    HomeResolver
   ],
   bootstrap: [AppComponent]
 })

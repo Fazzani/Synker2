@@ -21,16 +21,17 @@ import { PlaylistDetailResolver } from "./components/playlist/playlist.resolver"
 import { MessagesResolver } from "./components/messages/messages.resolver";
 import { UsersResolver } from "./components/admin/users/users.resolver";
 import { HostsResolver } from "./components/admin/hosts/hosts.resolver";
+import { HomeResolver } from "./components/home/home.resolver";
 
 const appRoutes: Routes = [
-  { path: "home", component: HomeComponent, canActivate: [LoginRouteGuard] },
+  { path: "home", component: HomeComponent, canActivate: [LoginRouteGuard], resolve: { data: HomeResolver } },
   { path: "tvgmedia", component: MediaComponent, canActivate: [LoginRouteGuard] },
   { path: "epg", component: EpgComponent, canActivate: [LoginRouteGuard] },
   { path: "xmltv", component: XmltvComponent, canActivate: [LoginRouteGuard] },
   { path: "sitepack", component: SitePackComponent, canActivate: [LoginRouteGuard] },
-  { path: "playlist/:id", component: PlaylistComponent, canActivate: [LoginRouteGuard], resolve: {data: PlaylistDetailResolver },
+  { path: "playlist/:id", component: PlaylistComponent, canActivate: [LoginRouteGuard], resolve: { data: PlaylistDetailResolver },
   { path: "playlist/:id/groups", component: GroupComponent, canActivate: [LoginRouteGuard] },
-  { path: "messages", component: MessagesComponent, canActivate: [LoginRouteGuard], resolve:{data: MessagesResolver },
+  { path: "messages", component: MessagesComponent, canActivate: [LoginRouteGuard], resolve: { data: MessagesResolver },
   { path: "me", component: UserComponent, canActivate: [LoginRouteGuard] },
   { path: "signin", component: DialogComponent },
   { path: "register", component: RegisterComponent },
