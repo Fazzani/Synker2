@@ -5,7 +5,9 @@ import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
 import { Epg_Listings, Channels, Live, XtreamPanel, PlayerApi } from "../../types/xtream.type";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class XtreamService extends BaseService {
   constructor(protected http: HttpClient) {
     super(http, "xtream");

@@ -7,7 +7,9 @@ import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
 import { sitePackChannel } from "../../types/sitepackchannel.type";
 import { environment } from "../../../environments/environment";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class XmltvService extends BaseService {
   constructor(protected http: HttpClient) {
     super(http, "xmltv");

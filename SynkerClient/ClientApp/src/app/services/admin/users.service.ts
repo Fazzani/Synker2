@@ -6,7 +6,9 @@ import { Observable } from "rxjs";
 import { User } from "../../types/auth.type";
 import { PagedResult, QueryListBaseModel } from "../../types/common.type";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class UsersService extends BaseService {
   constructor(protected http: HttpClient) {
     super(http, "users");

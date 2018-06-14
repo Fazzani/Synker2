@@ -10,7 +10,9 @@ import { Observable } from "rxjs";
 import { sitePackChannel } from "../../types/sitepackchannel.type";
 import { environment } from "../../../environments/environment";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class SitePackService extends BaseService {
   constructor(protected http: HttpClient) {
     super(http, "sitepack");

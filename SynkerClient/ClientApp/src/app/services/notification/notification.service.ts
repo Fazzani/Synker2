@@ -8,7 +8,9 @@ import { environment } from "../../../environments/environment";
 import { HubConnection, HubConnectionBuilder } from "@aspnet/signalr";
 import { CommonService } from "../common/common.service";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class NotificationService extends BaseService {
   public messages: BehaviorSubject<Message> = new BehaviorSubject<Message>(null);
   private hubConnection: HubConnection;

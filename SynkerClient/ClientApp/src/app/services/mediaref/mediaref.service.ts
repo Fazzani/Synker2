@@ -8,7 +8,9 @@ import { mediaRef } from "../../types/mediaref.type";
 import { sitePackChannel } from "../../types/sitepackchannel.type";
 import { environment } from "../../../environments/environment";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class MediaRefService extends BaseService {
   constructor(protected http: HttpClient) {
     super(http, "mediasref");

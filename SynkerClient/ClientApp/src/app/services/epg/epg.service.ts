@@ -7,7 +7,9 @@ import { ElasticQuery, ElasticResponse } from "../../types/elasticQuery.type";
 import { tvChannel } from "../../types/xmltv.type";
 import { environment } from "../../../environments/environment";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class EpgService extends BaseService {
   constructor(protected http: HttpClient) {
     super(http, "epg");

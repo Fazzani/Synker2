@@ -8,7 +8,9 @@ import { AuthResponse, User, RegisterUser, Login, AuthModel } from "../../types/
 import { environment } from "../../../environments/environment";
 import { JwtHelperService } from '@auth0/angular-jwt';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthService extends BaseService {
   /**
    * Is user authenticated

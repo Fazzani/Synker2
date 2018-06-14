@@ -6,7 +6,9 @@ import { BaseService } from "../base/base.service";
 import { PagedResult, QueryListBaseModel } from "../../types/common.type";
 import { Host } from "../../types/host.type";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class HostsService extends BaseService {
   constructor(protected http: HttpClient) {
     super(http, "host");

@@ -6,7 +6,9 @@ import { BaseService } from "../base/base.service";
 import { Message, MessageQueryModel } from "../../types/message.type";
 import { PagedResult } from "../../types/common.type";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class MessageService extends BaseService {
   url: string = `${this.FullBaseUrl}/status/`;
 

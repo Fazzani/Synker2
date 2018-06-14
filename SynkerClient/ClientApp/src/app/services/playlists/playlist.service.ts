@@ -1,5 +1,4 @@
-
-import {catchError, map } from 'rxjs/operators';
+import { catchError, map } from "rxjs/operators";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
@@ -9,10 +8,12 @@ import { Observable } from "rxjs";
 import { HttpHeaders, HttpParams } from "@angular/common/http";
 import { PlaylistModel, PlaylistPostModel } from "../../types/playlist.type";
 import { QueryListBaseModel, PagedResult } from "../../types/common.type";
-import { TvgMedia } from "../../types/media.type";
+import { TvgMedia, MediaGroup } from "../../types/media.type";
 import { environment } from "../../../environments/environment";
 
-@Injectable()
+@Injectable({
+  providedIn: "root"
+})
 export class PlaylistService extends BaseService {
   constructor(protected http: HttpClient) {
     super(http, "playlists");
@@ -25,51 +26,53 @@ export class PlaylistService extends BaseService {
     return this.http
       .get(`${environment.base_api_url}${this.BaseUrl}/${id}`, {
         params: params
-      }).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+      })
+      .pipe(
+        map(this.handleSuccess),
+        catchError(this.handleError)
+      );
   }
 
   list(query: QueryListBaseModel): Observable<PagedResult<PlaylistModel>> {
-    return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/search`, query).pipe(
+    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/search`, query).pipe(
       map(this.handleSuccess),
-      catchError(this.handleError),);
+      catchError(this.handleError)
+    );
   }
 
   synk(model: PlaylistPostModel): Observable<PlaylistModel> {
-    return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/synk`, model).pipe(
+    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/synk`, model).pipe(
       map(this.handleSuccess),
-      catchError(this.handleError),);
+      catchError(this.handleError)
+    );
   }
 
   executeHandlers(model: TvgMedia[]): Observable<TvgMedia[]> {
-    return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/handlers`, model).pipe(
+    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/handlers`, model).pipe(
       map(this.handleSuccess),
-      catchError(this.handleError),);
+      catchError(this.handleError)
+    );
   }
 
   match(id: string): Observable<PlaylistModel> {
-    return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/match/$${id}`, null).pipe(
+    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/match/$${id}`, null).pipe(
       map(this.handleSuccess),
-      catchError(this.handleError),);
+      catchError(this.handleError)
+    );
   }
 
   matchtvg(id: string, onlyNotMatched: boolean = true): Observable<PlaylistModel> {
-    return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/matchtvg/${id}?onlyNotMatched=${onlyNotMatched}`, null).pipe(
+    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/matchtvg/${id}?onlyNotMatched=${onlyNotMatched}`, null).pipe(
       map(this.handleSuccess),
-      catchError(this.handleError),);
+      catchError(this.handleError)
+    );
   }
 
   matchFiltredTvgSites(id: string, onlyNotMatched: boolean = true): Observable<PlaylistModel> {
-    return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/matchfiltred/${id}?onlyNotMatched=${onlyNotMatched}`, null).pipe(
+    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/matchfiltred/${id}?onlyNotMatched=${onlyNotMatched}`, null).pipe(
       map(this.handleSuccess),
-      catchError(this.handleError),);
+      catchError(this.handleError)
+    );
   }
 
   /**
@@ -78,10 +81,10 @@ export class PlaylistService extends BaseService {
    * @returns
    */
   matchVideosByPlaylist(id: string): Observable<PlaylistModel> {
-    return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/matchvideos/${id}`, null).pipe(
+    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/matchvideos/${id}`, null).pipe(
       map(this.handleSuccess),
-      catchError(this.handleError),);
+      catchError(this.handleError)
+    );
   }
 
   /**
@@ -90,10 +93,10 @@ export class PlaylistService extends BaseService {
    * @returns
    */
   matchVideos(...medias: TvgMedia[]): Observable<TvgMedia[]> {
-    return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/matchvideos`, medias).pipe(
+    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/matchvideos`, medias).pipe(
       map(this.handleSuccess),
-      catchError(this.handleError),);
+      catchError(this.handleError)
+    );
   }
 
   /**
@@ -102,10 +105,10 @@ export class PlaylistService extends BaseService {
    * @returns Poster Paht
    */
   matchVideo(mediaName: string): Observable<any> {
-    return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/matchvideo/${mediaName}`, null).pipe(
+    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/matchvideo/${mediaName}`, null).pipe(
       map(this.handleSuccess),
-      catchError(this.handleError),);
+      catchError(this.handleError)
+    );
   }
 
   //export(fromType: string, toType: string, ): Observable<any> {
@@ -115,10 +118,10 @@ export class PlaylistService extends BaseService {
   //}
 
   diff(model: PlaylistPostModel): Observable<PlaylistModel> {
-    return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/diff`, model).pipe(
+    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/diff`, model).pipe(
       map(this.handleSuccess),
-      catchError(this.handleError),);
+      catchError(this.handleError)
+    );
   }
 
   addByUrl(p: PlaylistPostModel): Observable<PlaylistModel> {
@@ -126,9 +129,11 @@ export class PlaylistService extends BaseService {
       .post(`${environment.base_api_url}${this.BaseUrl}/create`, p, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
-      }).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+      })
+      .pipe(
+        map(this.handleSuccess),
+        catchError(this.handleError)
+      );
   }
 
   addByStream(p: PlaylistPostModel): Observable<PlaylistModel> {
@@ -136,9 +141,11 @@ export class PlaylistService extends BaseService {
       .post(`${environment.base_api_url}${this.BaseUrl}/create/m3u`, p, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
-      }).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+      })
+      .pipe(
+        map(this.handleSuccess),
+        catchError(this.handleError)
+      );
   }
 
   update(p: PlaylistModel): Observable<PlaylistModel> {
@@ -146,9 +153,11 @@ export class PlaylistService extends BaseService {
       .put(`${environment.base_api_url}${this.BaseUrl}/${p.publicId}`, p, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
-      }).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+      })
+      .pipe(
+        map(this.handleSuccess),
+        catchError(this.handleError)
+      );
   }
 
   updateLight(p: PlaylistModel): Observable<any> {
@@ -156,7 +165,36 @@ export class PlaylistService extends BaseService {
       .put(`${environment.base_api_url}${this.BaseUrl}/light/${p.publicId}`, p, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
-      }).pipe(
-      catchError(this.handleError));
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Get playlist groups by id
+   * @param id playlist id
+   */
+  groups(id: string): Observable<MediaGroup[]> {
+
+    return this.http
+      .get(`${environment.base_api_url}${this.BaseUrl}/${id}/groups`)
+      .pipe(
+        map(this.handleSuccess),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Get group children tvgmedia
+   * @param id playlist id
+   * @param group group name
+   */
+  childrenGroups(id: string, group:string): Observable<TvgMedia[]> {
+
+    return this.http
+      .get(`${environment.base_api_url}${this.BaseUrl}/${id}/groups/${group}`)
+      .pipe(
+        map(this.handleSuccess),
+        catchError(this.handleError)
+      );
   }
 }

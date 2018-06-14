@@ -1,4 +1,5 @@
-﻿using hfa.PlaylistBaseLibrary.Options;
+﻿using hfa.PlaylistBaseLibrary.Entities;
+using hfa.PlaylistBaseLibrary.Options;
 using hfa.PlaylistBaseLibrary.Providers;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Entities.MediaScraper;
@@ -679,7 +680,7 @@ namespace Hfa.WebApi.Controllers
                     Freindlyname = playlistName,
                     Status = PlaylistStatus.Enabled,
                     SynkConfig = null,
-                    Tags = new  Dictionary<string, string> { { PlaylistTags.ImportProvider, provider } }
+                    Tags = new Dictionary<string, string> { { PlaylistTags.ImportProvider, provider } }
                 }, providerInstance, _xtreamService.IsXtreamPlaylist(playlistUrl), true, cancellationToken);
 
                 ClearCache();
@@ -737,6 +738,32 @@ namespace Hfa.WebApi.Controllers
 
         #endregion
 
+        [HttpGet("{id}/groups")]
+        [ProducesResponseType(typeof(PlaylistModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetGroupsAsync(string id, CancellationToken cancellationToken)
+        {
+            var idGuid = GetInternalPlaylistId(id);
+            var playlist = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.UniqueId == idGuid, cancellationToken);
+            if (playlist == null)
+                return NotFound(id);
+
+            return Ok(playlist.TvgMedias.Select(x => x.MediaGroup).Distinct(GroupComparerByName.Factory));
+        }
+
+        [HttpGet("{id}/groups/children")]
+        [ProducesResponseType(typeof(PlaylistModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetChildrenGroupsAsync(string id, string group, CancellationToken cancellationToken)
+        {
+            var idGuid = GetInternalPlaylistId(id);
+            var playlist = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.UniqueId == idGuid, cancellationToken);
+            if (playlist == null)
+                return NotFound(id);
+
+            return Ok(playlist.TvgMedias
+                .Where(x => x.MediaGroup.Name.Equals(group, StringComparison.InvariantCultureIgnoreCase)));
+        }
         private void ClearCache()
         {
             if (_memoryCache.TryGetValue(UserCachePlaylistKey, out List<string> list))

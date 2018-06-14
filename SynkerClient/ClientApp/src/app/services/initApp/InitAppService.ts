@@ -9,7 +9,9 @@ const aboutDefault: AboutApplication = <AboutApplication>{
   License: "MIT",
   Version: "1.0.0-beta"
 };
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class InitAppService {
   about: AboutApplication;
 

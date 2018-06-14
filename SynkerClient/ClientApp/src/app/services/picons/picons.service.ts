@@ -8,7 +8,9 @@ import { picon } from "../../types/picon.type";
 import { TvgMedia } from "../../types/media.type";
 import { environment } from "../../../environments/environment";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class PiconService extends BaseService {
   constructor(protected http: HttpClient) {
     super(http, "picons");

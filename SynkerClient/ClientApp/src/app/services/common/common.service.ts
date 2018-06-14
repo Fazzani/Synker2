@@ -3,7 +3,9 @@ import { BehaviorSubject } from "rxjs";
 import { Exception } from "../../types/common.type";
 import { ToastrService } from "ngx-toastr";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class CommonService {
   /**
    * @constructor

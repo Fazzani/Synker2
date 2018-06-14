@@ -12,24 +12,12 @@ import { MediaComponent, TvgMediaModifyDialog } from "./components/media/media.c
 import { EpgComponent, EpgModifyDialog } from "./components/epg/epg.component";
 import { XmltvComponent, XmltvModifyDialog } from "./components/xmltv/xmltv.component";
 import { DialogComponent } from "./components/shared/dialogs/dialog.component";
-import { LoginRouteGuard } from "./services/auth/loginRouteGuard.service";
 
-import { AuthService } from "./services/auth/auth.service";
-import { NotificationService } from "./services/notification/notification.service";
-import { TvgMediaService } from "./services/tvgmedia/tvgmedia.service";
-import { EpgService } from "./services/epg/epg.service";
-import { XmltvService } from "./services/xmltv/xmltv.service";
-import { MessageService } from "./services/message/message.service";
-import { CommonService, Constants } from "./services/common/common.service";
 import { NavBarModule } from "./components/shared/navbar/navbar";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { DefaultHttpInterceptor } from "./infrastructure/DefaultHttpInterceptor";
-import { MediaRefService } from "./services/mediaref/mediaref.service";
-import { PlaylistService } from "./services/playlists/playlist.service";
 import { PlaylistComponent } from "./components/playlist/playlist.component";
-import { PiconService } from "./services/picons/picons.service";
 import { SearchPipe } from "./pipes/search.pipe";
-import { SitePackService } from "./services/sitepack/sitepack.service";
 import { SitePackComponent, SitePackModifyDialog } from "./components/sitepack/sitepack.component";
 import { KeysPipe } from "./pipes/enumKey.pipe";
 import { JwtInterceptor } from "./infrastructure/JwtInterceptor";
@@ -45,22 +33,19 @@ import { GroupsDialog } from "./components/dialogs/group/groups.component";
 import { MatchTvgDialog } from "./components/dialogs/matchTvg/matchTvg.component";
 import { RegisterComponent, RegisterDialog } from "./components/dialogs/auth/RegisterDialog";
 import { LoginDialog } from "./components/dialogs/auth/LoginDialog";
-import { XtreamService } from "./services/xtream/xtream.service";
 import { PlaylistInfosDialog } from "./components/dialogs/playlistInfos/playlist.infos.component";
 import { MessagesComponent } from "./components/messages/messages.component";
 import { UsersComponent } from "./components/admin/users/users.component";
-import { UsersService } from "./services/admin/users.service";
 import { AdminComponent } from "./components/admin/admin.component";
 import { AdminDashboardComponent } from "./components/admin/dashboard/admin.dashboard.component";
 import { UserComponent } from "./components/user/user.component";
 import { AppRoutingModule } from "./app.module.routing";
 import { LoaderComponent } from "./components/shared/loader/loader.component";
-import { HostsService } from "./services/admin/hosts.service";
 import { HostsComponent } from "./components/admin/hosts/hosts.component";
 import { OverlayModule } from "@angular/cdk/overlay";
-import { AuthorizedRouteGuard } from "./services/auth/authorizedRouteGuard.service";
 import { BrowserModule } from "@angular/platform-browser";
 import { InitAppService } from "./services/initApp/InitAppService";
+import { GroupComponent } from "./components/group/group.component";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -83,6 +68,7 @@ export function getAboutApplication(initService: InitAppService) {
     AdminComponent,
     UserComponent,
     AdminDashboardComponent,
+    GroupComponent,
     UsersComponent,
     HostsComponent,
     LoaderComponent,
@@ -149,23 +135,6 @@ export function getAboutApplication(initService: InitAppService) {
     XmltvModifyDialog
   ],
   providers: [
-    LoginRouteGuard,
-    AuthorizedRouteGuard,
-    CommonService,
-    TvgMediaService,
-    MessageService,
-    NotificationService,
-    XmltvService,
-    AuthService,
-    MediaRefService,
-    PlaylistService,
-    PiconService,
-    UsersService,
-    XtreamService,
-    SitePackService,
-    HostsService,
-    InitAppService,
-    EpgService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: DefaultHttpInterceptor,

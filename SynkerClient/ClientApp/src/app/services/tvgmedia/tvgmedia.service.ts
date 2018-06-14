@@ -10,7 +10,9 @@ import { MatchTvgPostModel } from "../../types/matchTvgPostModel";
 import { sitePackChannel } from "../../types/sitepackchannel.type";
 import { environment } from "../../../environments/environment";
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class TvgMediaService extends BaseService {
   constructor(protected http: HttpClient) {
     super(http, "tvgmedia");

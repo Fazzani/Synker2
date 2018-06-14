@@ -16,6 +16,7 @@ import { AdminDashboardComponent } from "./components/admin/dashboard/admin.dash
 import { UserComponent } from "./components/user/user.component";
 import { HostsComponent } from "./components/admin/hosts/hosts.component";
 import { AuthorizedRouteGuard } from "./services/auth/authorizedRouteGuard.service";
+import { GroupComponent } from "./components/group/group.component";
 
 const appRoutes: Routes = [
   { path: "home", component: HomeComponent, canActivate: [LoginRouteGuard] },
@@ -24,6 +25,7 @@ const appRoutes: Routes = [
   { path: "xmltv", component: XmltvComponent, canActivate: [LoginRouteGuard] },
   { path: "sitepack", component: SitePackComponent, canActivate: [LoginRouteGuard] },
   { path: "playlist/:id", component: PlaylistComponent, canActivate: [LoginRouteGuard] },
+  { path: "playlist/:id/groups", component: GroupComponent, canActivate: [LoginRouteGuard] },
   { path: "messages", component: MessagesComponent, canActivate: [LoginRouteGuard] },
   { path: "me", component: UserComponent, canActivate: [LoginRouteGuard] },
   { path: "signin", component: DialogComponent },

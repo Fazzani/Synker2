@@ -24,4 +24,19 @@ namespace hfa.PlaylistBaseLibrary.Entities
         /// </summary>
         public string MatchingMediaPattern { get; set; }
     }
+
+    public class GroupComparerByName : IEqualityComparer<MediaGroup>
+    {
+        public bool Equals(MediaGroup x, MediaGroup y)
+        {
+            if (x == null && y == null)
+                return true;
+            return x?.Name?.Equals(y?.Name, StringComparison.InvariantCultureIgnoreCase) ?? true;
+        }
+
+        public int GetHashCode(MediaGroup obj) => obj?.Name?.GetHashCode() ?? 0;
+
+        public static GroupComparerByName Factory => new GroupComparerByName();
+    }
+
 }

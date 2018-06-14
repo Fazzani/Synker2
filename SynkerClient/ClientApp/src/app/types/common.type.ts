@@ -1,4 +1,6 @@
-﻿export class QueryListBaseModel {
+﻿import { BehaviorSubject } from "rxjs";
+
+export class QueryListBaseModel {
   public searchDict: Map<string>;
   public sortDict: Map<SortDirectionEnum>;
   public pageNumber: number;
@@ -86,4 +88,31 @@ export enum KEY {
 export class Exception {
   title: string;
   message: string;
+}
+
+/** Flat node with expandable and level information */
+export class DynamicFlatNode {
+  constructor(public item: string, public level: number = 1, public expandable: boolean = false,
+              public isLoading: boolean = false) {}
+}
+
+/** Nested node */
+export class LoadmoreNode<T> {
+  childrenChange: BehaviorSubject<LoadmoreNode<T>[]> = new BehaviorSubject<LoadmoreNode<T>[]>([]);
+
+  get children(): LoadmoreNode<T>[] {
+    return this.childrenChange.value;
+  }
+
+  constructor(public item: T,
+              public hasChildren: boolean = false,
+              public loadMoreParentItem: string | null = null) {}
+}
+
+/** Flat node with expandable and level information */
+export class LoadmoreFlatNode<T> {
+  constructor(public item: T,
+              public level: number = 1,
+              public expandable: boolean = false,
+              public loadMoreParentItem: string | null = null) {}
 }

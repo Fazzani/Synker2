@@ -14,6 +14,9 @@
                 [cbContent]="playlist.publicUrl" i18n>
                 <mat-icon class="md-24" aria-label="Copy url">content_copy</mat-icon>
               </a>
+              <a mat-icon-button class="secondary-content" [routerLink]="['/playlist', playlist.publicId, 'groups']" i18n>
+              <mat-icon class="md-24" aria-label="Groups">group_work</mat-icon>
+            </a>
             </span>
           </mat-card-header>
           <mat-card-content class="small-text" [routerLink]="['/playlist', playlist.publicId]">

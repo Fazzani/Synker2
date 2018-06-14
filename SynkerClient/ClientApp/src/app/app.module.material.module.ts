@@ -29,7 +29,8 @@ import {
   MatTabsModule,
   MatToolbarModule,
   MatTooltipModule,
-  MatStepperModule
+  MatStepperModule,
+  MatTreeModule
 } from "@angular/material";
 import { MatNativeDateModule, MatRippleModule } from "@angular/material";
 import { CdkTableModule } from "@angular/cdk/table";
@@ -85,7 +86,8 @@ import { FlexLayoutModule } from "@angular/flex-layout";
     OverlayModule,
     PlatformModule,
     PortalModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    MatTreeModule
   ]
 })
 export class AppModuleMaterialModule {}
