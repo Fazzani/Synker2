@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
 import { filter, distinctUntilChanged, debounceTime } from "rxjs/operators";
-import { Router, NavigationStart, NavigationCancel, NavigationEnd } from '@angular/router';
+import { Router, NavigationStart, NavigationCancel, NavigationEnd, NavigationError } from '@angular/router';
 import "hammerjs";
 import "./app.component.css";
 import { NotificationService } from "../../services/notification/notification.service";
@@ -116,11 +116,12 @@ export class AppComponent implements OnInit, OnDestroy {
             }
             else if (
                 event instanceof NavigationEnd ||
+                event instanceof NavigationError ||
                 event instanceof NavigationCancel
                 ) {
-                  setTimeout(() => { // here
+                  setTimeout(() => {
                     this.loading = false;
-                  }, 2000);
+                  }, 100);
             }
         });
 }
