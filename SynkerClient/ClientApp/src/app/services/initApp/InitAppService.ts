@@ -35,7 +35,7 @@ export class InitAppService {
           console.log(`About: ${this.about}`);
           resolve(this.about);
         } else if (xhr.readyState === XMLHttpRequest.DONE) {
-          if (!environment.production) {
+          if (environment.production) {
             reject();
           } else {
             localStorage.setItem(Constants.LS_ABOUT_APP_KEY, JSON.stringify(aboutDefault));
