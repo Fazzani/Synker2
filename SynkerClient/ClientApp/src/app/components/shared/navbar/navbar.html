@@ -16,7 +16,7 @@
   </a>
 
   <a routerLink="/me" class="dropdown-toggle" data-toggle="dropdown" *ngIf="(isAuthenticated | async)">
-    <img [src]="(user | async)?.photo" class="profile-image img-circle">
+    <img [src]="(user | async)?.photo" class="profile-image img-circle" [alt]="(user | async)?.firstName">
   </a>
   <a mat-icon-button [matMenuTriggerFor]="menu" *ngIf="(isAuthenticated | async)" fxHide="false">
     <mat-icon>more_vert</mat-icon>

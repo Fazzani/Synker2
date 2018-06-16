@@ -10,6 +10,7 @@ import { AuthService } from "../../services/auth/auth.service";
 import { Exception } from "../../types/common.type";
 import * as variables from "../../variables";
 import { OverlayContainer } from "@angular/cdk/overlay";
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: "app",
@@ -22,6 +23,7 @@ export class AppComponent implements OnInit, OnDestroy {
   loading:boolean;
 
   constructor(
+    private swUpdate: SwUpdate,
     private notifService: NotificationService,
     public snackBar: MatSnackBar,
     private commonService: CommonService,
@@ -88,6 +90,19 @@ export class AppComponent implements OnInit, OnDestroy {
       )
       .subscribe((err: Exception) => {
         this.commonService.displayError(err.message, err.title);
+      });
+
+      //angular-service-worker for progressive app
+      // auto refresh when new version is available
+      this.swUpdate.available.subscribe(event => {
+
+        console.log('[App] Update available: current version is', event.current, 'available version is', event.available);
+        let snackBarRef = this.snackBar.open('Newer version of the app is available', 'Refresh');
+
+        snackBarRef.onAction().subscribe(() => {
+          window.location.reload()
+        });
+
       });
   }
 

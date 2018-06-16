@@ -17,20 +17,20 @@ import { MessagesResolver } from "./components/messages/messages.resolver";
 import { HomeResolver } from "./components/home/home.resolver";
 
 const appRoutes: Routes = [
-  { path: "home", component: HomeComponent, canActivate: [LoginRouteGuard], resolve: { data: HomeResolver } },
+  { path: "", component: HomeComponent, canActivate: [LoginRouteGuard], resolve: { data: HomeResolver } },
   { path: "tvgmedia", component: MediaComponent, canActivate: [LoginRouteGuard] },
-  { path: "admin", loadChildren:'./components/admin/admin.module#AdminModule' },
+  { path: "admin", loadChildren: "./components/admin/admin.module#AdminModule" },
   { path: "epg", component: EpgComponent, canActivate: [LoginRouteGuard] },
   { path: "xmltv", component: XmltvComponent, canActivate: [LoginRouteGuard] },
   { path: "sitepack", component: SitePackComponent, canActivate: [LoginRouteGuard] },
-  { path: "playlist/:id", component: PlaylistComponent, canActivate: [LoginRouteGuard], resolve: { data: PlaylistDetailResolver },
+  { path: "playlist/:id", component: PlaylistComponent, canActivate: [LoginRouteGuard], resolve: { data: PlaylistDetailResolver } },
   { path: "playlist/:id/groups", component: GroupComponent, canActivate: [LoginRouteGuard] },
-  { path: "messages", component: MessagesComponent, canActivate: [LoginRouteGuard], resolve: { data: MessagesResolver },
+  { path: "messages", component: MessagesComponent, canActivate: [LoginRouteGuard], resolve: { data: MessagesResolver } },
   { path: "me", component: UserComponent, canActivate: [LoginRouteGuard] },
   { path: "signin", component: DialogComponent },
   { path: "register", component: RegisterComponent },
-  { path: "", redirectTo: "/home", pathMatch: "full" },
-  { path: "**", redirectTo: "/home" }
+  //{ path: "", redirectTo: "", pathMatch: "full" },
+  { path: "**", redirectTo: "", pathMatch: "full" }
 ];
 
 @NgModule({

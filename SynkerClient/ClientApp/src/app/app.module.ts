@@ -35,13 +35,9 @@ import { RegisterComponent, RegisterDialog } from "./components/dialogs/auth/Reg
 import { LoginDialog } from "./components/dialogs/auth/LoginDialog";
 import { PlaylistInfosDialog } from "./components/dialogs/playlistInfos/playlist.infos.component";
 import { MessagesComponent } from "./components/messages/messages.component";
-import { UsersComponent } from "./components/admin/users/users.component";
-import { AdminComponent } from "./components/admin/admin.component";
-import { AdminDashboardComponent } from "./components/admin/dashboard/admin.dashboard.component";
 import { UserComponent } from "./components/user/user.component";
 import { AppRoutingModule } from "./app.module.routing";
 import { LoaderComponent } from "./components/shared/loader/loader.component";
-import { HostsComponent } from "./components/admin/hosts/hosts.component";
 import { OverlayModule } from "@angular/cdk/overlay";
 import { BrowserModule } from "@angular/platform-browser";
 import { InitAppService } from "./services/initApp/InitAppService";
@@ -51,6 +47,8 @@ import { MessagesResolver } from "./components/messages/messages.resolver";
 import { UsersResolver } from "./components/admin/users/users.resolver";
 import { HostsResolver } from "./components/admin/hosts/hosts.resolver";
 import { HomeResolver } from "./components/home/home.resolver";
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -117,7 +115,8 @@ export function getAboutApplication(initService: InitAppService) {
         whitelistedDomains: ["localhost:56800", "api.synker.ovh"],
         blacklistedRoutes: [""]
       }
-    })
+    }),
+    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
   ],
   entryComponents: [
     TvgMediaModifyDialog,
