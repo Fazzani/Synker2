@@ -53,8 +53,8 @@ if [[ "$DOCKER_BUILD" == true ]]; then
   docker-compose build
   docker-compose push
 
-  # build image with latest tag version
-  export version=$TRAVIS_TAG
+ # build image with latest tag version
+  export version="latest"
   docker-compose build
   docker-compose push
   
