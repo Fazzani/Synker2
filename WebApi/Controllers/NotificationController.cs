@@ -40,7 +40,7 @@ namespace hfa.WebApi.Controllers
             _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
             _vapidKeysConfig = vapidKeysOptions.Value;
         }
-        
+
         /// <summary>
         /// </summary>
         /// <param name="notification"></param>
@@ -75,14 +75,15 @@ namespace hfa.WebApi.Controllers
         /// Push new WebPuch to device id
         /// </summary>
         /// <param name="webPushModel"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateModel]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> PostWebPushAsync([FromBody] WebPushModel webPushModel)
+        public async Task<IActionResult> PostWebPushAsync([FromBody] WebPushModel webPushModel, CancellationToken cancellationToken)
         {
-            var device = _dbContext.Devices.FirstOrDefault(x => x.Id == webPushModel.Id);
+            var device = await _dbContext.Devices.FirstOrDefaultAsync(x => x.Id == webPushModel.Id, cancellationToken);
             if (device == null)
                 return NotFound(device);
 
@@ -97,13 +98,18 @@ namespace hfa.WebApi.Controllers
         /// <summary>
         /// Generate Vapid Keys 
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
+        [Route("keys")]
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public IActionResult GetKeys()
+        public async Task<IActionResult> GetKeysAsync(CancellationToken cancellationToken)
         {
-            var keys = VapidHelper.GenerateVapidKeys();
-            return Ok(keys);
+            return await Task.Run(() =>
+            {
+                var keys = VapidHelper.GenerateVapidKeys();
+                return Ok(keys);
+            }, cancellationToken);
         }
     }
 }
