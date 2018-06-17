@@ -25,7 +25,7 @@
   <mat-menu x-position="before" #menu="matMenu">
 
     <button mat-menu-item *ngIf="(isAuthenticated | async)" class="profile-image-menu">
-      <img [src]="(user | async)?.photo" class="img-circle">
+      <img [src]="(user | async)?.photo" class="img-circle" [alt]="(user | async)?.firstName">
       <span>{{(user | async)?.firstName}} {{(user | async)?.lastName}}</span>
     </button>
     <button mat-menu-item>

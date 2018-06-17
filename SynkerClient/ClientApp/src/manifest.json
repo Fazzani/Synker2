@@ -1,8 +1,8 @@
 {
   "short_name": "Synker",
   "name": "Synker iptv application",
-  "theme_color": "#034162",
-  "background_color": "#303030",
+  "theme_color": "#303030",
+  "background_color": "#034162",
   "scope": "/",
   "start_url": "/",
   "display": "fullscreen",

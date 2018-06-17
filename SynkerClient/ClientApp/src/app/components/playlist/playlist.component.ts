@@ -288,6 +288,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   //#region media position AND Organization
+
   /**
    * Switch media position
    * @param {TvgMedia} x

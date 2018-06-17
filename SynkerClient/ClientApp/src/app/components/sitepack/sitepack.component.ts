@@ -47,7 +47,7 @@ export class SitePackComponent implements OnInit, OnDestroy {
     this.paginator.pageSizeOptions = [50, 100, 250, 1000];
     this.paginator.pageSize = storedQuery != null ? storedQuery.Size : this.paginator.pageSizeOptions[0];
     this.dataSource = new SitePackDataSource(this.sitePackService, this.paginator);
-    this.dataSource.filter = this.filter.nativeElement.value = storedQuery.Query;
+    this.dataSource.filter = this.filter.nativeElement.value = storedQuery!.Query;
 
     this.subscriptionTableEvent = this.paginator.page
       .asObservable().pipe(
