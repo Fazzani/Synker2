@@ -27,6 +27,7 @@ export class NavBar implements OnInit, OnDestroy {
   userSubscription: Subscription;
   messages: PagedResult<Message>;
   @Output() onThemeChanged = new EventEmitter();
+  @Output() onWebPushClicked = new EventEmitter();
 
   constructor(private authService: AuthService, private messageService: MessageService, public authorizedGuard: AuthorizedRouteGuard, private initAppService: InitAppService) {
     this.isAuthenticated = this.authService.authenticated;
@@ -48,6 +49,10 @@ export class NavBar implements OnInit, OnDestroy {
 
   onSetTheme(theme) {
     this.onThemeChanged.emit(theme);
+  }
+
+  onClickWebPush() {
+    this.onWebPushClicked.emit();
   }
 
   signout(): void {

@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostBinding } from "@angular/core";
 import { filter, distinctUntilChanged, debounceTime } from "rxjs/operators";
-import { Router, NavigationStart, NavigationCancel, NavigationEnd, NavigationError } from '@angular/router';
+import { Router, NavigationStart, NavigationCancel, NavigationEnd, NavigationError } from "@angular/router";
 import "hammerjs";
 import "./app.component.css";
 import { NotificationService } from "../../services/notification/notification.service";
@@ -10,7 +10,8 @@ import { AuthService } from "../../services/auth/auth.service";
 import { Exception } from "../../types/common.type";
 import * as variables from "../../variables";
 import { OverlayContainer } from "@angular/cdk/overlay";
-import { SwUpdate } from '@angular/service-worker';
+import { SwUpdate, SwPush } from "@angular/service-worker";
+import { DeviceService } from "../../services/device/device.service";
 
 @Component({
   selector: "app",
@@ -20,12 +21,15 @@ export class AppComponent implements OnInit, OnDestroy {
   @HostBinding("class") componentCssClass;
   color = "primary";
   objLoaderStatus: boolean;
-  loading:boolean;
+  loading: boolean;
+  readonly VAPID_PUBLIC_KEY = "BBxqxISU8686kkJSKc_DQdjHWQUG6THMmKai6QKHDS_RuA_dYCR9EwaNpWQzhRUViLpV_ttEmiJfxNvHjE7F7Rc";
 
   constructor(
+    private swPush: SwPush,
     private swUpdate: SwUpdate,
     private notifService: NotificationService,
     public snackBar: MatSnackBar,
+    private deviceService: DeviceService,
     private commonService: CommonService,
     private authService: AuthService,
     private router: Router,
@@ -92,18 +96,16 @@ export class AppComponent implements OnInit, OnDestroy {
         this.commonService.displayError(err.message, err.title);
       });
 
-      //angular-service-worker for progressive app
-      // auto refresh when new version is available
-      this.swUpdate.available.subscribe(event => {
+    //angular-service-worker for progressive app
+    // auto refresh when new version is available
+    this.swUpdate.available.subscribe(event => {
+      console.log("[App] Update available: current version is", event.current, "available version is", event.available);
+      let snackBarRef = this.snackBar.open("Newer version of the app is available", "Refresh");
 
-        console.log('[App] Update available: current version is', event.current, 'available version is', event.available);
-        let snackBarRef = this.snackBar.open('Newer version of the app is available', 'Refresh');
-
-        snackBarRef.onAction().subscribe(() => {
-          window.location.reload()
-        });
-
+      snackBarRef.onAction().subscribe(() => {
+        window.location.reload();
       });
+    });
   }
 
   handleThemeChanged(themeName: string): void {
@@ -121,23 +123,28 @@ export class AppComponent implements OnInit, OnDestroy {
     overlayContainerClasses.add(theme);
   }
 
+  handelSubscribeToWebPush(event:any) {
+    this.swPush
+      .requestSubscription({
+        serverPublicKey: this.VAPID_PUBLIC_KEY
+      })
+      .then(sub => {
+        console.log('PushSubscription: ', JSON.stringify(sub));
+        return this.deviceService.create(sub).subscribe();} )
+      .catch(err => console.error("Could not subscribe to notifications", err));
+  }
+
   ngOnDestroy(): void {}
 
   ngAfterViewInit() {
-    this.router.events
-        .subscribe((event) => {
-            if(event instanceof NavigationStart) {
-                this.loading = true;
-            }
-            else if (
-                event instanceof NavigationEnd ||
-                event instanceof NavigationError ||
-                event instanceof NavigationCancel
-                ) {
-                  setTimeout(() => {
-                    this.loading = false;
-                  }, 100);
-            }
-        });
-}
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.loading = true;
+      } else if (event instanceof NavigationEnd || event instanceof NavigationError || event instanceof NavigationCancel) {
+        setTimeout(() => {
+          this.loading = false;
+        }, 100);
+      }
+    });
+  }
 }

@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using WebPush;
 
 namespace hfa.WebApi.Controllers
 {
@@ -59,14 +60,21 @@ namespace hfa.WebApi.Controllers
         /// <summary>
         /// Create new device
         /// </summary>
-        /// <param name="device"></param>
+        /// <param name="pushSubscription"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateModel]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> PostAsync([FromBody] Device device, CancellationToken cancellationToken)
+        public async Task<IActionResult> PostAsync([FromBody] PushSubscriptionModel pushSubscription, CancellationToken cancellationToken)
         {
+            var device = new Device {
+                Name = Request.Headers["User-Agent"],
+                PushEndpoint = pushSubscription.EndPoint,
+                PushAuth = pushSubscription.Keys.Auth,
+                PushP256DH = pushSubscription.Keys.P256dh
+            };
+
             var result = await _dbContext.Devices.AddAsync(device, cancellationToken);
             var response = await _dbContext.SaveChangesAsync(HttpContext.RequestAborted);
             return Ok(response);
