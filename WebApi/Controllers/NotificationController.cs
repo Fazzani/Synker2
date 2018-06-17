@@ -10,13 +10,16 @@ using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Services.Dal;
+using hfa.WebApi.Common;
 using hfa.WebApi.Common.Filters;
 using hfa.WebApi.Models.Notifications;
 using Hfa.WebApi.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using WebPush;
 
 namespace hfa.WebApi.Controllers
 {
@@ -28,14 +31,16 @@ namespace hfa.WebApi.Controllers
     public class NotificationController : BaseController
     {
         private readonly IMessageQueueService _notificationService;
+        private readonly VapidKeysOptions _vapidKeysConfig;
 
         public NotificationController(IMessageQueueService notificationService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
-           IElasticConnectionClient elasticConnectionClient, SynkerDbContext context)
+           IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IOptions<VapidKeysOptions> vapidKeysOptions)
            : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+            _vapidKeysConfig = vapidKeysOptions.Value;
         }
-
+        
         /// <summary>
         /// </summary>
         /// <param name="notification"></param>
@@ -64,6 +69,41 @@ namespace hfa.WebApi.Controllers
             }
 
             return Ok();
+        }
+
+        /// <summary>
+        /// Push new WebPuch to device id
+        /// </summary>
+        /// <param name="webPushModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateModel]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> PostWebPushAsync([FromBody] WebPushModel webPushModel)
+        {
+            var device = _dbContext.Devices.FirstOrDefault(x => x.Id == webPushModel.Id);
+            if (device == null)
+                return NotFound(device);
+
+            var pushSubscription = new PushSubscription(device.PushEndpoint, device.PushP256DH, device.PushAuth);
+            var vapidDetails = new VapidDetails("mailto:synker-team@synker.ovh", _vapidKeysConfig.PublicKey, _vapidKeysConfig.PrivateKey);
+
+            var webPushClient = new WebPushClient();
+            webPushClient.SendNotification(pushSubscription, webPushModel.Payload, vapidDetails);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Generate Vapid Keys 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public IActionResult GetKeys()
+        {
+            var keys = VapidHelper.GenerateVapidKeys();
+            return Ok(keys);
         }
     }
 }

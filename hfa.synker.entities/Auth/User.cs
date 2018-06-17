@@ -1,10 +1,10 @@
-﻿using hfa.Synker.Service.Entities.Playlists;
+﻿using hfa.synker.entities.Notifications;
+using hfa.Synker.Service.Entities.Playlists;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace hfa.Synker.Service.Entities.Auth
 {
@@ -38,6 +38,8 @@ namespace hfa.Synker.Service.Entities.Auth
         public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
         public virtual ICollection<Command> Commands { get; set; } = new List<Command>();
         public virtual ICollection<Playlist> Playlists { get; set; }
+
+        public virtual ICollection<Device> Devices { get; set; } = new List<Device>();
 
         [NotMapped]
         public IEnumerable<string> Roles

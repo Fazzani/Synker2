@@ -78,6 +78,7 @@ namespace Hfa.WebApi.Controllers
         /// Get message by id
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet("{id:int}")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -96,6 +97,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("search")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public IActionResult List([FromBody] QueryListBaseModel query)
         {
             if (!ModelState.IsValid)

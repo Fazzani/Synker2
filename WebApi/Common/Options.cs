@@ -56,4 +56,10 @@ namespace hfa.WebApi.Common
         public string TmdbAPI { get; set; }
         public string TmdbPosterBaseUrl { get; set; }
     }
+
+    public class VapidKeysOptions
+    {
+        public string PublicKey { get; set; }
+        public string PrivateKey { get; set; }
+    }
 }

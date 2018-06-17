@@ -111,8 +111,9 @@ namespace hfa.WebApi
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))
                .Configure<GlobalOptions>(Configuration.GetSection(nameof(GlobalOptions)))
-               .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)));
-
+               .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)))
+               .Configure<VapidKeysOptions>(Configuration.GetSection(nameof(VapidKeysOptions)));
+            
             services.AddMemoryCache();
 
             if (isTestEnv)

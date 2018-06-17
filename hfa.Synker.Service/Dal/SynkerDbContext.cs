@@ -1,4 +1,5 @@
 ﻿using hfa.synker.entities;
+using hfa.synker.entities.Notifications;
 using hfa.Synker.Service.Entities;
 using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Service.Entities.Playlists;
@@ -19,6 +20,7 @@ namespace hfa.Synker.Services.Dal
         public DbSet<Role> Roles { get; set; }
 
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Device> Devices { get; set; }
 
         public DbSet<Command> Command { get; set; }
 
