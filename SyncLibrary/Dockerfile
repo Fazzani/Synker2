@@ -1,6 +1,6 @@
 ARG arch=x64
 ARG version=1.0.0
-FROM microsoft/dotnet:2.1-aspnetcore-runtime-alpine AS base
+FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
 ARG arch
 ARG version
 ENV VERSION=$version
