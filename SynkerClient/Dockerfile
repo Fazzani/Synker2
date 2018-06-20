@@ -12,7 +12,7 @@ EXPOSE 56801
 HEALTHCHECK --interval=3m --timeout=1m CMD curl -f http://localhost:56801/liveness || exit 1
 
 ARG arch=x64
-FROM microsoft/dotnet:2.1.0-sdk AS publish
+FROM microsoft/dotnet:2.1-sdk AS publish
 ARG arch
 ENV NODE_VERSION 8.11.1
 ENV NODE_DOWNLOAD_SHA 0e20787e2eda4cc31336d8327556ebc7417e8ee0a6ba0de96a09b0ec2b841f60
