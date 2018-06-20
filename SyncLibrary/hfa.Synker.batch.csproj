@@ -19,20 +19,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="00oton3r.mzb.tmp" />
-    <None Remove="01f30ync.orv.tmp" />
-    <None Remove="0jtuqbd3.4g5.tmp" />
-    <None Remove="0ohh0a0p.m4y.tmp" />
-    <None Remove="5k2vyq5k.bhd.tmp" />
-    <None Remove="f5bpivpt.s4n.tmp" />
-    <None Remove="j3bsfhq4.uhi.tmp" />
-    <None Remove="log.log" />
-    <None Remove="log.log.2017-08-28" />
-    <None Remove="log.log.2017-08-29" />
-    <None Remove="peqwhn0u.dzj.tmp" />
-    <None Remove="raio1ig1.4by.tmp" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.2.1" />
     <PackageReference Include="Docker.DotNet" Version="3.125.2" />
     <PackageReference Include="Docker.DotNet.X509" Version="3.125.2" />
