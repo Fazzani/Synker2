@@ -7,8 +7,6 @@ using PlaylistManager.Entities;
 using Hfa.WebApi.Common;
 using System.Threading;
 using Hfa.WebApi.Models;
-using hfa.SyncLibrary.Global;
-using hfa.WebApi.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.IO;

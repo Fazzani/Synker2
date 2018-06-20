@@ -15,7 +15,7 @@ LABEL maintainer="synker-team@synker.ovh" \
 WORKDIR /app
 
 ARG arch=x64
-FROM microsoft/dotnet:2.1-sdk AS build
+FROM microsoft/dotnet:2.1.300-sdk AS build
 ARG arch
 WORKDIR /src
 COPY . .

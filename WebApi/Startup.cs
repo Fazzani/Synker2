@@ -64,6 +64,7 @@ namespace hfa.WebApi
     {
         internal static IConfiguration Configuration;
         readonly IHostingEnvironment CurrentEnvironment;
+        internal static ServiceProvider ServiceProvider;
 
         /// <summary>
         /// Assembly version
@@ -393,9 +394,9 @@ namespace hfa.WebApi
         /// <param name="services"></param>
         private void ConfigSecurity(IServiceCollection services)
         {
-            var sp = services.BuildServiceProvider();
+            ServiceProvider = services.BuildServiceProvider();
             // Resolve the services from the service provider
-            var authService = sp.GetService<IAuthentificationService>();
+            var authService = ServiceProvider.GetService<IAuthentificationService>();
 
             services.AddAuthentication(options =>
             {
@@ -416,7 +417,7 @@ namespace hfa.WebApi
                     OnValidatePrincipal = context =>
                     {
                         var basic = new BasicAuthenticationMiddleware();
-                        var principal = basic.Invoke(context.HttpContext, authService, sp.GetService<SynkerDbContext>(), sp.GetService<ILoggerFactory>());
+                        var principal = basic.Invoke(context.HttpContext, authService, ServiceProvider.GetService<SynkerDbContext>(), ServiceProvider.GetService<ILoggerFactory>());
                         if (principal != null)
                         {
                             var ticket = new AuthenticationTicket(

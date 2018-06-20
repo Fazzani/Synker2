@@ -1,4 +1,8 @@
-﻿namespace System.Text
+﻿using Microsoft.Extensions.Logging;
+using Nest;
+using PlaylistManager.Entities;
+
+namespace System.Text
 {
     public static class EncodingForBase64
     {
@@ -24,4 +28,5 @@
             return encoding.GetString(textAsBytes);
         }
     }
+   
 }

@@ -1,5 +1,9 @@
-﻿using hfa.WebApi.Models;
+﻿using hfa.WebApi;
+using hfa.WebApi.Models;
 using Hfa.WebApi.Models;
+using Microsoft.Extensions.Logging;
+using Nest;
+using PlaylistManager.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +16,33 @@ namespace Hfa.WebApi.Common
     {
         public static IListResultModel<T2> GetResultListModel<T, T2>(this Nest.ISearchResponse<T> searchResponse) where T : class where T2 : class, IModel<T, T2>, new()
         => new ListResultModel<T, T2>(searchResponse);
+        public static void AssertElasticResponse(this IResponse response)
+        {
+            //Debug.Assert(response.IsValid);
+            if (!response.IsValid)
+                Common.Logger("Elastic").LogError(response.DebugInformation);
+        }
+
+        public class Common
+        {
+            public static ILogger Logger(string cat = "default") => _LoggerFactory.CreateLogger(cat);
+            private static ILoggerFactory _LoggerFactory = null;
+
+            static Common()
+            {
+                _LoggerFactory = (ILoggerFactory)Startup.ServiceProvider.GetService(typeof(ILoggerFactory));
+            }
+
+            internal static void DisplayList(Playlist<TvgMedia> pl, Action<string> logAction, string message)
+            {
+                logAction?.Invoke(message);
+                Logger().LogInformation(message);
+                if (pl != null)
+                    Logger().LogInformation(message);
+                //  logAction?.Invoke(pl.ToString(false));
+            }
+        }
+
     }
 }
 

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using PlaylistBaseLibrary.Entities;
 using Hfa.WebApi.Common;
 using Hfa.WebApi.Models;
-using hfa.SyncLibrary.Global;
 using Nest;
 using hfa.WebApi.Common;
 using Microsoft.Extensions.Logging;

@@ -10,8 +10,6 @@ using Microsoft.Extensions.Logging;
 using Hfa.WebApi.Common;
 using System.Linq.Expressions;
 using System.Reflection;
-using hfa.SyncLibrary.Global;
-using hfa.WebApi.Common;
 using Microsoft.Extensions.Options;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;

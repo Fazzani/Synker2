@@ -150,5 +150,6 @@ namespace System
         public static string FullTrim(this string text)
             => Regex.Replace(text, @"\s+", "");
 
+      
     }
 }
