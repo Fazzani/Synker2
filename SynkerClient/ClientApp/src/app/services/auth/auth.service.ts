@@ -45,7 +45,8 @@ export class AuthService extends BaseService {
    * @memberof AuthService
    */
   constructor(protected http: HttpClient, private router: Router, private jwtHelper: JwtHelperService) {
-    super(http, "auth");
+    super(http);
+    this._baseUrl = "auth";
     this.REGISTER_ENDPONT = environment.base_api_url + "auth/register";
     this.TOKEN_ENDPOINT = environment.base_api_url + "auth/token";
     this.REVOCATION_ENDPOINT = environment.base_api_url + "auth/revoketoken";

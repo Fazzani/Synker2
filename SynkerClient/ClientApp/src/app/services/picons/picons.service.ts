@@ -13,7 +13,8 @@ import { environment } from "../../../environments/environment";
 })
 export class PiconService extends BaseService {
   constructor(protected http: HttpClient) {
-    super(http, "picons");
+    super(http);
+    this._baseUrl = "picons";
   }
 
   search(query: SimpleQueryElastic): Observable<ElasticResponse<picon>> {
@@ -22,7 +23,7 @@ export class PiconService extends BaseService {
 
   get(id: string): Observable<ElasticResponse<picon>> {
     return this.http
-      .get(`${environment.base_api_url}${this.BaseUrl}/${id}`).pipe(
+      .get(`${environment.base_api_url}${this._baseUrl}/${id}`).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }
@@ -31,28 +32,28 @@ export class PiconService extends BaseService {
     let q = ElasticQuery.Match(field, filter);
 
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/_search`, q).pipe(
+      .post(`${environment.base_api_url}${this._baseUrl}/_search`, q).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }
 
   delete(id: string): Observable<number> {
     return this.http
-      .delete(`${environment.base_api_url}${this.BaseUrl}/${id}`).pipe(
+      .delete(`${environment.base_api_url}${this._baseUrl}/${id}`).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }
 
   synk(): Observable<ElasticResponse<picon>> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/synk`, null).pipe(
+      .post(`${environment.base_api_url}${this._baseUrl}/synk`, null).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }
 
   match(model: TvgMedia[], distance: number = 90, shouldMatchChannelNumber: boolean = true): Observable<TvgMedia[]> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/match?distance=${distance}&shouldMatchChannelNumber=${shouldMatchChannelNumber}`, model).pipe(
+      .post(`${environment.base_api_url}${this._baseUrl}/match?distance=${distance}&shouldMatchChannelNumber=${shouldMatchChannelNumber}`, model).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }

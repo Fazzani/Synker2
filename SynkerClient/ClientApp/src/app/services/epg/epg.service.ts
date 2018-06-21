@@ -12,12 +12,13 @@ import { environment } from "../../../environments/environment";
 })
 export class EpgService extends BaseService {
   constructor(protected http: HttpClient) {
-    super(http, "epg");
+    super(http);
+    this._baseUrl = "epg";
   }
 
   get(id: string): Observable<ElasticResponse<tvChannel>> {
     return this.http
-      .get(environment.base_api_url + `${this.BaseUrl}/${id}`).pipe(
+      .get(environment.base_api_url + `${this._baseUrl}/${id}`).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }

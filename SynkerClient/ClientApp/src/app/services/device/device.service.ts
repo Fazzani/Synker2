@@ -11,7 +11,8 @@ import { Device, DeviceModel } from "../../types/device.type";
 })
 export class DeviceService extends BaseService {
   constructor(protected http: HttpClient) {
-    super(http, "devices");
+    super(http);
+    this._baseUrl = "devices";
   }
 
   public get(id: string): Observable<PagedResult<Device>> {

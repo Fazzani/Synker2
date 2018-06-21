@@ -15,12 +15,13 @@ import { environment } from "../../../environments/environment";
 })
 export class SitePackService extends BaseService {
   constructor(protected http: HttpClient) {
-    super(http, "sitepack");
+    super(http);
+    this._baseUrl = "sitepack";
   }
 
   get(id: string): Observable<ElasticResponse<sitePackChannel>> {
     return this.http
-      .get(environment.base_api_url + `${this.BaseUrl}/${id}`).pipe(
+      .get(environment.base_api_url + `${this._baseUrl}/${id}`).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }
@@ -34,7 +35,7 @@ export class SitePackService extends BaseService {
 
   save(...sitePacks: sitePackChannel[]): Observable<ElasticResponse<sitePackChannel>> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/save`, sitePacks).pipe(
+      .post(`${environment.base_api_url}${this._baseUrl}/save`, sitePacks).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }
@@ -47,7 +48,7 @@ export class SitePackService extends BaseService {
   countries(filter?: string): Observable<string[]> {
     let f = filter ? filter : "_all";
     return this.http
-      .get(`${environment.base_api_url}${this.BaseUrl}/countries?filter=${f}`).pipe(
+      .get(`${environment.base_api_url}${this._baseUrl}/countries?filter=${f}`).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }
@@ -60,7 +61,7 @@ export class SitePackService extends BaseService {
    */
   matchTvgByMedia(mediaName: string, site?: string): Observable<sitePackChannel> {
     return this.http
-      .get(`${environment.base_api_url}${this.BaseUrl}/matchtvg/name/${mediaName}?site=${site}`).pipe(
+      .get(`${environment.base_api_url}${this._baseUrl}/matchtvg/name/${mediaName}?site=${site}`).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }
@@ -71,7 +72,7 @@ export class SitePackService extends BaseService {
    */
   tvgSites(): Observable<sitePackChannel[]> {
     return this.http
-      .get(`${environment.base_api_url}${this.BaseUrl}/tvgsites`).pipe(
+      .get(`${environment.base_api_url}${this._baseUrl}/tvgsites`).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }
@@ -81,7 +82,7 @@ export class SitePackService extends BaseService {
    * @returns
    */
   sitePacks(filter: string): Observable<sitePackChannel[]> {
-    return this.http.get<sitePackChannel[]>(`${environment.base_api_url}${this.BaseUrl}/sitepacks?filter=${filter}`).pipe(map(
+    return this.http.get<sitePackChannel[]>(`${environment.base_api_url}${this._baseUrl}/sitepacks?filter=${filter}`).pipe(map(
       res => {
         return res;
       },
@@ -91,7 +92,7 @@ export class SitePackService extends BaseService {
 
   delete(id: string): Observable<number> {
     return this.http
-      .delete(environment.base_api_url + `${this.BaseUrl}?id=${id}`).pipe(
+      .delete(environment.base_api_url + `${this._baseUrl}?id=${id}`).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }
@@ -102,7 +103,7 @@ export class SitePackService extends BaseService {
    */
   syncCountries(): Observable<number> {
     return this.http
-      .post(environment.base_api_url + `${this.BaseUrl}/countries`, null).pipe(
+      .post(environment.base_api_url + `${this._baseUrl}/countries`, null).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }
@@ -113,7 +114,7 @@ export class SitePackService extends BaseService {
    */
   synkWebgrab(): Observable<any> {
     return this.http
-      .post(environment.base_api_url + `${this.BaseUrl}/synk/webgrab`, null).pipe(
+      .post(environment.base_api_url + `${this._baseUrl}/synk/webgrab`, null).pipe(
       map(res => {
         return res;
       }),

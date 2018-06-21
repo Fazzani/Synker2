@@ -13,7 +13,8 @@ export class MessageService extends BaseService {
   url: string = `${this.FullBaseUrl}/status/`;
 
   constructor(protected http: HttpClient) {
-    super(http, "message");
+    super(http);
+    this._baseUrl = "message";
   }
 
   public get(id: string): Observable<PagedResult<Message>> {

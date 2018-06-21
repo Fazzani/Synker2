@@ -16,7 +16,8 @@ import { environment } from "../../../environments/environment";
 })
 export class PlaylistService extends BaseService {
   constructor(protected http: HttpClient) {
-    super(http, "playlists");
+    super(http);
+    this._baseUrl = "playlists";
   }
 
   get(id: string, light: boolean): Observable<PlaylistModel> {
@@ -24,7 +25,7 @@ export class PlaylistService extends BaseService {
     params = params.set("light", light ? "true" : "false");
 
     return this.http
-      .get(`${environment.base_api_url}${this.BaseUrl}/${id}`, {
+      .get(`${environment.base_api_url}${this._baseUrl}/${id}`, {
         params: params
       })
       .pipe(
@@ -34,42 +35,42 @@ export class PlaylistService extends BaseService {
   }
 
   list(query: QueryListBaseModel): Observable<PagedResult<PlaylistModel>> {
-    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/search`, query).pipe(
+    return this.http.post(`${environment.base_api_url}${this._baseUrl}/search`, query).pipe(
       map(this.handleSuccess),
       catchError(this.handleError)
     );
   }
 
   synk(model: PlaylistPostModel): Observable<PlaylistModel> {
-    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/synk`, model).pipe(
+    return this.http.post(`${environment.base_api_url}${this._baseUrl}/synk`, model).pipe(
       map(this.handleSuccess),
       catchError(this.handleError)
     );
   }
 
   executeHandlers(model: TvgMedia[]): Observable<TvgMedia[]> {
-    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/handlers`, model).pipe(
+    return this.http.post(`${environment.base_api_url}${this._baseUrl}/handlers`, model).pipe(
       map(this.handleSuccess),
       catchError(this.handleError)
     );
   }
 
   match(id: string): Observable<PlaylistModel> {
-    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/match/$${id}`, null).pipe(
+    return this.http.post(`${environment.base_api_url}${this._baseUrl}/match/$${id}`, null).pipe(
       map(this.handleSuccess),
       catchError(this.handleError)
     );
   }
 
   matchtvg(id: string, onlyNotMatched: boolean = true): Observable<PlaylistModel> {
-    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/matchtvg/${id}?onlyNotMatched=${onlyNotMatched}`, null).pipe(
+    return this.http.post(`${environment.base_api_url}${this._baseUrl}/matchtvg/${id}?onlyNotMatched=${onlyNotMatched}`, null).pipe(
       map(this.handleSuccess),
       catchError(this.handleError)
     );
   }
 
   matchFiltredTvgSites(id: string, onlyNotMatched: boolean = true): Observable<PlaylistModel> {
-    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/matchfiltred/${id}?onlyNotMatched=${onlyNotMatched}`, null).pipe(
+    return this.http.post(`${environment.base_api_url}${this._baseUrl}/matchfiltred/${id}?onlyNotMatched=${onlyNotMatched}`, null).pipe(
       map(this.handleSuccess),
       catchError(this.handleError)
     );
@@ -81,7 +82,7 @@ export class PlaylistService extends BaseService {
    * @returns
    */
   matchVideosByPlaylist(id: string): Observable<PlaylistModel> {
-    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/matchvideos/${id}`, null).pipe(
+    return this.http.post(`${environment.base_api_url}${this._baseUrl}/matchvideos/${id}`, null).pipe(
       map(this.handleSuccess),
       catchError(this.handleError)
     );
@@ -93,7 +94,7 @@ export class PlaylistService extends BaseService {
    * @returns
    */
   matchVideos(...medias: TvgMedia[]): Observable<TvgMedia[]> {
-    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/matchvideos`, medias).pipe(
+    return this.http.post(`${environment.base_api_url}${this._baseUrl}/matchvideos`, medias).pipe(
       map(this.handleSuccess),
       catchError(this.handleError)
     );
@@ -105,7 +106,7 @@ export class PlaylistService extends BaseService {
    * @returns Poster Paht
    */
   matchVideo(mediaName: string): Observable<any> {
-    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/matchvideo/${mediaName}`, null).pipe(
+    return this.http.post(`${environment.base_api_url}${this._baseUrl}/matchvideo/${mediaName}`, null).pipe(
       map(this.handleSuccess),
       catchError(this.handleError)
     );
@@ -118,7 +119,7 @@ export class PlaylistService extends BaseService {
   //}
 
   diff(model: PlaylistPostModel): Observable<PlaylistModel> {
-    return this.http.post(`${environment.base_api_url}${this.BaseUrl}/diff`, model).pipe(
+    return this.http.post(`${environment.base_api_url}${this._baseUrl}/diff`, model).pipe(
       map(this.handleSuccess),
       catchError(this.handleError)
     );
@@ -126,7 +127,7 @@ export class PlaylistService extends BaseService {
 
   addByUrl(p: PlaylistPostModel): Observable<PlaylistModel> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/create`, p, {
+      .post(`${environment.base_api_url}${this._baseUrl}/create`, p, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
       })
@@ -138,7 +139,7 @@ export class PlaylistService extends BaseService {
 
   addByStream(p: PlaylistPostModel): Observable<PlaylistModel> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/create/m3u`, p, {
+      .post(`${environment.base_api_url}${this._baseUrl}/create/m3u`, p, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
       })
@@ -150,7 +151,7 @@ export class PlaylistService extends BaseService {
 
   update(p: PlaylistModel): Observable<PlaylistModel> {
     return this.http
-      .put(`${environment.base_api_url}${this.BaseUrl}/${p.publicId}`, p, {
+      .put(`${environment.base_api_url}${this._baseUrl}/${p.publicId}`, p, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
       })
@@ -162,7 +163,7 @@ export class PlaylistService extends BaseService {
 
   updateLight(p: PlaylistModel): Observable<any> {
     return this.http
-      .put(`${environment.base_api_url}${this.BaseUrl}/light/${p.publicId}`, p, {
+      .put(`${environment.base_api_url}${this._baseUrl}/light/${p.publicId}`, p, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
       })
@@ -176,7 +177,7 @@ export class PlaylistService extends BaseService {
   groups(id: string): Observable<MediaGroup[]> {
 
     return this.http
-      .get(`${environment.base_api_url}${this.BaseUrl}/${id}/groups`)
+      .get(`${environment.base_api_url}${this._baseUrl}/${id}/groups`)
       .pipe(
         map(this.handleSuccess),
         catchError(this.handleError)
@@ -191,7 +192,7 @@ export class PlaylistService extends BaseService {
   childrenGroups(id: string, group:string): Observable<TvgMedia[]> {
 
     return this.http
-      .get(`${environment.base_api_url}${this.BaseUrl}/${id}/groups/${group}`)
+      .get(`${environment.base_api_url}${this._baseUrl}/${id}/groups/${group}`)
       .pipe(
         map(this.handleSuccess),
         catchError(this.handleError)

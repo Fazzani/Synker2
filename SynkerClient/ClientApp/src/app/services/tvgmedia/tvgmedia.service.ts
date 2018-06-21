@@ -15,7 +15,8 @@ import { environment } from "../../../environments/environment";
 })
 export class TvgMediaService extends BaseService {
   constructor(protected http: HttpClient) {
-    super(http, "tvgmedia");
+    super(http);
+    this._baseUrl = "tvgmedia";
   }
 
   get(id: string): Observable<ElasticResponse<TvgMedia>> {
@@ -34,7 +35,7 @@ export class TvgMediaService extends BaseService {
 
   addToToPlaylist(id: string, ...medias: TvgMedia[]) {
     return this.http
-      .post(environment.base_api_url + `${this.BaseUrl}/${id}/insert`, medias, {
+      .post(environment.base_api_url + `${this._baseUrl}/${id}/insert`, medias, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
       }).pipe(
@@ -43,7 +44,7 @@ export class TvgMediaService extends BaseService {
 
   removeFromPlaylist(id: string, ...medias: TvgMedia[]) {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/${id}/delete`, medias, {
+      .post(`${environment.base_api_url}${this._baseUrl}/${id}/delete`, medias, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
       }).pipe(
@@ -52,7 +53,7 @@ export class TvgMediaService extends BaseService {
 
   matchTvg(matchTvgPostModel: MatchTvgPostModel): Observable<sitePackChannel> {
     return this.http
-      .post(`${environment.base_api_url}${this.BaseUrl}/matchtvg`, matchTvgPostModel).pipe(
+      .post(`${environment.base_api_url}${this._baseUrl}/matchtvg`, matchTvgPostModel).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }

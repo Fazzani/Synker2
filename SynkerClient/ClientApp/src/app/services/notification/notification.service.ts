@@ -17,7 +17,7 @@ export class NotificationService extends BaseService {
   readonly  hubName: string = 'notification';
 
   constructor(protected http: HttpClient, private commonService: CommonService) {
-    super(http, "");
+    super(http);
     this.hubConnection = new HubConnectionBuilder().withUrl(`${environment.base_hub_url}${this.hubName}`).build();
 
     //TODO: retry when failed // see implementation in this file history

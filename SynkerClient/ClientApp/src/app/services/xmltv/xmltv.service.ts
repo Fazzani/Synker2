@@ -12,7 +12,8 @@ import { environment } from "../../../environments/environment";
 })
 export class XmltvService extends BaseService {
   constructor(protected http: HttpClient) {
-    super(http, "xmltv");
+    super(http);
+    this._baseUrl = "xmltv";
   }
 
   /**

@@ -13,12 +13,13 @@ import { environment } from "../../../environments/environment";
 })
 export class MediaRefService extends BaseService {
   constructor(protected http: HttpClient) {
-    super(http, "mediasref");
+    super(http);
+    this._baseUrl = "mediasref";
   }
 
   get(id: string): Observable<ElasticResponse<mediaRef>> {
     return this.http
-      .get(environment.base_api_url + `${this.BaseUrl}/${id}`).pipe(
+      .get(environment.base_api_url + `${this._baseUrl}/${id}`).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }
@@ -46,7 +47,7 @@ export class MediaRefService extends BaseService {
 
   save(...medias: mediaRef[]): Observable<ElasticResponse<mediaRef>> {
     return this.http
-      .post(environment.base_api_url + this.BaseUrl, medias).pipe(
+      .post(environment.base_api_url + this._baseUrl, medias).pipe(
       map(this.handleSuccess),
       catchError(this.handleError),);
   }

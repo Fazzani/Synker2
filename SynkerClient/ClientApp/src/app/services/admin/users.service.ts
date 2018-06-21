@@ -11,7 +11,8 @@ import { PagedResult, QueryListBaseModel } from "../../types/common.type";
 })
 export class UsersService extends BaseService {
   constructor(protected http: HttpClient) {
-    super(http, "users");
+    super(http);
+    this._baseUrl = "users";
   }
 
   update(user: User): Observable<User> {

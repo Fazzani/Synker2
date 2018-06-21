@@ -1,6 +1,6 @@
 
 import { throwError as observableThrowError, Observable } from 'rxjs';
-import {map, catchError } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { ElasticResponse, SimpleQueryElastic } from "../../types/elasticQuery.type";
@@ -8,15 +8,15 @@ import { environment } from "../../../environments/environment";
 
 @Injectable()
 export class BaseService {
-  protected FullBaseUrl: string = `${environment.base_api_url}${this.BaseUrl}`;
-
-  constructor(protected http: HttpClient, protected BaseUrl: string) {}
+  protected FullBaseUrl: string = `${environment.base_api_url}${this._baseUrl}`;
+  protected _baseUrl: string = "";
+  constructor(protected http: HttpClient) { }
 
   search<T>(query: SimpleQueryElastic): Observable<ElasticResponse<T>> {
     return this.http
       .post(`${this.FullBaseUrl}/_searchstring`, query).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+        map(this.handleSuccess),
+        catchError(this.handleError), );
   }
 
   simpleSearch<T>(query: string, indexName: string): Observable<ElasticResponse<T>> {
@@ -27,15 +27,15 @@ export class BaseService {
         IndexName: indexName,
         Query: query
       }).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+        map(this.handleSuccess),
+        catchError(this.handleError), );
   }
 
   delete(id: string): Observable<number> {
     return this.http
       .delete(`${this.FullBaseUrl}/${id}`).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+        map(this.handleSuccess),
+        catchError(this.handleError), );
   }
 
   handleSuccess = (response: Response | any) => {

@@ -11,7 +11,8 @@ import { Host } from "../../types/host.type";
 })
 export class HostsService extends BaseService {
   constructor(protected http: HttpClient) {
-    super(http, "host");
+    super(http);
+    this._baseUrl = "host";
   }
 
   update(host: Host): Observable<Host> {
