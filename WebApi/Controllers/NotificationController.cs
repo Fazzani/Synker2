@@ -67,7 +67,10 @@ namespace hfa.WebApi.Controllers
                     UserId = UserId.Value.ToString()
                 }, cancellationToken);
             }
+            else if(notification.NotificationType == NotificationTypeEnum.Email)
+            {
 
+            }
             return Ok();
         }
 
@@ -77,7 +80,7 @@ namespace hfa.WebApi.Controllers
         /// <param name="webPushModel"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("webpush")]
         [ValidateModel]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]

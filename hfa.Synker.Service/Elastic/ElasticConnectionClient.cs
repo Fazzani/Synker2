@@ -6,14 +6,15 @@ using Microsoft.Extensions.Logging;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Services.Xmltv;
 using Microsoft.Extensions.Options;
-using hfa.Synker.Service.Entities.MediasRef;
 using hfa.Synker.Service.Services.Picons;
+using System.Diagnostics;
+using System.Text;
 
 namespace hfa.Synker.Service.Services.Elastic
 {
     public class ElasticConnectionClient : IElasticConnectionClient
     {
-        public const string SITE_PACK_RETREIVE_COUNTRY_PIPELINE = "sitepack_retreive_country";
+        public const string SITE_PACK_PIPELINE = "sitepack_pipeline";
         public const string PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE = "picons_retreive_channel_number";
         private const string STOP_WORDS_FILE_PATH = "synkerconfig/stopwords.txt";
         private const string MAPPING_CHAR_FILTERS_FILE_PATH = "mapping_synker.txt";
@@ -32,24 +33,10 @@ namespace hfa.Synker.Service.Services.Elastic
 
         private void Init()
         {
-            //if (!Client.IndexExists(_config.DefaultIndex).Exists)
-            //    MappingPlaylistConfig();
-
             //SitePack index
             if (!Client.Value.IndexExists(_config.SitePackIndex).Exists)
             {
                 MappingSitePackConfig(_config.SitePackIndex);
-            }
-
-            //Create sitepack_retreive_country
-            var pipeCountry = Client.Value.GetPipeline(r => r.Id(new Id(SITE_PACK_RETREIVE_COUNTRY_PIPELINE)));
-            if (pipeCountry.Pipelines == null || pipeCountry.Pipelines.Count == 0)
-            {
-                var respPipeSitePack = Client.Value.PutPipeline(new Id(SITE_PACK_RETREIVE_COUNTRY_PIPELINE), f => f
-                 .Description("Used for retreiving country from source field (xml path)")
-                 .Processors(p => p.Script(s => s.Inline("if(ctx.source != null) { ctx.country =  /\\//.split(ctx.source)[4]; } else { ctx.country = ''}"))));
-
-                _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(respPipeSitePack.DebugInformation);
             }
 
             var pipelineResponse = Client.Value.PutPipeline("default-pipeline", p => p
@@ -64,7 +51,7 @@ namespace hfa.Synker.Service.Services.Elastic
             {
                 var respPipePicons = Client.Value.PutPipeline(new Id(PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE), f => f
                  .Description("Used for retreiving channel number from picon name and add new field ch_number to store the value into")
-                 .Processors(p => p.Script(s => s.Inline("if(ctx.name != null) { Matcher m = /(?:[^\\+])(\\d{1,2})/.matcher(ctx.name); if(m!=null && m.find())  { ctx.ch_number = m.group(1); } }"))));
+                 .Processors(p => p.Script(s => s.Source("if(ctx.name != null) { Matcher m = /(?:[^\\+])(\\d{1,2})/.matcher(ctx.name); if(m!=null && m.find())  { ctx.ch_number = m.group(1); } }"))));
 
                 _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(respPipePicons.DebugInformation);
             }
@@ -73,14 +60,14 @@ namespace hfa.Synker.Service.Services.Elastic
             if (!Client.Value.IndexExists(_config.PiconIndex).Exists)
                 MappingPicons(_config.PiconIndex);
 
-            Client.Value.Map<tv>(x => x.Index("xmltv-*").AutoMap());
+            //Client.Value.Map<tv>(x => x.Index("xmltv-*").AutoMap());
         }
 
         private void InitSettings()
         {
             _settings = new ConnectionSettings(new Uri(_config.ElasticUrl));
             _settings
-                .BasicAuthentication(_config.ElasticUserName, _config.ElasticPassword)
+                // .BasicAuthentication(_config.ElasticUserName, _config.ElasticPassword)
                 .DisableDirectStreaming(true)
                 .DefaultIndex(_config.DefaultIndex)
                 .PrettyJson()
@@ -89,16 +76,36 @@ namespace hfa.Synker.Service.Services.Elastic
 
 #if DEBUG
             _settings.EnableDebugMode();
+            _settings.OnRequestCompleted(call =>
+            {
+                if (call.RequestBodyInBytes != null)
+                {
+                    Debug.WriteLine("======================== REQUEST");
+                    Debug.WriteLine(Encoding.UTF8.GetString(call.RequestBodyInBytes));
+                    Debug.WriteLine("=================================");
+                }
+                if (call.ResponseBodyInBytes != null)
+                {
+                    Debug.WriteLine("======================== RESPONSE");
+                    Debug.WriteLine(Encoding.UTF8.GetString(call.ResponseBodyInBytes));
+                    Debug.WriteLine("=================================");
+                }
+            });
 #endif
             _settings
                 //.InferMappingFor<Message>(m => m.IndexName(_config.MessageIndex).IdProperty(p => p.Id))
-                .InferMappingFor<TvgMedia>(m => m.IdProperty(p => p.Id))
-                .InferMappingFor<tvChannel>(m => m.IdProperty(p => p.id))
-                .InferMappingFor<Tvg>(m => m.IdProperty(p => p.Id))
-                .InferMappingFor<tvProgramme>(m => m.IdProperty(p => p.Id).IndexName("xmltv-*"))
-                .InferMappingFor<MediaRef>(m => m.IndexName(_config.MediaRefIndex).IdProperty(p => p.Id))
-                .InferMappingFor<Picon>(m => m.IndexName(_config.PiconIndex).IdProperty(p => p.Id))
-                .InferMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex).TypeName("doc").IdProperty(p => p.id).Rename(x => x.Update, "update_date"));
+                //.DefaultMappingFor<TvgMedia>(m => m.IdProperty(p => p.Id))
+                //.DefaultMappingFor<tvChannel>(m => m.IdProperty(p => p.id))
+                //.DefaultMappingFor<Tvg>(m => m.IdProperty(p => p.Id))
+                //.DefaultMappingFor<tvProgramme>(m => m.IdProperty(p => p.Id).IndexName("xmltv-*"))
+                //.DefaultMappingFor<MediaRef>(m => m.IndexName(_config.MediaRefIndex).IdProperty(p => p.Id))
+                .DefaultMappingFor<Picon>(m => m.IndexName(_config.PiconIndex).IdProperty(p => p.Id))
+                .DefaultMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex)
+                .TypeName("doc")
+                .IdProperty(x => x.Id)
+                .PropertyName(x => x.Id, "_id")
+                .PropertyName(x => x.Update, "update_date")
+                );
         }
 
         private void MappingSitePackConfig(string indexName)

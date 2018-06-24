@@ -12,7 +12,8 @@ namespace hfa.WebApi.Models.Xmltv
     {
         public SitePackChannelModel ToModel(IHit<SitePackChannel> hit)
         {
-            id = hit.Source.id;
+            Id = hit.Source.Id;
+            Unique = hit.Source.Unique;
             Channel_name = hit.Source.Source;
             Site = hit.Source.Site;
             Site_id = hit.Source.Site_id;

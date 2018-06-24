@@ -154,7 +154,7 @@ namespace hfa.Synker.Service.Services
                , cancellationToken);
 
             var descriptor = new BulkDescriptor();
-            descriptor.Pipeline(ElasticConnectionClient.SITE_PACK_RETREIVE_COUNTRY_PIPELINE);
+            descriptor.Pipeline(ElasticConnectionClient.SITE_PACK_PIPELINE);
             descriptor.IndexMany(tvgSites.Documents);
             descriptor.Refresh(Elasticsearch.Net.Refresh.True);
 
@@ -164,7 +164,7 @@ namespace hfa.Synker.Service.Services
         public async Task<IBulkResponse> SaveAsync(List<SitePackChannel> sitepacks, CancellationToken cancellationToken)
         {
             var descriptor = new BulkDescriptor();
-            descriptor.Pipeline(ElasticConnectionClient.SITE_PACK_RETREIVE_COUNTRY_PIPELINE);
+            descriptor.Pipeline(ElasticConnectionClient.SITE_PACK_PIPELINE);
             descriptor.IndexMany(sitepacks);
             descriptor.Refresh(Elasticsearch.Net.Refresh.True);
             return await _elasticConnectionClient.Client.Value.BulkAsync(descriptor, cancellationToken);
@@ -191,7 +191,9 @@ namespace hfa.Synker.Service.Services
               .Aggregations(a => a
                   .Terms("unique", te => te
                       .Field(f => f.Country.Suffix("keyword"))
-                      .Order(TermsOrder.TermAscending)
+                      .Order(o => o
+                            .KeyAscending()
+                            .CountDescending())
                   )
               )
            , cancellationToken);

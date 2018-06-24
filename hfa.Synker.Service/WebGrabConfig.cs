@@ -34,8 +34,11 @@ namespace hfa.Synker.Service.Services.Xmltv
             DisplayNames = new List<string>();
         }
 
+        public string Id { get; set; }
+
         [XmlIgnore]
-        public string id { get; set; }
+        public string Unique { get; set; }
+
         DateTime _update;
         [XmlIgnore]
         public DateTime Update
@@ -98,7 +101,7 @@ namespace hfa.Synker.Service.Services.Xmltv
             return obj.Xmltv_id.GetHashCode();
         }
 
-        public override string ToString() => $"{MediaType}:{Channel_name} {id} {Country}";
+        public override string ToString() => $"{MediaType}:{Channel_name} {Id} {Country}";
     }
 
     public enum SitePackMediaTypes

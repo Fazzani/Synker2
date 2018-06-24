@@ -399,19 +399,19 @@ namespace Hfa.WebApi.Controllers
                    var matched = _sitePackService.MatchTermByDispaynamesAndFiltredBySiteNameAsync(media.DisplayName, media.Lang, playlistEntity.TvgSites, cancellationToken).GetAwaiter().GetResult();
                    if (matched != null)
                    {
-                       media.MediaGroup = new hfa.PlaylistBaseLibrary.Entities.MediaGroup(matched.Country);
+                       media.MediaGroup = new MediaGroup(matched.Country);
                        if (media.Tvg == null)
                        {
-                           media.Tvg = new Tvg { Name = matched.Channel_name, TvgIdentify = matched.id, TvgSiteSource = matched.Site, Id = matched.Xmltv_id };
+                           media.Tvg = new Tvg { Name = matched.Channel_name, TvgIdentify = matched.Unique, TvgSiteSource = matched.Site, Id = matched.Xmltv_id };
                        }
                        else
                        {
                            media.Tvg.Name = matched.Channel_name;
                            media.Tvg.Id = matched.Xmltv_id;
-                           media.Tvg.TvgIdentify = matched.id;
+                           media.Tvg.TvgIdentify = matched.Unique;
                            media.Tvg.TvgSiteSource = matched.Site;
                            if (media.Tvg.TvgSource == null)
-                               media.Tvg.TvgSource = new hfa.PlaylistBaseLibrary.Entities.TvgSource();
+                               media.Tvg.TvgSource = new TvgSource();
                            media.Tvg.TvgSource.Site = matched.Site;
                            media.Tvg.TvgSource.Country = matched.Country;
                            media.Tvg.TvgSource.Code = matched.Site_id;
@@ -453,7 +453,7 @@ namespace Hfa.WebApi.Controllers
                       {
                           media.Tvg.Id = matched.Xmltv_id;
                           media.Tvg.Name = matched.Channel_name;
-                          media.Tvg.TvgIdentify = matched.id;
+                          media.Tvg.TvgIdentify = matched.Unique;
                           media.Tvg.TvgSiteSource = matched.Site;
                       }
                   });

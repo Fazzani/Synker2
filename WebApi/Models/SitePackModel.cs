@@ -11,10 +11,10 @@ namespace hfa.WebApi.Models
 {
     public class SitePackModel : SitePackChannel, IModel<SitePackChannel, SitePackModel>
     {
-        public string Id { get; set; }
         public SitePackModel ToModel(IHit<SitePackChannel> hit)
         {
             Id = hit.Id;
+            Unique = hit.Source.Unique;
             Site = hit.Source.Site;
             Site_id = hit.Source.Site_id;
             Xmltv_id = hit.Source.Xmltv_id;

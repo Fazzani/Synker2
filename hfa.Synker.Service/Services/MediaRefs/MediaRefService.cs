@@ -101,12 +101,14 @@ namespace hfa.Synker.Service.Services.MediaRefs
                .Aggregations(a => a
                    .Terms("unique", te => te
                        .Field(f => f.Channel_name.Suffix(ElasticConfig.ELK_KEYWORD_SUFFIX))
-                       .Order(TermsOrder.TermAscending)
+                       .Order(o => o
+                            .KeyAscending()
+                            .CountDescending())
                    )
                )
             , cancellationToken);
 
-            var mediasRef = response.Documents.Select(x => new MediaRef(x.Channel_name, x.Site, x.Country, x.Xmltv_id, x.id)).ToList();
+            var mediasRef = response.Documents.Select(x => new MediaRef(x.Channel_name, x.Site, x.Country, x.Xmltv_id, x.Id)).ToList();
 
             //var qc = new QueryContainerDescriptor<Picon>();
 
@@ -184,7 +186,9 @@ namespace hfa.Synker.Service.Services.MediaRefs
               .Aggregations(a => a
                   .Terms("unique", te => te
                       .Field(f => f.Cultures.Suffix("keyword"))
-                      .Order(TermsOrder.TermAscending)
+                      .Order(o => o
+                            .KeyAscending()
+                            .CountDescending())
                   )
               )
            , cancellationToken);
@@ -225,7 +229,9 @@ namespace hfa.Synker.Service.Services.MediaRefs
                          .Terms("groups_aggr", te => te
                             .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)
                              .Field(f => f.Groups.Suffix(ElasticConfig.ELK_KEYWORD_SUFFIX))
-                             .Order(TermsOrder.TermAscending)
+                             .Order(o => o
+                            .KeyAscending()
+                            .CountDescending())
                          )
                      )
                   , cancellationToken);

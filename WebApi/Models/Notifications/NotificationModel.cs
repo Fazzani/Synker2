@@ -7,7 +7,6 @@ namespace hfa.WebApi.Models.Notifications
 {
     public class NotificationModel
     {
-
         public NotificationTypeEnum NotificationType { get; set; } = NotificationTypeEnum.Email;
 
         public string Body { get; set; }
