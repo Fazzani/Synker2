@@ -164,7 +164,7 @@ namespace hfa.Synker.Service.Services
         public async Task<IBulkResponse> SaveAsync(List<SitePackChannel> sitepacks, CancellationToken cancellationToken)
         {
             var descriptor = new BulkDescriptor();
-            //descriptor.Pipeline(ElasticConnectionClient.SITE_PACK_PIPELINE);
+            descriptor.Pipeline(ElasticConnectionClient.SITE_PACK_PIPELINE);
             descriptor.IndexMany(sitepacks);
             descriptor.Refresh(Elasticsearch.Net.Refresh.True);
             return await _elasticConnectionClient.Client.Value.BulkAsync(descriptor, cancellationToken);
