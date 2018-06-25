@@ -402,13 +402,13 @@ namespace Hfa.WebApi.Controllers
                        media.MediaGroup = new MediaGroup(matched.Country);
                        if (media.Tvg == null)
                        {
-                           media.Tvg = new Tvg { Name = matched.Channel_name, TvgIdentify = matched.Unique, TvgSiteSource = matched.Site, Id = matched.Xmltv_id };
+                           media.Tvg = new Tvg { Name = matched.Channel_name, TvgIdentify = matched.Id, TvgSiteSource = matched.Site, Id = matched.Xmltv_id };
                        }
                        else
                        {
                            media.Tvg.Name = matched.Channel_name;
                            media.Tvg.Id = matched.Xmltv_id;
-                           media.Tvg.TvgIdentify = matched.Unique;
+                           media.Tvg.TvgIdentify = matched.Id;
                            media.Tvg.TvgSiteSource = matched.Site;
                            if (media.Tvg.TvgSource == null)
                                media.Tvg.TvgSource = new TvgSource();
@@ -453,7 +453,7 @@ namespace Hfa.WebApi.Controllers
                       {
                           media.Tvg.Id = matched.Xmltv_id;
                           media.Tvg.Name = matched.Channel_name;
-                          media.Tvg.TvgIdentify = matched.Unique;
+                          media.Tvg.TvgIdentify = matched.Id;
                           media.Tvg.TvgSiteSource = matched.Site;
                       }
                   });

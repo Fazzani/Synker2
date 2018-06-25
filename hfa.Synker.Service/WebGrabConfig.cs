@@ -36,9 +36,6 @@ namespace hfa.Synker.Service.Services.Xmltv
 
         public string Id { get; set; }
 
-        [XmlIgnore]
-        public string Unique { get; set; }
-
         DateTime _update;
         [XmlIgnore]
         public DateTime Update
