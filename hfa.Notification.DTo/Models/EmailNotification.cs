@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace hfa.Brokers.Messages.Models
+﻿namespace hfa.Brokers.Messages.Models
 {
+    using System.Collections.Generic;
     public class EmailNotification : NotificationContext
     {
-        public EmailNotification():base()
+        public EmailNotification() : base()
         {
 
         }

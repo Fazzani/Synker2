@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace hfa.Brokers.Messages.Configuration
+﻿namespace hfa.Brokers.Messages.Configuration
 {
     public class RabbitMQConfiguration
     {

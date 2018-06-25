@@ -1,11 +1,9 @@
-﻿using PlaylistManager.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace hfa.Synker.Service.Entities.MediasRef
+﻿namespace hfa.Synker.Service.Entities.MediasRef
 {
+    using PlaylistManager.Entities;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     public class MediaRef : IEqualityComparer<MediaRef>
     {
         public Guid Id { get; set; } = Guid.NewGuid();

@@ -1,12 +1,10 @@
-﻿using PlaylistBaseLibrary.Providers.Linq;
-using PlaylistManager.Entities;
-using System;
-using System.Linq;
-using System.Linq.Expressions;
-using TvheadendLibrary.Common;
-
-namespace TvheadendLibrary
+﻿namespace TvheadendLibrary
 {
+    using PlaylistBaseLibrary.Providers.Linq;
+    using System;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using TvheadendLibrary.Common;
     internal class QueryParamsTranslator : ExpressionVisitor
     {
         QueryParams _queryParams;

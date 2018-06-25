@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace hfa.PlaylistBaseLibrary.Common
+﻿namespace hfa.PlaylistBaseLibrary.Common
 {
+    using System;
     public class ApplicationAbout
     {
         public string Author { get; set; }

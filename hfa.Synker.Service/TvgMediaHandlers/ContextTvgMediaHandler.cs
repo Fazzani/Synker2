@@ -1,14 +1,11 @@
 ﻿using PlaylistBaseLibrary.ChannelHandlers;
-using PlaylistManager.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Hfa.PlaylistBaseLibrary.Entities;
-using Nest;
-using hfa.Synker.Service.Services.Elastic;
-
 namespace hfa.Synker.Service.Services.TvgMediaHandlers
 {
+    using PlaylistManager.Entities;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Hfa.PlaylistBaseLibrary.Entities;
+    using hfa.Synker.Service.Services.Elastic;
     public class ContextTvgMediaHandler : IContextTvgMediaHandler
     {
         private MediaConfiguration _mediaConfig;

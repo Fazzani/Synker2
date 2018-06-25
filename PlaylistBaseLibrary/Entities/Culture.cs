@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace hfa.PlaylistBaseLibrary.Entities
+﻿namespace hfa.PlaylistBaseLibrary.Entities
 {
+    using System;
     [Serializable]
     public class Culture
     {

@@ -1,10 +1,6 @@
-﻿using hfa.Synker.Service.Services.Xmltv;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace hfa.Synker.Service
+﻿namespace hfa.Synker.Service
 {
+    using hfa.Synker.Service.Services.Xmltv;
     // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
     /// <remarks/>
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]

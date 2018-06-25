@@ -1,13 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
-
-namespace System.Text
+﻿namespace System.Text
 {
+    using Newtonsoft.Json;
+    using System.Collections.Generic;
+    using System.Web;
     public static class StringBuilderEx
     {
         //in an extension class

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-
-namespace hfa.Brokers.Messages
+﻿namespace hfa.Brokers.Messages
 {
+    using System.Reflection;
     public class NotificationContext
     {
 

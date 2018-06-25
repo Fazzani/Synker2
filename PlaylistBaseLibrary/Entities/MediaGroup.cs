@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace hfa.PlaylistBaseLibrary.Entities
+﻿namespace hfa.PlaylistBaseLibrary.Entities
 {
+    using System;
+    using System.Collections.Generic;
     public class MediaGroup
     {
         public MediaGroup()

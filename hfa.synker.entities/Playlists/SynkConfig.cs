@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-
-namespace hfa.Synker.Service.Entities.Playlists
+﻿namespace hfa.Synker.Service.Entities.Playlists
 {
+    using System;
+    using System.ComponentModel.DataAnnotations.Schema;
     public class SynkConfig
     {
         /// <summary>

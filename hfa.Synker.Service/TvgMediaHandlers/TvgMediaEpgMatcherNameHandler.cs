@@ -1,16 +1,12 @@
-﻿using hfa.Synker.Service.Elastic;
-using hfa.Synker.Service.Entities.MediasRef;
-using hfa.Synker.Service.Services.Elastic;
-using Microsoft.Extensions.Options;
-using PlaylistBaseLibrary.ChannelHandlers;
-using PlaylistBaseLibrary.Entities;
-using PlaylistManager.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace hfa.Synker.Service.Services.TvgMediaHandlers
+﻿using PlaylistBaseLibrary.ChannelHandlers;
+namespace hfa.Synkerk.Service.Services.TvgMediaHandlers
 {
+    using hfa.Synker.Service.Elastic;
+    using hfa.Synker.Service.Entities.MediasRef;
+    using hfa.Synker.Service.Services.Elastic;
+    using Microsoft.Extensions.Options;
+    using PlaylistManager.Entities;
+    using System.Linq;
     public class TvgMediaEpgMatcherNameHandler : TvgMediaHandler
     {
         private IElasticConnectionClient _elasticClient;

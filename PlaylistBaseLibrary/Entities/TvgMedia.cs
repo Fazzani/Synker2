@@ -1,11 +1,8 @@
-﻿using hfa.PlaylistBaseLibrary.Entities;
-using PlaylistBaseLibrary.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PlaylistManager.Entities
+﻿namespace PlaylistManager.Entities
 {
+    using hfa.PlaylistBaseLibrary.Entities;
+    using PlaylistBaseLibrary.Entities;
+    using System;
     [Serializable]
     public class TvgMedia : Media
     {

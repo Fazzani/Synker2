@@ -1,13 +1,8 @@
-﻿using System;
-using System.Xml.Serialization;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Globalization;
-
-namespace hfa.Synker.Service.Services.Xmltv
+﻿namespace hfa.Synker.Service.Services.Xmltv
 {
+    using System;
+    using System.Xml.Serialization;
+    using System.Collections.Generic;
     [XmlRoot(ElementName = "postprocess")]
     public class Postprocess
     {

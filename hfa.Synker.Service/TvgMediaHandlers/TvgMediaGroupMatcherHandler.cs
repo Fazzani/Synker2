@@ -1,14 +1,12 @@
-﻿using Hfa.PlaylistBaseLibrary.Entities;
+﻿
 using PlaylistBaseLibrary.ChannelHandlers;
-using PlaylistManager.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace hfa.Synker.Service.Services.TvgMediaHandlers
 {
+    using PlaylistManager.Entities;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.RegularExpressions;
     public class TvgMediaGroupMatcherHandler : TvgMediaHandler
     {
         public TvgMediaGroupMatcherHandler(IContextTvgMediaHandler contextTvgMediaHandler) : base(contextTvgMediaHandler)

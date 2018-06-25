@@ -1,12 +1,9 @@
 ﻿using PlaylistBaseLibrary.ChannelHandlers;
-using PlaylistManager.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-
 namespace hfa.Synker.Service.Services.TvgMediaHandlers
 {
+    using PlaylistManager.Entities;
+    using System.Linq;
+    using System.Text.RegularExpressions;
     public class TvgMediaCleanNameHandler : TvgMediaHandler
     {
         public TvgMediaCleanNameHandler(IContextTvgMediaHandler contextTvgMediaHandler)

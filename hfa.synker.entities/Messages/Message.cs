@@ -1,10 +1,9 @@
-﻿using hfa.Synker.Service.Entities.Auth;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace hfa.Synker.Services.Entities.Messages
+﻿namespace hfa.Synker.Services.Entities.Messages
 {
+    using hfa.Synker.Service.Entities.Auth;
+    using System;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
     //[ElasticsearchType(IdProperty = nameof(Id))]
     public class Message
     {

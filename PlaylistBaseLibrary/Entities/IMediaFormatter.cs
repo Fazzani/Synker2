@@ -1,10 +1,7 @@
-﻿using PlaylistManager.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PlaylistBaseLibrary.Entities
+﻿namespace PlaylistBaseLibrary.Entities
 {
+    using PlaylistManager.Entities;
+
     public interface IMediaFormatter
     {
         string Format(Media media);

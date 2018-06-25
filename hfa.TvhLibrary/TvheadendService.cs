@@ -1,23 +1,21 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using PlaylistBaseLibrary.Providers.Linq;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using static TvheadendLibrary.Constants;
-using System.Linq.Expressions;
-using PlaylistManager.Entities;
-using System.Threading;
-using System.Reflection;
-using hfa.PlaylistBaseLibrary.Providers;
-
-namespace TvheadendLibrary
+﻿namespace TvheadendLibrary
 {
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+    using PlaylistBaseLibrary.Providers.Linq;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Text;
+    using System.Threading.Tasks;
+    using static TvheadendLibrary.Constants;
+    using System.Linq.Expressions;
+    using PlaylistManager.Entities;
+    using System.Threading;
+    using System.Reflection;
+    using hfa.PlaylistBaseLibrary.Providers;
     public class TvheadendService : PlaylistProvider<Playlist<TvgMedia>, TvgMedia>
     {
         readonly private string _url;

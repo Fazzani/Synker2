@@ -1,14 +1,11 @@
-﻿using PlaylistManager.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Linq;
-using PlaylistBaseLibrary.ChannelHandlers;
-using System.Globalization;
-
+﻿using PlaylistBaseLibrary.ChannelHandlers;
 namespace hfa.Synker.Service.Services.TvgMediaHandlers
 {
+    using PlaylistManager.Entities;
+    using System;
+    using System.Text.RegularExpressions;
+    using System.Linq;
+    using System.Globalization;
     public class TvgMediaCultureMatcherHandler : TvgMediaHandler
     {
         public const string FallBackCountry = "International";

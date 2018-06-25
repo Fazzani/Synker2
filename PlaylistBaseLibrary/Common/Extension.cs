@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace System
+﻿namespace System
 {
+    using System.Globalization;
+    using System.Text;
+    using System.Text.RegularExpressions;
     public class Common
     {
         public static T2 TryGet<T, T2>(Func<T, T2> func, T param)

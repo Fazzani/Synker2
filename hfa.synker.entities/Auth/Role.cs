@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
-namespace hfa.Synker.Service.Entities.Auth
+﻿namespace hfa.Synker.Service.Entities.Auth
 {
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     public class Role : EntityBase
     {
        public const string ADMIN_ROLE_NAME = "Administrator";

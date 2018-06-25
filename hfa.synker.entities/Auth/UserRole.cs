@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace hfa.Synker.Service.Entities.Auth
+﻿namespace hfa.Synker.Service.Entities.Auth
 {
     public class UserRole : EntityBaseAudit
     {

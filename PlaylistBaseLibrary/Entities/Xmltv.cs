@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-using System.Globalization;
-using System.Xml.Serialization;
-
-namespace PlaylistBaseLibrary.Entities
+﻿namespace PlaylistBaseLibrary.Entities
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Globalization;
+    using System.Xml.Serialization;
 
     /// <remarks/>
     [XmlTypeAttribute(AnonymousType = true)]

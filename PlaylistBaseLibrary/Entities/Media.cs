@@ -1,14 +1,13 @@
-﻿using hfa.PlaylistBaseLibrary.Entities;
-using PlaylistBaseLibrary.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace PlaylistManager.Entities
+﻿namespace PlaylistManager.Entities
 {
+    using hfa.PlaylistBaseLibrary.Entities;
+    using PlaylistBaseLibrary.Entities;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Text;
+    using System.Text.RegularExpressions;
     [Serializable]
     public class Media : IComparable<Media>, IComparable, IValidatableObject, IEquatable<Media>, IEqualityComparer<Media>
     {

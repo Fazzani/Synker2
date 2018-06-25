@@ -1,12 +1,9 @@
-﻿using Newtonsoft.Json;
-using PlaylistManager.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace hfa.PlaylistBaseLibrary.Entities.XtreamCode
+﻿namespace hfa.PlaylistBaseLibrary.Entities.XtreamCode
 {
-
+    using Newtonsoft.Json;
+    using PlaylistManager.Entities;
+    using System;
+    using System.Collections.Generic;
     public class XtreamPanel
     {
         public User_Info User_info { get; set; }

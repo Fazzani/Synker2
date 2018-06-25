@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace Hfa.PlaylistBaseLibrary.Entities
+﻿namespace Hfa.PlaylistBaseLibrary.Entities
 {
+    using System.Collections.Generic;
     public class MediaConfiguration
     {
         public int Id { get; set; }
@@ -48,6 +47,5 @@ namespace Hfa.PlaylistBaseLibrary.Entities
         public int Priority { get; set; }
         public bool IsDefault { get; set; }
     }
-
     
 }

@@ -1,10 +1,6 @@
-﻿using hfa.Synker.Service.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace hfa.Brokers.Messages.Models
+﻿namespace hfa.Brokers.Messages.Models
 {
+    using hfa.Synker.Service.Entities;
     public class WebGrabNotification : NotificationContext
     {
         public WebGrabNotification() : base()

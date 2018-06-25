@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Linq.Expressions;
-using PlaylistBaseLibrary.Providers.Linq;
-using hfa.PlaylistBaseLibrary.Providers;
-
-namespace PlaylistManager.Entities
+﻿namespace PlaylistManager.Entities
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using System.Linq.Expressions;
+    using hfa.PlaylistBaseLibrary.Providers;
     public class Playlist<TMedia> : IDisposable, IOrderedQueryable<TMedia>// where TMedia : Media
     {
         private bool _disposed = false; // to detect redundant calls

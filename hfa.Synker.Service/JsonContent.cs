@@ -1,11 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-
-namespace hfa.Synker.Services
+﻿namespace hfa.Synker.Services
 {
+    using Newtonsoft.Json;
+    using System.Net.Http;
+    using System.Text;
     public class JsonContent : StringContent
     {
         public JsonContent(object obj) :
