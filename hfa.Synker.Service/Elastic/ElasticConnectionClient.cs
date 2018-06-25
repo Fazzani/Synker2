@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using hfa.Synker.Service.Services.Picons;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace hfa.Synker.Service.Services.Elastic
 {
@@ -18,26 +19,25 @@ namespace hfa.Synker.Service.Services.Elastic
         public const string PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE = "picons_retreive_channel_number";
         private const string STOP_WORDS_FILE_PATH = "synkerconfig/stopwords.txt";
         private const string MAPPING_CHAR_FILTERS_FILE_PATH = "mapping_synker.txt";
+        private const int max_result_window = 1_000_000;
         private ConnectionSettings _settings;
         private ElasticClient _client;
         private static object syncRoot = new Object();
-        ILoggerFactory _loggerFactory;
+        private ILogger<ElasticConnectionClient> _logger;
         static string[] stopWords = { "tnt", "hd", "sd", "fhd", "tn:", "vip:", "vip", "ca:", "usa:", "ch:", "ar", "fr", "fr:", "ar:", "1080p", "720p", "(fr)", "(ar)", "+1", "+2", "+4", "+6", "+8", "arb", "vip", "it", "my" };
         private ElasticConfig _config;
+        static PropertyName keywordProperty = new PropertyName("keyword");
 
         public ElasticConnectionClient(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory)
         {
             _config = config.Value;
-            _loggerFactory = loggerFactory;
+            _logger = loggerFactory.CreateLogger<ElasticConnectionClient>();
         }
 
         private void Init()
         {
             //SitePack index
-            if (!Client.Value.IndexExists(_config.SitePackIndex).Exists)
-            {
-                MappingSitePackConfig(_config.SitePackIndex);
-            }
+            MappingSitePackConfig(_config.SitePackIndex).Wait();
 
             var pipelineResponse = Client.Value.PutPipeline("default-pipeline", p => p
                 .Processors(pr => pr
@@ -53,7 +53,7 @@ namespace hfa.Synker.Service.Services.Elastic
                  .Description("Used for retreiving channel number from picon name and add new field ch_number to store the value into")
                  .Processors(p => p.Script(s => s.Source("if(ctx.name != null) { Matcher m = /(?:[^\\+])(\\d{1,2})/.matcher(ctx.name); if(m!=null && m.find())  { ctx.ch_number = m.group(1); } }"))));
 
-                _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(respPipePicons.DebugInformation);
+                _logger.LogDebug(respPipePicons.DebugInformation);
             }
 
             //Picon index
@@ -103,55 +103,100 @@ namespace hfa.Synker.Service.Services.Elastic
                 .DefaultMappingFor<SitePackChannel>(m => m.IndexName(_config.SitePackIndex)
                 .TypeName("doc")
                 .IdProperty(x => x.Id)
-                .PropertyName(x => x.Id, "_id")
+                //.PropertyName(x => x.Id, "_id")
                 .PropertyName(x => x.Update, "update_date")
                 );
         }
 
-        private void MappingSitePackConfig(string indexName)
+        private async Task MappingSitePackConfig(string indexName)
         {
-            var keywordProperty = new PropertyName("keyword");
-            var response = Client.Value.CreateIndex(indexName, c => c
-            .Settings(s => s
-                     .Setting("max_result_window", 1_000_000)
-                     .Analysis(a => a
-                         .Analyzers(an => an
-                             .Custom("sitepack_name_analyzer", ca => ca
-                                 .Tokenizer("standard")
-                                 .Filters("lowercase", "standard", "asciifolding")
-                             )
-                             .Standard("standard", sd => sd.StopWords(stopWords))
-                         )
-                     )
-                 )
-            .Mappings(m =>
-                 m.Map<SitePackChannel>(x => x
-                         .Properties(p =>
-                             p.Keyword(t => t.Name(pt => pt.MediaType))
-                              .Keyword(t => t.Name(pt => pt.Site))
-                              .Keyword(t => t.Name(pt => pt.Source))
-                              .Keyword(t => t.Name(pt => pt.Site_id))
-                              .Keyword(t => t.Name(pt => pt.Xmltv_id))
-                              .Date(t => t.Name(pt => pt.Update))
-                              .Keyword(t => t.Name(pt => pt.Country))
-                              .Text(t => t
-                                .Name(pt => pt.DisplayNames)
-                                .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
-                                .Analyzer("sitepack_name_analyzer")
-                                .SearchAnalyzer("sitepack_name_analyzer"))
+            if (!Client.Value.IndexExists(_config.SitePackIndex).Exists)
+            {
+                _logger.LogInformation($"Index {indexName} doesn't exist so will be created");
 
-                     ))
-                 ));
+                var response = Client.Value.CreateIndex(indexName, c => c
+                              .Settings(s => s
+                                       .Setting(nameof(max_result_window), max_result_window)
+                                       .Analysis(_sitepackAnalysis))
+                              .Mappings(m =>
+                                   m.Map<SitePackChannel>(x => x
+                                           .Properties(p =>
+                                               p.Keyword(t => t.Name(pt => pt.MediaType))
+                                                .Keyword(t => t.Name(pt => pt.Site))
+                                                .Keyword(t => t.Name(pt => pt.Source))
+                                                .Keyword(t => t.Name(pt => pt.Site_id))
+                                                .Keyword(t => t.Name(pt => pt.Xmltv_id))
+                                                .Date(t => t.Name(pt => pt.Update))
+                                                .Keyword(t => t.Name(pt => pt.Country))
+                                                .Text(t => t
+                                                  .Name(pt => pt.DisplayNames)
+                                                  .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
+                                                  .Analyzer("sitepack_name_analyzer")
+                                                  .SearchAnalyzer("sitepack_name_analyzer"))
 
-            _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(response.DebugInformation);
+                                       ))
+                               ));
+                _logger.LogDebug(response.DebugInformation);
+            }
+            else
+            {
+                var index = await Client.Value.GetIndexAsync(indexName);
+                if (!index.Indices[indexName].Settings.ContainsKey(nameof(max_result_window)))
+                {
+                    _logger.LogInformation($"Applying settings for index : {indexName}");
+                    index.Indices[indexName].Settings.Add(nameof(max_result_window), max_result_window);
+                    index.Indices[indexName].Settings.Analysis = _sitepackAnalysis(new AnalysisDescriptor());
+                    await Client.Value.UpdateIndexSettingsAsync(new UpdateIndexSettingsRequest { IndexSettings = index.Indices[indexName].Settings });
+                    await Client.Value.MapAsync<SitePackChannel>(x => x
+                                                                  .Properties(p =>
+                                                                      p.Keyword(t => t.Name(pt => pt.MediaType))
+                                                                       .Keyword(t => t.Name(pt => pt.Site))
+                                                                       .Keyword(t => t.Name(pt => pt.Source))
+                                                                       .Keyword(t => t.Name(pt => pt.Site_id))
+                                                                       .Keyword(t => t.Name(pt => pt.Xmltv_id))
+                                                                       .Date(t => t.Name(pt => pt.Update))
+                                                                       .Keyword(t => t.Name(pt => pt.Country))
+                                                                       .Text(t => t
+                                                                         .Name(pt => pt.DisplayNames)
+                                                                         .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
+                                                                         .Analyzer("sitepack_name_analyzer")
+                                                                         .SearchAnalyzer("sitepack_name_analyzer"))
+                                                                   ));
+                }
+            }
+
         }
+
+        Func<AnalysisDescriptor, IAnalysis> _sitepackAnalysis = a => a
+                                           .Analyzers(an => an
+                                               .Custom("sitepack_name_analyzer", ca => ca
+                                                   .Tokenizer("standard")
+                                                   .Filters("lowercase", "standard", "asciifolding")
+                                               )
+                                               .Standard("standard", sd => sd.StopWords(stopWords))
+                                           );
+
+        Func<TypeMappingDescriptor<SitePackChannel>, ITypeMapping> _sitepackMapping = x => x
+                                            .Properties(p =>
+                                                p.Keyword(t => t.Name(pt => pt.MediaType))
+                                                 .Keyword(t => t.Name(pt => pt.Site))
+                                                 .Keyword(t => t.Name(pt => pt.Source))
+                                                 .Keyword(t => t.Name(pt => pt.Site_id))
+                                                 .Keyword(t => t.Name(pt => pt.Xmltv_id))
+                                                 .Date(t => t.Name(pt => pt.Update))
+                                                 .Keyword(t => t.Name(pt => pt.Country))
+                                                 .Text(t => t
+                                                   .Name(pt => pt.DisplayNames)
+                                                   .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
+                                                   .Analyzer("sitepack_name_analyzer")
+                                                   .SearchAnalyzer("sitepack_name_analyzer"))
+                                        );
 
         public void MappingPicons(string indexName)
         {
-            var keywordProperty = new PropertyName("keyword");
             var response = Client.Value.CreateIndex(indexName, c => c
             .Settings(s => s
-                     .Setting("max_result_window", _config.MaxResultWindow)
+                     .Setting(nameof(max_result_window), _config.MaxResultWindow)
                      .Analysis(a => a
                      .CharFilters(cf => cf
                              .Mapping("mapping_picons_char_filter", x => new MappingCharFilter() { MappingsPath = MAPPING_CHAR_FILTERS_FILE_PATH })
@@ -191,15 +236,14 @@ namespace hfa.Synker.Service.Services.Elastic
                                   .SearchAnalyzer("picons_name_analyzer"))))
                  ));
 
-            _loggerFactory.CreateLogger<ElasticConnectionClient>().LogDebug(response.DebugInformation);
+            _logger.LogDebug(response.DebugInformation);
         }
 
         public void MappingPlaylistConfig()
         {
-            var keywordProperty = new PropertyName("keyword");
             var response = Client.Value.CreateIndex(_config.DefaultIndex, c => c
             .Settings(s => s
-            .Setting("max_result_window", 1_000_000)
+            .Setting(nameof(max_result_window), max_result_window)
             .Setting("analysis.char_filter.drop_specChars.type", "pattern_replace")
             .Setting("analysis.char_filter.drop_specChars.pattern", "\\bbeinsports?\\b")
             .Setting("analysis.char_filter.drop_specChars.replacement", "beIN sports")
