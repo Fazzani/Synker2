@@ -1,9 +1,6 @@
-﻿using Nest;
-using System.Collections;
-using System.Collections.Generic;
-
-namespace Hfa.WebApi.Models
+﻿namespace Hfa.WebApi.Models
 {
+    using System.Collections.Generic;
     public interface IListResultModel<out T> where T : class
     {
         long Took { get; }

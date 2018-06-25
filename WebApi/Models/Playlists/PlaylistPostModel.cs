@@ -1,12 +1,8 @@
-﻿using hfa.Synker.Service.Entities.Playlists;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace hfa.WebApi.Models.Playlists
+﻿namespace hfa.WebApi.Models.Playlists
 {
+    using hfa.Synker.Service.Entities.Playlists;
+    using System.ComponentModel.DataAnnotations;
+
     public class PlaylistPostModel
     {
         [Required]

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace hfa.WebApi.Models.Notifications
+﻿namespace hfa.WebApi.Models.Notifications
 {
+    using System.Collections.Generic;
     public class NotificationModel
     {
         public NotificationTypeEnum NotificationType { get; set; } = NotificationTypeEnum.Email;

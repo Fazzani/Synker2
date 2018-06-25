@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace hfa.WebApi.Models
+﻿namespace hfa.WebApi.Models
 {
+    using System;
+    using System.Collections.Generic;
     public abstract class PagedResultBase
     {
         public int CurrentPage { get; set; }

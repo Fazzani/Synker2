@@ -1,11 +1,7 @@
-﻿using hfa.Synker.Service.Entities.Auth;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace hfa.WebApi.Models.Xmltv
+﻿namespace hfa.WebApi.Models.Xmltv
 {
+    using hfa.Synker.Service.Entities.Auth;
+    using System;
     public class CommandModel
     {
         public int Id { get; set; }

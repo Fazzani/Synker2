@@ -1,11 +1,9 @@
-﻿using Nest;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Hfa.WebApi.Models
+﻿namespace Hfa.WebApi.Models
 {
+    using Nest;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     public class ListResultModel<T, T2> : IListResultModel<T2> where T : class where T2 : class, IModel<T, T2>, new()
     {
         private double _maxScore;

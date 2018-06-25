@@ -1,13 +1,8 @@
-﻿using hfa.Synker.Service.Entities.MediasRef;
-using Hfa.WebApi.Models;
-using Nest;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace hfa.WebApi.Models
+﻿namespace hfa.WebApi.Models
 {
+    using hfa.Synker.Service.Entities.MediasRef;
+    using Hfa.WebApi.Models;
+    using Nest;
     public class MediaRefModel : MediaRef, IModel<MediaRef, MediaRefModel>
     {
         public new string Id { get; set; }

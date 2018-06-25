@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace hfa.WebApi.Models.Elastic
+﻿namespace hfa.WebApi.Models.Elastic
 {
     public class SimpleQueryElastic
     {

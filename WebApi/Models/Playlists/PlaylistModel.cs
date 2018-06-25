@@ -1,17 +1,12 @@
-﻿using hfa.PlaylistBaseLibrary.Entities;
-using hfa.Synker.Service.Entities.Playlists;
-using Hfa.WebApi.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using PlaylistManager.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace hfa.WebApi.Models.Playlists
+﻿namespace hfa.WebApi.Models.Playlists
 {
+    using hfa.Synker.Service.Entities.Playlists;
+    using Microsoft.AspNetCore.Mvc;
+    using PlaylistManager.Entities;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.Text;
     public class PlaylistModel
     {
         private IUrlHelper _urlHelper;

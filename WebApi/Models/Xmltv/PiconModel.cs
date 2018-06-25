@@ -1,13 +1,8 @@
-﻿using hfa.Synker.Service.Services.Picons;
-using Hfa.WebApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Nest;
-
-namespace hfa.WebApi.Models.Xmltv
+﻿namespace hfa.WebApi.Models.Xmltv
 {
+    using hfa.Synker.Service.Services.Picons;
+    using Hfa.WebApi.Models;
+    using Nest;
     public class PiconModel : Picon, IModel<Picon, PiconModel>
     {
         public PiconModel ToModel(IHit<Picon> hit)

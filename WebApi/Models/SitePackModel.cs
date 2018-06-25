@@ -1,14 +1,8 @@
-﻿using hfa.Synker.Service.Entities.MediasRef;
-using hfa.Synker.Service.Services.Xmltv;
-using Hfa.WebApi.Models;
-using Nest;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace hfa.WebApi.Models
+﻿namespace hfa.WebApi.Models
 {
+    using hfa.Synker.Service.Services.Xmltv;
+    using Hfa.WebApi.Models;
+    using Nest;
     public class SitePackModel : SitePackChannel, IModel<SitePackChannel, SitePackModel>
     {
         public SitePackModel ToModel(IHit<SitePackChannel> hit)

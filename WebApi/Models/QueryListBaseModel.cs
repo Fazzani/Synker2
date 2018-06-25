@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Hfa.WebApi.Models
+﻿namespace Hfa.WebApi.Models
 {
+    using System.Collections.Generic;
     public class QueryListBaseModel
     {
         public Dictionary<string, string> SearchDict { get; set; }
