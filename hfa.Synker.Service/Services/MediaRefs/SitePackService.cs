@@ -128,6 +128,8 @@ namespace hfa.Synker.Service.Services
         {
             _logger.LogInformation($"Lister les SitePackChannels");
 
+            //TODO: passer le count au lieu de passer le maxResultWindow
+
             var tvgSites = await _elasticConnectionClient.Client.Value.SearchAsync<SitePackChannel>(s => s
                .Index(_elasticConnectionClient.ElasticConfig.SitePackIndex)
                .Size(_elasticConnectionClient.ElasticConfig.MaxResultWindow)

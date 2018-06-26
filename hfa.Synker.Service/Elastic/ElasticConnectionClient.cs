@@ -143,25 +143,43 @@ namespace hfa.Synker.Service.Services.Elastic
                 var index = await Client.Value.GetIndexAsync(indexName);
                 if (!index.Indices[indexName].Settings.ContainsKey(nameof(max_result_window)))
                 {
-                    _logger.LogInformation($"Applying settings for index : {indexName}");
-                    index.Indices[indexName].Settings.Add(nameof(max_result_window), max_result_window);
-                    index.Indices[indexName].Settings.Analysis = _sitepackAnalysis(new AnalysisDescriptor());
-                    await Client.Value.UpdateIndexSettingsAsync(new UpdateIndexSettingsRequest { IndexSettings = index.Indices[indexName].Settings });
-                    await Client.Value.MapAsync<SitePackChannel>(x => x
-                                                                  .Properties(p =>
-                                                                      p.Keyword(t => t.Name(pt => pt.MediaType))
-                                                                       .Keyword(t => t.Name(pt => pt.Site))
-                                                                       .Keyword(t => t.Name(pt => pt.Source))
-                                                                       .Keyword(t => t.Name(pt => pt.Site_id))
-                                                                       .Keyword(t => t.Name(pt => pt.Xmltv_id))
-                                                                       .Date(t => t.Name(pt => pt.Update))
-                                                                       .Keyword(t => t.Name(pt => pt.Country))
-                                                                       .Text(t => t
-                                                                         .Name(pt => pt.DisplayNames)
-                                                                         .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
-                                                                         .Analyzer("sitepack_name_analyzer")
-                                                                         .SearchAnalyzer("sitepack_name_analyzer"))
-                                                                   ));
+                    var responseClose = await Client.Value.CloseIndexAsync(indexName);
+                    if (responseClose.IsValid)
+                    {
+                        _logger.LogInformation($"Applying settings for index : {indexName}");
+                        var indexSettings = new IndexSettings()
+                        {
+                            Analysis = _sitepackAnalysis(new AnalysisDescriptor())
+                        };
+                        indexSettings.Add(nameof(max_result_window), max_result_window);
+                        var responseSetting = await Client.Value.UpdateIndexSettingsAsync(new UpdateIndexSettingsRequest(indexName) { IndexSettings = indexSettings });
+
+                        if (!responseSetting.IsValid)
+                        {
+                            _logger.LogError($"{responseSetting.ServerError.Error.ToString()}");
+                            if (responseSetting.TryGetServerErrorReason(out string reason))
+                            {
+                                _logger.LogError($"{reason}");
+                            }
+                        }
+
+                        await Client.Value.MapAsync<SitePackChannel>(x => x
+                                                                      .Properties(p =>
+                                                                          p.Keyword(t => t.Name(pt => pt.MediaType))
+                                                                           .Keyword(t => t.Name(pt => pt.Site))
+                                                                           .Keyword(t => t.Name(pt => pt.Source))
+                                                                           .Keyword(t => t.Name(pt => pt.Site_id))
+                                                                           .Keyword(t => t.Name(pt => pt.Xmltv_id))
+                                                                           .Date(t => t.Name(pt => pt.Update))
+                                                                           .Keyword(t => t.Name(pt => pt.Country))
+                                                                           .Text(t => t
+                                                                             .Name(pt => pt.DisplayNames)
+                                                                             .Fields(f => f.Keyword(k => k.Name(keywordProperty)))
+                                                                             .Analyzer("sitepack_name_analyzer")
+                                                                             .SearchAnalyzer("sitepack_name_analyzer"))
+                                                                       ));
+                        var responseOpen = await Client.Value.OpenIndexAsync(indexName);
+                    }
                 }
             }
 

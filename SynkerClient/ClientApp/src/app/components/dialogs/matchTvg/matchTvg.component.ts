@@ -1,24 +1,24 @@
-﻿import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
-import { BehaviorSubject } from "rxjs";
-import { MatchTvgPostModel, MatchTvgFormModel, MatchingTvgSiteTypeEnum } from "../../../types/matchTvgPostModel";
-import { TvgMediaService } from "../../../services/tvgmedia/tvgmedia.service";
-import { TvgMedia } from "../../../types/media.type";
-import { sitePackChannel } from "../../../types/sitepackchannel.type";
+﻿import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { BehaviorSubject } from 'rxjs';
+import { MatchTvgPostModel, MatchTvgFormModel, MatchingTvgSiteTypeEnum } from '../../../types/matchTvgPostModel';
+import { TvgMediaService } from '../../../services/tvgmedia/tvgmedia.service';
+import { TvgMedia } from '../../../types/media.type';
+import { sitePackChannel } from '../../../types/sitepackchannel.type';
 
 /**
  *  url tests
  * http://www.m3uliste.pw/
  */
 @Component({
-  selector: "matchtvg-dialog",
-  templateUrl: "./matchtvg.dialog.html"
+  selector: 'matchtvg-dialog',
+  templateUrl: './matchtvg.dialog.html'
 })
 export class MatchTvgDialog implements OnInit, OnDestroy {
   tvgSites: string[];
   medias: TvgMedia[];
   matchTvgFormModel: MatchTvgFormModel = new MatchTvgFormModel();
-  progress: number = 0;
+  progress = 0;
   matchingTvgSiteTypes: typeof MatchingTvgSiteTypeEnum;
   compareFn: ((f1: any, f2: any) => boolean) | null = this.compareByValue;
 
@@ -40,25 +40,25 @@ export class MatchTvgDialog implements OnInit, OnDestroy {
   }
 
   compareByValue(f1: any, f2: any) {
-    return f1 != null && f2 != null && f1 == f2;
+    return f1 != null && f2 != null && f1 === f2;
   }
 
   /**
    * Try match tvg with Sites defined in media
    */
   matchTvg(): void {
-    let model: MatchTvgPostModel = <MatchTvgPostModel>{
+    const model: MatchTvgPostModel = <MatchTvgPostModel>{
       minScore: this.matchTvgFormModel.minScore
     };
     let mediasToMatch = this.medias.filter((v, i) => v.selected || this.matchTvgFormModel.matchAll);
-    if (!this.matchTvgFormModel.overrideTvg) mediasToMatch = mediasToMatch.filter(x => x.tvg == null || x.tvg.id == "");
+    if (!this.matchTvgFormModel.overrideTvg) { mediasToMatch = mediasToMatch.filter(x => x.tvg == null || x.tvg.id === ''); }
 
     let index = 0;
 
     mediasToMatch.forEach((x, i) => {
       model.mediaName = x.displayName;
 
-      if (this.matchTvgFormModel.matchCountry) model.country = x.lang;
+      if (this.matchTvgFormModel.matchCountry) { model.country = x.lang; }
 
       switch (this.matchTvgFormModel.matchingTvgSiteType) {
         case MatchingTvgSiteTypeEnum.TvgSiteInMedia:
@@ -82,7 +82,7 @@ export class MatchTvgDialog implements OnInit, OnDestroy {
           x.tvg.tvgIdentify = res.site_id;
         }
         this.obs.next(x);
-        if (i == mediasToMatch.length - 1) this.obs.complete();
+        if (i === mediasToMatch.length - 1) { this.obs.complete(); }
       });
     });
 

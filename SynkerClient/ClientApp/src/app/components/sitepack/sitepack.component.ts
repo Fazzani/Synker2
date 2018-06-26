@@ -208,7 +208,7 @@ export class SitePackModifyDialog implements OnInit, OnDestroy {
         this.piconsFilter = this.piconService
           .search(query).pipe(
           map(x => x.result),
-          tap(x => console.log(x));
+          tap(x => console.log(x)));
       });
   }
 

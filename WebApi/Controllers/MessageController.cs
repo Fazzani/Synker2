@@ -112,7 +112,7 @@ namespace Hfa.WebApi.Controllers
         /// <summary>
         /// Get Messages by status for connected user
         /// </summary>
-        /// <param name="messageStatus"></param>
+        /// <param name="messageQuery"></param>
         /// <returns></returns>
         [ValidateModel]
         [Route("search/status")]
