@@ -1,4 +1,4 @@
-﻿import { ISelectable } from "./common.type";
+﻿import { ISelectable } from './common.type';
 
 /**
  * SitePack channel Model

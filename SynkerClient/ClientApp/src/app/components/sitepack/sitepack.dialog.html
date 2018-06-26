@@ -18,7 +18,7 @@
     <!--Display names-->
     <mat-form-field class="chip-list" name="data.displayNames">
         <mat-chip-list #displaynamesInput ng-model="data.displayNames" required>
-            <mat-chip color="accent" *ngFor="let name of data.displayNames" [selectable]="selectable" [removable]="removable" (remove)="remove(name, data.displayNames)">
+            <mat-chip color="accent" *ngFor="let name of data.displayNames" [selectable]="selectable" [removable]="removable" (removed)="remove(name, data.displayNames)">
                 {{name}}
                 <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
             </mat-chip>

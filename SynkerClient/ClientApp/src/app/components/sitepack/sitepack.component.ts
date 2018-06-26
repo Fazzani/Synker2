@@ -22,10 +22,10 @@ import { SimpleQueryElastic } from "../../types/elasticQuery.type";
 export class SitePackComponent implements OnInit, OnDestroy {
   subscriptionTableEvent: Subscription;
 
-  displayedColumns = ["logo", "update", "displayNames", "site", "country", "mediaType", "channel_name", "actions"];
+  displayedColumns = ["logo", "update", "displayNames", "site", 'country', 'mediaType', 'channel_name', 'actions'];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild("filter") filter: ElementRef;
+  @ViewChild('filter') filter: ElementRef;
   dataSource: SitePackDataSource | null;
   currentItem: sitePackChannel | null;
 
@@ -41,7 +41,7 @@ export class SitePackComponent implements OnInit, OnDestroy {
   /** Called by Angular after media component initialized */
   ngOnInit(): void {
     let storedQuery = this.commonService.JsonToObject<SimpleQueryElastic>(localStorage.getItem(Constants.LS_SiteQueryKey));
-    console.log("storedQuery ", storedQuery);
+    console.log('storedQuery ', storedQuery);
 
     this.paginator.pageIndex = storedQuery != null ? Math.floor(storedQuery.From / storedQuery.Size) : 0;
     this.paginator.pageSizeOptions = [50, 100, 250, 1000];
@@ -51,14 +51,14 @@ export class SitePackComponent implements OnInit, OnDestroy {
 
     this.subscriptionTableEvent = this.paginator.page
       .asObservable().pipe(
-      merge(fromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup")),
+      merge(fromEvent<KeyboardEvent>(this.filter.nativeElement, 'keyup')),
       debounceTime(1500),
       distinctUntilChanged(),)
       .subscribe(x => {
         if (!this.dataSource) {
           return;
         }
-        console.log("subscriptionTableEvent => ", x);
+        console.log('subscriptionTableEvent => ', x);
         if ((x as PageEvent).pageIndex !== undefined) this.paginator.pageIndex = (x as PageEvent).pageIndex;
         else if ((x as PageEvent).length === undefined) this.paginator.pageIndex = 0;
 
@@ -73,12 +73,12 @@ export class SitePackComponent implements OnInit, OnDestroy {
    */
   openDialog(spChannel: sitePackChannel): void {
     let dialogRef = this.dialog.open(SitePackModifyDialog, {
-      width: "550px",
+      width: '550px',
       data: spChannel
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.snackBar.open(spChannel.displayNames[0] + " was modified", "", {
+      this.snackBar.open(spChannel.displayNames[0] + ' was modified', '', {
         duration: snakbar_duration
       });
     });
@@ -89,7 +89,7 @@ export class SitePackComponent implements OnInit, OnDestroy {
    */
   synkPiconsGlobal(): void {
     this.piconService.synk().subscribe(res => {
-      this.snackBar.open("Picons index was synchronized");
+      this.snackBar.open('Picons index was synchronized');
     });
   }
 
@@ -98,7 +98,7 @@ export class SitePackComponent implements OnInit, OnDestroy {
    */
   synkWebgrab(): void {
     this.sitePackService.synkWebgrab().subscribe(res => {
-      this.snackBar.open("Sitepack webgrab config was synchronized");
+      this.snackBar.open('Sitepack webgrab config was synchronized');
       this.reload();
     });
   }
@@ -108,37 +108,27 @@ export class SitePackComponent implements OnInit, OnDestroy {
    */
   synkCountries(): void {
     this.sitePackService.syncCountries().subscribe(res => {
-      this.snackBar.open("Country field was synchronized");
+      this.snackBar.open('Country field was synchronized');
       this.reload();
     });
   }
 
-  ///**
-  // * Match mediaRef with picons
-  // */
-  //synkPiconsForMediaRef(): void {
-  //    this.mediaRefService.synkPicons().subscribe(res => {
-  //        this.snackBar.open("Picons was synchronized for all mediaRef");
-  //        this.reload();
-  //    });
-  //}
-
   delete(id: string): void {
-    const confirm = window.confirm("Do you really want to delete this media ref?");
+    const confirm = window.confirm('Do you really want to delete this media ref?');
 
     of(id).pipe(
       filter(() => confirm),
       switchMap(x => this.sitePackService.delete(x)),)
       .subscribe(res => {
-        this.snackBar.open("Medias referentiel was deleted");
+        this.snackBar.open('Medias referentiel was deleted');
         this.dataSource.getData();
       });
   }
 
   save(): void {
-    console.log("saving site pack..");
+    console.log('saving site pack..');
     this.dataSource.save().subscribe(res => {
-      this.snackBar.open("site pack was saved successfully");
+      this.snackBar.open('site pack was saved successfully');
     });
   }
 
@@ -146,12 +136,12 @@ export class SitePackComponent implements OnInit, OnDestroy {
    * Force save all site packs
    */
   saveAll(): void {
-    console.log("saving all site pack..");
+    console.log('saving all site pack..');
     this.dataSource.saveAll();
   }
 
   update(spChannel: sitePackChannel): void {
-    this.sitePackService.save(spChannel).subscribe(x => this.snackBar.open("Site pack was synchronized"));
+    this.sitePackService.save(spChannel).subscribe(x => this.snackBar.open('Site pack was synchronized'));
   }
 
   reload(): void {
@@ -165,7 +155,7 @@ export class SitePackComponent implements OnInit, OnDestroy {
    */
   toggleSelected(media: sitePackChannel, event: any): void {
     if (!event.ctrlKey) {
-      this.dataSource.data.filter((v, i) => v.id != media.id).forEach((m, i) => {
+      this.dataSource.data.filter((v, i) => v.id !== media.id).forEach((m, i) => {
         m.selected = false;
       });
     }
@@ -182,19 +172,19 @@ export class SitePackComponent implements OnInit, OnDestroy {
   }
 }
 
-//---------------------------------------------------------------------------------   Site Pack ModifyDialog
+// ---------------------------------------------------------------------------------   Site Pack ModifyDialog
 @Component({
-  selector: "sitepack-modify-dialog",
-  templateUrl: "./sitepack.dialog.html"
+  selector: 'sitepack-modify-dialog',
+  templateUrl: './sitepack.dialog.html'
 })
 export class SitePackModifyDialog implements OnInit, OnDestroy {
-  @ViewChild("filterPicon") filterPicon: ElementRef;
+  @ViewChild('filterPicon') filterPicon: ElementRef;
   piconsFilter: Observable<picon[]>;
   currrentPiconUrl: string;
-  visible: boolean = true;
-  selectable: boolean = true;
-  removable: boolean = true;
-  addOnBlur: boolean = true;
+  visible = true;
+  selectable = true;
+  removable = true;
+  addOnBlur = true;
 
   // Enter, comma
   separatorKeysCodes = [ENTER, COMMA];
@@ -205,20 +195,20 @@ export class SitePackModifyDialog implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    fromEvent<KeyboardEvent>(this.filterPicon.nativeElement, "keyup").pipe(
+    fromEvent<KeyboardEvent>(this.filterPicon.nativeElement, 'keyup').pipe(
       debounceTime(1000),
-      distinctUntilChanged(),)
+      distinctUntilChanged())
       .subscribe((x: KeyboardEvent) => {
-        let query = <SimpleQueryElastic>{
+        const query = <SimpleQueryElastic>{
           From: 0,
-          IndexName: "picons",
+          IndexName: 'picons',
           Query: `name: ${this.filterPicon.nativeElement.value}`,
           Size: 10
         };
         this.piconsFilter = this.piconService
           .search(query).pipe(
           map(x => x.result),
-          tap(x => console.log(x)),);
+          tap(x => console.log(x));
       });
   }
 
@@ -228,28 +218,30 @@ export class SitePackModifyDialog implements OnInit, OnDestroy {
 
   onfocusPicon(piconUrl: string): void {
     this.currrentPiconUrl = piconUrl;
-    this.filterPicon.nativeElement.value = "";
+    this.filterPicon.nativeElement.value = '';
   }
 
   onblurPicon(piconPath: string): void {
-    if (piconPath == "") this.filterPicon.nativeElement.value = this.currrentPiconUrl;
+    if (piconPath === '') {
+      this.filterPicon.nativeElement.value = this.currrentPiconUrl;
+    }
   }
 
   add(event: MatChipInputEvent, model): void {
-    let input = event.input;
-    let value = event.value;
-    if ((value || "").trim()) {
+    const input = event.input;
+    const value = event.value;
+    if ((value || '').trim()) {
       model.push(value.trim());
     }
 
     // Reset the input value
     if (input) {
-      input.value = "";
+      input.value = '';
     }
   }
 
   remove(data: any, model: any[]): void {
-    let index = model.indexOf(data);
+    const index = model.indexOf(data);
 
     if (index >= 0) {
       model.splice(index, 1);
@@ -259,16 +251,16 @@ export class SitePackModifyDialog implements OnInit, OnDestroy {
   ngOnDestroy(): void {}
 }
 
-//---------------------------------------------------------------------------------   MediaRef DataSource
+// ----------------------------------------  MediaRef DataSource
 /**
  * Media datasource for mat-table component
  */
 export class SitePackDataSource extends DataSource<sitePackChannel> {
   data: sitePackChannel[];
   medias = new BehaviorSubject<sitePackChannel[]>([]);
-  _filterTvgSiteChange = new BehaviorSubject<string>("");
+  _filterTvgSiteChange = new BehaviorSubject<string>('');
 
-  _filterChange = new BehaviorSubject<string>("");
+  _filterChange = new BehaviorSubject<string>('');
   get filter(): string {
     return this._filterChange.value;
   }
@@ -291,7 +283,7 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
     this._filterChange.pipe(
       merge(this._paginator),
       debounceTime(300),)
-      //.distinctUntilChanged()
+      // .distinctUntilChanged()
       .subscribe(x => this.getData());
   }
 
@@ -307,15 +299,15 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
     let pageSize = this.paginator.pageSize === undefined ? 25 : this.paginator.pageSize;
     let query = <SimpleQueryElastic>{
       From: pageSize * (isNaN(this.paginator.pageIndex) ? 0 : this.paginator.pageIndex),
-      IndexName: "sitepack",
+      IndexName: 'sitepack',
       Query: this.filter,
       Size: pageSize
     };
 
     localStorage.setItem(Constants.LS_SiteQueryKey, JSON.stringify(query));
 
-    let res = this.sitePackService.search<sitePackChannel>(query).pipe(map((v, i) => {
-      console.log("Getting sitepacks ", v);
+    const res = this.sitePackService.search<sitePackChannel>(query).pipe(map((v, i) => {
+      console.log('Getting sitepacks ', v);
       this._paginator.value.length = v.total;
       return v.result;
     }));
@@ -332,10 +324,10 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
    * Force save all site packs
    */
   saveAll(): void {
-    let query = <SimpleQueryElastic>{
+    const query = <SimpleQueryElastic>{
       From: 0,
-      IndexName: "sitepack",
-      Query: "",
+      IndexName: 'sitepack',
+      Query: '',
       Size: 1000000
     };
 
@@ -349,7 +341,7 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
 
   delete(id: string): void {
     this.sitePackService.delete(id).subscribe((res: number) => {
-      var idx = this.medias.value.findIndex(m => m.id == id);
+      let idx = this.medias.value.findIndex(m => m.id === id);
       this.medias.value.splice(idx, 1);
       this.medias.next(this.medias.value);
     });
