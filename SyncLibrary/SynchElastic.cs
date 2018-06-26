@@ -37,6 +37,7 @@ using hfa.Synker.batch.EmailModels;
 using Newtonsoft.Json;
 using System.Text;
 using System.Reflection;
+using hfa.Synkerk.Service.Services.TvgMediaHandlers;
 
 [assembly: InternalsVisibleTo("hfa.synker.batch.test")]
 namespace SyncLibrary
