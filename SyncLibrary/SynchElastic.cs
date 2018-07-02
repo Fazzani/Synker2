@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Nest;
-using PlaylistBaseLibrary.ChannelHandlers;
 using PlaylistBaseLibrary.Entities;
 using PlaylistManager.Entities;
 using SyncLibrary.Configuration;
@@ -38,6 +37,7 @@ using Newtonsoft.Json;
 using System.Text;
 using System.Reflection;
 using hfa.Synkerk.Service.Services.TvgMediaHandlers;
+using hfa.PlaylistBaseLibrary.ChannelHandlers;
 
 [assembly: InternalsVisibleTo("hfa.synker.batch.test")]
 namespace SyncLibrary

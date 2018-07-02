@@ -1,7 +1,7 @@
-﻿using PlaylistManager.Entities;
-
-namespace PlaylistBaseLibrary.ChannelHandlers
+﻿
+namespace hfa.PlaylistBaseLibrary.ChannelHandlers
 {
+    using PlaylistManager.Entities;
     public abstract class TvgMediaHandler
     {
         protected IContextTvgMediaHandler _contextTvgMediaHandler;

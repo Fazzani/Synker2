@@ -1,22 +1,16 @@
-﻿using hfa.PlaylistBaseLibrary.Providers;
+﻿using hfa.PlaylistBaseLibrary.ChannelHandlers;
+using hfa.PlaylistBaseLibrary.Providers;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Entities.Playlists;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Services.TvgMediaHandlers;
 using hfa.Synker.Services.Dal;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using PlaylistBaseLibrary.ChannelHandlers;
 using PlaylistManager.Entities;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 

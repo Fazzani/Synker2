@@ -1,6 +1,4 @@
-﻿using PlaylistBaseLibrary.ChannelHandlers;
-
-namespace Hfa.SyncLibrary
+﻿namespace Hfa.SyncLibrary
 {
     using RazorLight;
     using System;
@@ -27,6 +25,7 @@ namespace Hfa.SyncLibrary
     using hfa.Synker.batch.Consumers;
     using hfa.Synker.batch.Producers;
     using Serilog;
+    using hfa.PlaylistBaseLibrary.ChannelHandlers;
 
     public class Init
     {

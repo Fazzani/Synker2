@@ -1,6 +1,6 @@
-﻿using PlaylistBaseLibrary.ChannelHandlers;
-namespace hfa.Synker.Service.Services.TvgMediaHandlers
+﻿namespace hfa.Synker.Service.Services.TvgMediaHandlers
 {
+    using hfa.PlaylistBaseLibrary.ChannelHandlers;
     using PlaylistManager.Entities;
     using System.Text.RegularExpressions;
     public class TvgMediaLangMatcherHandler : TvgMediaHandler

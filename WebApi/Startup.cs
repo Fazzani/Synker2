@@ -31,7 +31,6 @@ using hfa.PlaylistBaseLibrary.Providers;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Services.TvgMediaHandlers;
-using PlaylistBaseLibrary.ChannelHandlers;
 using hfa.Synker.Service.Services.Picons;
 using hfa.Synker.Service.Services.MediaRefs;
 using Microsoft.AspNetCore.Mvc;
@@ -54,6 +53,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using hfa.WebApi.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using hfa.PlaylistBaseLibrary.Common;
+using hfa.PlaylistBaseLibrary.ChannelHandlers;
 
 namespace hfa.WebApi
 {

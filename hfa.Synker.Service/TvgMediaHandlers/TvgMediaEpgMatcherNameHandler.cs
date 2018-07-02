@@ -1,6 +1,6 @@
-﻿using PlaylistBaseLibrary.ChannelHandlers;
-namespace hfa.Synkerk.Service.Services.TvgMediaHandlers
+﻿namespace hfa.Synkerk.Service.Services.TvgMediaHandlers
 {
+    using hfa.PlaylistBaseLibrary.ChannelHandlers;
     using hfa.Synker.Service.Elastic;
     using hfa.Synker.Service.Entities.MediasRef;
     using hfa.Synker.Service.Services.Elastic;

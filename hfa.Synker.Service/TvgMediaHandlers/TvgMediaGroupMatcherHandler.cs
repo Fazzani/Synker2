@@ -1,8 +1,7 @@
 ﻿
-using PlaylistBaseLibrary.ChannelHandlers;
-
 namespace hfa.Synker.Service.Services.TvgMediaHandlers
 {
+    using hfa.PlaylistBaseLibrary.ChannelHandlers;
     using PlaylistManager.Entities;
     using System.Collections.Generic;
     using System.Linq;

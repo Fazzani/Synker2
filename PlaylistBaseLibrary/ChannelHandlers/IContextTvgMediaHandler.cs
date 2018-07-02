@@ -1,12 +1,8 @@
-﻿using PlaylistManager.Entities;
-using System;
-using System.Collections.Generic;
-
-namespace PlaylistBaseLibrary.ChannelHandlers
+﻿
+namespace hfa.PlaylistBaseLibrary.ChannelHandlers
 {
     public interface IContextTvgMediaHandler
     {
 
     }
-
 }
