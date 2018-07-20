@@ -19,7 +19,9 @@
     <FileVersion>1.0.0.1</FileVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="MassTransit.RabbitMQ" Version="5.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.1.0" />
     <PackageReference Include="NEST" Version="6.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.1.0" />

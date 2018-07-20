@@ -1,6 +1,5 @@
 ﻿using hfa.Brokers.Messages.Models;
 using hfa.Notification.Brokers.Emailing;
-using Hfa.SyncLibrary;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -16,11 +15,11 @@ namespace hfa.Notification.Brokers.Consumers
 {
     public class NotificationConsumer : INotificationConsumer, IDisposable
     {
-        ILogger _logger;
+        private readonly ILogger _logger;
         private IModel _mailChannel;
-        private INotificationService _notificationService;
-        private string MailQueueName = "synker.mail.queue";
-        private EventHandler<CallbackExceptionEventArgs> eventChannel_CallbackException;
+        private readonly INotificationService _notificationService;
+        private readonly string MailQueueName = "synker.mail.queue";
+        private readonly EventHandler<CallbackExceptionEventArgs> eventChannel_CallbackException;
 
         public NotificationConsumer(INotificationService notificationService, ILogger<NotificationConsumer> logger)
         {

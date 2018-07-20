@@ -1,59 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Swagger;
+﻿using AspNet.Core.Webhooks.Receivers;
+using GreenPipes;
+using hfa.Brokers.Messages.Configuration;
+using hfa.PlaylistBaseLibrary.ChannelHandlers;
+using hfa.PlaylistBaseLibrary.Common;
+using hfa.PlaylistBaseLibrary.Options;
+using hfa.PlaylistBaseLibrary.Providers;
+using hfa.Synker.Service;
+using hfa.Synker.Service.Elastic;
+using hfa.Synker.Service.Entities.Auth;
+using hfa.Synker.Service.Services;
+using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Services.MediaRefs;
+using hfa.Synker.Service.Services.Picons;
+using hfa.Synker.Service.Services.Playlists;
+using hfa.Synker.Service.Services.Scraper;
+using hfa.Synker.Service.Services.TvgMediaHandlers;
+using hfa.Synker.Service.Services.Xtream;
+using hfa.Synker.Services.Dal;
+using hfa.Synker.Services.Xmltv;
 using hfa.WebApi.Common;
-using System.Net.WebSockets;
-using Microsoft.AspNetCore.Http;
-using System.Threading;
-using Microsoft.EntityFrameworkCore;
-using System.Text;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using hfa.WebApi.Common.Auth;
 using hfa.WebApi.Common.Filters;
-using System.Net;
-using Newtonsoft.Json;
-using AspNet.Core.Webhooks.Receivers;
-using hfa.WebApi.Services;
 using hfa.WebApi.Common.Middlewares;
-using hfa.Synker.Services.Xmltv;
-using hfa.Synker.Services.Dal;
-using hfa.Synker.Service.Services.Playlists;
-using Microsoft.AspNetCore.ResponseCompression;
-using hfa.PlaylistBaseLibrary.Providers;
-using hfa.Synker.Service.Services.Elastic;
-using hfa.Synker.Service.Elastic;
-using hfa.Synker.Service.Services.TvgMediaHandlers;
-using hfa.Synker.Service.Services.Picons;
-using hfa.Synker.Service.Services.MediaRefs;
+using hfa.WebApi.Common.Swagger;
+using hfa.WebApi.Consumers;
+using hfa.WebApi.Hubs;
+using hfa.WebApi.Services;
+using MassTransit;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using hfa.Synker.Service.Services;
-using hfa.Synker.Service.Services.Scraper;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using RabbitMQ.Client;
+using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Net.WebSockets;
+using System.Reflection;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 using ZNetCS.AspNetCore.Authentication.Basic;
 using ZNetCS.AspNetCore.Authentication.Basic.Events;
-using Microsoft.AspNetCore.Authentication;
-using hfa.Synker.Service.Services.Xtream;
-using hfa.Synker.Service.Entities.Auth;
-using System.Security.Claims;
-using System.Reflection;
-using hfa.PlaylistBaseLibrary.Options;
-using hfa.Brokers.Messages.Configuration;
-using System.IO;
-using Microsoft.Extensions.FileProviders;
-using hfa.WebApi.Common.Swagger;
-using Newtonsoft.Json.Converters;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using hfa.WebApi.Hubs;
-using Microsoft.AspNetCore.SignalR;
-using hfa.PlaylistBaseLibrary.Common;
-using hfa.PlaylistBaseLibrary.ChannelHandlers;
 
 namespace hfa.WebApi
 {
@@ -63,7 +68,7 @@ namespace hfa.WebApi
     public class Startup
     {
         internal static IConfiguration Configuration;
-        readonly IHostingEnvironment CurrentEnvironment;
+        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment CurrentEnvironment;
         internal static ServiceProvider ServiceProvider;
 
         /// <summary>
@@ -76,7 +81,7 @@ namespace hfa.WebApi
         /// </summary>
         /// <param name="configuration"></param>
         /// <param name="env"></param>
-        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        public Startup(IConfiguration configuration, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
         {
             Configuration = configuration;
             CurrentEnvironment = env;
@@ -88,8 +93,8 @@ namespace hfa.WebApi
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionstring = Configuration.GetConnectionString("PlDatabase");
-            var isTestEnv = string.IsNullOrEmpty(connectionstring) || CurrentEnvironment.IsEnvironment("Testing");
+            string connectionstring = Configuration.GetConnectionString("PlDatabase");
+            bool isTestEnv = string.IsNullOrEmpty(connectionstring) || CurrentEnvironment.IsEnvironment("Testing");
 
             services.
                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
@@ -107,6 +112,8 @@ namespace hfa.WebApi
                .AddScoped<IMediaScraper, MediaScraper>()
                .AddScoped<IWebGrabConfigService, WebGrabConfigService>()
                .AddScoped<IMessageQueueService, MessageQueueService>()
+               .AddSingleton<IHostedService, MassTransitHostedService>()
+
                .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
@@ -114,7 +121,7 @@ namespace hfa.WebApi
                .Configure<GlobalOptions>(Configuration.GetSection(nameof(GlobalOptions)))
                .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)))
                .Configure<VapidKeysOptions>(Configuration.GetSection(nameof(VapidKeysOptions)));
-            
+
             services.AddMemoryCache();
 
             if (isTestEnv)
@@ -126,7 +133,7 @@ namespace hfa.WebApi
             }
             else
             {
-                var serviceProvider = services.AddDbContext<SynkerDbContext>(options =>
+                ServiceProvider serviceProvider = services.AddDbContext<SynkerDbContext>(options =>
                 {
                     options.UseNpgsql(Configuration.GetConnectionString("PlDatabase"),
                     sqlOptions =>
@@ -143,7 +150,7 @@ namespace hfa.WebApi
                     //RelationalEventId.QueryClientEvaluationWarning));
                 }).BuildServiceProvider();
 
-                var DB = serviceProvider.GetService<SynkerDbContext>();
+                SynkerDbContext DB = serviceProvider.GetService<SynkerDbContext>();
                 DB.Database.EnsureCreated();
             }
 
@@ -169,8 +176,11 @@ namespace hfa.WebApi
             #endregion
 
             ConfigSecurity(services);
+
+            ConfigureRabbitMQ(services);
+
             //Logger
-            var loggerFactory = new LoggerFactory();
+            LoggerFactory loggerFactory = new LoggerFactory();
 
             //cache
             services.AddResponseCaching(options =>
@@ -285,18 +295,20 @@ namespace hfa.WebApi
         /// <param name="env"></param>
         /// <param name="loggerFactory"></param>
         /// <param name="synkerDbContext"></param>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, SynkerDbContext synkerDbContext)
+        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env, ILoggerFactory loggerFactory, SynkerDbContext synkerDbContext)
         {
-            var log = loggerFactory.CreateLogger<Startup>();
+            ILogger<Startup> log = loggerFactory.CreateLogger<Startup>();
             app.UseResponseCompression();
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
             app.Map("/liveness", lapp => lapp.Run(async ctx => ctx.Response.StatusCode = 200));
-            var appAbout = JsonConvert.SerializeObject(new ApplicationAbout
+
+            string appAbout = JsonConvert.SerializeObject(new ApplicationAbout
             {
                 Author = "Synker corporation",
                 ApplicationName = "Synker",
             });
+
             app.Map("/about", lapp => lapp.Run(async ctx =>
             {
                 log.LogDebug("about");
@@ -317,6 +329,7 @@ namespace hfa.WebApi
             });
 
             loggerFactory.AddFile(Configuration.GetSection("Logging"));
+
             if (env.IsDevelopment())
             {
                 loggerFactory.AddConsole(Configuration.GetSection("Logging"));
@@ -388,6 +401,50 @@ namespace hfa.WebApi
             }
         }
 
+        private static void ConfigureRabbitMQ(IServiceCollection services)
+        {
+            services.AddScoped<DiffPlaylistConsumer>();
+
+            IBusControl bus = Bus.Factory.CreateUsingRabbitMq(cfg =>
+            {
+                ServiceProvider sp = services.BuildServiceProvider();
+                IOptions<RabbitMQConfiguration> rabbitConfig = sp.GetService<IOptions<RabbitMQConfiguration>>();
+                ILoggerFactory _loggerFactory = sp.GetService<ILoggerFactory>();
+                ILogger _logger = _loggerFactory.CreateLogger(typeof(Startup));
+
+                _logger.LogInformation($"Connected to rabbit host: {rabbitConfig.Value.Hostname}{rabbitConfig.Value.VirtualHost}:{rabbitConfig.Value.Port}");
+
+                MassTransit.RabbitMqTransport.IRabbitMqHost host = cfg.Host(rabbitConfig.Value.Hostname, rabbitConfig.Value.Port, rabbitConfig.Value.VirtualHost, h =>
+                {
+                    h.Username(rabbitConfig.Value.Username);
+                    h.Password(rabbitConfig.Value.Password);
+                });
+
+                cfg.ExchangeType = ExchangeType.Fanout;
+
+                cfg.ReceiveEndpoint(host, ep =>
+                {
+                    ep.UseCircuitBreaker(cb =>
+                    {
+                        cb.TrackingPeriod = TimeSpan.FromMinutes(1);
+                        cb.TripThreshold = 15;
+                        cb.ActiveThreshold = 10;
+                        cb.ResetInterval = TimeSpan.FromMinutes(5);
+                    });
+
+                    ep.UseRateLimit(1000, TimeSpan.FromSeconds(5));
+
+                    ep.Consumer(() => sp.GetService<DiffPlaylistConsumer>());
+                });
+            });
+
+            services.AddSingleton<IPublishEndpoint>(bus);
+            services.AddSingleton<ISendEndpointProvider>(bus);
+            services.AddSingleton<IBusControl>(bus);
+            services.AddSingleton<IBus>(bus);
+
+        }
+
         /// <summary>
         /// Configure Security
         /// </summary>
@@ -396,7 +453,7 @@ namespace hfa.WebApi
         {
             ServiceProvider = services.BuildServiceProvider();
             // Resolve the services from the service provider
-            var authService = ServiceProvider.GetService<IAuthentificationService>();
+            IAuthentificationService authService = ServiceProvider.GetService<IAuthentificationService>();
 
             services.AddAuthentication(options =>
             {
@@ -416,11 +473,11 @@ namespace hfa.WebApi
                 {
                     OnValidatePrincipal = context =>
                     {
-                        var basic = new BasicAuthenticationMiddleware();
-                        var principal = basic.Invoke(context.HttpContext, authService, ServiceProvider.GetService<SynkerDbContext>(), ServiceProvider.GetService<ILoggerFactory>());
+                        BasicAuthenticationMiddleware basic = new BasicAuthenticationMiddleware();
+                        ClaimsPrincipal principal = basic.Invoke(context.HttpContext, authService, ServiceProvider.GetService<SynkerDbContext>(), ServiceProvider.GetService<ILoggerFactory>());
                         if (principal != null)
                         {
-                            var ticket = new AuthenticationTicket(
+                            AuthenticationTicket ticket = new AuthenticationTicket(
                                 principal,
                                 new AuthenticationProperties(),
                                 BasicAuthenticationDefaults.AuthenticationScheme);
@@ -434,24 +491,24 @@ namespace hfa.WebApi
                     }
                 };
             });
+
             services.AddAuthorization(authorizationOptions =>
             {
                 authorizationOptions.AddPolicy(AuthorizePolicies.ADMIN, policyBuilder => policyBuilder.RequireClaim(ClaimTypes.Role, Role.ADMIN_ROLE_NAME));
                 authorizationOptions.AddPolicy(AuthorizePolicies.VIP, policyBuilder => policyBuilder.RequireClaim(AuthorizePolicies.VIP));
-
                 authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme, "Basic").RequireAuthenticatedUser().Build();
             });
         }
 
         #region WebHook Action
-        Action<HttpContext, object> genericHookAction = async (context, message) =>
+        private Action<HttpContext, object> genericHookAction = async (context, message) =>
         {
             CancellationToken ct = context.RequestAborted;
-            var logger = context.RequestServices?.GetService<ILogger>();
-            var notifHub = context.RequestServices?.GetService<IHubContext<NotificationHub>>();
+            ILogger logger = context.RequestServices?.GetService<ILogger>();
+            IHubContext<NotificationHub> notifHub = context.RequestServices?.GetService<IHubContext<NotificationHub>>();
             try
             {
-                var messageJson = string.Empty;
+                string messageJson = string.Empty;
                 messageJson = JsonConvert.SerializeObject(message);
                 //Call webSocket to add new message (Db and trigger that for all observers)
 
