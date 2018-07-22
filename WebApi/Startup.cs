@@ -24,9 +24,11 @@ using hfa.WebApi.Common.Filters;
 using hfa.WebApi.Common.Middlewares;
 using hfa.WebApi.Common.Swagger;
 using hfa.WebApi.Consumers;
+using hfa.WebApi.Http;
 using hfa.WebApi.Hubs;
 using hfa.WebApi.Services;
 using MassTransit;
+using MassTransit.ExtensionsDependencyInjectionIntegration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -36,6 +38,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
@@ -69,7 +72,8 @@ namespace hfa.WebApi
     {
         internal static IConfiguration Configuration;
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment CurrentEnvironment;
-        internal static ServiceProvider ServiceProvider;
+        private static IServiceCollection _serviceDescriptors;
+        public static IServiceProvider Provider => _serviceDescriptors.BuildServiceProvider();
 
         /// <summary>
         /// Assembly version
@@ -93,8 +97,14 @@ namespace hfa.WebApi
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
+            _serviceDescriptors = services;
             string connectionstring = Configuration.GetConnectionString("PlDatabase");
             bool isTestEnv = string.IsNullOrEmpty(connectionstring) || CurrentEnvironment.IsEnvironment("Testing");
+
+            services.AddMassTransit(c =>
+            {
+                c.AddConsumer<DiffPlaylistConsumer>();
+            });
 
             services.
                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
@@ -112,8 +122,6 @@ namespace hfa.WebApi
                .AddScoped<IMediaScraper, MediaScraper>()
                .AddScoped<IWebGrabConfigService, WebGrabConfigService>()
                .AddScoped<IMessageQueueService, MessageQueueService>()
-               .AddSingleton<IHostedService, MassTransitHostedService>()
-
                .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
@@ -121,6 +129,14 @@ namespace hfa.WebApi
                .Configure<GlobalOptions>(Configuration.GetSection(nameof(GlobalOptions)))
                .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)))
                .Configure<VapidKeysOptions>(Configuration.GetSection(nameof(VapidKeysOptions)));
+
+            services.AddSingleton(typeof(HubLifetimeManager<>), typeof(DefaultHubLifetimeManager<>));
+            services.AddSingleton(typeof(IHubProtocolResolver), typeof(DefaultHubProtocolResolver));
+            services.AddScoped(typeof(IHubActivator<>), typeof(DefaultHubActivator<>));
+
+            services.AddHttpContextAccessor();
+            services.AddSignalR();
+            ConfigureRabbitMQ(services);
 
             services.AddMemoryCache();
 
@@ -133,7 +149,7 @@ namespace hfa.WebApi
             }
             else
             {
-                ServiceProvider serviceProvider = services.AddDbContext<SynkerDbContext>(options =>
+                services.AddDbContext<SynkerDbContext>(options =>
                 {
                     options.UseNpgsql(Configuration.GetConnectionString("PlDatabase"),
                     sqlOptions =>
@@ -148,9 +164,9 @@ namespace hfa.WebApi
                     //// Default in EFCore would be to log warning when client evaluation is done.
                     //options.ConfigureWarnings(warnings => warnings.Throw(
                     //RelationalEventId.QueryClientEvaluationWarning));
-                }).BuildServiceProvider();
+                });
 
-                SynkerDbContext DB = serviceProvider.GetService<SynkerDbContext>();
+                SynkerDbContext DB = Provider.GetService<SynkerDbContext>();
                 DB.Database.EnsureCreated();
             }
 
@@ -176,8 +192,6 @@ namespace hfa.WebApi
             #endregion
 
             ConfigSecurity(services);
-
-            ConfigureRabbitMQ(services);
 
             //Logger
             LoggerFactory loggerFactory = new LoggerFactory();
@@ -285,7 +299,6 @@ namespace hfa.WebApi
             });
             #endregion
 
-            services.AddSignalR();
         }
 
         /// <summary>
@@ -295,13 +308,17 @@ namespace hfa.WebApi
         /// <param name="env"></param>
         /// <param name="loggerFactory"></param>
         /// <param name="synkerDbContext"></param>
-        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env, ILoggerFactory loggerFactory, SynkerDbContext synkerDbContext)
+        /// <param name="applicationLifetime"></param>
+        /// <param name="serviceProvider"></param>
+        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env, ILoggerFactory loggerFactory,
+            SynkerDbContext synkerDbContext, Microsoft.AspNetCore.Hosting.IApplicationLifetime applicationLifetime, IServiceProvider serviceProvider)
         {
             ILogger<Startup> log = loggerFactory.CreateLogger<Startup>();
             app.UseResponseCompression();
-
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
             app.Map("/liveness", lapp => lapp.Run(async ctx => ctx.Response.StatusCode = 200));
+
+            app.UseHttpContext();
 
             string appAbout = JsonConvert.SerializeObject(new ApplicationAbout
             {
@@ -385,6 +402,7 @@ namespace hfa.WebApi
                 {
                     routes.MapHub<NotificationHub>("/notification");
                 });
+
             }
             catch (Exception ex)
             {
@@ -401,15 +419,23 @@ namespace hfa.WebApi
             }
         }
 
-        private static void ConfigureRabbitMQ(IServiceCollection services)
+        /// <summary>
+        /// Configure RabbitMq bus
+        /// </summary>
+        /// <param name="services"></param>
+        private void ConfigureRabbitMQ(IServiceCollection services)
         {
             services.AddScoped<DiffPlaylistConsumer>();
 
-            IBusControl bus = Bus.Factory.CreateUsingRabbitMq(cfg =>
+            services.AddMassTransit(x =>
             {
-                ServiceProvider sp = services.BuildServiceProvider();
-                IOptions<RabbitMQConfiguration> rabbitConfig = sp.GetService<IOptions<RabbitMQConfiguration>>();
-                ILoggerFactory _loggerFactory = sp.GetService<ILoggerFactory>();
+                x.AddConsumer<DiffPlaylistConsumer>();
+            });
+
+            services.AddSingleton(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
+            {
+                IOptions<RabbitMQConfiguration> rabbitConfig = Provider.GetService<IOptions<RabbitMQConfiguration>>();
+                ILoggerFactory _loggerFactory = Provider.GetService<ILoggerFactory>();
                 ILogger _logger = _loggerFactory.CreateLogger(typeof(Startup));
 
                 _logger.LogInformation($"Connected to rabbit host: {rabbitConfig.Value.Hostname}{rabbitConfig.Value.VirtualHost}:{rabbitConfig.Value.Port}");
@@ -433,16 +459,20 @@ namespace hfa.WebApi
                     });
 
                     ep.UseRateLimit(1000, TimeSpan.FromSeconds(5));
-
-                    ep.Consumer(() => sp.GetService<DiffPlaylistConsumer>());
+                    ep.LoadFrom(Provider);
+                   // ep.Consumer(() => (DiffPlaylistConsumer)Provider.GetRequiredService(typeof(DiffPlaylistConsumer)));
                 });
-            });
+            }));
 
-            services.AddSingleton<IPublishEndpoint>(bus);
-            services.AddSingleton<ISendEndpointProvider>(bus);
-            services.AddSingleton<IBusControl>(bus);
-            services.AddSingleton<IBus>(bus);
+            services.AddSingleton<IPublishEndpoint>(provider => provider.GetRequiredService<IBusControl>());
+            services.AddSingleton<ISendEndpointProvider>(provider => provider.GetRequiredService<IBusControl>());
+            services.AddSingleton<IBus>(provider => provider.GetRequiredService<IBusControl>());
 
+            services.AddSingleton<IHostedService, MassTransitHostedService>();
+            //services.AddSingleton<IPublishEndpoint>(bus);
+            //services.AddSingleton<ISendEndpointProvider>(bus);
+            //services.AddSingleton<IBusControl>(bus);
+            //services.AddSingleton<IBus>(bus);
         }
 
         /// <summary>
@@ -451,9 +481,8 @@ namespace hfa.WebApi
         /// <param name="services"></param>
         private void ConfigSecurity(IServiceCollection services)
         {
-            ServiceProvider = services.BuildServiceProvider();
             // Resolve the services from the service provider
-            IAuthentificationService authService = ServiceProvider.GetService<IAuthentificationService>();
+            IAuthentificationService authService = Provider.GetService<IAuthentificationService>();
 
             services.AddAuthentication(options =>
             {
@@ -474,7 +503,7 @@ namespace hfa.WebApi
                     OnValidatePrincipal = context =>
                     {
                         BasicAuthenticationMiddleware basic = new BasicAuthenticationMiddleware();
-                        ClaimsPrincipal principal = basic.Invoke(context.HttpContext, authService, ServiceProvider.GetService<SynkerDbContext>(), ServiceProvider.GetService<ILoggerFactory>());
+                        ClaimsPrincipal principal = basic.Invoke(context.HttpContext, authService, Provider.GetService<SynkerDbContext>(), Provider.GetService<ILoggerFactory>());
                         if (principal != null)
                         {
                             AuthenticationTicket ticket = new AuthenticationTicket(

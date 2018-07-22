@@ -8,5 +8,8 @@
 
         [Required]
         public string Payload { get; set; }
+
     }
+
 }
+

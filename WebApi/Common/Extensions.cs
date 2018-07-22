@@ -1,6 +1,9 @@
 ﻿using hfa.WebApi;
 using hfa.WebApi.Models;
 using Hfa.WebApi.Models;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nest;
 using PlaylistManager.Entities;
@@ -8,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Hfa.WebApi.Common
 {
@@ -20,7 +22,9 @@ namespace Hfa.WebApi.Common
         {
             //Debug.Assert(response.IsValid);
             if (!response.IsValid)
+            {
                 Common.Logger("Elastic").LogError(response.DebugInformation);
+            }
         }
 
         public class Common
@@ -30,7 +34,7 @@ namespace Hfa.WebApi.Common
 
             static Common()
             {
-                _LoggerFactory = (ILoggerFactory)Startup.ServiceProvider.GetService(typeof(ILoggerFactory));
+                _LoggerFactory = (ILoggerFactory)Startup.Provider.GetService(typeof(ILoggerFactory));
             }
 
             internal static void DisplayList(Playlist<TvgMedia> pl, Action<string> logAction, string message)
@@ -38,10 +42,14 @@ namespace Hfa.WebApi.Common
                 logAction?.Invoke(message);
                 Logger().LogInformation(message);
                 if (pl != null)
+                {
                     Logger().LogInformation(message);
+                }
                 //  logAction?.Invoke(pl.ToString(false));
             }
         }
+
+
 
     }
 }
@@ -52,14 +60,14 @@ namespace System.Linq
     {
         public static PagedResult<T> GetPaged<T>(this IEnumerable<T> query, int page, int pageSize, bool getAll) where T : class
         {
-            var result = new PagedResult<T>
+            PagedResult<T> result = new PagedResult<T>
             {
                 CurrentPage = page,
                 PageSize = pageSize,
                 RowCount = query.Count()
             };
 
-            var pageCount = (double)result.RowCount / pageSize;
+            double pageCount = (double)result.RowCount / pageSize;
             result.PageCount = (int)Math.Ceiling(pageCount);
 
             result.Results = getAll ? query.ToList() : query.Skip(page * pageSize).Take(pageSize).ToList();
@@ -80,16 +88,19 @@ namespace System
     {
         public static string FirstCharToUpper(this string input)
         {
-            if (String.IsNullOrEmpty(input))
+            if (string.IsNullOrEmpty(input))
+            {
                 throw new ArgumentException("ARGH!");
+            }
+
             return input.First().ToString().ToUpper() + input.Substring(1);
         }
 
         public static string HashPassword(this string password, string salt)
         {
-            var bytes = new UTF8Encoding().GetBytes(salt + password);
+            byte[] bytes = new UTF8Encoding().GetBytes(salt + password);
             byte[] hashBytes;
-            using (var algorithm = new Security.Cryptography.SHA512Managed())
+            using (Security.Cryptography.SHA512Managed algorithm = new Security.Cryptography.SHA512Managed())
             {
                 hashBytes = algorithm.ComputeHash(bytes);
             }
@@ -98,7 +109,7 @@ namespace System
 
         public static bool VerifyPassword(this string password, string password64, string salt)
         {
-            var expectedPassword = HashPassword(password, salt);
+            string expectedPassword = HashPassword(password, salt);
             return expectedPassword.Equals(password64);
         }
     }
@@ -116,10 +127,12 @@ namespace NETCore.Encrypt.Extensions.Internal
         public static void FromXmlString(this RSA rsa, string xmlString, bool ex)
         {
             if (string.IsNullOrEmpty(xmlString))
+            {
                 throw new ArgumentNullException(nameof(xmlString));
+            }
 
-            var parameters = new RSAParameters();
-            var xmlDoc = new XmlDocument();
+            RSAParameters parameters = new RSAParameters();
+            XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(xmlString);
 
             if (xmlDoc.DocumentElement.Name.Equals("RSAKeyValue"))
@@ -147,4 +160,31 @@ namespace NETCore.Encrypt.Extensions.Internal
             rsa.ImportParameters(parameters);
         }
     }
+}
+
+namespace hfa.WebApi.Http
+{
+    public static class HttpContextExtensions
+    {
+        public static IApplicationBuilder UseHttpContext(this IApplicationBuilder app)
+        {
+            SynkerHttpContext.Configure(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>);
+            return app;
+        }
+    }
+
+    public class SynkerHttpContext
+    {
+        private static Func<IHttpContextAccessor> _httpContextAccessor;
+
+        public static HttpContext Current => _httpContextAccessor().HttpContext;
+
+        public static string AppBaseUrl => Current == null ? "" : $"{Current.Request.Scheme}://{Current.Request.Host}{Current.Request.PathBase}";
+
+        internal static void Configure(Func<IHttpContextAccessor> contextAccessor)
+        {
+            _httpContextAccessor = contextAccessor;
+        }
+    }
+
 }

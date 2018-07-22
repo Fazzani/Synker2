@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using hfa.WebApi;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using hfa.WebApi;
-using System.Security.Cryptography.X509Certificates;
-using System.Net;
 using Serilog;
+using System;
+using System.IO;
 
 namespace Web
 {
     public class Program
     {
+        public static IWebHostBuilder SynkerWebHostBuilder;
+
         public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
           .SetBasePath(Directory.GetCurrentDirectory())
           .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -36,7 +32,8 @@ namespace Web
             {
                 Log.Information("Getting the motors running...");
 
-                BuildWebHost(args).Run();
+                SynkerWebHostBuilder = BuildWebHost(args);
+                SynkerWebHostBuilder.Build().Run();
 
                 return 0;
             }
@@ -52,12 +49,12 @@ namespace Web
 
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
+        public static IWebHostBuilder BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseKestrel()
                 .UseSerilog()
-                .UseUrls("http://*:56800")
-                .Build();
+                .UseUrls("http://*:56800");
+               
     }
 }

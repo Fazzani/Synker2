@@ -1,24 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using hfa.Brokers.Messages.Models;
+﻿using hfa.Brokers.Messages.Models;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Services.Dal;
 using hfa.WebApi.Common;
 using hfa.WebApi.Common.Filters;
+using hfa.WebApi.Hubs;
 using hfa.WebApi.Models.Notifications;
 using Hfa.WebApi.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
+using System.Net;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using WebPush;
 
 namespace hfa.WebApi.Controllers
@@ -32,13 +32,15 @@ namespace hfa.WebApi.Controllers
     {
         private readonly IMessageQueueService _notificationService;
         private readonly VapidKeysOptions _vapidKeysConfig;
+        private readonly IHubContext<NotificationHub> _notifcationHubContext;
 
         public NotificationController(IMessageQueueService notificationService, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory,
-           IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IOptions<VapidKeysOptions> vapidKeysOptions)
+           IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IHubContext<NotificationHub> notifcationHubContext, IOptions<VapidKeysOptions> vapidKeysOptions)
            : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
             _vapidKeysConfig = vapidKeysOptions.Value;
+            _notifcationHubContext = notifcationHubContext;
         }
 
         /// <summary>
@@ -67,7 +69,7 @@ namespace hfa.WebApi.Controllers
                     UserId = UserId.Value.ToString()
                 }, cancellationToken);
             }
-            else if(notification.NotificationType == NotificationTypeEnum.Email)
+            else if (notification.NotificationType == NotificationTypeEnum.Email)
             {
 
             }
@@ -86,14 +88,16 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> PostWebPushAsync([FromBody] WebPushModel webPushModel, CancellationToken cancellationToken)
         {
-            var device = await _dbContext.Devices.FirstOrDefaultAsync(x => x.Id == webPushModel.Id, cancellationToken);
+            synker.entities.Notifications.Device device = await _dbContext.Devices.FirstOrDefaultAsync(x => x.Id == webPushModel.Id, cancellationToken);
             if (device == null)
+            {
                 return NotFound(device);
+            }
 
-            var pushSubscription = new PushSubscription(device.PushEndpoint, device.PushP256DH, device.PushAuth);
-            var vapidDetails = new VapidDetails("mailto:synker-team@synker.ovh", _vapidKeysConfig.PublicKey, _vapidKeysConfig.PrivateKey);
+            PushSubscription pushSubscription = new PushSubscription(device.PushEndpoint, device.PushP256DH, device.PushAuth);
+            VapidDetails vapidDetails = new VapidDetails("mailto:synker-team@synker.ovh", _vapidKeysConfig.PublicKey, _vapidKeysConfig.PrivateKey);
 
-            var webPushClient = new WebPushClient();
+            WebPushClient webPushClient = new WebPushClient();
             webPushClient.SendNotification(pushSubscription, webPushModel.Payload, vapidDetails);
             return Ok();
         }
@@ -110,9 +114,25 @@ namespace hfa.WebApi.Controllers
         {
             return await Task.Run(() =>
             {
-                var keys = VapidHelper.GenerateVapidKeys();
+                VapidDetails keys = VapidHelper.GenerateVapidKeys();
                 return Ok(keys);
             }, cancellationToken);
+        }
+
+        /// <summary>
+        /// Test Web push notification
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Route("push")]
+        [HttpPost]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetWebPushNotification([FromBody]BorkerMessageModel message, CancellationToken cancellationToken)
+        {
+            await _notifcationHubContext.Clients.All.SendAsync("SendMessage", User.Identity.Name, message.Message, cancellationToken);
+            return Ok();
         }
     }
 }

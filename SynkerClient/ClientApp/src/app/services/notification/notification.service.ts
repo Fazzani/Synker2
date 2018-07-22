@@ -13,11 +13,12 @@ import { CommonService } from "../common/common.service";
 })
 export class NotificationService extends BaseService {
   public messages: BehaviorSubject<Message> = new BehaviorSubject<Message>(null);
-  private hubConnection: HubConnection;
-  readonly  hubName: string = 'notification';
+  private hubConnection: HubConnection | undefined;
+  readonly hubName: string = 'notification';
 
   constructor(protected http: HttpClient, private commonService: CommonService) {
     super(http);
+    console.log(`NotificationHub Url : ${environment.base_hub_url}${this.hubName}`);
     this.hubConnection = new HubConnectionBuilder().withUrl(`${environment.base_hub_url}${this.hubName}`).build();
 
     //TODO: retry when failed // see implementation in this file history
@@ -26,7 +27,7 @@ export class NotificationService extends BaseService {
       .then(() => this.commonService.info("Hub connection", "Connecté au hub"))
       .catch(error => this.commonService.displayError("Hub connection", "Problème de connexion au hub: " + error));
 
-    this.hubConnection.on("ReceiveMessage", (userName: string, content: string) => {
+    this.hubConnection.on("SendMessage", (userName: string, content: string) => {
       const text = `New received message from ${userName}: ${content}`;
       console.log(text);
       this.messages.next(<Message>{

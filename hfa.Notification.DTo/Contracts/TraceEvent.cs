@@ -1,6 +1,4 @@
-﻿using PlaylistManager.Entities;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace hfa.Brokers.Messages.Contracts
 {
@@ -10,5 +8,6 @@ namespace hfa.Brokers.Messages.Contracts
 
         public string Message { get; set; }
 
+        public override string ToString() =>  $"{CreatedDate}: {Message}";
     }
 }
