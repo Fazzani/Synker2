@@ -391,7 +391,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openWatchVideoDialog(media: TvgMedia): void {
     let dialogRef = this.dialog.open(MediaWatchDialog, {
-      width: "550px",
+      width: "800px",
       data: media
     });
 
