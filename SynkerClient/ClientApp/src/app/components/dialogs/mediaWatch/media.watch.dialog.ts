@@ -8,7 +8,7 @@ import ClapprStats from 'clappr-stats';
 //import ClapprNerdStats from 'clappr-nerd-stats';
 import ChromecastPlugin from 'clappr-chromecast-plugin';
 import LevelSelector from 'level-selector';
-import ClapprPIPPlugin from 'clappr-pip-plugin';
+//import ClapprPIPPlugin from 'clappr-pip-plugin';
 
 @Component({
   selector: "media-watch-dialog",
@@ -28,7 +28,7 @@ export class MediaWatchDialog implements OnInit, OnDestroy {
     this.player = new Clappr.Player({
       source: this.data.url.replace('.ts', '.m3u8'),
       autoPlay: true,
-      plugins: [PlaybackRatePlugin, ClapprStats, ChromecastPlugin, LevelSelector, ClapprPIPPlugin],
+      plugins: [PlaybackRatePlugin, ClapprStats, ChromecastPlugin, LevelSelector],
       parentId: '#player',
       height: 700,
       width: 750,
@@ -66,7 +66,7 @@ export class MediaWatchDialog implements OnInit, OnDestroy {
         },
       },
       chromecast: {
-        appId: 'EF2DCDA0',
+        appId: '6BDD3F23',
         contentType: 'video/mp4',
         media: {
           type: ChromecastPlugin.Movie,

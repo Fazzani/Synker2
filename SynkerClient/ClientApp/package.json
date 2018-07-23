@@ -39,8 +39,6 @@
     "aspnet-prerendering": "^3.0.1",
     "clappr": "^0.2.97",
     "clappr-chromecast-plugin": "0.0.6",
-    "clappr-nerd-stats": "^0.1.0",
-    "clappr-pip-plugin": "^2.0.1",
     "clappr-playback-rate-plugin": "^0.4.0",
     "clappr-stats": "^0.1.4",
     "core-js": "^2.4.1",
