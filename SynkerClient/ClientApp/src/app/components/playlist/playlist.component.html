@@ -90,15 +90,18 @@
         <ng-container matColumnDef="actions">
             <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
             <mat-cell *matCellDef="let row">
-                <button mat-icon-button color="primary" (click)="openDialog(row)" matTooltip="Edit">
-                    <mat-icon class="mat-24" aria-label="Edit">edit</mat-icon>
-                </button>
-                <button mat-icon-button color="warn" (click)="delete(row.id)" matTooltip="Remove">
-                    <mat-icon class="mat-24" aria-label="">delete</mat-icon>
-                </button>
-                <button mat-icon-button color="primary" (click)="matchVideo(row)" matTooltip="Match VOD">
-                    <mat-icon class="mat-24" aria-label="">video_label</mat-icon>
-                </button>
+              <button mat-icon-button color="primary" (click)="openDialog(row)" matTooltip="Edit">
+                <mat-icon class="mat-24" aria-label="Edit">edit</mat-icon>
+              </button>
+              <button mat-icon-button color="primary" (click)="openWatchVideoDialog(row)" matTooltip="Watch">
+                <mat-icon class="mat-24" aria-label="Watch">videocam</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="delete(row.id)" matTooltip="Remove">
+                <mat-icon class="mat-24" aria-label="">delete</mat-icon>
+              </button>
+              <button mat-icon-button color="primary" (click)="matchVideo(row)" matTooltip="Match VOD">
+                <mat-icon class="mat-24" aria-label="">video_label</mat-icon>
+              </button>
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

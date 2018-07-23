@@ -29,7 +29,7 @@
               "src/styles/themes.scss",
               "src/styles/style.scss"
             ],
-            "scripts": []
+            "scripts": [ "node_modules/clappr/dist/clappr.min.js" ]
           },
           "configurations": {
             "production": {

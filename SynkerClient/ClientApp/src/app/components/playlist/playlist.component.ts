@@ -17,6 +17,7 @@ import { PlaylistDiffDialog } from "../dialogs/playlistDiff/playlist.diff.compon
 import { GroupsDialog } from "../dialogs/group/groups.component";
 import { MatchTvgDialog } from "../dialogs/matchTvg/matchTvg.component";
 import { debug } from "util";
+import { MediaWatchDialog } from "../dialogs/mediaWatch/media.watch.dialog";
 
 @Component({
   selector: "playlist",
@@ -128,7 +129,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     private commonService: CommonService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   /** Called by Angular after media component initialized */
   ngOnInit(): void {
@@ -385,6 +386,17 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
       this.snackBar.open(media.displayName + " was modified", "", {
         duration: snakbar_duration
       });
+    });
+  }
+
+  openWatchVideoDialog(media: TvgMedia): void {
+    let dialogRef = this.dialog.open(MediaWatchDialog, {
+      width: "550px",
+      data: media
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
     });
   }
 

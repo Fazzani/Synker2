@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.1.0" />
   </ItemGroup>
 
@@ -31,6 +31,7 @@
     <None Remove="ClientApp\src\app\components\admin\dashboard\admin.dashboard.component.ts" />
     <None Remove="ClientApp\src\app\components\dialogs\auth\LoginDialog.ts" />
     <None Remove="ClientApp\src\app\components\dialogs\auth\RegisterDialog.ts" />
+    <None Remove="ClientApp\src\app\components\dialogs\mediaWatch\media.watch.dialog.ts" />
     <None Remove="ClientApp\src\app\components\dialogs\playlistBulkUpdate\playlistBulkUpdate.ts" />
     <None Remove="ClientApp\src\app\components\dialogs\playlistTvgSites\PlaylistTvgSitesDialog.ts" />
     <None Remove="ClientApp\src\app\components\dialogs\playlistUpdate\playlist.update.dialog.ts" />
@@ -148,6 +149,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\auth\RegisterDialog.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\playlistBulkUpdate\playlistBulkUpdate.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\playlistTvgSites\PlaylistTvgSitesDialog.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\mediaWatch\media.watch.dialog.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\playlistUpdate\playlist.update.dialog.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\infrastructure\DefaultHttpInterceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\infrastructure\JwtInterceptor.ts" />

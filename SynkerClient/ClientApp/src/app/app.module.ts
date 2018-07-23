@@ -49,6 +49,7 @@ import { HostsResolver } from "./components/admin/hosts/hosts.resolver";
 import { HomeResolver } from "./components/home/home.resolver";
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { MediaWatchDialog } from "./components/dialogs/mediaWatch/media.watch.dialog";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -84,6 +85,7 @@ export function getAboutApplication(initService: InitAppService) {
     PlaylistDiffDialog,
     SitePackModifyDialog,
     PlaylistInfosDialog,
+    MediaWatchDialog,
     GroupsDialog,
     MatchTvgDialog,
     XmltvModifyDialog,
@@ -132,7 +134,8 @@ export function getAboutApplication(initService: InitAppService) {
     GroupsDialog,
     MatchTvgDialog,
     PlaylistInfosDialog,
-    XmltvModifyDialog
+    XmltvModifyDialog,
+    MediaWatchDialog
   ],
   providers: [
     {
