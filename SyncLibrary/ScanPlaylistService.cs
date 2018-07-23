@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,15 +13,15 @@ namespace hfa.Synker.batch
 {
     internal class ScanPlaylistService
     {
-        const string ExNewLine = "#EXTINF:-1,group-title=\"NewChannels\", channel {0}{1}{2}";
-        const string EXTM3U = "#EXTM3U";
+        private const string ExNewLine = "#EXTINF:-1,group-title=\"NewChannels\", channel {0}{1}{2}";
+        private const string EXTM3U = "#EXTM3U";
 
-        public async Task ScanAsync(ScanPlaylistFileVerb options, ILogger logger, CancellationToken token = default(CancellationToken))
+        public async Task ScanAsync(ScanPlaylistFileVerb options, ILogger logger, CancellationToken token = default)
         {
             await Task.Run(() =>
              {
-                 var existedUrls = File.ReadAllLines(options.LocalFilePath).Where(x => !x.StartsWith("#"));
-                 var lines = new ConcurrentBag<string>();
+                 IEnumerable<string> existedUrls = File.ReadAllLines(options.LocalFilePath).Where(x => !x.StartsWith("#"));
+                 ConcurrentBag<string> lines = new ConcurrentBag<string>();
 
                  Enumerable.Range(options.From, options.Count)
                      .AsParallel()
@@ -33,26 +32,30 @@ namespace hfa.Synker.batch
                  logger.LogInformation("Total new urls {0}", lines.Count);
 
                  if (lines.Count > 0)
+                 {
                      File.AppendAllLines(options.LocalFilePath, lines);
+                 }
              });
         }
 
         private async Task PingAsync(IEnumerable<string> listUrl, ConcurrentBag<string> lines, int i, string streamPatternUrl,
-            ILogger logger, CancellationToken token)
+            ILogger logger, CancellationToken token = default)
         {
             try
             {
                 token.ThrowIfCancellationRequested();
-                var uri = String.Format(streamPatternUrl, i);
+                string uri = string.Format(streamPatternUrl, i);
                 if (listUrl.Any(x => x.Equals(uri)))
+                {
                     return;
+                }
 
                 logger.LogInformation(uri);
-                var request = (HttpWebRequest)WebRequest.Create(uri);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
                 request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.101 Safari/537.36";
 
-                using (var response = await request.GetResponseAsync())
-                using (var reader = new StreamReader(response.GetResponseStream()))
+                using (WebResponse response = await request.GetResponseAsync())
+                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                 {
                     token.ThrowIfCancellationRequested();
                     string res = await reader.ReadLineAsync();

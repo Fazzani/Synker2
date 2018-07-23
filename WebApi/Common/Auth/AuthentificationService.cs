@@ -186,6 +186,7 @@ namespace hfa.WebApi.Common.Auth
                 new Claim("photo", user.Photo, ClaimValueTypes.String),
                 new Claim(ClaimTypes.Gender, user.Gender.ToString()),
                 new Claim("id", user.Id.ToString(), ClaimValueTypes.Integer),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Nbf, now.ToString())
                     };
 

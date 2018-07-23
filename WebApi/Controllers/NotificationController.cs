@@ -53,25 +53,44 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> Post([FromBody] NotificationModel notification, CancellationToken cancellationToken)
         {
-            if (notification.NotificationType == NotificationTypeEnum.Email)
+            switch (notification.NotificationType)
             {
-                await _notificationService.SendMailAsync(new EmailNotification
-                {
-                    Body = notification.Body,
-                    Cc = notification.Cc,
-                    Cci = notification.Cci,
-                    From = notification.From,
-                    Subject = notification.Subject,
-                    To = notification.To,
-                    FromDisplayName = notification.FromDisplayName,
-                    IsBodyHtml = notification.IsBodyHtml,
-                    AppId = Assembly.GetExecutingAssembly().FullName,
-                    UserId = UserId.Value.ToString()
-                }, cancellationToken);
-            }
-            else if (notification.NotificationType == NotificationTypeEnum.Email)
-            {
-
+                case NotificationTypeEnum.Email:
+                    await _notificationService.SendMailAsync(new EmailNotification
+                    {
+                        Body = notification.Body,
+                        Cc = notification.Cc,
+                        Cci = notification.Cci,
+                        From = notification.From,
+                        Subject = notification.Subject,
+                        To = notification.To,
+                        FromDisplayName = notification.FromDisplayName,
+                        IsBodyHtml = notification.IsBodyHtml,
+                        AppId = Assembly.GetExecutingAssembly().FullName,
+                        UserId = UserId.Value.ToString()
+                    }, cancellationToken);
+                    break;
+                case NotificationTypeEnum.Sms:
+                    break;
+                case NotificationTypeEnum.PushBrowser:
+                    break;
+                case NotificationTypeEnum.PushMobile:
+                    break;
+                default:
+                    await _notificationService.SendMailAsync(new EmailNotification
+                    {
+                        Body = notification.Body,
+                        Cc = notification.Cc,
+                        Cci = notification.Cci,
+                        From = notification.From,
+                        Subject = notification.Subject,
+                        To = notification.To,
+                        FromDisplayName = notification.FromDisplayName,
+                        IsBodyHtml = notification.IsBodyHtml,
+                        AppId = Assembly.GetExecutingAssembly().FullName,
+                        UserId = UserId.Value.ToString()
+                    }, cancellationToken);
+                    break;
             }
             return Ok();
         }
@@ -97,8 +116,7 @@ namespace hfa.WebApi.Controllers
             PushSubscription pushSubscription = new PushSubscription(device.PushEndpoint, device.PushP256DH, device.PushAuth);
             VapidDetails vapidDetails = new VapidDetails("mailto:synker-team@synker.ovh", _vapidKeysConfig.PublicKey, _vapidKeysConfig.PrivateKey);
 
-            WebPushClient webPushClient = new WebPushClient();
-            webPushClient.SendNotification(pushSubscription, webPushModel.Payload, vapidDetails);
+            new WebPushClient().SendNotification(pushSubscription, webPushModel.Payload, vapidDetails);
             return Ok();
         }
 

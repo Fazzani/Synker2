@@ -87,6 +87,7 @@
                 .ConfigureHostConfiguration(config =>
                 {
                     config.SetBasePath(Directory.GetCurrentDirectory());
+                    config.AddEnvironmentVariables();
                 })
                 .ConfigureLogging((hostingContext, logging) =>
                 {

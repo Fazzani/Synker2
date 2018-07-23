@@ -2,11 +2,9 @@
 {
     using hfa.Brokers.Messages.Contracts;
     using hfa.Synker.Services;
-    using hfa.Synker.Services.Dal;
     using hfa.WebApi.Models.Notifications;
     using MassTransit;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Linq;
@@ -14,34 +12,26 @@
     using System.Threading.Tasks;
     using Web;
 
-    public class DiffPlaylistConsumer : IConsumer<DiffPlaylistEvent>
+    public class TraceConsumer :  IConsumer<TraceEvent>
     {
-        private readonly ILogger<DiffPlaylistConsumer> _logger;
-        private readonly SynkerDbContext _dbContext;
+        private readonly ILogger<TraceConsumer> _logger;
         private readonly string requestUri = $"api/v1/notification/push";
 
-        public DiffPlaylistConsumer(ILogger<DiffPlaylistConsumer> logger, SynkerDbContext context)
+        public TraceConsumer(ILogger<TraceConsumer> logger)
         {
             _logger = logger;
-            _dbContext = context;
         }
 
-        public async Task Consume(ConsumeContext<DiffPlaylistEvent> context)
+        public async Task Consume(ConsumeContext<TraceEvent> context)
         {
-            _logger.LogInformation(context.Message.ToString());
-
-            var playlist = await _dbContext.Playlist
-                .Include(pl => pl.User)
-                .FirstOrDefaultAsync(x => x.Id == context.Message.Id);
-
+            _logger.LogCritical(context.Message.ToString());
             using (var client = new HttpClient())
             {
                 Configureclient(client);
                 var response = await client.PostAsync(requestUri, new JsonContent(new BorkerMessageModel
                 {
-                    BrokerMessageType = BrokerMessageType.PlaylistDiff,
-                    Message = context.Message.ToString(),
-                    Id = playlist.Id
+                    BrokerMessageType = BrokerMessageType.Exception,
+                    Message = context.Message.ToString()
                 }));
                 response.EnsureSuccessStatusCode();
             }

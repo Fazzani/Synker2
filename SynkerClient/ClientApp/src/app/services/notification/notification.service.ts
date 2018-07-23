@@ -7,6 +7,7 @@ import { BaseService } from "../base/base.service";
 import { environment } from "../../../environments/environment";
 import { HubConnection, HubConnectionBuilder } from "@aspnet/signalr";
 import { CommonService } from "../common/common.service";
+import { AuthService } from "../auth/auth.service";
 
 @Injectable({
   providedIn: 'root',
@@ -14,12 +15,12 @@ import { CommonService } from "../common/common.service";
 export class NotificationService extends BaseService {
   public messages: BehaviorSubject<Message> = new BehaviorSubject<Message>(null);
   private hubConnection: HubConnection | undefined;
-  readonly hubName: string = 'notification';
+  readonly hubName: string = 'hubs/notification';
 
-  constructor(protected http: HttpClient, private commonService: CommonService) {
+  constructor(protected http: HttpClient, private commonService: CommonService, private authService: AuthService) {
     super(http);
     console.log(`NotificationHub Url : ${environment.base_hub_url}${this.hubName}`);
-    this.hubConnection = new HubConnectionBuilder().withUrl(`${environment.base_hub_url}${this.hubName}`).build();
+    this.hubConnection = new HubConnectionBuilder().withUrl(`${environment.base_hub_url}${this.hubName}`, { accessTokenFactory: () => this.authService.getToken() }).build();
 
     //TODO: retry when failed // see implementation in this file history
     this.hubConnection

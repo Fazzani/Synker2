@@ -101,11 +101,6 @@ namespace hfa.WebApi
             string connectionstring = Configuration.GetConnectionString("PlDatabase");
             bool isTestEnv = string.IsNullOrEmpty(connectionstring) || CurrentEnvironment.IsEnvironment("Testing");
 
-            services.AddMassTransit(c =>
-            {
-                c.AddConsumer<DiffPlaylistConsumer>();
-            });
-
             services.
                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                .AddSingleton<IPasteBinService, PasteBinService>()
@@ -314,11 +309,11 @@ namespace hfa.WebApi
             SynkerDbContext synkerDbContext, Microsoft.AspNetCore.Hosting.IApplicationLifetime applicationLifetime, IServiceProvider serviceProvider)
         {
             ILogger<Startup> log = loggerFactory.CreateLogger<Startup>();
-            app.UseResponseCompression();
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
             app.Map("/liveness", lapp => lapp.Run(async ctx => ctx.Response.StatusCode = 200));
 
             app.UseHttpContext();
+            app.UseResponseCompression();
 
             string appAbout = JsonConvert.SerializeObject(new ApplicationAbout
             {
@@ -400,7 +395,7 @@ namespace hfa.WebApi
 
                 app.UseSignalR(routes =>
                 {
-                    routes.MapHub<NotificationHub>("/notification");
+                    routes.MapHub<NotificationHub>("/hubs/notification");
                 });
 
             }
@@ -426,10 +421,12 @@ namespace hfa.WebApi
         private void ConfigureRabbitMQ(IServiceCollection services)
         {
             services.AddScoped<DiffPlaylistConsumer>();
+            services.AddScoped<TraceConsumer>();
 
             services.AddMassTransit(x =>
             {
                 x.AddConsumer<DiffPlaylistConsumer>();
+                x.AddConsumer<TraceConsumer>();
             });
 
             services.AddSingleton(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
@@ -460,7 +457,6 @@ namespace hfa.WebApi
 
                     ep.UseRateLimit(1000, TimeSpan.FromSeconds(5));
                     ep.LoadFrom(Provider);
-                   // ep.Consumer(() => (DiffPlaylistConsumer)Provider.GetRequiredService(typeof(DiffPlaylistConsumer)));
                 });
             }));
 
@@ -469,10 +465,6 @@ namespace hfa.WebApi
             services.AddSingleton<IBus>(provider => provider.GetRequiredService<IBusControl>());
 
             services.AddSingleton<IHostedService, MassTransitHostedService>();
-            //services.AddSingleton<IPublishEndpoint>(bus);
-            //services.AddSingleton<ISendEndpointProvider>(bus);
-            //services.AddSingleton<IBusControl>(bus);
-            //services.AddSingleton<IBus>(bus);
         }
 
         /// <summary>
@@ -494,6 +486,27 @@ namespace hfa.WebApi
                 //jwtBearerOptions.BackchannelHttpHandler
                 jwtBearerOptions.RequireHttpsMetadata = true;
                 jwtBearerOptions.TokenValidationParameters = authService.Parameters;
+                // We have to hook the OnMessageReceived event in order to
+                // allow the JWT authentication handler to read the access
+                // token from the query string when a WebSocket or 
+                // Server-Sent Events request comes in.
+                jwtBearerOptions.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        // If the request is for our hub...
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            (path.StartsWithSegments("/hubs/notification")))
+                        {
+                            // Read the token out of the query string
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             }).AddBasicAuthentication(
             options =>
             {
@@ -502,11 +515,11 @@ namespace hfa.WebApi
                 {
                     OnValidatePrincipal = context =>
                     {
-                        BasicAuthenticationMiddleware basic = new BasicAuthenticationMiddleware();
-                        ClaimsPrincipal principal = basic.Invoke(context.HttpContext, authService, Provider.GetService<SynkerDbContext>(), Provider.GetService<ILoggerFactory>());
+                        var basic = new BasicAuthenticationMiddleware();
+                        var principal = basic.Invoke(context.HttpContext, authService, Provider.GetService<SynkerDbContext>(), Provider.GetService<ILoggerFactory>());
                         if (principal != null)
                         {
-                            AuthenticationTicket ticket = new AuthenticationTicket(
+                            var ticket = new AuthenticationTicket(
                                 principal,
                                 new AuthenticationProperties(),
                                 BasicAuthenticationDefaults.AuthenticationScheme);
