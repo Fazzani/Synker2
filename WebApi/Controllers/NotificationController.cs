@@ -16,6 +16,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -151,6 +153,15 @@ namespace hfa.WebApi.Controllers
         {
             await _notifcationHubContext.Clients.All.SendAsync("SendMessage", User.Identity.Name, message.Message, cancellationToken);
             return Ok();
+        }
+
+        [Route("stream/{url}")]
+        [AllowAnonymous]
+        public async Task<FileStreamResult> GetStreamAsync(string url)
+        {
+            HttpClient _client = new HttpClient();
+            var stream = await _client.GetStreamAsync("http://dmtn.tv:8080/live/1124nad1701/t3yurCsrYI/149.m3u8");
+            return new FileStreamResult(stream, new MediaTypeHeaderValue("video/mp4").MediaType);
         }
     }
 }

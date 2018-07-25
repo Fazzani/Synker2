@@ -26,7 +26,7 @@ export class MediaWatchDialog implements OnInit, OnDestroy {
     console.log(`playing ${this.data.url} ${this.data.displayName}`);
 
     this.player = new Clappr.Player({
-      source: this.data.url.replace('.ts', '.m3u8').replace('http:', ''),
+      source: "http://localhost:56800/api/v1/notification/stream/test.m3u8",
       autoPlay: true,
       plugins: [PlaybackRatePlugin, ClapprStats, ChromecastPlugin, LevelSelector],
       parentId: '#player',
