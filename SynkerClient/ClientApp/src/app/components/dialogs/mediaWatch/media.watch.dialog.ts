@@ -16,6 +16,8 @@ import LevelSelector from 'level-selector';
 })
 export class MediaWatchDialog implements OnInit, OnDestroy {
   player: any;
+  private MEDIA_PROXY_URL: string = 'https://media.synker.ovh/url?url=';
+
   constructor(public dialogRef: MatDialogRef<MediaWatchDialog>, @Inject(MAT_DIALOG_DATA) public data: TvgMedia) { }
 
   ngOnInit(): void {
@@ -23,10 +25,10 @@ export class MediaWatchDialog implements OnInit, OnDestroy {
       this.ngOnDestroy();
     }
 
-    console.log(`playing ${this.data.url} ${this.data.displayName}`);
+    console.log(`playing url: ${this.data.url}, displayName: ${this.data.displayName}, live: ${this.MEDIA_PROXY_URL}${this.data.url.replace('.ts', '.m3u8')}`);
 
     this.player = new Clappr.Player({
-      source: "http://localhost:56800/api/v1/notification/stream/test.m3u8",
+      source: `${this.MEDIA_PROXY_URL}${this.data.url.replace('.ts', '.m3u8')}`,
       autoPlay: true,
       plugins: [PlaybackRatePlugin, ClapprStats, ChromecastPlugin, LevelSelector],
       parentId: '#player',
