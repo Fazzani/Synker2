@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.environment = {
     production: false,
     base_url: "/",
-    base_api_url: "http://localhost:56800/api/v1/",
+    base_api_url: "//localhost:56800/api/v1/",
     base_ws_url: "ws://localhost:56800/api/v1/"
 };
 //# sourceMappingURL=environment.js.map

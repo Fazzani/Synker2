@@ -6,6 +6,6 @@
 export const environment = {
   production: false,
   base_url: "/",
-  base_hub_url: "http://localhost:56800/",
-  base_api_url: "http://localhost:56800/api/v1/"
+  base_hub_url: "//localhost:56800/",
+  base_api_url: "//localhost:56800/api/v1/"
 };
