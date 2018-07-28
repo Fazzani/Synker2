@@ -25,7 +25,7 @@ export class MediaWatchDialog implements OnInit, OnDestroy {
       this.ngOnDestroy();
     }
 
-    console.log(`playing url: ${this.data.url}, displayName: ${this.data.displayName}, live: ${this.live_url}`);
+    console.log(`playing url: ${this.data.url}, displayName: ${this.data.displayName}, live: ${this.data.url.replace('.ts', '.m3u8').replace(/^https?:\/\//i, '//')}`);
 
     this.player = new Clappr.Player({
       source: this.data.url.replace('.ts', '.m3u8').replace('^https?://', '//'),
