@@ -25,10 +25,10 @@ export class MediaWatchDialog implements OnInit, OnDestroy {
       this.ngOnDestroy();
     }
 
-    console.log(`playing url: ${this.data.url}, displayName: ${this.data.displayName}, live: ${this.data.url.replace('.ts', '.m3u8').replace(/^https?:\/\//i, '//')}`);
+    console.log(`playing url: ${this.data.url}, displayName: ${this.data.displayName}, live: ${encodeURI(this.data.url.replace('.ts', '.m3u8').replace(/^https?:\/\//i, '//'))}`);
 
     this.player = new Clappr.Player({
-      source: this.data.url.replace('.ts', '.m3u8').replace('^https?://', '//'),
+      source: encodeURI(this.data.url.replace('.ts', '.m3u8')),
       autoPlay: true,
       flushLiveURLCache: true,
       plugins: [PlaybackRatePlugin, ClapprStats, ChromecastPlugin, LevelSelector],
