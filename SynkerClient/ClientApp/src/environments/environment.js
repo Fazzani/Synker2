@@ -7,7 +7,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.environment = {
     production: false,
     base_url: "/",
+    base_hub_url: "//localhost:56800/",
     base_api_url: "//localhost:56800/api/v1/",
-    base_ws_url: "ws://localhost:56800/api/v1/"
+    base_proxy_url: "//media.synker.ovh/url?url="
 };
 //# sourceMappingURL=environment.js.map

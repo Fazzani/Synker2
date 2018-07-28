@@ -157,6 +157,7 @@ namespace hfa.WebApi.Controllers
 
         [Route("stream/{url}")]
         [AllowAnonymous]
+        [HttpGet]
         public async Task<FileStreamResult> GetStreamAsync(string url)
         {
             HttpClient _client = new HttpClient();

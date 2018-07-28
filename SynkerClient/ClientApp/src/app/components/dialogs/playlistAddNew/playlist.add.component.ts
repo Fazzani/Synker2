@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
+import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
 import { MatDialogRef } from "@angular/material";
 import { PlaylistService } from "../../../services/playlists/playlist.service";
 import { PlaylistPostModel, PlaylistStatus, Providers } from "../../../types/playlist.type";

@@ -1,13 +1,13 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material";
 import { Inject, Component, OnInit, OnDestroy } from "@angular/core";
 import { TvgMedia } from "../../../types/media.type";
-//import Clappr from '../../../../../node_modules/clappr/dist/clappr.min.js';
 import Clappr from 'clappr';
 import PlaybackRatePlugin from 'clappr-playback-rate-plugin';
 import ClapprStats from 'clappr-stats';
 //import ClapprNerdStats from 'clappr-nerd-stats';
 import ChromecastPlugin from 'clappr-chromecast-plugin';
 import LevelSelector from 'level-selector';
+import { environment } from "../../../../environments/environment";
 //import ClapprPIPPlugin from 'clappr-pip-plugin';
 
 @Component({
@@ -16,20 +16,21 @@ import LevelSelector from 'level-selector';
 })
 export class MediaWatchDialog implements OnInit, OnDestroy {
   player: any;
-  private MEDIA_PROXY_URL: string = 'https://media.synker.ovh/url?url=';
+  live_url: string = environment.base_proxy_url + this.data.url.replace('.ts', '.m3u8');
 
-  constructor(public dialogRef: MatDialogRef<MediaWatchDialog>, @Inject(MAT_DIALOG_DATA) public data: TvgMedia) { }
+  constructor(public dialogRef: MatDialogRef<MediaWatchDialog>, @Inject(MAT_DIALOG_DATA) private data: TvgMedia) { }
 
   ngOnInit(): void {
     if (this.player) {
       this.ngOnDestroy();
     }
 
-    console.log(`playing url: ${this.data.url}, displayName: ${this.data.displayName}, live: ${this.MEDIA_PROXY_URL}${this.data.url.replace('.ts', '.m3u8')}`);
+    console.log(`playing url: ${this.data.url}, displayName: ${this.data.displayName}, live: ${this.live_url}`);
 
     this.player = new Clappr.Player({
-      source: `${this.MEDIA_PROXY_URL}${this.data.url.replace('.ts', '.m3u8')}`,
+      source: this.data.url.replace('.ts', '.m3u8').replace('^https?://', '//'),
       autoPlay: true,
+      flushLiveURLCache: true,
       plugins: [PlaybackRatePlugin, ClapprStats, ChromecastPlugin, LevelSelector],
       parentId: '#player',
       height: 700,
@@ -80,6 +81,7 @@ export class MediaWatchDialog implements OnInit, OnDestroy {
   }
 
   onNoClick(): void {
+    this.player.destroy();
     this.dialogRef.close();
   }
 

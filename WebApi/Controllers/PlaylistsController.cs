@@ -630,11 +630,11 @@ namespace Hfa.WebApi.Controllers
         /// <summary>
         /// Add new Upload playlist from stream
         /// </summary>
-        /// <param name="fromType"></param>
+        /// <param name="playlistName"></param>
         /// <param name="playlistUrl">if playlist not null the file param will ignored</param>
-        /// <param name="toType"></param>
+        /// <param name="provider"></param>
         /// <param name="file"></param>
-        /// <param name="providersOptions"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("create/{provider}")]
@@ -691,7 +691,6 @@ namespace Hfa.WebApi.Controllers
         /// Add new Upload playlist from url
         /// </summary>
         /// <param name="playlistPostModel"></param>
-        /// <param name="providersOptions"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
