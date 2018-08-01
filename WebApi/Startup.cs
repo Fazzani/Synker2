@@ -49,6 +49,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Polly;
 using RabbitMQ.Client;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
@@ -121,9 +122,21 @@ namespace hfa.WebApi
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))
+               .Configure<MediaServerOptions>(Configuration.GetSection(nameof(MediaServerOptions)))
                .Configure<GlobalOptions>(Configuration.GetSection(nameof(GlobalOptions)))
                .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)))
                .Configure<VapidKeysOptions>(Configuration.GetSection(nameof(VapidKeysOptions)));
+
+            services.AddHttpClient<MediaServerService>(c =>
+            {
+                var ServerMediaOptions = Provider.GetService<IOptions<MediaServerOptions>>();
+                var scheme = ServerMediaOptions.Value.IsSecure ? "https" : "http";
+                c.BaseAddress = new Uri($"{scheme}://{ServerMediaOptions.Value.Host}:{ServerMediaOptions.Value.Port}/");
+                c.DefaultRequestHeaders.Add("Accept", "application/json");
+                c.DefaultRequestHeaders.Add("User-Agent", "HttpClientFactory-Sample");
+            })
+            .AddTransientHttpErrorPolicy(p => p.RetryAsync(3))
+            .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
             services.AddSingleton(typeof(HubLifetimeManager<>), typeof(DefaultHubLifetimeManager<>));
             services.AddSingleton(typeof(IHubProtocolResolver), typeof(DefaultHubProtocolResolver));

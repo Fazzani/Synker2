@@ -53,6 +53,7 @@
         public string TagsString { get; set; }
 
         public Dictionary<string, string> _tags;
+
         [NotMapped]
         public Dictionary<string, string> Tags
         {
@@ -65,7 +66,7 @@
             set { TagsString = JsonConvert.SerializeObject(value); }
         }
 
-        private List<String> _tvgSites { get; set; }
+        private List<string> _tvgSites { get; set; }
 
         [NotMapped]
         public List<string> TvgSites

@@ -28,11 +28,11 @@ namespace hfa.WebApi.Common
 
         public bool UseRsa { get; set; } = true;
 
-        public int TokenLifetimeInMinutes { get;  set; }
+        public int TokenLifetimeInMinutes { get; set; }
 
         public string TokenEndPoint { get; set; }
     }
-   
+
     public class PastBinOptions
     {
         public string UserName { get; set; }
@@ -48,7 +48,7 @@ namespace hfa.WebApi.Common
         public string Password { get; set; }
         public string PrivateKeyFilePath { get; set; }
         public string Passphrase { get; set; }
-        
+
     }
 
     public class GlobalOptions
@@ -61,5 +61,48 @@ namespace hfa.WebApi.Common
     {
         public string PublicKey { get; set; }
         public string PrivateKey { get; set; }
+    }
+
+    public class MediaServerOptions
+    {
+        public string Host { get; set; }
+
+        /// <summary>
+        /// Rtmp Port
+        /// </summary>
+        public uint Rtmp { get; set; } = 1935;
+
+        /// <summary>
+        /// Http Port
+        /// </summary>
+        public uint Port { get; set; } = 80;
+
+        public bool IsSecure { get; set; } = false;
+
+        /// <summary>
+        /// Auth for api access
+        /// </summary>
+        public BasicAuthOptions BasicAuthApiOptions { get; set; }
+
+        /// <summary>
+        /// Auth for playing or publishing a stream
+        /// </summary>
+        public AuthOptions Auth { get; set; }
+
+        /// <summary>
+        /// Auth for playing or publishing a stream
+        /// </summary>
+        public class AuthOptions
+        {
+            public bool Play { get; set; } = true;
+            public bool Publish { get; set; } = true;
+            public string Secret { get; set; } = "defaultvalue";
+        }
+    }
+
+    public class BasicAuthOptions
+    {
+        public string UserName { get; set; }
+        public string Password { get; set; }
     }
 }
