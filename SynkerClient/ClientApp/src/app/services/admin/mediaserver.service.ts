@@ -1,0 +1,31 @@
+import { catchError, map } from 'rxjs/operators';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { BaseService } from "../base/base.service";
+import { Observable } from "rxjs";
+import { MediaServerStreamsStats } from '../../types/mediaserver.streams.stats.type';
+import { MediaServerStats } from '../../types/mediaserver.stats.type';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class MediaServerService extends BaseService {
+  constructor(protected http: HttpClient) {
+    super(http);
+    this._baseUrl = 'mediaserver';
+  }
+
+  public server(): Observable<MediaServerStats> {
+    return this.http
+      .get(`${this.FullBaseUrl}/server`).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError));
+  }
+
+  public streams(): Observable<MediaServerStreamsStats> {
+     return this.http
+      .get(`${this.FullBaseUrl}/streams`).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError));
+  }
+}

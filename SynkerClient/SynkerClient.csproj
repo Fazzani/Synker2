@@ -54,6 +54,7 @@
     <None Remove="ClientApp\src\app\types\host.type.ts" />
     <None Remove="ClientApp\src\app\types\matchTvgPostModel.ts" />
     <None Remove="ClientApp\src\app\types\media.type.ts" />
+    <None Remove="ClientApp\src\app\types\mediaserver.type.ts" />
     <None Remove="ClientApp\src\app\types\picon.type.ts" />
     <None Remove="ClientApp\src\app\types\xmltv.type.ts" />
     <None Remove="ClientApp\src\app\types\xtream.type.ts" />
