@@ -2,23 +2,19 @@ import { AboutApplication } from "../../types/aboutApplication.type";
 import { Injectable } from "@angular/core";
 import { Constants } from "../common/common.service";
 import { environment } from "../../../environments/environment";
-const aboutDefault: AboutApplication = <AboutApplication>{
-  ApplicationName: "Synker",
-  Author: "Synker",
-  LastUpdate: new Date().toLocaleTimeString(),
-  License: "MIT",
-  Version: "1.0.0-beta"
-};
+import { MediaServerOptions } from "../../types/mediaServerConfig.type";
+
 @Injectable({
   providedIn: "root"
 })
 export class InitAppService {
   about: AboutApplication;
+  mediaServerConfig: MediaServerOptions;
 
   /**
    * @constructor
    */
-  constructor() {}
+  constructor() { }
 
   /**
    * About Application
@@ -38,8 +34,8 @@ export class InitAppService {
           if (environment.production) {
             reject();
           } else {
-            localStorage.setItem(Constants.LS_ABOUT_APP_KEY, JSON.stringify(aboutDefault));
-            this.about = aboutDefault;
+            localStorage.setItem(Constants.LS_ABOUT_APP_KEY, JSON.stringify(AboutApplication.Default));
+            this.about = AboutApplication.Default;
             resolve(this.about);
           }
         }

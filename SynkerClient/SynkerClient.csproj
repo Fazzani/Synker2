@@ -55,6 +55,7 @@
     <None Remove="ClientApp\src\app\types\matchTvgPostModel.ts" />
     <None Remove="ClientApp\src\app\types\media.type.ts" />
     <None Remove="ClientApp\src\app\types\mediaserver.type.ts" />
+    <None Remove="ClientApp\src\app\types\mediaServerConfig.type.ts" />
     <None Remove="ClientApp\src\app\types\picon.type.ts" />
     <None Remove="ClientApp\src\app\types\xmltv.type.ts" />
     <None Remove="ClientApp\src\app\types\xtream.type.ts" />
@@ -171,6 +172,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\types\host.type.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\types\matchTvgPostModel.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\types\media.type.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\types\mediaServerConfig.type.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\types\picon.type.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\types\xmltv.type.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\types\xtream.type.ts" />

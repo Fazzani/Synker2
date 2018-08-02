@@ -5,6 +5,7 @@ import { BaseService } from "../base/base.service";
 import { Observable } from "rxjs";
 import { MediaServerStreamsStats } from '../../types/mediaserver.streams.stats.type';
 import { MediaServerStats } from '../../types/mediaserver.stats.type';
+import { MediaServerOptions } from '../../types/mediaServerConfig.type';
 
 @Injectable({
   providedIn: 'root',
@@ -27,5 +28,12 @@ export class MediaServerService extends BaseService {
       .get(`${this.FullBaseUrl}/streams`).pipe(
       map(this.handleSuccess),
       catchError(this.handleError));
+  }
+
+  public config(): Observable<MediaServerOptions> {
+    return this.http
+      .get(`${this.FullBaseUrl}/config`).pipe(
+        map(this.handleSuccess),
+        catchError(this.handleError));
   }
 }
