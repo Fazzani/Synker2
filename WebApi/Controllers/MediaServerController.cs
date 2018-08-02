@@ -16,6 +16,8 @@
     using System.Net;
     using System.Threading;
     using hfa.WebApi.Common;
+    using hfa.WebApi.Models.MediaServer;
+    using hfa.WebApi.Common.Filters;
 
     [Produces("application/json")]
     [Route("api/v{version:apiVersion}/[controller]")]
@@ -64,6 +66,30 @@
         {
             var response = await _mediaServerService.GetServerStreamsAsync(cancellationToken);
             return Ok(response);
+        }
+
+        /// <summary>
+        /// Publish new live
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost("live")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ValidateModel]
+        public async Task<IActionResult> PostLiveAsync([FromBody]MediaServerLivePost model, CancellationToken cancellationToken)
+        {
+            var streamId = $"{UserId}_{Guid.NewGuid()}";
+            var response = await _mediaServerService.PublishLiveAsync(model.Stream, streamId, cancellationToken);
+            return Ok(new
+            {
+                response,
+                FlvOutput = $"{_mediaServerOptions.Value.StreamBaseUrl}live/{streamId}.flv",
+                HlsOutput = $"{_mediaServerOptions.Value.StreamBaseUrl}live/{streamId}.m3u8",
+                DashOutput = $"{_mediaServerOptions.Value.StreamBaseUrl}live/{streamId}.mpd",
+                RtmpOutput = $"{_mediaServerOptions.Value.StreamRtmpBaseUrl}live/{streamId}.mpd",
+                WsOutput = $"{_mediaServerOptions.Value.StreamWebsocketBaseUrl}live/{streamId}.flv"
+            });
         }
 
         /// <summary>

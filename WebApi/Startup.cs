@@ -50,12 +50,14 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Polly;
+using Polly.Extensions.Http;
 using RabbitMQ.Client;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Net.WebSockets;
 using System.Reflection;
 using System.Security.Claims;
@@ -127,6 +129,12 @@ namespace hfa.WebApi
                .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)))
                .Configure<VapidKeysOptions>(Configuration.GetSection(nameof(VapidKeysOptions)));
 
+            var retryPolicy = HttpPolicyExtensions
+                   .HandleTransientHttpError()
+                   .RetryAsync(3);
+                   //.CircuitBreaker(5, TimeSpan.FromSeconds(30));
+
+            var noOp = Policy.NoOpAsync().AsAsyncPolicy<HttpResponseMessage>();
             services.AddHttpClient<MediaServerService>(c =>
             {
                 var ServerMediaOptions = Provider.GetService<IOptions<MediaServerOptions>>();
@@ -134,9 +142,10 @@ namespace hfa.WebApi
                 c.BaseAddress = new Uri($"{scheme}://{ServerMediaOptions.Value.Host}:{ServerMediaOptions.Value.Port}/");
                 c.DefaultRequestHeaders.Add("Accept", "application/json");
                 c.DefaultRequestHeaders.Add("User-Agent", "HttpClientFactory-Sample");
-            })
-            .AddTransientHttpErrorPolicy(p => p.RetryAsync(3))
-            .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+            }).AddPolicyHandler(request => request.Method == HttpMethod.Get ? retryPolicy : noOp);
+
+            //.AddTransientHttpErrorPolicy(p => p.RetryAsync(3))
+            //.AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
             services.AddSingleton(typeof(HubLifetimeManager<>), typeof(DefaultHubLifetimeManager<>));
             services.AddSingleton(typeof(IHubProtocolResolver), typeof(DefaultHubProtocolResolver));

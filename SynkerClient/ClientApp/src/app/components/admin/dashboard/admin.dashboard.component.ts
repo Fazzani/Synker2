@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { MediaServerService } from "../../../services/admin/mediaserver.service";
 import { MatSnackBar } from "@angular/material";
 import { MediaServerStats } from "../../../types/mediaserver.stats.type";
 import { Observable } from "rxjs";
 import { MediaServerStreamsStats } from "../../../types/mediaserver.streams.stats.type";
+import { MediaServerService } from "../../../services/mediaServer/mediaserver.service";
 
 @Component({
   selector: "admin-dashboard",

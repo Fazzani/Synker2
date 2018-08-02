@@ -65,6 +65,14 @@ namespace hfa.WebApi.Common
 
     public class MediaServerOptions
     {
+        public string StreamBaseUrl { get { return $"{Scheme}://{Host}:{PortStreaming}/"; } }
+        public string StreamRtmpBaseUrl { get { return $"rtmp://{Host}:{Rtmp}/"; } }
+        public string StreamWebsocketBaseUrl { get { return $"{WsScheme}://{Host}:{PortStreaming}/"; } }
+        public string Scheme => IsSecure ? "https" : "http";
+        public string WsScheme => IsSecure ? "wss" : "ws";
+        /// <summary>
+        /// Server media adress (ip or dns)
+        /// </summary>
         public string Host { get; set; }
 
         /// <summary>
@@ -73,10 +81,18 @@ namespace hfa.WebApi.Common
         public uint Rtmp { get; set; } = 1935;
 
         /// <summary>
-        /// Http Port
+        /// Http  Api
         /// </summary>
         public uint Port { get; set; } = 80;
 
+        /// <summary>
+        /// Http Port Streaming
+        /// </summary>
+        public uint PortStreaming { get; set; } = 8000;
+        
+        /// <summary>
+        /// Is Https
+        /// </summary>
         public bool IsSecure { get; set; } = false;
 
         /// <summary>

@@ -37,5 +37,15 @@
             return JsonConvert.DeserializeObject<MediaServerStreamsStats>(result);
         }
 
+        public async Task<MediaServerLiveResponse> PublishLiveAsync(string streamSource, string streamId, CancellationToken cancellationToken)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(new { stream = new { url = streamSource, streamId } }), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync("/stream/live", content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<MediaServerLiveResponse>(result);
+        }
     }
 }
