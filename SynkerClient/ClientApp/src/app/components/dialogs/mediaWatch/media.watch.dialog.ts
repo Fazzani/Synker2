@@ -87,10 +87,11 @@ export class MediaWatchDialog implements OnInit, OnDestroy {
       }
     });
 
+    var mss = this.mediaServerService;
     this.mediaServerService.live(this.data.url).subscribe(response => {
       console.log(`playing url: ${this.data.url}, displayName: ${this.data.displayName}, live: ${response.flvOutput}`);
 
-      let p = this.player = new Clappr.Player({
+      let player = this.player = new Clappr.Player({
         source: response.flvOutput,
         autoPlay: true,
         mimeType: 'video/flv',
@@ -99,12 +100,30 @@ export class MediaWatchDialog implements OnInit, OnDestroy {
         parentId: '#player',
         height: 700,
         width: 750,
+        events: {
+          onReady: function () { }, //Fired when the player is ready on startup
+          onResize: function () { },//Fired when player resizes
+          onPlay: function () { player.stopped = false; },//Fired when player starts to play
+          onPause: function () { },//Fired when player pauses
+          onStop: function () {
+            if (!player.stopped) {
+              mss.stop(response.streamId).subscribe(r => {
+                player.stopped = true;
+              });
+            }
+          },//Fired when player stops
+          onEnded: function () { },//Fired when player ends the video
+          onSeek: function () { },//Fired when player seeks the video
+          onError: function () { },//Fired when player receives an error
+          onTimeUpdate: function () { },//Fired when the time is updated on player
+          onVolumeUpdate: function () { },//Fired when player updates its volume
+        },
         errorPlugin: {
           // text: 'My custom error message.',
           onRetry: function (e) {
             // simulate successful recovery
             // or decide here what to do between each retry
-            p.configure({
+            player.configure({
               source: response.flvOutput,
               autoPlay: true,
             });
@@ -162,12 +181,18 @@ export class MediaWatchDialog implements OnInit, OnDestroy {
   }
 
   onNoClick(): void {
-    this.player.destroy();
     this.dialogRef.close();
   }
 
   ngOnDestroy(): void {
-    this.player.destroy();
+    console.log('ngOnDestroy');
+
+    if (this.player !== undefined) {
+      if (this.player.isPlaying()) {
+        this.player.stop();
+      }
+      this.player.destroy();
+    }
   }
 
 }

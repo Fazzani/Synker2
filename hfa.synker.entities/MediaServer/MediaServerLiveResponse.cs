@@ -7,11 +7,19 @@ namespace hfa.synker.entities.MediaServer
     public class MediaServerLiveResponse
     {
         public string StreamUrl { get; set; }
+        public string StreamId { get; set; }
 
         public string Commandline { get; set; }
 
-        public Command Command { get; set; }
+        //public Command Command { get; set; }
 
+    }
+
+    public class MediaServerStopLiveResponse
+    {
+        public string StreamId { get; set; }
+
+        public string Status { get; set; }
     }
 
     public class Command

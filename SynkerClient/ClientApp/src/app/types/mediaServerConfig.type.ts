@@ -32,4 +32,5 @@ export class MediaServerLiveResponse {
   dashOutput: string;
   rtmpOutput: string;
   wsOutput: string;
+  streamId: string;
 }

@@ -47,5 +47,14 @@
             var result = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<MediaServerLiveResponse>(result);
         }
+
+        public async Task<MediaServerStopLiveResponse> StopLiveAsync(string streamId, CancellationToken cancellationToken)
+        {
+            var response = await _httpClient.GetAsync($"/stream/stop/{streamId}", cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<MediaServerStopLiveResponse>(result);
+        }
     }
 }

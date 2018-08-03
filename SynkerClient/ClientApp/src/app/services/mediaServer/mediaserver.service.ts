@@ -43,4 +43,11 @@ export class MediaServerService extends BaseService {
         map(this.handleSuccess),
         catchError(this.handleError));
   }
+
+  public stop(id: string): Observable<MediaServerLiveResponse> {
+    return this.http
+      .post(`${this.FullBaseUrl}/stop`, { stream: id }).pipe(
+        map(this.handleSuccess),
+        catchError(this.handleError));
+  }
 }
