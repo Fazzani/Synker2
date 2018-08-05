@@ -2,9 +2,6 @@
 {
     using hfa.synker.entities.MediaServer;
     using Newtonsoft.Json;
-    using System;
-    using System.Collections.Generic;
-    using System.Net;
     using System.Net.Http;
     using System.Text;
     using System.Threading;
@@ -21,7 +18,7 @@
 
         public async Task<MediaServerStats> GetServerStatsAsync(CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync("/api/server", cancellationToken);
+            var response = await _httpClient.GetAsync("/api/v1/nms/server", cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadAsStringAsync();
@@ -30,7 +27,7 @@
 
         public async Task<MediaServerStreamsStats> GetServerStreamsAsync(CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync("/api/streams", cancellationToken);
+            var response = await _httpClient.GetAsync("/api/v1/nms/streams", cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadAsStringAsync();
@@ -41,7 +38,7 @@
         {
             var content = new StringContent(JsonConvert.SerializeObject(new { stream = new { url = streamSource, streamId } }), Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync("/stream/live", content, cancellationToken);
+            var response = await _httpClient.PostAsync("/api/v1/ffmpeg/live", content, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadAsStringAsync();
@@ -50,7 +47,7 @@
 
         public async Task<MediaServerStopLiveResponse> StopLiveAsync(string streamId, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.GetAsync($"/stream/stop/{streamId}", cancellationToken);
+            var response = await _httpClient.GetAsync($"/api/v1/ffmpeg/stop/{streamId}", cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadAsStringAsync();
