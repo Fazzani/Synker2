@@ -36,7 +36,7 @@
 
             using (var client = new HttpClient())
             {
-                Configureclient(client);
+                ConfigureClient(client);
                 var response = await client.PostAsync(requestUri, new JsonContent(new BorkerMessageModel
                 {
                     BrokerMessageType = BrokerMessageType.PlaylistDiff,
@@ -47,7 +47,7 @@
             }
         }
 
-        private static void Configureclient(HttpClient client)
+        private static void ConfigureClient(HttpClient client)
         {
             string urls = Program.SynkerWebHostBuilder.GetSetting(WebHostDefaults.ServerUrlsKey);
             string apiUrl = urls.Split(',').FirstOrDefault().Replace("*", "127.0.0.1");

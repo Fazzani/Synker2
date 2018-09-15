@@ -1,4 +1,4 @@
-import { of, fromEvent,  BehaviorSubject, Subscription, Observable } from 'rxjs';
+import { of, fromEvent, BehaviorSubject, Subscription, Observable } from 'rxjs';
 import { debounceTime, switchMap, distinctUntilChanged, map, filter, tap, merge } from 'rxjs/operators';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Inject } from "@angular/core";
 import { DataSource } from "@angular/cdk/collections";
@@ -36,7 +36,7 @@ export class SitePackComponent implements OnInit, OnDestroy {
     private commonService: CommonService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   /** Called by Angular after media component initialized */
   ngOnInit(): void {
@@ -47,13 +47,13 @@ export class SitePackComponent implements OnInit, OnDestroy {
     this.paginator.pageSizeOptions = [50, 100, 250, 1000];
     this.paginator.pageSize = storedQuery != null ? storedQuery.Size : this.paginator.pageSizeOptions[0];
     this.dataSource = new SitePackDataSource(this.sitePackService, this.paginator);
-    this.dataSource.filter = this.filter.nativeElement.value = storedQuery!.Query;
+    this.dataSource.filter = this.filter.nativeElement.value = storedQuery != null ? storedQuery.Query : '';
 
     this.subscriptionTableEvent = this.paginator.page
       .asObservable().pipe(
-      merge(fromEvent<KeyboardEvent>(this.filter.nativeElement, 'keyup')),
-      debounceTime(1500),
-      distinctUntilChanged(),)
+        merge(fromEvent<KeyboardEvent>(this.filter.nativeElement, 'keyup')),
+        debounceTime(1500),
+        distinctUntilChanged())
       .subscribe(x => {
         if (!this.dataSource) {
           return;
@@ -118,7 +118,7 @@ export class SitePackComponent implements OnInit, OnDestroy {
 
     of(id).pipe(
       filter(() => confirm),
-      switchMap(x => this.sitePackService.delete(x)),)
+      switchMap(x => this.sitePackService.delete(x)))
       .subscribe(res => {
         this.snackBar.open('Medias referentiel was deleted');
         this.dataSource.getData();
@@ -192,7 +192,7 @@ export class SitePackModifyDialog implements OnInit, OnDestroy {
     private piconService: PiconService,
     public dialogRef: MatDialogRef<SitePackModifyDialog>,
     @Inject(MAT_DIALOG_DATA) public data: sitePackChannel
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     fromEvent<KeyboardEvent>(this.filterPicon.nativeElement, 'keyup').pipe(
@@ -207,8 +207,8 @@ export class SitePackModifyDialog implements OnInit, OnDestroy {
         };
         this.piconsFilter = this.piconService
           .search(query).pipe(
-          map(x => x.result),
-          tap(x => console.log(x)));
+            map(x => x.result),
+            tap(x => console.log(x)));
       });
   }
 
@@ -248,7 +248,7 @@ export class SitePackModifyDialog implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void { }
 }
 
 // ----------------------------------------  MediaRef DataSource
@@ -282,7 +282,7 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
     this.paginator = this.mdPaginator;
     this._filterChange.pipe(
       merge(this._paginator),
-      debounceTime(300),)
+      debounceTime(300))
       // .distinctUntilChanged()
       .subscribe(x => this.getData());
   }
@@ -333,9 +333,9 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
 
     this.sitePackService
       .search<sitePackChannel>(query).pipe(
-      map(v => {
-        this.sitePackService.save(...v.result).subscribe();
-      }))
+        map(v => {
+          this.sitePackService.save(...v.result).subscribe();
+        }))
       .subscribe(x => console.log(x));
   }
 
@@ -351,5 +351,5 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
     return this.sitePackService.save(...this.medias.value);
   }
 
-  disconnect() {}
+  disconnect() { }
 }
