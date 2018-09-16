@@ -161,7 +161,7 @@
 
         public int GetHashCode(SitePackChannel obj)
         {
-            if (obj is null)
+            if (obj is null || obj.Site == null)
             {
                 return 0;
             }
