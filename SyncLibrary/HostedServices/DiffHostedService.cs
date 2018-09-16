@@ -36,6 +36,7 @@
 
         public async Task ExecuteAsync(CancellationToken cancellationToken)
         {
+            await _bus.Publish(new TraceEvent { Message = $"Service: {nameof(DiffHostedService)}: Start" }, cancellationToken);
             IQueryable<Playlist> playlists = _dbContext.Playlist
                 .Include(x => x.User)
                 //.ThenInclude(u => u.Devices)
@@ -47,13 +48,14 @@
                 {
                     if (pl.IsXtreamTag)
                     {
-                        (System.Collections.Generic.IEnumerable<PlaylistManager.Entities.TvgMedia> tvgMedia, System.Collections.Generic.IEnumerable<PlaylistManager.Entities.TvgMedia> removed) diff = await _playlistService.DiffWithSourceAsync(() => pl, new XtreamProvider(pl.SynkConfig.Url), false, cancellationToken);
+                        (System.Collections.Generic.IEnumerable<PlaylistManager.Entities.TvgMedia> tvgMedia, System.Collections.Generic.IEnumerable<PlaylistManager.Entities.TvgMedia> removed) = await _playlistService.DiffWithSourceAsync(() => pl, new XtreamProvider(pl.SynkConfig.Url), false, cancellationToken);
 
-                        if (diff.removed.Any() || diff.tvgMedia.Any())
+                        if (removed.Any() || tvgMedia.Any())
                         {
                             _logger.LogInformation($"Diff detected for the playlist {pl.Id} of user {pl.UserId}");
+
                             //publish message to Rabbit
-                            await _bus.Publish(new DiffPlaylistEvent { Id = pl.Id, RemovedMedias = diff.removed, NewMedias = diff.tvgMedia }, cancellationToken);
+                            await _bus.Publish(new DiffPlaylistEvent { Id = pl.Id, RemovedMediasCount = removed.Count(), RemovedMedias = removed.Take(10), NewMediasCount = tvgMedia.Count(), NewMedias = tvgMedia.Take(10) }, cancellationToken);
                         }
                     }
                 }
@@ -62,6 +64,7 @@
                     await _bus.Publish(new TraceEvent { Message = $"Service: {nameof(DiffHostedService)}: playlistId : {pl.Id}, Exception :{ex.Message}" }, cancellationToken);
                 }
             }
+            await _bus.Publish(new TraceEvent { Message = $"Service: {nameof(DiffHostedService)}: End" }, cancellationToken);
         }
     }
 }

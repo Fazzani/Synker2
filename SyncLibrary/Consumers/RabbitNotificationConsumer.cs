@@ -31,7 +31,7 @@ namespace hfa.Notification.Brokers.Consumers
         {
             try
             {
-                _logger.LogInformation($"New Mail poped from the queue {context.CorrelationId}");
+                _logger.LogInformation($"{nameof(RabbitNotificationConsumer)}: New Mail poped from the queue {context.CorrelationId}");
                 var message = context.Message.ToString();
                 _logger.LogInformation(message);
                 //var mail = JsonConvert.DeserializeObject<EmailNotification>(message);
@@ -49,7 +49,7 @@ namespace hfa.Notification.Brokers.Consumers
         {
             try
             {
-                _logger.LogInformation($"New Mail poped from the queue {context.CorrelationId}");
+                _logger.LogInformation($"{nameof(RabbitNotificationConsumer)}: New Mail poped from the queue {context.CorrelationId}");
                 _logger.LogInformation(context.Message.Message);
                 //var mail = JsonConvert.DeserializeObject<EmailNotification>(message);
                 //_notificationService.SendMailAsync(mail, CancellationToken.None).GetAwaiter().GetResult();

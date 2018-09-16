@@ -1,19 +1,17 @@
-﻿using System;
-
-namespace hfa.Brokers.Messages.Contracts
+﻿namespace hfa.Brokers.Messages.Contracts
 {
-    public class ApplicationEvent
+    using MassTransit;
+    using System;
+
+    public class ApplicationEvent : CorrelatedBy<Guid>
     {
         public ApplicationEvent()
         {
             CreatedDate = DateTime.UtcNow;
         }
 
-        public DateTime CreatedDate
-        {
-            get; set;
+        public DateTime CreatedDate { get; set; }
 
-        }
-        private Guid CorrelationId { get; }
+        public Guid CorrelationId => Guid.NewGuid();
     }
 }

@@ -37,7 +37,7 @@ namespace hfa.Notification.Brokers.Consumers
         {
             try
             {
-                _logger.LogInformation($"New Mail poped from the queue {MailQueueName}");
+                _logger.LogInformation($"{nameof(NotificationConsumer)}: New Mail poped from the queue {MailQueueName}");
                 var body = ea.Body;
                 var message = Encoding.UTF8.GetString(body);
                 var mail = JsonConvert.DeserializeObject<EmailNotification>(message);

@@ -45,7 +45,7 @@
                     services
                     .Configure<RabbitMQConfiguration>(hostContext.Configuration.GetSection(nameof(RabbitMQConfiguration)))
                     .AddScoped<IPlaylistService, PlaylistService>()
-                    .AddSingleton<IScheduledTask, DiffHostedService>()
+                    .AddScoped<IScheduledTask, DiffHostedService>()
                     .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
                     .AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                     .AddSingleton<INotificationService, NotificationService>()
@@ -116,7 +116,6 @@
                 });
 
                 cfg.ExchangeType = ExchangeType.Fanout;
-
                 cfg.ReceiveEndpoint(host, ep =>
                 {
                     ep.UseCircuitBreaker(cb =>
@@ -129,9 +128,17 @@
 
                     ep.UseRateLimit(1000, TimeSpan.FromSeconds(5));
 
-                    ep.Handler<DiffPlaylistEvent>(context =>
+                    ep.Handler<DiffPlaylistEvent>(async context =>
                     {
-                        return Console.Out.WriteLineAsync($"Received: {context.Message}");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        await Console.Out.WriteLineAsync($"{nameof(DiffPlaylistEvent)}: {context.Message}");
+                        Console.ResetColor();
+                    });
+                    ep.Handler<TraceEvent>(async context =>
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        await Console.Out.WriteLineAsync($"{nameof(TraceEvent)}: {context.Message}");
+                        Console.ResetColor();
                     });
 
                     ep.Consumer(() => sp.GetService<RabbitNotificationConsumer>());

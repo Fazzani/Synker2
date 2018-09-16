@@ -32,7 +32,7 @@
 
             var playlist = await _dbContext.Playlist
                 .Include(pl => pl.User)
-                .FirstOrDefaultAsync(x => x.Id == context.Message.Id);
+                .FirstOrDefaultAsync(x => x.Id == context.Message.ConversationId);
 
             using (var client = new HttpClient())
             {
