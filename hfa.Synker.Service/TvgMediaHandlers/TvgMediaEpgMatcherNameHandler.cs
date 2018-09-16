@@ -1,35 +1,36 @@
 ﻿namespace hfa.Synkerk.Service.Services.TvgMediaHandlers
 {
     using hfa.PlaylistBaseLibrary.ChannelHandlers;
-    using hfa.Synker.Service.Elastic;
-    using hfa.Synker.Service.Entities.MediasRef;
-    using hfa.Synker.Service.Services.Elastic;
-    using Microsoft.Extensions.Options;
+    using hfa.Synker.Service.Services;
     using PlaylistManager.Entities;
     using System.Linq;
+    using System.Threading;
+
     public class TvgMediaEpgMatcherNameHandler : TvgMediaHandler
     {
-        private IElasticConnectionClient _elasticClient;
-        private ElasticConfig _elasticConfig;
+        private ISitePackService _sitePackService;
 
-        public TvgMediaEpgMatcherNameHandler(IContextTvgMediaHandler contextTvgMediaHandler, IElasticConnectionClient elasticClient,
-            IOptions<ElasticConfig> elasticConfig) : base(contextTvgMediaHandler)
+        public TvgMediaEpgMatcherNameHandler(IContextTvgMediaHandler contextTvgMediaHandler, ISitePackService sitePackService) : base(contextTvgMediaHandler)
         {
-            _elasticClient = elasticClient;
-            _elasticConfig = elasticConfig.Value;
+            _sitePackService = sitePackService;
         }
 
-        //TODO: Passer par l'index filebeat // log_webGrabber
         public override void HandleTvgMedia(TvgMedia tvgMedia)
         {
-            var result = _elasticClient.Client.Value.Search<MediaRef>(x => x.Index(_elasticConfig.MediaRefIndex).From(0).Size(1)
-            .Query(q => q.Match(m => m.Field(f => f.DisplayNames).Query(tvgMedia.Name))));
-            //var result = ElasticConnectionClient.Client.SearchAsync<tvChannel>(x => x.Query(q => q.Fuzzy(m => m.Field(f => f.displayname).Fuzziness(Nest.Fuzziness.EditDistance(2)).Value(tvgMedia.Name)))).GetAwaiter().GetResult();
-            if (result.Documents.Any())
+            var result = _sitePackService.MatchMediaNameAndCountryAsync(tvgMedia.DisplayName, tvgMedia.Culture?.Country, CancellationToken.None).GetAwaiter().GetResult();
+
+            if (result != null)
             {
-                tvgMedia.Tvg = result.Documents.FirstOrDefault().Tvg;
-                tvgMedia.MediaGroup = new PlaylistBaseLibrary.Entities.MediaGroup(result.Documents.FirstOrDefault().Groups.FirstOrDefault());
-                tvgMedia.Lang = result.Documents.FirstOrDefault().Cultures.FirstOrDefault();
+                tvgMedia.Tvg = new Tvg
+                {
+                    Name = result.Xmltv_id,
+                    Id = result.Id,
+                    Logo = result.Logo,
+                    TvgIdentify = result.Xmltv_id,
+                    TvgSiteSource = result.Site,
+                    TvgSource = new PlaylistBaseLibrary.Entities.TvgSource { Site = result.Site, Code = result.Site_id, Country = result.Country }
+                };
+                tvgMedia.Lang = result.Country;
             }
             if (_successor != null)
                 _successor.HandleTvgMedia(tvgMedia);

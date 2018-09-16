@@ -9,6 +9,7 @@
     using hfa.PlaylistBaseLibrary.ChannelHandlers;
     using hfa.Synker.batch.HostedServices;
     using hfa.Synker.Service;
+    using hfa.Synker.Service.Services;
     using hfa.Synker.Service.Services.Elastic;
     using hfa.Synker.Service.Services.Playlists;
     using hfa.Synker.Service.Services.TvgMediaHandlers;
@@ -44,12 +45,15 @@
                     services.AddOptions();
                     services
                     .Configure<RabbitMQConfiguration>(hostContext.Configuration.GetSection(nameof(RabbitMQConfiguration)))
+                    .Configure<FirebaseConfiguration>(hostContext.Configuration.GetSection(nameof(FirebaseConfiguration)))
+                    .AddScoped<ISitePackService, SitePackService>()
                     .AddScoped<IPlaylistService, PlaylistService>()
                     .AddScoped<IScheduledTask, DiffHostedService>()
                     .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
                     .AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                     .AddSingleton<INotificationService, NotificationService>()
-                    .AddSingleton<RabbitNotificationConsumer, RabbitNotificationConsumer>()
+                    .AddScoped<RabbitNotificationConsumer, RabbitNotificationConsumer>()
+                    .AddScoped<RabbitSynchronizeConsumer, RabbitSynchronizeConsumer>()
                     .AddSingleton(loggerFactory)
                     .AddLogging(loggingBuilder =>
                          loggingBuilder.AddSerilog(dispose: true))
@@ -142,6 +146,7 @@
                     });
 
                     ep.Consumer(() => sp.GetService<RabbitNotificationConsumer>());
+                    ep.Consumer(() => sp.GetService<RabbitSynchronizeConsumer>());
                 });
             });
 

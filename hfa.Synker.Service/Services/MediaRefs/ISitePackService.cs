@@ -8,7 +8,6 @@ namespace hfa.Synker.Service.Services
 {
     public interface ISitePackService
     {
-
         /// <summary>
         /// Search by MediaName and filter by site
         /// </summary>

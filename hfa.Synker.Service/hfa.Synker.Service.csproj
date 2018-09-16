@@ -19,6 +19,11 @@
     <FileVersion>1.0.0.1</FileVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Services\Auth\**" />
+    <EmbeddedResource Remove="Services\Auth\**" />
+    <None Remove="Services\Auth\**" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="MassTransit.RabbitMQ" Version="5.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.1.0" />
@@ -32,7 +37,6 @@
 
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Services\Auth\" />
   </ItemGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">

@@ -276,6 +276,7 @@ namespace Hfa.WebApi.Controllers
 
         /// <summary>
         /// Synk playlist from source url
+        /// override tvgmedias from source
         /// </summary>
         /// <param name="playlistPostModel"></param>
         /// <param name="cancellationToken"></param>

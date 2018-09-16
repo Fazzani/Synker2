@@ -1,21 +1,13 @@
-﻿using hfa.PlaylistBaseLibrary.Providers;
-using PlaylistBaseLibrary.Providers;
-using PlaylistBaseLibrary.Services;
-using PlaylistManager.Entities;
-using PlaylistManager.Services;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using static hfa.SyncLibrary.Global.Common;
-
-namespace ConsoleAppTest
+﻿namespace ConsoleAppTest
 {
+    using hfa.PlaylistBaseLibrary.Providers;
+    using PlaylistManager.Entities;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Security.Cryptography;
+    using System.Text;
     internal class EncryptedPlaylistTest
     {
         public const string HeaderFile = "#EXTM3U";

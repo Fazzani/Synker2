@@ -24,6 +24,7 @@
     <PackageReference Include="Docker.DotNet" Version="3.125.2" />
     <PackageReference Include="Docker.DotNet.X509" Version="3.125.2" />
     <PackageReference Include="Elasticsearch.Net" Version="6.1.0" />
+    <PackageReference Include="FirebaseDatabase.net" Version="3.3.3" />
     <PackageReference Include="MassTransit" Version="5.1.4" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="5.1.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.0" />

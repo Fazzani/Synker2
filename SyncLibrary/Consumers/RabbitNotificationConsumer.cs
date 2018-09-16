@@ -1,42 +1,46 @@
-﻿using hfa.Brokers.Messages.Contracts;
-using hfa.Brokers.Messages.Models;
-using hfa.Notification.Brokers.Emailing;
-using MassTransit;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace hfa.Notification.Brokers.Consumers
+﻿namespace hfa.Notification.Brokers.Consumers
 {
-    public class RabbitNotificationConsumer : IConsumer<DiffPlaylistEvent>, IConsumer<TraceEvent>
+    using hfa.Brokers.Messages.Contracts;
+    using hfa.Notification.Brokers.Emailing;
+    using MassTransit;
+    using Microsoft.Extensions.Logging;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Firebase.Database;
+    using Firebase.Database.Query;
+    using Microsoft.Extensions.Options;
+    using hfa.Brokers.Messages.Configuration;
+    using hfa.Brokers.Messages;
+
+    /// <summary>
+    /// save message into firebase database
+    /// </summary>
+    public class RabbitNotificationConsumer : IConsumer<DiffPlaylistEvent>
     {
         private readonly ILogger _logger;
-        private IModel _mailChannel;
-        private readonly INotificationService _notificationService;
+        private readonly FirebaseConfiguration _firebaseOptions;
 
-        public RabbitNotificationConsumer(INotificationService notificationService, ILogger<NotificationConsumer> logger)
+        public RabbitNotificationConsumer(INotificationService notificationService, ILogger<RabbitSynchronizeConsumer> logger,
+            IOptions<FirebaseConfiguration> firebaseOptions)
         {
-            _notificationService = notificationService;
             _logger = logger;
+            _firebaseOptions = firebaseOptions.Value;
         }
 
         public Task Consume(ConsumeContext<DiffPlaylistEvent> context)
         {
             try
             {
-                _logger.LogInformation($"{nameof(RabbitNotificationConsumer)}: New Mail poped from the queue {context.CorrelationId}");
+                _logger.LogInformation($"{nameof(RabbitNotificationConsumer)}: New message {context.CorrelationId} poped");
                 var message = context.Message.ToString();
+                if (context.Message.Changed)
+                {
+                    SaveAsync(context.Message).Wait();
+                }
                 _logger.LogInformation(message);
-                //var mail = JsonConvert.DeserializeObject<EmailNotification>(message);
-                //_notificationService.SendMailAsync(mail, CancellationToken.None).GetAwaiter().GetResult();
-                //_logger.LogInformation($"Mail from {mail.From} to {mail.To}");
             }
             catch (Exception e)
             {
@@ -45,21 +49,25 @@ namespace hfa.Notification.Brokers.Consumers
             return context.CompleteTask;
         }
 
-        public Task Consume(ConsumeContext<TraceEvent> context)
+        private async Task SaveAsync(DiffPlaylistEvent message, CancellationToken cancellationToken = default)
         {
-            try
+            var firebase = new FirebaseClient(_firebaseOptions.DatabaseURL, new FirebaseOptions
             {
-                _logger.LogInformation($"{nameof(RabbitNotificationConsumer)}: New Mail poped from the queue {context.CorrelationId}");
-                _logger.LogInformation(context.Message.Message);
-                //var mail = JsonConvert.DeserializeObject<EmailNotification>(message);
-                //_notificationService.SendMailAsync(mail, CancellationToken.None).GetAwaiter().GetResult();
-                //_logger.LogInformation($"Mail from {mail.From} to {mail.To}");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-            }
-            return context.CompleteTask;
+                AuthTokenAsyncFactory = () => Task.FromResult(_firebaseOptions.Secret)
+            });
+
+            var notif = await firebase
+              .Child(FirebaseNotifications.TableName)
+              .PostAsync(new FirebaseNotifications.FirebaseNotification
+              {
+                  Date = DateTime.UtcNow.ToShortDateString(),
+                  Level = FirebaseNotifications.FirebaseNotification.LevelEnum.Info,
+                  Source = "Synker Batch",
+                  Body = $"The Playlist {message.Id} changment detected. {message.NewMediasCount} new medias wad founded and {message.RemovedMediasCount} was removed.",
+                  Title = $"The Playlist {message.Id} changment detected"
+              }, true);
+
+            _logger.LogInformation($"{nameof(RabbitNotificationConsumer)}: Key for the new notification: {notif.Key}");
         }
     }
 }

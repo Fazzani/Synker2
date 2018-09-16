@@ -12,6 +12,8 @@
         public int NewMediasCount { get; set; }
         public int RemovedMediasCount { get; set; }
 
+        public bool Changed { get { return NewMediasCount > 0 || RemovedMediasCount > 0; } }
+
         public override string ToString() => $"{CreatedDate}:{CorrelationId} => Playlist: {Id}, Newest : {NewMediasCount}, Removed : {RemovedMediasCount}";
     }
 }

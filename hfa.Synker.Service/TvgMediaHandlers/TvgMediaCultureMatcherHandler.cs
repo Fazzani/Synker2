@@ -13,7 +13,7 @@
 
         public TvgMediaCultureMatcherHandler(IContextTvgMediaHandler contextTvgMediaHandler) : base(contextTvgMediaHandler)
         {
-
+            
         }
 
         public override void HandleTvgMedia(TvgMedia tvgMedia)
