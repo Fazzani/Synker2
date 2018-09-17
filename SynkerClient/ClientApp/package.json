@@ -50,7 +50,7 @@
     "ng-push": "0.2.2",
     "ngx-clipboard": "11.1.1",
     "ngx-toastr": "9.0.2",
-    "rxjs": "^6.2.2",
+    "rxjs": "6.3.2",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

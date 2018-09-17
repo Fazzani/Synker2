@@ -6,7 +6,7 @@ import { RouterModule } from "@angular/router";
 import { AppModuleMaterialModule } from "../../../app.module.material.module";
 import { User } from "../../../types/auth.type";
 import { AuthService } from "../../../services/auth/auth.service";
-import { BehaviorSubject, Subscription } from "rxjs";
+import { BehaviorSubject, Subscription, Observable } from "rxjs";
 import { EqualValidator } from "../../../directives/equal-validator.directive";
 import { MessageService } from "../../../services/message/message.service";
 import { Message, MessageStatus } from "../../../types/message.type";
@@ -28,9 +28,10 @@ export class NavBar implements OnInit, OnDestroy {
   user: BehaviorSubject<User>;
   userSubscription: Subscription;
   messages: PagedResult<Message>;
-  notifications: FirebaseNotification[];
+  notifications$: Observable<FirebaseNotification[]>;
   @Output() onThemeChanged = new EventEmitter();
   @Output() onWebPushClicked = new EventEmitter();
+  notificationsCount$: Observable<number>;
 
   constructor(private authService: AuthService, private messageService: MessageService, public authorizedGuard: AuthorizedRouteGuard,
     private initAppService: InitAppService, private notificationService: NotificationService) {
@@ -48,9 +49,8 @@ export class NavBar implements OnInit, OnDestroy {
         //  this.messages = msg;
         //});
 
-        this.notificationService.list().subscribe(notifs => {
-          this.notifications = notifs
-        });
+        this.notifications$ = this.notificationService.list(5).valueChanges();
+        this.notificationsCount$ = this.notificationService.count();
       }
     });
   }

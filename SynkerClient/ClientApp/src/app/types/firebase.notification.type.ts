@@ -1,7 +1,7 @@
 export default class FirebaseNotification {
-  date: Date;
-  body: string;
-  title: string;
-  source: string;
-  level: "info" | "warning" | "error";
+  Date: Date;
+  Body: string;
+  Title: string;
+  Source: string;
+  Level: "info" | "warning" | "error";
 }

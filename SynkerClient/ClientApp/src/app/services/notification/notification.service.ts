@@ -8,7 +8,7 @@ import { environment } from "../../../environments/environment";
 import { HubConnection, HubConnectionBuilder } from "@aspnet/signalr";
 import { CommonService } from "../common/common.service";
 import { AuthService } from "../auth/auth.service";
-import { AngularFireDatabase } from '@angular/fire/database';
+import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import FirebaseNotification from "../../types/firebase.notification.type";
 
 @Injectable({
@@ -40,7 +40,10 @@ export class NotificationService extends BaseService {
     });
   }
 
-  public list(): Observable<FirebaseNotification[]> {
-    return this.db.list<FirebaseNotification>('notifications').valueChanges();
+  public list(limit: number = 10): AngularFireList<FirebaseNotification> {
+    return this.db.list<FirebaseNotification>('/notifications', ref => ref.limitToFirst(limit).orderByKey());
+  }
+  public count(): Observable<number>{
+    return this.db.list<FirebaseNotification>('/notifications').valueChanges().pipe(map(x => x.length));
   }
 }
