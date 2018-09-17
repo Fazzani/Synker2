@@ -6,7 +6,7 @@ import { RouterModule } from "@angular/router";
 import { AppModuleMaterialModule } from "../../../app.module.material.module";
 import { User } from "../../../types/auth.type";
 import { AuthService } from "../../../services/auth/auth.service";
-import { BehaviorSubject ,  Subscription } from "rxjs";
+import { BehaviorSubject, Subscription } from "rxjs";
 import { EqualValidator } from "../../../directives/equal-validator.directive";
 import { MessageService } from "../../../services/message/message.service";
 import { Message, MessageStatus } from "../../../types/message.type";
@@ -14,6 +14,8 @@ import { PagedResult } from "../../../types/common.type";
 import { AuthorizedRouteGuard } from "../../../services/auth/authorizedRouteGuard.service";
 import { InitAppService } from "../../../services/initApp/InitAppService";
 import { AboutApplication } from "../../../types/aboutApplication.type";
+import { NotificationService } from "../../../services/notification/notification.service";
+import FirebaseNotification from "../../../types/firebase.notification.type";
 
 @Component({
   selector: "app-navbar",
@@ -26,10 +28,12 @@ export class NavBar implements OnInit, OnDestroy {
   user: BehaviorSubject<User>;
   userSubscription: Subscription;
   messages: PagedResult<Message>;
+  notifications: FirebaseNotification[];
   @Output() onThemeChanged = new EventEmitter();
   @Output() onWebPushClicked = new EventEmitter();
 
-  constructor(private authService: AuthService, private messageService: MessageService, public authorizedGuard: AuthorizedRouteGuard, private initAppService: InitAppService) {
+  constructor(private authService: AuthService, private messageService: MessageService, public authorizedGuard: AuthorizedRouteGuard,
+    private initAppService: InitAppService, private notificationService: NotificationService) {
     this.isAuthenticated = this.authService.authenticated;
     this.user = this.authService.user;
     this.authService.connect();
@@ -40,8 +44,12 @@ export class NavBar implements OnInit, OnDestroy {
     this.userSubscription = this.user.subscribe(user => {
       if (user != undefined) {
         console.log(`User ${user.firstName} is authenticated...`);
-        this.messageService.listByStatus([MessageStatus.None, MessageStatus.NotReaded], 0, 10).subscribe(msg => {
-          this.messages = msg;
+        //this.messageService.listByStatus([MessageStatus.None, MessageStatus.NotReaded], 0, 10).subscribe(msg => {
+        //  this.messages = msg;
+        //});
+
+        this.notificationService.list().subscribe(notifs => {
+          this.notifications = notifs
         });
       }
     });
@@ -70,4 +78,4 @@ export class NavBar implements OnInit, OnDestroy {
   exports: [NavBar, EqualValidator],
   declarations: [NavBar, EqualValidator]
 })
-export class NavBarModule {}
+export class NavBarModule { }

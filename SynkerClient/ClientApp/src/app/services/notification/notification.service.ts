@@ -1,4 +1,4 @@
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { map, retry, share } from "rxjs/operators";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
@@ -8,6 +8,8 @@ import { environment } from "../../../environments/environment";
 import { HubConnection, HubConnectionBuilder } from "@aspnet/signalr";
 import { CommonService } from "../common/common.service";
 import { AuthService } from "../auth/auth.service";
+import { AngularFireDatabase } from '@angular/fire/database';
+import FirebaseNotification from "../../types/firebase.notification.type";
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +19,7 @@ export class NotificationService extends BaseService {
   private hubConnection: HubConnection | undefined;
   readonly hubName: string = 'hubs/notification';
 
-  constructor(protected http: HttpClient, private commonService: CommonService, private authService: AuthService) {
+  constructor(private db: AngularFireDatabase, protected http: HttpClient, private commonService: CommonService, private authService: AuthService) {
     super(http);
     console.log(`NotificationHub Url : ${environment.base_hub_url}${this.hubName}`);
     this.hubConnection = new HubConnectionBuilder().withUrl(`${environment.base_hub_url}${this.hubName}`, { accessTokenFactory: () => this.authService.getToken() }).build();
@@ -36,5 +38,9 @@ export class NotificationService extends BaseService {
         content: content
       });
     });
+  }
+
+  public list(): Observable<FirebaseNotification[]> {
+    return this.db.list<FirebaseNotification>('notifications').valueChanges();
   }
 }

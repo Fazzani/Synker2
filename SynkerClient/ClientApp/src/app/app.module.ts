@@ -50,6 +50,17 @@ import { HomeResolver } from "./components/home/home.resolver";
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { MediaWatchDialog } from "./components/dialogs/mediaWatch/media.watch.dialog";
+import { AngularFireModule } from 'angularfire2';
+
+export const firebaseConfig = {
+  secret: "SMDRzX3kVsP9Tci0ADhOYo62Ty4bMkEDm3qiihlL",
+  apiKey: "AIzaSyAgozGrBpxU01ezugBKXMJMPZ184BzU6JY",
+  authDomain: "holo-970f4.firebaseapp.com",
+  databaseURL: "https://holo-970f4.firebaseio.com",
+  projectId: "holo-970f4",
+  storageBucket: "holo-970f4.appspot.com",
+  messagingSenderId: "685189543315"
+};
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -96,6 +107,7 @@ export function getAboutApplication(initService: InitAppService) {
     BrowserModule.withServerTransition({ appId: "ng-cli-universal" }),
     BrowserAnimationsModule,
     PushNotificationsModule,
+    AngularFireModule.initializeApp(firebaseConfig),
     FlexLayoutModule,
     ToastrModule.forRoot({
       positionClass: "toast-bottom-right",
@@ -162,4 +174,4 @@ export function getAboutApplication(initService: InitAppService) {
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
