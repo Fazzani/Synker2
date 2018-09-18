@@ -5,6 +5,7 @@
     using MassTransit;
     using Microsoft.Extensions.Logging;
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -15,12 +16,14 @@
     public class RabbitSynchronizeConsumer : IConsumer<DiffPlaylistEvent>, IConsumer<TraceEvent>
     {
         private readonly ILogger _logger;
+        private readonly IBus _bus;
         private readonly IPlaylistService _playlistService;
 
-        public RabbitSynchronizeConsumer(IPlaylistService playlistService, ILogger<NotificationConsumer> logger)
+        public RabbitSynchronizeConsumer(IPlaylistService playlistService, ILogger<NotificationConsumer> logger, IBus bus)
         {
             _playlistService = playlistService;
             _logger = logger;
+            _bus = bus;
         }
 
         public Task Consume(ConsumeContext<DiffPlaylistEvent> context)
@@ -29,7 +32,9 @@
             {
                 _logger.LogInformation($"{nameof(RabbitSynchronizeConsumer)}: new mail poped from the queue {context.CorrelationId}. Received message: {context.Message.ToString()}");
                 var playlist = _playlistService.SynkPlaylistAsync(context.Message.Id).GetAwaiter().GetResult();
-                _logger.LogInformation($"The playlist {playlist.Id}:{playlist.Freindlyname} was synchronized. Total tvgmadias count: {playlist.TvgMedias.Count}");
+                var eventMessage = $"The playlist {playlist.Id}:{playlist.Freindlyname} was synchronized. Total tvgmadias count: {playlist.TvgMedias.Count}";
+                _logger.LogInformation(eventMessage);
+                _bus.Publish(new TraceEvent { Message = eventMessage }, CancellationToken.None).Wait();
             }
             catch (Exception e)
             {

@@ -59,6 +59,7 @@
                     .AddSingleton<INotificationService, NotificationService>()
                     .AddScoped<RabbitNotificationConsumer, RabbitNotificationConsumer>()
                     .AddScoped<RabbitSynchronizeConsumer, RabbitSynchronizeConsumer>()
+                    .AddScoped<FirebaseNotificationConsumer, FirebaseNotificationConsumer>()
                     .AddSingleton(loggerFactory)
                     .AddLogging(loggingBuilder =>
                          loggingBuilder.AddSerilog(dispose: true))
@@ -152,6 +153,8 @@
 
                     ep.Consumer(() => sp.GetService<RabbitNotificationConsumer>());
                     ep.Consumer(() => sp.GetService<RabbitSynchronizeConsumer>());
+                    ep.Consumer(() => sp.GetService<FirebaseNotificationConsumer>());
+                    
                 });
             });
 
