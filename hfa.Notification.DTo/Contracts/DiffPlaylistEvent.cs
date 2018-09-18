@@ -6,7 +6,11 @@
 
     public class DiffPlaylistEvent : ApplicationEvent
     {
+        
         public int Id { get; set; }
+        public int UserId { get; set; }
+        public string PlaylistName { get; set; }
+
         public IEnumerable<TvgMedia> RemovedMedias { get; set; }
         public IEnumerable<TvgMedia> NewMedias { get; set; }
         public int NewMediasCount { get; set; }

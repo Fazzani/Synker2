@@ -44,12 +44,12 @@ export class NavBar implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.userSubscription = this.user.subscribe(user => {
       if (user != undefined) {
-        console.log(`User ${user.firstName} is authenticated...`);
+        console.log(`User ${user.firstName} is authenticated...${user.id}`);
         //this.messageService.listByStatus([MessageStatus.None, MessageStatus.NotReaded], 0, 10).subscribe(msg => {
         //  this.messages = msg;
         //});
 
-        this.notifications$ = this.notificationService.list(5).valueChanges();
+        this.notifications$ = this.notificationService.list(user.id, 5).valueChanges();
         this.notificationsCount$ = this.notificationService.count();
       }
     });

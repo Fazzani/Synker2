@@ -1,0 +1,16 @@
+<div class="site-container " fxLayout="column" fxLayoutGap="20px">
+    <mat-card *ngFor="let notif of notifications$ | async">
+        <mat-card-header>
+            <mat-card-title>{{ notif.title }}</mat-card-title>
+            <mat-card-subtitle>{{notif.Date | date:'dd/MM/yyyy'}}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <ng-container>
+                <p [innerHtml]="notif.Body"></p>
+            </ng-container>
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-button (click)="markAsRead(notif)">Mark as read</button>
+        </mat-card-actions>
+    </mat-card>
+</div>

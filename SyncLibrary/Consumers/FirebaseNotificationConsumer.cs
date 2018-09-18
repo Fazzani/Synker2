@@ -27,17 +27,16 @@
             _firebaseOptions = firebaseOptions.Value;
         }
 
-        public Task Consume(ConsumeContext<TraceEvent> context)
+        public async Task Consume(ConsumeContext<TraceEvent> context)
         {
             try
             {
-                SaveAsync(context.Message).Wait();
+                await SaveAsync(context.Message);
             }
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
             }
-            return context.CompleteTask;
         }
 
         private async Task SaveAsync(TraceEvent message, CancellationToken cancellationToken = default)
@@ -64,12 +63,12 @@
         private string GetLevel(string traceEventlevel)
         {
 
-            if (traceEventlevel == TraceEvent.LevelTrace.warning)
+            if (traceEventlevel == TraceEvent.LevelTrace.Warning)
             {
                 return FirebaseNotifications.FirebaseNotification.LevelEnum.Warning;
             }
             else
-                 if (traceEventlevel == TraceEvent.LevelTrace.error)
+                 if (traceEventlevel == TraceEvent.LevelTrace.Error)
             {
                 return FirebaseNotifications.FirebaseNotification.LevelEnum.Error;
             }

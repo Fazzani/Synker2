@@ -1,4 +1,4 @@
-﻿import { NgModule } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { HomeComponent } from "./components/home/home.component";
 import { LoginRouteGuard } from "./services/auth/loginRouteGuard.service";
 import { Routes, RouterModule } from "@angular/router";
@@ -15,6 +15,7 @@ import { GroupComponent } from "./components/group/group.component";
 import { PlaylistDetailResolver } from "./components/playlist/playlist.resolver";
 import { MessagesResolver } from "./components/messages/messages.resolver";
 import { HomeResolver } from "./components/home/home.resolver";
+import { NotificationsComponent } from "./components/notifications/notifications.component";
 
 const appRoutes: Routes = [
   { path: "", component: HomeComponent, canActivate: [LoginRouteGuard], resolve: { data: HomeResolver } },
@@ -26,10 +27,10 @@ const appRoutes: Routes = [
   { path: "playlist/:id", component: PlaylistComponent, canActivate: [LoginRouteGuard], resolve: { data: PlaylistDetailResolver } },
   { path: "playlist/:id/groups", component: GroupComponent, canActivate: [LoginRouteGuard] },
   { path: "messages", component: MessagesComponent, canActivate: [LoginRouteGuard], resolve: { data: MessagesResolver } },
-  { path: "me", component: UserComponent, canActivate: [LoginRouteGuard] },
+  { path: "notifications", component: NotificationsComponent, canActivate: [LoginRouteGuard] },
+  { path: "me", component: UserComponent, canActivate: [LoginRouteGuard] }, 
   { path: "signin", component: DialogComponent },
   { path: "register", component: RegisterComponent },
-  //{ path: "", redirectTo: "", pathMatch: "full" },
   { path: "**", redirectTo: "", pathMatch: "full" }
 ];
 

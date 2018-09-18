@@ -53,6 +53,7 @@ import { MediaWatchDialog } from "./components/dialogs/mediaWatch/media.watch.di
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
+import { NotificationsComponent } from "./components/notifications/notifications.component";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -73,6 +74,7 @@ export function getAboutApplication(initService: InitAppService) {
     XmltvComponent,
     UserComponent,
     MessagesComponent,
+    NotificationsComponent,
     GroupComponent,
     LoaderComponent,
     TvgMediaModifyDialog,

@@ -36,7 +36,6 @@
 
         public async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            await _bus.Publish(new TraceEvent { Message = $"Service: {nameof(DiffHostedService)}: Start" }, cancellationToken);
             IQueryable<Playlist> playlists = _dbContext.Playlist
                 .Include(x => x.User)
                 //.ThenInclude(u => u.Devices)
@@ -55,16 +54,29 @@
                             _logger.LogInformation($"Diff detected for the playlist {pl.Id} of user {pl.UserId}");
 
                             //publish message to Rabbit
-                            await _bus.Publish(new DiffPlaylistEvent { Id = pl.Id, RemovedMediasCount = removed.Count(), RemovedMedias = removed.Take(10), NewMediasCount = tvgMedia.Count(), NewMedias = tvgMedia.Take(10) }, cancellationToken);
+                            await _bus.Publish(new DiffPlaylistEvent
+                            {
+                                Id = pl.Id,
+                                PlaylistName = pl.Freindlyname,
+                                UserId = pl.UserId,
+                                RemovedMediasCount = removed.Count(),
+                                RemovedMedias = removed.Take(10),
+                                NewMediasCount = tvgMedia.Count(),
+                                NewMedias = tvgMedia.Take(10)
+                            }, cancellationToken);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    await _bus.Publish(new TraceEvent { Message = $"Service: {nameof(DiffHostedService)}: playlistId : {pl.Id}, Exception :{ex.Message}" }, cancellationToken);
+                    await _bus.Publish(new TraceEvent
+                    {
+                        Message = $"Service: {nameof(DiffHostedService)}: playlistId : {pl.Id}, Exception :{ex.Message}",
+                        UserId = pl.UserId,
+                        Level = TraceEvent.LevelTrace.Error
+                    }, cancellationToken);
                 }
             }
-            await _bus.Publish(new TraceEvent { Message = $"Service: {nameof(DiffHostedService)}: End" }, cancellationToken);
         }
     }
 }

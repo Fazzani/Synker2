@@ -262,6 +262,7 @@ export class AuthService extends BaseService {
   private mapTokenToUserModel(userToken: any) {
     console.log(`${userToken.photo}`);
     let user = <User>{
+      id: userToken.id,
       birthday: userToken.birthdate,
       lastName: userToken.family_name,
       firstName: userToken.given_name,

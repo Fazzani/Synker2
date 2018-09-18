@@ -23,4 +23,5 @@ namespace hfa.Brokers.Messages
             public string Title { get; set; }
         }
     }
+    
 }

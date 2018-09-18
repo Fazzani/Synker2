@@ -40,10 +40,10 @@ export class NotificationService extends BaseService {
     });
   }
 
-  public list(limit: number = 10): AngularFireList<FirebaseNotification> {
-    return this.db.list<FirebaseNotification>('/notifications', ref => ref.limitToFirst(limit).orderByKey());
+  public list(userId: number, limit: number = 10): AngularFireList<FirebaseNotification> {
+    return this.db.list<FirebaseNotification>(`/notifications/${userId}`, ref => ref.limitToFirst(limit).orderByKey());
   }
-  public count(): Observable<number>{
+  public count(): Observable<number> {
     return this.db.list<FirebaseNotification>('/notifications').valueChanges().pipe(map(x => x.length));
   }
 }

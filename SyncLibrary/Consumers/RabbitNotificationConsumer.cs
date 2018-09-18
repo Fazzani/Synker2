@@ -30,7 +30,7 @@
             _firebaseOptions = firebaseOptions.Value;
         }
 
-        public Task Consume(ConsumeContext<DiffPlaylistEvent> context)
+        public async Task Consume(ConsumeContext<DiffPlaylistEvent> context)
         {
             try
             {
@@ -38,7 +38,7 @@
                 var message = context.Message.ToString();
                 if (context.Message.Changed)
                 {
-                    SaveAsync(context.Message).Wait();
+                    await SaveAsync(context.Message);
                 }
                 _logger.LogInformation(message);
             }
@@ -46,7 +46,6 @@
             {
                 _logger.LogError(e, e.Message);
             }
-            return context.CompleteTask;
         }
 
         private async Task SaveAsync(DiffPlaylistEvent message, CancellationToken cancellationToken = default)
@@ -57,14 +56,14 @@
             });
 
             var notif = await firebase
-              .Child(FirebaseNotifications.TableName)
+              .Child($"{FirebaseNotifications.TableName}/{message.UserId}")
               .PostAsync(new FirebaseNotifications.FirebaseNotification
               {
                   Date = DateTime.UtcNow.ToShortDateString(),
                   Level = FirebaseNotifications.FirebaseNotification.LevelEnum.Info,
                   Source = "Synker Batch",
-                  Body = $"The Playlist {message.Id} changment detected. {message.NewMediasCount} new medias wad founded and {message.RemovedMediasCount} was removed.",
-                  Title = $"The Playlist {message.Id} changment detected"
+                  Body = $"The Playlist {message.PlaylistName} changment detected. {message.NewMediasCount} new medias wad founded and {message.RemovedMediasCount} was removed.",
+                  Title = $"The Playlist {message.PlaylistName} changment detected"
               }, true);
 
             _logger.LogInformation($"{nameof(RabbitNotificationConsumer)}: Key for the new notification: {notif.Key}");

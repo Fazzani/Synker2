@@ -151,10 +151,10 @@
                         Console.ResetColor();
                     });
 
-                    ep.Consumer(() => sp.GetService<RabbitNotificationConsumer>());
-                    ep.Consumer(() => sp.GetService<RabbitSynchronizeConsumer>());
-                    ep.Consumer(() => sp.GetService<FirebaseNotificationConsumer>());
-                    
+                    //Note: do no use sp variable
+                    ep.Consumer(() => services.BuildServiceProvider().GetService<RabbitNotificationConsumer>());
+                    ep.Consumer(() => services.BuildServiceProvider().GetService<RabbitSynchronizeConsumer>());
+                    ep.Consumer(() => services.BuildServiceProvider().GetService<FirebaseNotificationConsumer>());
                 });
             });
 
