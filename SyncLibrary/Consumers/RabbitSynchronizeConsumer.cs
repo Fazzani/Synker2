@@ -1,16 +1,10 @@
 ﻿namespace hfa.Notification.Brokers.Consumers
 {
     using hfa.Brokers.Messages.Contracts;
-    using hfa.Notification.Brokers.Emailing;
+    using hfa.Synker.Service.Services.Playlists;
     using MassTransit;
     using Microsoft.Extensions.Logging;
-    using Newtonsoft.Json;
-    using RabbitMQ.Client;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -21,12 +15,11 @@
     public class RabbitSynchronizeConsumer : IConsumer<DiffPlaylistEvent>, IConsumer<TraceEvent>
     {
         private readonly ILogger _logger;
-        private IModel _mailChannel;
-        private readonly INotificationService _notificationService;
+        private readonly IPlaylistService _playlistService;
 
-        public RabbitSynchronizeConsumer(INotificationService notificationService, ILogger<NotificationConsumer> logger)
+        public RabbitSynchronizeConsumer(IPlaylistService playlistService, ILogger<NotificationConsumer> logger)
         {
-            _notificationService = notificationService;
+            _playlistService = playlistService;
             _logger = logger;
         }
 
@@ -34,12 +27,9 @@
         {
             try
             {
-                _logger.LogInformation($"{nameof(RabbitSynchronizeConsumer)}: New Mail poped from the queue {context.CorrelationId}");
-                var message = context.Message.ToString();
-                _logger.LogInformation(message);
-                //var mail = JsonConvert.DeserializeObject<EmailNotification>(message);
-                //_notificationService.SendMailAsync(mail, CancellationToken.None).GetAwaiter().GetResult();
-                //_logger.LogInformation($"Mail from {mail.From} to {mail.To}");
+                _logger.LogInformation($"{nameof(RabbitSynchronizeConsumer)}: new mail poped from the queue {context.CorrelationId}. Received message: {context.Message.ToString()}");
+                var playlist = _playlistService.SynkPlaylistAsync(context.Message.Id).GetAwaiter().GetResult();
+                _logger.LogInformation($"The playlist {playlist.Id}:{playlist.Freindlyname} was synchronized. Total tvgmadias count: {playlist.TvgMedias.Count}");
             }
             catch (Exception e)
             {
@@ -52,7 +42,7 @@
         {
             try
             {
-                _logger.LogInformation($"{nameof(RabbitSynchronizeConsumer)}: New Mail poped from the queue {context.CorrelationId}");
+                _logger.LogInformation($"{nameof(RabbitSynchronizeConsumer)}: new mail poped from the queue {context.CorrelationId}");
                 _logger.LogInformation(context.Message.Message);
                 //var mail = JsonConvert.DeserializeObject<EmailNotification>(message);
                 //_notificationService.SendMailAsync(mail, CancellationToken.None).GetAwaiter().GetResult();

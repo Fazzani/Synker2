@@ -21,7 +21,7 @@
         private readonly SynkerDbContext _dbContext;
         private readonly IBus _bus;
 
-        public string Schedule => Environment.GetEnvironmentVariable($"{nameof(DiffHostedService)}_ScheduledTask") ?? "* */6 * * *";
+        public string Schedule => Environment.GetEnvironmentVariable($"{nameof(DiffHostedService)}_ScheduledTask") ?? "0 12 * * *";
         //public string EndPoint => $"http://rabbitmq.synker.ovh/diff_playlist_{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}_queue";
         //public string TraceEndPoint => $"http://rabbitmq.synker.ovh/trace_{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}_queue";
 

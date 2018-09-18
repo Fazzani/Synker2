@@ -7,6 +7,8 @@
     using hfa.Notification.Brokers.Consumers;
     using hfa.Notification.Brokers.Emailing;
     using hfa.PlaylistBaseLibrary.ChannelHandlers;
+    using hfa.PlaylistBaseLibrary.Options;
+    using hfa.PlaylistBaseLibrary.Providers;
     using hfa.Synker.batch.HostedServices;
     using hfa.Synker.Service;
     using hfa.Synker.Service.Services;
@@ -24,6 +26,7 @@
     using RabbitMQ.Client;
     using Serilog;
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
@@ -46,6 +49,8 @@
                     services
                     .Configure<RabbitMQConfiguration>(hostContext.Configuration.GetSection(nameof(RabbitMQConfiguration)))
                     .Configure<FirebaseConfiguration>(hostContext.Configuration.GetSection(nameof(FirebaseConfiguration)))
+                    .Configure<List<PlaylistProviderOption>>(hostContext.Configuration.GetSection(PlaylistProviderOption.PlaylistProvidersConfigurationKeyName))
+                    .AddSingleton<IProviderFactory, ProviderFactory>()
                     .AddScoped<ISitePackService, SitePackService>()
                     .AddScoped<IPlaylistService, PlaylistService>()
                     .AddScoped<IScheduledTask, DiffHostedService>()

@@ -25,9 +25,10 @@
         private ILogger _logger;
         private IOptions<ElasticConfig> _elasticConfig;
         private ISitePackService _sitePackService;
+        private IProviderFactory _providerFactory;
 
         public PlaylistService(SynkerDbContext synkerDbContext, IElasticConnectionClient elasticConnectionClient,
-            IContextTvgMediaHandler contextHandler, ILoggerFactory loggerFactory, IOptions<ElasticConfig> elasticConfig, ISitePackService sitePackService)
+            IContextTvgMediaHandler contextHandler, ILoggerFactory loggerFactory, IOptions<ElasticConfig> elasticConfig, ISitePackService sitePackService, IProviderFactory providerFactory)
         {
             _dbcontext = synkerDbContext;
             _elasticConnectionClient = elasticConnectionClient;
@@ -35,6 +36,7 @@
             _logger = loggerFactory.CreateLogger(nameof(PlaylistService));
             _elasticConfig = elasticConfig;
             _sitePackService = sitePackService;
+            _providerFactory = providerFactory;
         }
 
         public async Task<IEnumerable<Playlist>> ListByUserAsync(int userId)
@@ -51,7 +53,7 @@
         /// <param name="force"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<Playlist> SynkPlaylist(Func<Playlist> getPlaylist, PlaylistProvider<Playlist<TvgMedia>, TvgMedia> provider, bool isXtreamPlaylist, bool force = false,
+        public async Task<Playlist> SynkPlaylistAsync(Func<Playlist> getPlaylist, PlaylistProvider<Playlist<TvgMedia>, TvgMedia> provider = default, bool isXtreamPlaylist = false, bool force = false,
             CancellationToken cancellationToken = default)
         {
             var playlistEntity = getPlaylist();
@@ -59,6 +61,15 @@
                 throw new ArgumentNullException($"Playlist not found");
             if (!playlistEntity.IsSynchronizable)
                 throw new ApplicationException($"Playlist isn't synchronizable");
+
+            try
+            {
+                provider = _providerFactory.CreateInstance(playlistEntity.SynkConfig.Uri, playlistEntity.SynkConfig.Provider);
+            }
+            catch (Exception)
+            {
+                throw new ApplicationException("Can't resolve playlist provider");
+            }
 
             using (var playlist = new Playlist<TvgMedia>(provider))
             {
@@ -81,12 +92,65 @@
             return playlistEntity;
         }
 
+        /// <summary>
+        /// Synk playlist and match epg, logos and groups
+        /// </summary>
+        /// <param name="playlistId">Playlist id</param>
+        /// <param name="resetAndSynch">Reset and synchronize playlist from scrach</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<Playlist> SynkPlaylistAsync(int playlistId, bool resetAndSynch = false,
+            CancellationToken cancellationToken = default)
+        {
+            var playlistEntity = await _dbcontext.Playlist.FindAsync(new object[] { playlistId }, cancellationToken);
+
+            if (playlistEntity == null)
+                throw new ArgumentNullException($"Playlist not found");
+            if (!playlistEntity.IsSynchronizable)
+                throw new ApplicationException($"Playlist isn't synchronizable");
+
+            PlaylistProvider<Playlist<TvgMedia>, TvgMedia> provider = null;
+            try
+            {
+                provider = _providerFactory.CreateInstance(playlistEntity.SynkConfig.Uri, playlistEntity.SynkConfig.Provider);
+            }
+            catch (Exception)
+            {
+                throw new ApplicationException("Can't resolve playlist provider");
+            }
+
+            if (resetAndSynch)
+            {
+                return await SynkPlaylistAsync(() => _dbcontext.Playlist.Find(playlistId), provider, false, resetAndSynch, cancellationToken);
+            }
+
+            var (tvgMedia, removed) = await DiffWithSourceAsync(() => playlistEntity, provider, true, cancellationToken);
+
+            var changed = false;
+            if (removed != null && removed.Any())
+            {
+                playlistEntity.TvgMedias.RemoveAll(x => removed.Any(r => r == x));
+                changed = true;
+            }
+            if (tvgMedia != null && tvgMedia.Any())
+            {
+                playlistEntity.TvgMedias.AddRange(tvgMedia);
+                changed = true;
+            }
+
+            if (changed)
+            {
+                await _dbcontext.SaveChangesAsync(cancellationToken);
+            }
+
+            return playlistEntity;
+        }
+
         private static void UpdateIsXtreamTag(bool isXtreamPlaylist, Playlist playlistEntity)
         {
-            if (!playlistEntity.Tags.Any(x => String.Equals(x.Key, PlaylistTags.IsXtream, StringComparison.InvariantCultureIgnoreCase)))
+            if (!playlistEntity.Tags.Any(x => string.Equals(x.Key, PlaylistTags.IsXtream, StringComparison.InvariantCultureIgnoreCase)))
             {
                 playlistEntity.Tags.Add(PlaylistTags.IsXtream, isXtreamPlaylist.ToString());
-
             }
             else
             {
@@ -123,7 +187,8 @@
         /// <param name="force"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<(IEnumerable<TvgMedia> tvgMedia, IEnumerable<TvgMedia> removed)> DiffWithSourceAsync(Func<Playlist> getPlaylist, PlaylistProvider<Playlist<TvgMedia>, TvgMedia> provider, bool force = false,
+        public async Task<(IEnumerable<TvgMedia> tvgMedia, IEnumerable<TvgMedia> removed)> DiffWithSourceAsync(Func<Playlist> getPlaylist,
+            PlaylistProvider<Playlist<TvgMedia>, TvgMedia> provider, bool force = false,
             CancellationToken cancellationToken = default)
         {
             var pl = getPlaylist();

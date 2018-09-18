@@ -309,7 +309,7 @@ namespace Hfa.WebApi.Controllers
 
             using (providerInstance)
             {
-                var pl = await _playlistService.SynkPlaylist(() => playlist, providerInstance, _xtreamService.IsXtreamPlaylist(playlistPostModel.Url), cancellationToken: cancellationToken);
+                var pl = await _playlistService.SynkPlaylistAsync(() => playlist, providerInstance, _xtreamService.IsXtreamPlaylist(playlistPostModel.Url), cancellationToken: cancellationToken);
 
                 stopwatch.Stop();
                 _logger.LogInformation($"Elapsed time : {stopwatch.Elapsed.ToString("c")}");
@@ -672,7 +672,7 @@ namespace Hfa.WebApi.Controllers
 
             using (providerInstance)
             {
-                var pl = await _playlistService.SynkPlaylist(() => new Playlist
+                var pl = await _playlistService.SynkPlaylistAsync(() => new Playlist
                 {
                     UserId = UserId.Value,
                     Freindlyname = playlistName,
@@ -714,7 +714,7 @@ namespace Hfa.WebApi.Controllers
 
             using (providerInstance)
             {
-                var pl = await _playlistService.SynkPlaylist(() => new Playlist
+                var pl = await _playlistService.SynkPlaylistAsync(() => new Playlist
                 {
                     UserId = UserId.Value,
                     Freindlyname = playlistPostModel.Freindlyname,

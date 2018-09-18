@@ -121,7 +121,7 @@ namespace hfa.WebApi
                .AddScoped<IWebGrabConfigService, WebGrabConfigService>()
                .AddScoped<IMessageQueueService, MessageQueueService>()
                .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
-               .Configure<List<PlaylistProviderOption>>(Configuration.GetSection("PlaylistProviders"))
+               .Configure<List<PlaylistProviderOption>>(Configuration.GetSection(PlaylistProviderOption.PlaylistProvidersConfigurationKeyName))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))
                .Configure<MediaServerOptions>(Configuration.GetSection(nameof(MediaServerOptions)))

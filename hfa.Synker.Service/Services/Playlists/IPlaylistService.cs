@@ -12,19 +12,28 @@ namespace hfa.Synker.Service.Services.Playlists
     public interface IPlaylistService
     {
         Task<IEnumerable<Playlist>> ListByUserAsync(int userId);
-        Task<Playlist> SynkPlaylist(Func<Playlist> getPlaylist, PlaylistProvider<Playlist<TvgMedia>, TvgMedia> provider, bool isXtreamPlaylist, bool force = false,
+        Task<Playlist> SynkPlaylistAsync(Func<Playlist> getPlaylist, PlaylistProvider<Playlist<TvgMedia>, TvgMedia> provider, bool isXtreamPlaylist, bool force = false,
             CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Genére un rapport avec les new medias et 
         /// les médias qui n'existes plus
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="getPlaylist"></param>
         /// <param name="force"></param>
         /// <param name="token"></param>
         /// <returns></returns>
         Task<(IEnumerable<TvgMedia> tvgMedia, IEnumerable<TvgMedia> removed)> DiffWithSourceAsync(Func<Playlist> getPlaylist, PlaylistProvider<Playlist<TvgMedia>,
             TvgMedia> provider, bool force = false, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Synchronize playlist
+        /// </summary>
+        /// <param name="playlistId"></param>
+        /// <param name="resetAndsynch">Reset and synchronize playlist from scrach</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<Playlist> SynkPlaylistAsync(int playlistId, bool resetAndsynch = false, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Execute Handlers on Tvgmedias list
