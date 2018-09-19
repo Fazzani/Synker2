@@ -74,6 +74,33 @@ export class PlaylistModel {
   public static SYNKGROUP: string[] = Object.keys(SynkGroupEnum).slice(Object.keys(SynkGroupEnum).length / 2);
 }
 
+export class PlaylistModelLive {
+  public id: number;
+  public uniqueId: string;
+  public userId: number;
+  public freindlyname: string;
+  public tvgMedias: TvgMedia[];
+  public tvgSites: string[];
+  public url: string;
+  public createdDate: Date;
+  public updatedDate: Date;
+  public synkEpg: boolean;
+  public synkGroup: SynkGroupEnum;
+  public status: PlaylistStatus;
+  public notifcationTypeInsertedMedia: NotificationTypeEnum;
+  public synkLogos: boolean;
+  public publicUrl: string;
+  public publicId: string;
+  public xtreamPlayerApi: PlayerApi;
+  public isXtream: boolean;
+  public importProvider: string;
+  public tags: any;
+  public static PROVIDERS: string[] = Object.keys(Providers).slice(Object.keys(Providers).length / 2);
+  public static SYNKGROUP: string[] = Object.keys(SynkGroupEnum).slice(Object.keys(SynkGroupEnum).length / 2);
+  public isOnline: boolean;
+  public MediaCount: number;
+}
+
 export class PlaylistPostModel {
   public freindlyname: string;
   public status: PlaylistStatus;

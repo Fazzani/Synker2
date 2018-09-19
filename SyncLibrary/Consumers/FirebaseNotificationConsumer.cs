@@ -15,7 +15,7 @@
     /// <summary>
     /// save message into firebase database
     /// </summary>
-    public class FirebaseNotificationConsumer : IConsumer<TraceEvent>
+    public class FirebaseNotificationConsumer : IConsumer<TraceEvent>, IConsumer<PlaylistHealthEvent>
     {
         private readonly ILogger _logger;
         private readonly FirebaseConfiguration _firebaseOptions;
@@ -61,18 +61,35 @@
         }
 
         private string GetLevel(string traceEventlevel)
-        {
-
+        { 
             if (traceEventlevel == TraceEvent.LevelTrace.Warning)
             {
                 return FirebaseNotifications.FirebaseNotification.LevelEnum.Warning;
             }
-            else
-                 if (traceEventlevel == TraceEvent.LevelTrace.Error)
+            else if (traceEventlevel == TraceEvent.LevelTrace.Error)
             {
                 return FirebaseNotifications.FirebaseNotification.LevelEnum.Error;
             }
             return FirebaseNotifications.FirebaseNotification.LevelEnum.Info;
+        }
+
+        public async Task Consume(ConsumeContext<PlaylistHealthEvent> context)
+        {
+            try
+            {
+                var firebase = new FirebaseClient(_firebaseOptions.DatabaseURL, new FirebaseOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(_firebaseOptions.Secret)
+                });
+
+                await firebase
+                 .Child($"{nameof(PlaylistHealthState)}/{context.Message.Id}")
+                 .PutAsync(context.Message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+            }
         }
     }
 }

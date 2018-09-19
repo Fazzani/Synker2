@@ -1,5 +1,6 @@
 ﻿namespace hfa.Synker.Service.Services.Playlists
 {
+    using hfa.Brokers.Messages;
     using hfa.PlaylistBaseLibrary.ChannelHandlers;
     using hfa.PlaylistBaseLibrary.Providers;
     using hfa.Synker.Service.Elastic;
@@ -14,6 +15,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -231,6 +233,30 @@
             shiftHandler.SetSuccessor(cleanNameHandler);
             cleanNameHandler.SetSuccessor(sitePackHandler);
             return cultureHandler;
+        }
+
+        public async Task<PlaylistHealthState> HealthAsync(Playlist pl, CancellationToken cancellationToken = default)
+        {
+            var result = new PlaylistHealthState
+            {
+                Id = pl.Id,
+                Name = pl.Freindlyname,
+                MediaCount = pl.TvgMedias?.Count??0,
+                IsOnline = false,
+            };
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    var response = await client.GetAsync(pl.SynkConfig.Uri, HttpCompletionOption.ResponseHeadersRead);
+                    result.IsOnline = response.IsSuccessStatusCode;
+                    return result;
+                }
+                catch (HttpRequestException)
+                {
+                    return result;
+                }
+            }
         }
     }
 }

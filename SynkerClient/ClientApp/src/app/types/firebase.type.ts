@@ -5,3 +5,10 @@ export default class FirebaseNotification {
   Source: string;
   Level: "info" | "warning" | "error";
 }
+
+export class FirebasePlaylistHealthState {
+  IsOnline:boolean;
+  Id:number;
+  Name:string;
+  MediaCount:number;
+}

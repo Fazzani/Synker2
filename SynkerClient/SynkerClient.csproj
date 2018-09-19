@@ -51,7 +51,7 @@
     <None Remove="ClientApp\src\app\types\auth.type.ts" />
     <None Remove="ClientApp\src\app\types\common.type.ts" />
     <None Remove="ClientApp\src\app\types\elasticQuery.type.ts" />
-    <None Remove="ClientApp\src\app\types\firebase.notification.type.ts" />
+    <None Remove="ClientApp\src\app\types\firebase.type.ts" />
     <None Remove="ClientApp\src\app\types\host.type.ts" />
     <None Remove="ClientApp\src\app\types\matchTvgPostModel.ts" />
     <None Remove="ClientApp\src\app\types\media.type.ts" />
@@ -170,7 +170,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\types\auth.type.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\types\common.type.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\types\elasticQuery.type.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\types\firebase.notification.type.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\types\firebase.type.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\types\host.type.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\types\matchTvgPostModel.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\types\media.type.ts" />

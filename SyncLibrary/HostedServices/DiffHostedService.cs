@@ -69,6 +69,7 @@
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError(ex,ex.Message);
                     await _bus.Publish(new TraceEvent
                     {
                         Message = $"Service: {nameof(DiffHostedService)}: playlistId : {pl.Id}, Exception :{ex.Message}",

@@ -54,6 +54,7 @@
                     .AddScoped<ISitePackService, SitePackService>()
                     .AddScoped<IPlaylistService, PlaylistService>()
                     .AddScoped<IScheduledTask, DiffHostedService>()
+                    .AddScoped<IScheduledTask, PlaylistHealthHostedService>()
                     .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
                     .AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                     .AddSingleton<INotificationService, NotificationService>()

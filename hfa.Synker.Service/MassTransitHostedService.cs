@@ -1,13 +1,9 @@
-﻿using MassTransit;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace hfa.Synker.Service
+﻿namespace hfa.Synker.Service
 {
+    using MassTransit;
+    using Microsoft.Extensions.Hosting;
+    using System.Threading;
+    using System.Threading.Tasks;
     public class MassTransitHostedService : IHostedService
     {
         private readonly IBusControl busControl;

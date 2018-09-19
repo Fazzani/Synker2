@@ -1,21 +1,25 @@
 import { catchError, map } from "rxjs/operators";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { BaseService } from "../base/base.service";
 
 // All the RxJS stuff we need
 import { Observable } from "rxjs";
+import { flatMap } from "rxjs/operators";
 import { HttpHeaders, HttpParams } from "@angular/common/http";
-import { PlaylistModel, PlaylistPostModel } from "../../types/playlist.type";
+import { PlaylistModel, PlaylistPostModel, PlaylistModelLive } from "../../types/playlist.type";
 import { QueryListBaseModel, PagedResult } from "../../types/common.type";
 import { TvgMedia, MediaGroup } from "../../types/media.type";
 import { environment } from "../../../environments/environment";
+import { FirebasePlaylistHealthState } from "../../types/firebase.type";
+import { pipe } from "@angular/core/src/render3/pipe";
 
 @Injectable({
   providedIn: "root"
 })
 export class PlaylistService extends BaseService {
-  constructor(protected http: HttpClient) {
+  constructor(protected http: HttpClient, private db: AngularFireDatabase) {
     super(http);
     this._baseUrl = "playlists";
   }
@@ -39,6 +43,20 @@ export class PlaylistService extends BaseService {
       map(this.handleSuccess),
       catchError(this.handleError)
     );
+  }
+
+  /**
+  * playlist list with live status from firebase
+  */
+  listWithHealthStatus(query: QueryListBaseModel): Observable<PagedResult<PlaylistModelLive>> {
+    // return this.http.post(`${environment.base_api_url}${this._baseUrl}/search`, query)
+    // .pipe<Observable<PlaylistModel>>(
+    //   map(this.handleSuccess),
+    //   flatMap(x => this.db.list<FirebasePlaylistHealthState>(`/playlisthealthstate/${x.id}`, ref => ref.limitToFirst(50).orderByKey()))
+    //     .pipe(map(s=> { ...x, s })),
+    //   catchError(this.handleError)
+    // );
+    return null;
   }
 
   synk(model: PlaylistPostModel): Observable<PlaylistModel> {

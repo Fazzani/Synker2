@@ -6,6 +6,7 @@ using hfa.PlaylistBaseLibrary.Providers;
 using System;
 using PlaylistManager.Entities;
 using System.IO;
+using hfa.Brokers.Messages;
 
 namespace hfa.Synker.Service.Services.Playlists
 {
@@ -41,5 +42,12 @@ namespace hfa.Synker.Service.Services.Playlists
         /// <returns></returns>
         List<TvgMedia> ExecuteHandlersAsync(List<TvgMedia> tvgmedias, CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Get playlist health state
+        /// </summary>
+        /// <param name="pl"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<PlaylistHealthState> HealthAsync(Playlist pl, CancellationToken cancellationToken);
     }
 }
