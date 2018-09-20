@@ -55,7 +55,7 @@ export class PlaylistService extends BaseService {
     return merge(promises).pipe(
       flatMap(x => x),
       filter(x => x != null),
-       map(x => <PlaylistModelLive>{ id: x.Id, isOnline: x.IsOnline, MediaCount: x.MediaCount, freindlyname: x.Name }));
+       map(x => <PlaylistModelLive>{ id: x.Id, isOnline: x.IsOnline, mediaCount: x.MediaCount, freindlyname: x.Name }));
   }
 
   synk(model: PlaylistPostModel): Observable<PlaylistModel> {

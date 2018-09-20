@@ -98,7 +98,7 @@ export class PlaylistModelLive {
   public static PROVIDERS: string[] = Object.keys(Providers).slice(Object.keys(Providers).length / 2);
   public static SYNKGROUP: string[] = Object.keys(SynkGroupEnum).slice(Object.keys(SynkGroupEnum).length / 2);
   public isOnline: boolean;
-  public MediaCount: number;
+  public mediaCount: number;
 }
 
 export class PlaylistPostModel {
