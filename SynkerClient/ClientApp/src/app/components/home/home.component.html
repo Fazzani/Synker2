@@ -2,26 +2,26 @@
   <mat-tab-group>
     <mat-tab label="Playlists">
       <div fxLayout="row wrap">
-        <mat-card color="primary" *ngFor="let playlist of playlists?.results" class="hoverable" fxFlex.gt-md="20" fxFlex.md="28"
-          fxFlex.sm="40" fxFlex.xs="100">
+        <mat-card color="primary" *ngFor="let playlist of playlists?.results" class="hoverable" fxFlex.gt-md="20" fxFlex.md="28" fxFlex.sm="40" fxFlex.xs="100">
           <mat-card-header>
             <mat-card-title>{{ playlist.freindlyname }}</mat-card-title>
             <span class="mat-header-button-actions">
               <button color="primary" mat-icon-button class="secondary-content" color="warn" (click)="delete(playlist)" i18n>
                 <mat-icon class="md-24" aria-label="Delete Playlist">delete</mat-icon>
               </button>
-              <a mat-icon-button class="secondary-content" [attr.href]="null" (click)="copyPublicLink(playlist.publicUrl)" ngxClipboard
-                [cbContent]="playlist.publicUrl" i18n>
+              <a mat-icon-button class="secondary-content" [attr.href]="null" (click)="copyPublicLink(playlist.publicUrl)" ngxClipboard [cbContent]="playlist.publicUrl" i18n>
                 <mat-icon class="md-24" aria-label="Copy url">content_copy</mat-icon>
               </a>
               <a mat-icon-button class="secondary-content" [routerLink]="['/playlist', playlist.publicId, 'groups']" i18n>
-              <mat-icon class="md-24" aria-label="Groups">group_work</mat-icon>
-            </a>
+                <mat-icon class="md-24" aria-label="Groups">group_work</mat-icon>
+              </a>
+              <a mat-icon-button class="secondary-content">
+                <mat-icon  [ngClass]="{'md-inactive': !playlist.isOnline}" class="md-24" aria-label="{playlist.isOnline?'online':'offline'}">{{playlist.isOnline?"wifi":"wifi_off"}}</mat-icon>
+              </a>
             </span>
           </mat-card-header>
           <mat-card-content class="small-text" [routerLink]="['/playlist', playlist.publicId]">
             <ng-container>
-              <span ng-class="{'online': playlist.isOnline, 'offline': !playlist.isOnline, 'playlistonline': true}"></span>
               <p>{{playlist.createdDate | date:'medium'}}</p>
               <p>{{playlist.updatedDate | date:'medium'}}</p>
             </ng-container>

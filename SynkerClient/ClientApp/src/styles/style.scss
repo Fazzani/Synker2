@@ -1,5 +1,9 @@
 @import '_variables';
+
+.material-icons.md-inactive { color: #ff0000; }
+
 .docs-button {
+
   &[mat-button],
   &[mat-raised-button] {
     text-transform: uppercase;
@@ -28,14 +32,17 @@ img {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
   -ms-interpolation-mode: nearest-neighbor;
+
   &.logo-medium {
     max-height: 80px;
   }
+
   &.logo-grid {
     width: 33% !important;
     height: 33px;
     max-width: 100px !important;
   }
+
   &.logo-small {
     max-height: 30px;
   }
@@ -43,9 +50,11 @@ img {
 
 .site-container {
   margin: 56px;
+
   form {
     margin-top: 80px;
   }
+
   .mat-table {
     margin-bottom: 56px;
   }
@@ -121,20 +130,25 @@ app-navbar {
 }
 
 mat-dialog-container {
+
   .addnewplaylist,
   .mat-dialog-container {
     form {
       display: flex;
       flex-direction: column;
     }
+
     .mat-dialog-content {
       overflow: auto !important;
     }
+
     height: inherit;
   }
+
   .action-row-bottom {
     align-self: flex-end;
   }
+
   .mat-card-content {
     display: flex;
     flex-direction: column;
@@ -156,14 +170,17 @@ mat-dialog-container {
   flex-direction: row;
   width: 100%;
   justify-content: flex-end;
+
   .page-select {
     display: flex;
     align-items: center;
     font-size: 12px;
+
     .label {
       margin: 0 4px;
       width: 100%;
     }
+
     .mat-form-field {
       flex-grow: initial;
     }
@@ -188,9 +205,11 @@ mat-slide-toggle {
   .mat-figure {
     justify-content: flex-start !important;
     color: $primary-color-font;
+
     &:hover {
       transition: ease .5s background-color;
     }
+
     .group-name,
     a {
       padding-left: 5px;
@@ -210,17 +229,20 @@ mat-slide-toggle {
 .mat-card {
   opacity: 0.7;
   transform: scale(0.95);
+
   .mat-header-button-actions {
     position: absolute;
     right: 5px;
     top: 15px;
   }
+
   &.hoverable:hover {
     transition: ease-out opacity 0.7s, linear transform 0.2s;
     opacity: 1;
     cursor: pointer;
     transform: scale(1);
   }
+
   mat-card-content {
     outline: none;
   }

@@ -9,7 +9,7 @@ import { HubConnection, HubConnectionBuilder } from "@aspnet/signalr";
 import { CommonService } from "../common/common.service";
 import { AuthService } from "../auth/auth.service";
 import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
-import FirebaseNotification from "../../types/firebase.notification.type";
+import FirebaseNotification from "../../types/firebase.type";
 
 @Injectable({
   providedIn: 'root',

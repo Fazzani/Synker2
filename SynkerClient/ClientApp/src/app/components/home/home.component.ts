@@ -9,6 +9,7 @@ import { ClipboardService } from "ngx-clipboard";
 import { PlaylistAddDialog } from "../dialogs/playlistAddNew/playlist.add.component";
 import { PlaylistInfosDialog } from "../dialogs/playlistInfos/playlist.infos.component";
 import { ActivatedRoute } from "@angular/router";
+import { delay } from "q";
 
 @Component({
   selector: "home",

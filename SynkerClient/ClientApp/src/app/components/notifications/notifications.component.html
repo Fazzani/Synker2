@@ -2,7 +2,7 @@
     <mat-card *ngFor="let notif of notifications$ | async">
         <mat-card-header>
             <mat-card-title>{{ notif.title }}</mat-card-title>
-            <mat-card-subtitle>{{notif.Date | date:'dd/MM/yyyy'}}</mat-card-subtitle>
+            <mat-card-subtitle>{{ notif.Date }}</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
             <ng-container>

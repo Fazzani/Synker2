@@ -15,7 +15,7 @@ import { AuthorizedRouteGuard } from "../../../services/auth/authorizedRouteGuar
 import { InitAppService } from "../../../services/initApp/InitAppService";
 import { AboutApplication } from "../../../types/aboutApplication.type";
 import { NotificationService } from "../../../services/notification/notification.service";
-import FirebaseNotification from "../../../types/firebase.notification.type";
+import FirebaseNotification from "../../../types/firebase.type";
 
 @Component({
   selector: "app-navbar",

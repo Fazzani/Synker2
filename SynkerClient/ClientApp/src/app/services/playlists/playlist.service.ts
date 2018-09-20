@@ -52,7 +52,10 @@ export class PlaylistService extends BaseService {
       //console.warn(`playlist to watch from firebase: ${JSON.stringify(pl)}`);
       return this.db.object<FirebasePlaylistHealthState>(`/playlisthealthstate/${pl.id}`).valueChanges();
     });
-    return merge(promises).pipe(flatMap(x => x), filter(x => x != null), map(x => <PlaylistModelLive>{ id: x.Id, isOnline: x.IsOnline, MediaCount: x.MediaCount, freindlyname: x.Name }));
+    return merge(promises).pipe(
+      flatMap(x => x),
+      filter(x => x != null),
+       map(x => <PlaylistModelLive>{ id: x.Id, isOnline: x.IsOnline, MediaCount: x.MediaCount, freindlyname: x.Name }));
   }
 
   synk(model: PlaylistPostModel): Observable<PlaylistModel> {
