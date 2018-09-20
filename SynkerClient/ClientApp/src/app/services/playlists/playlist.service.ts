@@ -1,11 +1,11 @@
-import { catchError, map } from "rxjs/operators";
+import { catchError, map, combineLatest, filter } from "rxjs/operators";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { BaseService } from "../base/base.service";
 
 // All the RxJS stuff we need
-import { Observable } from "rxjs";
+import { Observable, from, forkJoin, of, merge } from "rxjs";
 import { flatMap } from "rxjs/operators";
 import { HttpHeaders, HttpParams } from "@angular/common/http";
 import { PlaylistModel, PlaylistPostModel, PlaylistModelLive } from "../../types/playlist.type";
@@ -13,7 +13,6 @@ import { QueryListBaseModel, PagedResult } from "../../types/common.type";
 import { TvgMedia, MediaGroup } from "../../types/media.type";
 import { environment } from "../../../environments/environment";
 import { FirebasePlaylistHealthState } from "../../types/firebase.type";
-import { pipe } from "@angular/core/src/render3/pipe";
 
 @Injectable({
   providedIn: "root"
@@ -48,15 +47,12 @@ export class PlaylistService extends BaseService {
   /**
   * playlist list with live status from firebase
   */
-  listWithHealthStatus(query: QueryListBaseModel): Observable<PagedResult<PlaylistModelLive>> {
-    // return this.http.post(`${environment.base_api_url}${this._baseUrl}/search`, query)
-    // .pipe<Observable<PlaylistModel>>(
-    //   map(this.handleSuccess),
-    //   flatMap(x => this.db.list<FirebasePlaylistHealthState>(`/playlisthealthstate/${x.id}`, ref => ref.limitToFirst(50).orderByKey()))
-    //     .pipe(map(s=> { ...x, s })),
-    //   catchError(this.handleError)
-    // );
-    return null;
+  listWithHealthStatus(playlistsToWatch: PlaylistModelLive[]): Observable<PlaylistModelLive> {
+    const promises = playlistsToWatch.map(pl => {
+      //console.warn(`playlist to watch from firebase: ${JSON.stringify(pl)}`);
+      return this.db.object<FirebasePlaylistHealthState>(`/playlisthealthstate/${pl.id}`).valueChanges();
+    });
+    return merge(promises).pipe(flatMap(x => x), filter(x => x != null), map(x => <PlaylistModelLive>{ id: x.Id, isOnline: x.IsOnline, MediaCount: x.MediaCount, freindlyname: x.Name }));
   }
 
   synk(model: PlaylistPostModel): Observable<PlaylistModel> {
@@ -207,7 +203,7 @@ export class PlaylistService extends BaseService {
    * @param id playlist id
    * @param group group name
    */
-  childrenGroups(id: string, group:string): Observable<TvgMedia[]> {
+  childrenGroups(id: string, group: string): Observable<TvgMedia[]> {
 
     return this.http
       .get(`${environment.base_api_url}${this._baseUrl}/${id}/groups/${group}`)

@@ -21,6 +21,7 @@
           </mat-card-header>
           <mat-card-content class="small-text" [routerLink]="['/playlist', playlist.publicId]">
             <ng-container>
+              <span ng-class="{'online': playlist.isOnline, 'offline': !playlist.isOnline, 'playlistonline': true}"></span>
               <p>{{playlist.createdDate | date:'medium'}}</p>
               <p>{{playlist.updatedDate | date:'medium'}}</p>
             </ng-container>

@@ -3,7 +3,7 @@ import { switchMap, filter } from "rxjs/operators";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { PlaylistService } from "../../services/playlists/playlist.service";
 import { MatDialog, MatSnackBar } from "@angular/material";
-import { PlaylistModel } from "../../types/playlist.type";
+import { PlaylistModel, PlaylistModelLive } from "../../types/playlist.type";
 import { QueryListBaseModel, PagedResult } from "../../types/common.type";
 import { ClipboardService } from "ngx-clipboard";
 import { PlaylistAddDialog } from "../dialogs/playlistAddNew/playlist.add.component";
@@ -15,8 +15,8 @@ import { ActivatedRoute } from "@angular/router";
   templateUrl: "./home.component.html"
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  playlists: PagedResult<PlaylistModel> = <PagedResult<PlaylistModel>>{
-    results: new Array<PlaylistModel>()
+  playlists: PagedResult<PlaylistModelLive> = <PagedResult<PlaylistModelLive>>{
+    results: new Array<PlaylistModelLive>()
   };
   query: QueryListBaseModel;
 
@@ -26,11 +26,17 @@ export class HomeComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
     private clipboardService: ClipboardService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.query = <QueryListBaseModel>{ pageNumber: 0, pageSize: 20 };
-    this.playlists = <PagedResult<PlaylistModel>>this.route.snapshot.data.data;
+    this.playlists = <PagedResult<PlaylistModelLive>>this.route.snapshot.data.data;
+    this.playlistService.listWithHealthStatus(this.playlists.results.map(x => <PlaylistModelLive>{ ...x }))
+      .subscribe(res => {
+        console.log(`playlist health state changed =>${JSON.stringify(res)}`);
+        let pl = this.playlists.results.find(p => p.id == res.id);
+        Object.assign(pl, res);
+      });
   }
 
   openPlaylistInfosDialog(playlist: PlaylistModel): void {
@@ -40,7 +46,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  share(playlist: PlaylistModel): void {}
+  share(playlist: PlaylistModel): void { }
 
   copyPublicLink(link: string): void {
     if (this.clipboardService.isSupported) this.clipboardService.copyFromContent(link);
