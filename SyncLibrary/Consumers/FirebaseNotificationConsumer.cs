@@ -83,7 +83,7 @@
                 });
 
                 await firebase
-                 .Child($"{nameof(PlaylistHealthState)}/{context.Message.Id}")
+                 .Child($"{nameof(PlaylistHealthState).ToLowerInvariant()}/{context.Message.Id}")
                  .PutAsync(context.Message);
             }
             catch (Exception e)
