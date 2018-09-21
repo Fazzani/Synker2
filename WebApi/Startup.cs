@@ -23,7 +23,6 @@ using hfa.WebApi.Common.Auth;
 using hfa.WebApi.Common.Filters;
 using hfa.WebApi.Common.Middlewares;
 using hfa.WebApi.Common.Swagger;
-using hfa.WebApi.Consumers;
 using hfa.WebApi.Http;
 using hfa.WebApi.Hubs;
 using hfa.WebApi.Services;
@@ -442,13 +441,13 @@ namespace hfa.WebApi
         /// <param name="services"></param>
         private void ConfigureRabbitMQ(IServiceCollection services)
         {
-            services.AddScoped<DiffPlaylistConsumer>();
-            services.AddScoped<TraceConsumer>();
+            //services.AddScoped<DiffPlaylistConsumer>();
+            //services.AddScoped<TraceConsumer>();
 
             services.AddMassTransit(x =>
             {
-                x.AddConsumer<DiffPlaylistConsumer>();
-                x.AddConsumer<TraceConsumer>();
+               // x.AddConsumer<DiffPlaylistConsumer>();
+                // x.AddConsumer<TraceConsumer>();
             });
 
             services.AddSingleton(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>

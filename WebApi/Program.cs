@@ -13,25 +13,25 @@ namespace Web
         public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
           .SetBasePath(Directory.GetCurrentDirectory())
           .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-          .AddUserSecrets<Startup>()
           .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true, reloadOnChange: true)
+          .AddUserSecrets<Startup>()
           .AddEnvironmentVariables()
           .Build();
 
         public static int Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(Configuration)
-                .Enrich.FromLogContext()
+                .ReadFrom
+                .Configuration(Configuration)
+                .Enrich
+                .FromLogContext()
                 .WriteTo.Console()
                 .CreateLogger();
 
             try
             {
                 Log.Information("Getting the motors running...");
-
                 BuildWebHost(args).Run();
-
                 return 0;
             }
             catch (Exception ex)

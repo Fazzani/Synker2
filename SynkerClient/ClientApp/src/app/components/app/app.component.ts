@@ -27,7 +27,6 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private swPush: SwPush,
     private swUpdate: SwUpdate,
-    private notifService: NotificationService,
     public snackBar: MatSnackBar,
     private deviceService: DeviceService,
     private commonService: CommonService,
@@ -36,15 +35,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private overlayContainer: OverlayContainer
   ) {
     this.objLoaderStatus = false;
-    this.notifService.messages.subscribe(
-      m => {
-        if (m != null) {
-          console.log("new message ", m);
-          this.commonService.info(`New message ${m.messageType}`, m.content);
-        }
-      },
-      error => console.warn(error)
-    );
+    
     this.loading = true;
   }
 

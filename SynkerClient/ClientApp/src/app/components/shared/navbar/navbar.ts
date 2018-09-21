@@ -8,7 +8,6 @@ import { User } from "../../../types/auth.type";
 import { AuthService } from "../../../services/auth/auth.service";
 import { BehaviorSubject, Subscription, Observable } from "rxjs";
 import { EqualValidator } from "../../../directives/equal-validator.directive";
-import { MessageService } from "../../../services/message/message.service";
 import { AuthorizedRouteGuard } from "../../../services/auth/authorizedRouteGuard.service";
 import { InitAppService } from "../../../services/initApp/InitAppService";
 import { AboutApplication } from "../../../types/aboutApplication.type";
@@ -30,7 +29,7 @@ export class NavBar implements OnInit, OnDestroy {
   @Output() onWebPushClicked = new EventEmitter();
   notificationsCount$: Observable<number>;
 
-  constructor(private authService: AuthService, private messageService: MessageService, public authorizedGuard: AuthorizedRouteGuard,
+  constructor(private authService: AuthService, public authorizedGuard: AuthorizedRouteGuard,
     private initAppService: InitAppService, private notificationService: NotificationService) {
     this.isAuthenticated = this.authService.authenticated;
     this.user = this.authService.user;
