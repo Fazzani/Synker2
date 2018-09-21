@@ -10,8 +10,6 @@ namespace Web
 {
     public class Program
     {
-        public static IWebHostBuilder SynkerWebHostBuilder;
-
         public static IConfiguration Configuration { get; } = new ConfigurationBuilder()
           .SetBasePath(Directory.GetCurrentDirectory())
           .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -39,13 +37,12 @@ namespace Web
             catch (Exception ex)
             {
                 Log.Fatal(ex, "Host terminated unexpectedly");
-                return 1;
+                return -1;
             }
             finally
             {
                 Log.CloseAndFlush();
             }
-
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
