@@ -30,7 +30,7 @@
         {
             try
             {
-                _logger.LogInformation($"{nameof(RabbitSynchronizeConsumer)}: new mail poped from the queue {context.CorrelationId}. Received message: {context.Message.ToString()}");
+                _logger.LogInformation($"{nameof(RabbitSynchronizeConsumer)}: new message poped from the queue {context.CorrelationId}. Received message: {context.Message.ToString()}");
                 var playlist = await _playlistService.SynkPlaylistAsync(context.Message.Id);
                 var eventMessage = $"The playlist {playlist.Id}:{playlist.Freindlyname} was synchronized. Total media count: {playlist.TvgMedias.Count}";
 

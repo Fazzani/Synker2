@@ -129,9 +129,10 @@
             var (tvgMedia, removed) = await DiffWithSourceAsync(() => playlistEntity, provider, true, cancellationToken);
 
             var changed = false;
+
             if (removed != null && removed.Any())
             {
-                playlistEntity.TvgMedias.RemoveAll(x => removed.Any(r => r == x));
+                playlistEntity.TvgMedias.RemoveAll(x => removed.Any(r => r.Id == x.Id));
                 changed = true;
             }
             if (tvgMedia != null && tvgMedia.Any())
@@ -139,12 +140,11 @@
                 playlistEntity.TvgMedias.AddRange(tvgMedia);
                 changed = true;
             }
-
             if (changed)
             {
-                await _dbcontext.SaveChangesAsync(cancellationToken);
+                playlistEntity.TvgMedias = playlistEntity.TvgMedias;
+                var resRq = await _dbcontext.SaveChangesAsync(cancellationToken);
             }
-
             return playlistEntity;
         }
 
@@ -210,7 +210,7 @@
                     return (new List<TvgMedia>(), pl.TvgMedias ?? new List<TvgMedia>());
                 }
 
-                return (sourceList.Where(s => pl.TvgMedias.All(t => t.Url != s.Url)), pl.TvgMedias.Where(s => sourceList.All(t => t.Url != s.Url)));
+                return (sourceList.Where(s => pl.TvgMedias.All(t => t.Url != s.Url)).ToList(), pl.TvgMedias.Where(s => sourceList.All(t => t.Url != s.Url)).ToList());
             }
         }
 
@@ -241,7 +241,7 @@
             {
                 Id = pl.Id,
                 Name = pl.Freindlyname,
-                MediaCount = pl.TvgMedias?.Count??0,
+                MediaCount = pl.TvgMedias?.Count ?? 0,
                 IsOnline = false,
             };
             using (var client = new HttpClient())
