@@ -35,6 +35,8 @@
         /// Notification of new inserted Medias
         /// </summary>
         public NotificationTypeEnum? NotifcationTypeInsertedMedia { get; set; }
+
+        public bool AutoSynchronize { get; set; } = true;
     }
 
     public enum SynkGroupEnum : byte

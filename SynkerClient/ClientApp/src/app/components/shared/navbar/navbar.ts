@@ -9,8 +9,6 @@ import { AuthService } from "../../../services/auth/auth.service";
 import { BehaviorSubject, Subscription, Observable } from "rxjs";
 import { EqualValidator } from "../../../directives/equal-validator.directive";
 import { MessageService } from "../../../services/message/message.service";
-import { Message, MessageStatus } from "../../../types/message.type";
-import { PagedResult } from "../../../types/common.type";
 import { AuthorizedRouteGuard } from "../../../services/auth/authorizedRouteGuard.service";
 import { InitAppService } from "../../../services/initApp/InitAppService";
 import { AboutApplication } from "../../../types/aboutApplication.type";
@@ -27,7 +25,6 @@ export class NavBar implements OnInit, OnDestroy {
   isAuthenticated: BehaviorSubject<boolean>;
   user: BehaviorSubject<User>;
   userSubscription: Subscription;
-  messages: PagedResult<Message>;
   notifications$: Observable<FirebaseNotification[]>;
   @Output() onThemeChanged = new EventEmitter();
   @Output() onWebPushClicked = new EventEmitter();
@@ -45,10 +42,6 @@ export class NavBar implements OnInit, OnDestroy {
     this.userSubscription = this.user.subscribe(user => {
       if (user != undefined) {
         console.log(`User ${user.firstName} is authenticated...${user.id}`);
-        //this.messageService.listByStatus([MessageStatus.None, MessageStatus.NotReaded], 0, 10).subscribe(msg => {
-        //  this.messages = msg;
-        //});
-
         this.notifications$ = this.notificationService.list(user.id, 5).valueChanges();
         this.notificationsCount$ = this.notificationService.count();
       }

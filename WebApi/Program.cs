@@ -32,8 +32,7 @@ namespace Web
             {
                 Log.Information("Getting the motors running...");
 
-                SynkerWebHostBuilder = BuildWebHost(args);
-                SynkerWebHostBuilder.Build().Run();
+                BuildWebHost(args).Run();
 
                 return 0;
             }
@@ -49,12 +48,13 @@ namespace Web
 
         }
 
-        public static IWebHostBuilder BuildWebHost(string[] args) =>
+        public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseKestrel()
                 .UseSerilog()
-                .UseUrls("http://*:56800");
+                .UseUrls("http://*:56800")
+            .Build();
                
     }
 }

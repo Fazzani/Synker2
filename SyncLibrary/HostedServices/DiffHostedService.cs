@@ -78,7 +78,6 @@
                             NewMedias = tvgMedia.Take(10)
                         }, cancellationToken);
                     }
-
                 }
                 catch (Exception ex)
                 {

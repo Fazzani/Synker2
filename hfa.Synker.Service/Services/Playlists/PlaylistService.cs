@@ -108,8 +108,8 @@
 
             if (playlistEntity == null)
                 throw new ArgumentNullException($"Playlist not found");
-            if (!playlistEntity.IsSynchronizable)
-                throw new ApplicationException($"Playlist isn't synchronizable");
+            if (!playlistEntity.IsSynchronizable || playlistEntity.SynkConfig.AutoSynchronize)
+                throw new ApplicationException($"Playlist isn't synchronizable or not auto synchrizable is disabled");
 
             PlaylistProvider<Playlist<TvgMedia>, TvgMedia> provider = null;
             try

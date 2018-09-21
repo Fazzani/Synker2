@@ -34,7 +34,6 @@ import { MatchTvgDialog } from "./components/dialogs/matchTvg/matchTvg.component
 import { RegisterComponent, RegisterDialog } from "./components/dialogs/auth/RegisterDialog";
 import { LoginDialog } from "./components/dialogs/auth/LoginDialog";
 import { PlaylistInfosDialog } from "./components/dialogs/playlistInfos/playlist.infos.component";
-import { MessagesComponent } from "./components/messages/messages.component";
 import { UserComponent } from "./components/user/user.component";
 import { AppRoutingModule } from "./app.module.routing";
 import { LoaderComponent } from "./components/shared/loader/loader.component";
@@ -43,7 +42,6 @@ import { BrowserModule } from "@angular/platform-browser";
 import { InitAppService } from "./services/initApp/InitAppService";
 import { GroupComponent } from "./components/group/group.component";
 import { PlaylistDetailResolver } from "./components/playlist/playlist.resolver";
-import { MessagesResolver } from "./components/messages/messages.resolver";
 import { UsersResolver } from "./components/admin/users/users.resolver";
 import { HostsResolver } from "./components/admin/hosts/hosts.resolver";
 import { HomeResolver } from "./components/home/home.resolver";
@@ -73,7 +71,6 @@ export function getAboutApplication(initService: InitAppService) {
     EpgComponent,
     XmltvComponent,
     UserComponent,
-    MessagesComponent,
     NotificationsComponent,
     GroupComponent,
     LoaderComponent,
@@ -163,7 +160,6 @@ export function getAboutApplication(initService: InitAppService) {
       deps: [InitAppService]
     },
     PlaylistDetailResolver,
-    MessagesResolver,
     HostsResolver,
     UsersResolver,
     HomeResolver

@@ -3,10 +3,8 @@ using hfa.synker.entities.Notifications;
 using hfa.Synker.Service.Entities;
 using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Service.Entities.Playlists;
-using hfa.Synker.Services.Entities.Messages;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,7 +17,6 @@ namespace hfa.Synker.Services.Dal
 
         public DbSet<Role> Roles { get; set; }
 
-        public DbSet<Message> Messages { get; set; }
         public DbSet<Device> Devices { get; set; }
 
         public DbSet<Command> Command { get; set; }
@@ -30,9 +27,10 @@ namespace hfa.Synker.Services.Dal
 
         public DbSet<WebGrabConfigDocker> WebGrabConfigDockers { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    base.OnConfiguring(optionsBuilder);
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -56,7 +54,6 @@ namespace hfa.Synker.Services.Dal
             .IsUnique();
 
             modelBuilder.Entity<Playlist>().OwnsOne(x => x.SynkConfig);
-
 
             modelBuilder.Entity<UserRole>().HasKey(pc => new { pc.UserId, pc.RoleId });
 
