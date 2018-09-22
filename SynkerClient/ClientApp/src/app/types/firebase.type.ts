@@ -6,6 +6,7 @@ export default class FirebaseNotification {
   Level: "info" | "warning" | "error";
   Key: string;
   UnixTimestamp: number;
+  UserId: number;
 }
 
 export class FirebasePlaylistHealthState {
