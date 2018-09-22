@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { map, share } from "rxjs/operators";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
@@ -34,14 +34,14 @@ export class NotificationService extends BaseService {
   }
 
   public list(userId: number, limit: number = 10): AngularFireList<FirebaseNotification> {
-    return this.db.list<FirebaseNotification>(`/notifications/${userId}`, ref => ref.limitToFirst(limit).orderByKey());
+    return this.db.list<FirebaseNotification>(`/notifications/${userId}`, ref => ref.limitToFirst(limit).orderByChild('UnixTimestamp'));
   }
 
-  public count(): Observable<number> {
+  public count(userId:number): Observable<number> {
     return this.db
-      .list<FirebaseNotification>("/notifications")
+      .list<FirebaseNotification>(`/notifications/${userId}`)
       .valueChanges()
-      .pipe(map(x => x.length));
+      .pipe(map(x => x.length), share());
   }
 
   public remove(userId: number, key: string) {

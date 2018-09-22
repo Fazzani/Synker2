@@ -1,12 +1,17 @@
 <div class="site-container">
   <div id="content">
     <h1>Notifications Timeline</h1>
-    <button mat-icon-button (click)="markAllAsRead()" class="pull-right">
-      <mat-icon>done_all</mat-icon>
-    </button>
+    <div class="toolbar" *ngIf="notifications$ | async; else loading">
+      <span class="title">
+        {{notificationsCount$ | async}} notification(s) not readed yet
+      </span>
+      <button mat-icon-button (click)="markAllAsRead()" matTooltip="Mark all as read">
+        <mat-icon aria-label="Mark as all read">done_all</mat-icon>
+      </button>
+    </div>
     <ul class="timeline">
       <li class="event" *ngFor="let notif of notifications$ | async" attr.data-date="{{notif.Date}}">
-        <h3>{{notif.Title}}  <button mat-icon-button color="accent" class="pull-right" (click)="markAsRead(notif)">
+        <h3>{{notif.Title}} <button mat-icon-button color="accent" class="pull-right" (click)="markAsRead(notif)">
             <mat-icon aria-label="Mark as read">clear</mat-icon>
           </button></h3>
         <p>{{notif.Body}} </p>
@@ -14,4 +19,3 @@
     </ul>
   </div>
 </div>
-

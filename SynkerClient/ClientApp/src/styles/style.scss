@@ -1,6 +1,8 @@
 @import '_variables';
 
-.material-icons.md-inactive { color: #ff0000; }
+.material-icons.md-inactive {
+  color: #ff0000;
+}
 
 .docs-button {
 
@@ -248,9 +250,10 @@ mat-slide-toggle {
   }
 }
 
-.text-muted{
+.text-muted {
   opacity: 0.5;
 }
+
 .small-text {
   font-size: 10px;
   color: aliceblue;
@@ -320,19 +323,21 @@ $dotborder: 4px;
 $dot: 11px;
 $line: 4px;
 
-$font-title: 'Saira', sans-serif;
-$font-text: 'Chivo', sans-serif;
+$font-title: 'Saira',
+sans-serif;
+$font-text: 'Chivo',
+sans-serif;
 
 strong {
   font-weight: 600;
 }
 
 h1 {
- font-family: $font-title;
- letter-spacing: 1.5px;
- color: $primary-color-font;
- font-weight: 400;
- font-size: 2.4em;
+  font-family: $font-title;
+  letter-spacing: 1.5px;
+  color: $primary-color-font;
+  font-weight: 400;
+  font-size: 2.4em;
 }
 
 #content {
@@ -341,6 +346,23 @@ h1 {
 }
 
 /* Timeline */
+.toolbar {
+  display: block;
+  min-height: 50px;
+  border-bottom: $line solid $color-primary;
+  max-width: 30%;
+  margin: 0 auto;
+  line-height: 2.5em;
+  text-shadow: 2px 2px #020202;
+  button {
+    float: right;
+  }
+
+  title {
+    text-align: left !important;
+
+  }
+}
 
 .timeline {
   border-left: $line solid $color-primary;
@@ -348,7 +370,7 @@ h1 {
   border-top-right-radius: $radius;
   color: opacify($primary-color-font, .8);
   font-family: $font-text;
-  margin: $spacing auto;
+  margin: 0 auto;
   letter-spacing: 0.5px;
   position: relative;
   line-height: 1.4em;
@@ -360,17 +382,18 @@ h1 {
   max-width: 30%;
 
   h1 {
-   font-family: $font-title;
-   letter-spacing: 1.5px;
-   font-weight: 100;
-   font-size: 1.4em;
+    font-family: $font-title;
+    letter-spacing: 1.5px;
+    font-weight: 100;
+    font-size: 1.4em;
   }
 
-  h2, h3 {
-   font-family: $font-title;
-   letter-spacing: 1.5px;
-   font-weight: 400;
-   font-size: 1.4em;
+  h2,
+  h3 {
+    font-family: $font-title;
+    letter-spacing: 1.5px;
+    font-weight: 400;
+    font-size: 1.4em;
   }
 
   .event {
@@ -383,7 +406,8 @@ h1 {
       border: none;
     }
 
-    &:before, &:after {
+    &:before,
+    &:after {
       position: absolute;
       display: block;
       top: 0;
@@ -401,9 +425,9 @@ h1 {
     }
 
     &:after {
-      box-shadow: 0 0 0 $dotborder opacify($primary-color-font,1);
+      box-shadow: 0 0 0 $dotborder opacify($primary-color-font, 1);
       left: ($spacing + $line + ($dot * 0.35)) * -1;
-      background: lighten($background,5%);
+      background: lighten($background, 5%);
       border-radius: 50%;
       height: $dot;
       width: $dot;

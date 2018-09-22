@@ -51,7 +51,7 @@ export class NavBar implements OnInit, OnDestroy {
       if (user != undefined) {
         console.log(`User ${user.firstName} is authenticated...${user.id}`);
         this.notifications$ = this.notificationService.list(user.id, 5).valueChanges();
-        this.notificationsCount$ = this.notificationService.count();
+        this.notificationsCount$ = this.notificationService.count(user.id);
       }
     });
   }

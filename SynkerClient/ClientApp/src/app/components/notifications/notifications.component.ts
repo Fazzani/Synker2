@@ -6,6 +6,7 @@ import { AuthService } from "../../services/auth/auth.service";
 import FirebaseNotification from "../../types/firebase.type";
 import { User } from "../../types/auth.type";
 import { map } from "rxjs/operators";
+import { Observable } from "rxjs";
 
 @Component({
   selector: "notifications",
@@ -14,6 +15,7 @@ import { map } from "rxjs/operators";
 export class NotificationsComponent implements OnInit, OnDestroy {
   notifications$: any;
   user: User;
+  notificationsCount$: Observable<number>;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,6 +31,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         .list(user.id, 100)
         .snapshotChanges()
         .pipe(map(changes => changes.map(c => <FirebaseNotification>{ Key: c.payload.key, ...c.payload.val() })));
+        this.notificationsCount$ = this.notificationService.count(user.id);
     });
   }
 
