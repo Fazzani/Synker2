@@ -31,8 +31,15 @@ export class NotificationsComponent implements OnInit, OnDestroy {
       this.notifications$ = this.notificationService
         .list(user.id, 100)
         .snapshotChanges()
-        .pipe(map(changes => changes.map(c => <FirebaseNotification>{ Key: c.payload.key, Since : moment.utc(c.payload.val().Date).fromNow(), ...c.payload.val() })));
-        this.notificationsCount$ = this.notificationService.count(user.id);
+        .pipe(
+          map(changes =>
+            changes.map(c => {
+              let val = c.payload.val();
+              return <FirebaseNotification>{ Key: c.payload.key, Since: moment.utc(val.Date).fromNow(), ...val };
+            })
+          )
+        );
+      this.notificationsCount$ = this.notificationService.count(user.id);
     });
   }
 
@@ -44,6 +51,5 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     this.notificationService.removeAll(this.user.id);
   }
 
-  ngOnDestroy() {
-  }
+  ngOnDestroy() {}
 }

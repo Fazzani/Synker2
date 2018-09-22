@@ -39,6 +39,7 @@
                 {
                     try
                     {
+                        _logger.LogInformation($"checking Playlist {pl?.Freindlyname} health");
                         var response = await _playlistService.HealthAsync(pl, cancellationToken);
                         await _bus.Publish(new PlaylistHealthEvent
                         {
@@ -53,8 +54,8 @@
                         _logger.LogError(ex, ex.Message);
                         await _bus.Publish(new TraceEvent
                         {
-                            Message = $"playlistId : {pl.Id}, Exception :{ex.Message}",
-                            UserId = pl.UserId,
+                            Message = $"playlistId : {pl?.Id}, Exception :{ex.Message}",
+                            UserId = pl?.UserId ?? -1,
                             Level = TraceEvent.LevelTrace.Error,
                             Source = nameof(PlaylistHealthHostedService)
                         }, cancellationToken);
