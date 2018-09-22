@@ -34,11 +34,12 @@
                 var playlist = await _playlistService.SynkPlaylistAsync(context.Message.Id);
                 var eventMessage = $"The playlist {playlist.Id}:{playlist.Freindlyname} was synchronized. Total media count: {playlist.TvgMedias.Count}";
 
-               await _bus.Publish(new TraceEvent
+                await _bus.Publish(new TraceEvent
                 {
                     Message = eventMessage,
                     Level = TraceEvent.LevelTrace.Info,
-                    UserId = playlist.UserId
+                    UserId = playlist.UserId,
+                    Source = nameof(RabbitSynchronizeConsumer)
                 }, CancellationToken.None);
 
                 _logger.LogInformation(eventMessage);

@@ -53,9 +53,10 @@
                         _logger.LogError(ex, ex.Message);
                         await _bus.Publish(new TraceEvent
                         {
-                            Message = $"Service: {nameof(PlaylistHealthHostedService)}: playlistId : {pl.Id}, Exception :{ex.Message}",
+                            Message = $"playlistId : {pl.Id}, Exception :{ex.Message}",
                             UserId = pl.UserId,
-                            Level = TraceEvent.LevelTrace.Error
+                            Level = TraceEvent.LevelTrace.Error,
+                            Source = nameof(PlaylistHealthHostedService)
                         }, cancellationToken);
                     }
                 });
@@ -65,8 +66,9 @@
                 _logger.LogError(ex, ex.Message);
                 await _bus.Publish(new TraceEvent
                 {
-                    Message = $"Service: {nameof(PlaylistHealthHostedService)}: Exception :{ex.Message}",
+                    Message = $"{ex.Message}",
                     Level = TraceEvent.LevelTrace.Error,
+                    Source = nameof(PlaylistHealthHostedService)
                 }, cancellationToken);
             }
         }

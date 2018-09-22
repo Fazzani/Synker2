@@ -84,9 +84,10 @@
                     _logger.LogError(ex, ex.Message);
                     await _bus.Publish(new TraceEvent
                     {
-                        Message = $"Service: {nameof(DiffHostedService)}: playlistId : {pl.Id}, Exception :{ex.Message}",
+                        Message = $"playlistId : {pl.Id}, Exception :{ex.Message}",
                         UserId = pl.UserId,
-                        Level = TraceEvent.LevelTrace.Error
+                        Level = TraceEvent.LevelTrace.Error,
+                        Source = nameof(DiffHostedService)
                     }, cancellationToken);
                 }
             }

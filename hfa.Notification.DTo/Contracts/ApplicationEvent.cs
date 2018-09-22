@@ -5,6 +5,7 @@
 
     public class ApplicationEvent : CorrelatedBy<Guid>
     {
+        public string Source { get; set; }
         public DateTime CreatedDate
         {
             get

@@ -5,15 +5,11 @@
     using MassTransit;
     using Microsoft.Extensions.Logging;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Firebase.Database;
-    using Firebase.Database.Query;
     using Microsoft.Extensions.Options;
     using hfa.Brokers.Messages.Configuration;
-    using hfa.Brokers.Messages;
 
     /// <summary>
     /// save message into firebase database
@@ -22,12 +18,14 @@
     {
         private readonly ILogger _logger;
         private readonly FirebaseConfiguration _firebaseOptions;
+        private readonly IBusControl _bus;
 
         public RabbitNotificationConsumer(INotificationService notificationService, ILogger<RabbitSynchronizeConsumer> logger,
-            IOptions<FirebaseConfiguration> firebaseOptions)
+            IOptions<FirebaseConfiguration> firebaseOptions, IBusControl bus)
         {
             _logger = logger;
             _firebaseOptions = firebaseOptions.Value;
+            _bus = bus;
         }
 
         public async Task Consume(ConsumeContext<DiffPlaylistEvent> context)
@@ -55,17 +53,13 @@
                 AuthTokenAsyncFactory = () => Task.FromResult(_firebaseOptions.Secret)
             });
 
-            var notif = await firebase
-              .Child($"{FirebaseNotifications.TableName}/{message.UserId}")
-              .PostAsync(new FirebaseNotifications.FirebaseNotification
-              {
-                  Date = DateTime.UtcNow.ToShortDateString(),
-                  Level = FirebaseNotifications.FirebaseNotification.LevelEnum.Info,
-                  Source = "Synker Batch",
-                  Body = $"The Playlist {message.PlaylistName} changment detected. {message.NewMediasCount} new medias wad founded and {message.RemovedMediasCount} was removed.",
-                  Title = $"The Playlist {message.PlaylistName} changment detected"
-              }, true);
-
+            await _bus.Publish(new TraceEvent
+            {
+                Message = $"The Playlist {message.PlaylistName} changment detected. {message.NewMediasCount} new medias wad founded and {message.RemovedMediasCount} was removed.",
+                Level = TraceEvent.LevelTrace.Info,
+                UserId = message.UserId,
+                Source = nameof(RabbitNotificationConsumer)
+            }, CancellationToken.None);
             _logger.LogInformation($"{nameof(RabbitNotificationConsumer)}: Key for the new notification: {notif.Key}");
         }
     }

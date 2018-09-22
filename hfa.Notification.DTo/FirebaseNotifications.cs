@@ -17,11 +17,11 @@ namespace hfa.Brokers.Messages
                 public static string Error = "error";
             }
             public string Body { get; set; }
-            public string Date { get; set; }
+            public string Date { get; set; } = DateTime.UtcNow.ToString();
             public string Level { get; set; }
             public string Source { get; set; }
             public string Title { get; set; }
-            public int UnixTimestamp { get; set; }
+            public int UnixTimestamp { get; set; } = DateTime.UtcNow.ToUnixTimestamp();
             public int UserId { get; set; }
 
             public int Order
