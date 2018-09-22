@@ -7,6 +7,7 @@ export default class FirebaseNotification {
   Key: string;
   UnixTimestamp: number;
   UserId: number;
+  Since: string;
 }
 
 export class FirebasePlaylistHealthState {

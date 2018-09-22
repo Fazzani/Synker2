@@ -7,6 +7,7 @@ import FirebaseNotification from "../../types/firebase.type";
 import { User } from "../../types/auth.type";
 import { map } from "rxjs/operators";
 import { Observable } from "rxjs";
+import * as moment from "moment";
 
 @Component({
   selector: "notifications",
@@ -30,7 +31,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
       this.notifications$ = this.notificationService
         .list(user.id, 100)
         .snapshotChanges()
-        .pipe(map(changes => changes.map(c => <FirebaseNotification>{ Key: c.payload.key, ...c.payload.val() })));
+        .pipe(map(changes => changes.map(c => <FirebaseNotification>{ Key: c.payload.key, Since : moment.utc(c.payload.val().Date).fromNow(), ...c.payload.val() })));
         this.notificationsCount$ = this.notificationService.count(user.id);
     });
   }

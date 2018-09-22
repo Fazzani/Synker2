@@ -29,7 +29,9 @@
               "src/styles/themes.scss",
               "src/styles/style.scss"
             ],
-            "scripts": [ "node_modules/clappr/dist/clappr.min.js" ]
+            "scripts": ["node_modules/clappr/dist/clappr.min.js",
+              "node_modules/moment/min/moment.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -43,12 +45,10 @@
               "vendorChunk": false,
               "buildOptimizer": true,
               "ngswConfigPath": "ngsw-config.json",
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
+              "fileReplacements": [{
+                "replace": "src/environments/environment.ts",
+                "with": "src/environments/environment.prod.ts"
+              }],
               "serviceWorker": true
             }
           }
@@ -78,8 +78,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "scripts": [],
-            "styles": [
-              {
+            "styles": [{
                 "input": "node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
               },
               "node_modules/bootstrap/dist/css/bootstrap.min.css",

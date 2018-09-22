@@ -34,7 +34,7 @@ export class NotificationService extends BaseService {
   }
 
   public list(userId: number, limit: number = 10): AngularFireList<FirebaseNotification> {
-    return this.db.list<FirebaseNotification>(`/notifications/${userId}`, ref => ref.limitToFirst(limit).orderByChild('UnixTimestamp'));
+    return this.db.list<FirebaseNotification>(`/notifications/${userId}`, ref => ref.limitToFirst(limit).orderByChild('Order'));
   }
 
   public count(userId:number): Observable<number> {
