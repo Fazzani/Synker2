@@ -39,7 +39,7 @@
                 {
                     try
                     {
-                        _logger.LogInformation($"checking Playlist {pl?.Freindlyname} health");
+                        _logger.LogInformation($"{nameof(PlaylistHealthHostedService)}: Checking playlist {pl?.Freindlyname} health");
                         var response = await _playlistService.HealthAsync(pl, cancellationToken);
                         await _bus.Publish(new PlaylistHealthEvent
                         {
