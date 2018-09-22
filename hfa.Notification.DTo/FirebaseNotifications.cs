@@ -23,6 +23,11 @@ namespace hfa.Brokers.Messages
             public string Title { get; set; }
             public int UnixTimestamp { get; set; }
             public int UserId { get; set; }
+
+            public int Order
+            {
+                get { return Int32.MaxValue - UnixTimestamp; }
+            }
         }
     }
 

@@ -4,6 +4,14 @@
   color: #ff0000;
 }
 
+.error {
+  color: red;
+}
+
+.pull-right {
+  float: right;
+}
+
 .docs-button {
 
   &[mat-button],
@@ -354,13 +362,13 @@ h1 {
   margin: 0 auto;
   line-height: 2.5em;
   text-shadow: 2px 2px #020202;
+
   button {
     float: right;
   }
 
   title {
     text-align: left !important;
-
   }
 }
 
@@ -373,7 +381,6 @@ h1 {
   margin: 0 auto;
   letter-spacing: 0.5px;
   position: relative;
-  line-height: 1.4em;
   font-size: 1.03em;
   padding: $spacing;
   list-style: none;
