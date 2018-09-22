@@ -25,12 +25,21 @@ export class NavBar implements OnInit, OnDestroy {
   user: BehaviorSubject<User>;
   userSubscription: Subscription;
   notifications$: Observable<FirebaseNotification[]>;
-  @Output() onThemeChanged = new EventEmitter();
-  @Output() onWebPushClicked = new EventEmitter();
+  @Output()
+  onThemeChanged = new EventEmitter();
+  @Output()
+  onWebPushClicked = new EventEmitter();
   notificationsCount$: Observable<number>;
 
-  constructor(private authService: AuthService, public authorizedGuard: AuthorizedRouteGuard,
-    private initAppService: InitAppService, private notificationService: NotificationService) {
+  //TODO: init from localStorage
+  notificationOn: boolean = true;
+
+  constructor(
+    private authService: AuthService,
+    public authorizedGuard: AuthorizedRouteGuard,
+    private initAppService: InitAppService,
+    private notificationService: NotificationService
+  ) {
     this.isAuthenticated = this.authService.authenticated;
     this.user = this.authService.user;
     this.authService.connect();
@@ -60,6 +69,11 @@ export class NavBar implements OnInit, OnDestroy {
     this.authService.signout();
   }
 
+  toggleNotification = () => {
+    this.notificationOn = !this.notificationOn;
+    //TODO disable push and save config to localStorage
+  };
+
   ngOnDestroy(): void {
     this.userSubscription.unsubscribe();
   }
@@ -70,4 +84,4 @@ export class NavBar implements OnInit, OnDestroy {
   exports: [NavBar, EqualValidator],
   declarations: [NavBar, EqualValidator]
 })
-export class NavBarModule { }
+export class NavBarModule {}

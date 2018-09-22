@@ -38,18 +38,10 @@
       <img [src]="(user | async)?.photo" class="img-circle" [alt]="(user | async)?.firstName">
       <span>{{(user | async)?.firstName}} {{(user | async)?.lastName}}</span>
     </button>
-    <button mat-menu-item>
-      <mat-icon>notifications_off</mat-icon>
+    <button mat-menu-item *ngIf="(isAuthenticated | async)" (click)="toggleNotification()">
+      <mat-icon *ngIf="(notificationOn )">notifications_off</mat-icon>
+      <mat-icon *ngIf="(!notificationOn )">notifications_on</mat-icon>
       <span>Disable alerts</span>
-    </button>
-    <button mat-menu-item routerLink="/sitepack" *ngIf="(isAuthenticated | async)" fxHide.gt-sm>
-      <mat-icon>description</mat-icon>
-      <span>Sites Pack</span>
-    </button>
-
-    <button mat-menu-item *ngIf="(isAuthenticated | async)" onClick="window.open('//github.com/Fazzani/Synker2')">
-      <mat-icon>notifications_off</mat-icon>
-      <span>Github</span>
     </button>
     <!-- Mobile actions Menu-->
     <button mat-menu-item routerLink="/epg" *ngIf="(isAuthenticated | async)" fxHide.gt-sm>
@@ -66,15 +58,10 @@
       <span>Admin</span>
     </button>
     <button mat-menu-item [matMenuTriggerFor]="subMenuTheme">Themes</button>
-    <!-- WebPush subscribe -->
+    <!-- Logout -->
     <button mat-menu-item (click)="signout()" *ngIf="(isAuthenticated | async)">
       <mat-icon>power_settings_new</mat-icon>
       <span>Sign out</span>
-    </button>
-    <!-- Logout -->
-    <button mat-menu-item (click)="onClickWebPush()" *ngIf="(isAuthenticated | async)">
-      <mat-icon>add_alert</mat-icon>
-      <span>Notify me</span>
     </button>
   </mat-menu>
   <!-- Themes submenu -->
