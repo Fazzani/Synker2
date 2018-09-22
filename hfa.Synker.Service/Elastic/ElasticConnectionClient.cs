@@ -1,20 +1,21 @@
-﻿using Nest;
-using PlaylistBaseLibrary.Entities;
-using PlaylistManager.Entities;
-using System;
-using Microsoft.Extensions.Logging;
-using hfa.Synker.Service.Elastic;
-using hfa.Synker.Service.Services.Xmltv;
-using Microsoft.Extensions.Options;
-using hfa.Synker.Service.Services.Picons;
-using System.Diagnostics;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace hfa.Synker.Service.Services.Elastic
+﻿namespace hfa.Synker.Service.Services.Elastic
 {
+    using Nest;
+    using PlaylistBaseLibrary.Entities;
+    using PlaylistManager.Entities;
+    using System;
+    using Microsoft.Extensions.Logging;
+    using hfa.Synker.Service.Elastic;
+    using hfa.Synker.Service.Services.Xmltv;
+    using Microsoft.Extensions.Options;
+    using hfa.Synker.Service.Services.Picons;
+    using System.Diagnostics;
+    using System.Text;
+    using System.Threading.Tasks;
+
     public class ElasticConnectionClient : IElasticConnectionClient
     {
+        //Updated from bash script @see synker-docker repository
         public const string SITE_PACK_PIPELINE = "sitepack_pipeline";
         public const string PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE = "picons_retreive_channel_number";
         private const string STOP_WORDS_FILE_PATH = "synkerconfig/stopwords.txt";
