@@ -51,7 +51,7 @@
               .Child($"{message.UserId}")
               .PostAsync(new FirebaseNotifications.FirebaseNotification
               {
-                  Date = message.CreatedDate.ToLongDateString(),
+                  Date = message.CreatedDate.ToString(),
                   Level = GetLevel(message.Level),
                   Source = nameof(TraceEvent),
                   Body = message.Message,
