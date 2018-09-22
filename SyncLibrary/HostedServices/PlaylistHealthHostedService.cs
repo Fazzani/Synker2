@@ -2,12 +2,10 @@
 {
     using global::Synker.Scheduled.HostedServices;
     using hfa.Brokers.Messages.Contracts;
-    using hfa.PlaylistBaseLibrary.Providers;
     using hfa.Synker.Service.Entities.Playlists;
     using hfa.Synker.Service.Services.Playlists;
     using hfa.Synker.Services.Dal;
     using MassTransit;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Linq;
@@ -16,7 +14,7 @@
 
     public class PlaylistHealthHostedService : IScheduledTask
     {
-        private readonly ILogger<DiffHostedService> _logger;
+        private readonly ILogger<PlaylistHealthHostedService> _logger;
         private readonly IPlaylistService _playlistService;
         private readonly SynkerDbContext _dbContext;
         private readonly IBus _bus;
@@ -26,7 +24,7 @@
         public PlaylistHealthHostedService(ILoggerFactory loggerFactory, IPlaylistService playlistService, SynkerDbContext synkerDbContext,
             IBus requestClient)
         {
-            _logger = loggerFactory.CreateLogger<DiffHostedService>();
+            _logger = loggerFactory.CreateLogger<PlaylistHealthHostedService>();
             _playlistService = playlistService;
             _dbContext = synkerDbContext;
             _bus = requestClient;
@@ -55,7 +53,7 @@
                         _logger.LogError(ex, ex.Message);
                         await _bus.Publish(new TraceEvent
                         {
-                            Message = $"Service: {nameof(DiffHostedService)}: playlistId : {pl.Id}, Exception :{ex.Message}",
+                            Message = $"Service: {nameof(PlaylistHealthHostedService)}: playlistId : {pl.Id}, Exception :{ex.Message}",
                             UserId = pl.UserId,
                             Level = TraceEvent.LevelTrace.Error
                         }, cancellationToken);
@@ -67,7 +65,7 @@
                 _logger.LogError(ex, ex.Message);
                 await _bus.Publish(new TraceEvent
                 {
-                    Message = $"Service: {nameof(DiffHostedService)}: Exception :{ex.Message}",
+                    Message = $"Service: {nameof(PlaylistHealthHostedService)}: Exception :{ex.Message}",
                     Level = TraceEvent.LevelTrace.Error,
                 }, cancellationToken);
             }

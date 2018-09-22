@@ -21,7 +21,9 @@ namespace hfa.Brokers.Messages
             public string Level { get; set; }
             public string Source { get; set; }
             public string Title { get; set; }
+            public int UnixTimestamp { get; set; }
+            public int UserId { get; set; }
         }
     }
-    
+
 }

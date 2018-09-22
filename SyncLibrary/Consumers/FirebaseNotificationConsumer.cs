@@ -51,18 +51,20 @@
               .Child($"{message.UserId}")
               .PostAsync(new FirebaseNotifications.FirebaseNotification
               {
-                  Date = DateTime.UtcNow.ToShortDateString(),
+                  Date = message.CreatedDate.ToLongDateString(),
                   Level = GetLevel(message.Level),
                   Source = nameof(TraceEvent),
                   Body = message.Message,
-                  Title = nameof(TraceEvent)
+                  Title = nameof(TraceEvent),
+                  UserId = message.UserId,
+                  UnixTimestamp = message.UnixTimestamp
               }, true);
 
             _logger.LogInformation($"{nameof(FirebaseNotificationConsumer)}: Key for the new notification: {notif.Key}");
         }
 
         private string GetLevel(string traceEventlevel)
-        { 
+        {
             if (traceEventlevel == TraceEvent.LevelTrace.Warning)
             {
                 return FirebaseNotifications.FirebaseNotification.LevelEnum.Warning;

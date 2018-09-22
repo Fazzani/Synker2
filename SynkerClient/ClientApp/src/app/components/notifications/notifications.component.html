@@ -1,23 +1,17 @@
 <div class="site-container">
-  <mat-toolbar color="primary">
-    <mat-toolbar-row>
-      <span>My notifications</span>
-      <span class="example-spacer"></span>
-      <button mat-icon-button (click)="markAllAsRead()">
-        <mat-icon>done_all</mat-icon>
-      </button>
-    </mat-toolbar-row>
-  </mat-toolbar>
-  <mat-list dense>
-    <mat-list-item *ngFor="let notif of notifications$ | async">
-      <small class="pull-right text-muted">{{notif.Date}}</small>
-      <h3 matLine>
-        <mat-icon>event</mat-icon> {{notif.Title}}
-      </h3>
-      <p matLine class="notif-body text-muted"> {{notif.Body}} </p>
-      <button mat-icon-button color="accent" class="pull-right" (click)="markAsRead(notif)">
-        <mat-icon aria-label="Mark as read">done</mat-icon>
-      </button>
-    </mat-list-item>
-  </mat-list>
+  <div id="content">
+    <h1>Notifications Timeline</h1>
+    <button mat-icon-button (click)="markAllAsRead()" class="pull-right">
+      <mat-icon>done_all</mat-icon>
+    </button>
+    <ul class="timeline">
+      <li class="event" *ngFor="let notif of notifications$ | async" attr.data-date="{{notif.Date}}">
+        <h3>{{notif.Title}}  <button mat-icon-button color="accent" class="pull-right" (click)="markAsRead(notif)">
+            <mat-icon aria-label="Mark as read">clear</mat-icon>
+          </button></h3>
+        <p>{{notif.Body}} </p>
+      </li>
+    </ul>
+  </div>
 </div>
+
