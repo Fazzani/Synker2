@@ -60,7 +60,6 @@
                 UserId = message.UserId,
                 Source = nameof(RabbitNotificationConsumer)
             }, CancellationToken.None);
-            _logger.LogInformation($"{nameof(RabbitNotificationConsumer)}: Key for the new notification: {notif.Key}");
         }
     }
 }
