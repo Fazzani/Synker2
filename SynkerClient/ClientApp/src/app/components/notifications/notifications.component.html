@@ -1,25 +1,23 @@
-<!-- <div class="site-container " fxLayout="column" fxLayoutGap="20px">
-    <mat-card *ngFor="let notif of notifications$ | async">
-        <mat-card-header>
-            <mat-card-title>{{ notif.Title }}</mat-card-title>
-            <mat-card-subtitle>{{ notif.Date }}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-            <ng-container>
-                <p [innerHtml]="notif.Body"></p>
-            </ng-container>
-        </mat-card-content>
-        <mat-card-actions>
-            <button mat-button (click)="markAsRead(notif)">Mark as read</button>
-        </mat-card-actions>
-    </mat-card>
-</div> -->
-<div class="site-container ">
+<div class="site-container">
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <span>My notifications</span>
+      <span class="example-spacer"></span>
+      <button mat-icon-button (click)="markAllAsRead()">
+        <mat-icon>done_all</mat-icon>
+      </button>
+    </mat-toolbar-row>
+  </mat-toolbar>
   <mat-list dense>
     <mat-list-item *ngFor="let notif of notifications$ | async">
       <small class="pull-right text-muted">{{notif.Date}}</small>
-      <h3 matLine> {{notif.Title}} </h3>
+      <h3 matLine>
+        <mat-icon>event</mat-icon> {{notif.Title}}
+      </h3>
       <p matLine class="notif-body text-muted"> {{notif.Body}} </p>
+      <button mat-icon-button color="accent" class="pull-right" (click)="markAsRead(notif)">
+        <mat-icon aria-label="Mark as read">done</mat-icon>
+      </button>
     </mat-list-item>
   </mat-list>
 </div>
