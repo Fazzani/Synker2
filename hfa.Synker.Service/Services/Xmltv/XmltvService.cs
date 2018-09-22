@@ -1,4 +1,5 @@
-﻿using Nest;
+﻿using hfa.PlaylistBaseLibrary.Entities;
+using Nest;
 using PlaylistBaseLibrary.Entities;
 using System;
 using System.Collections.Generic;

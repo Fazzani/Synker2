@@ -1,4 +1,4 @@
-﻿namespace PlaylistBaseLibrary.Entities
+﻿namespace hfa.PlaylistBaseLibrary.Entities
 {
     using System;
     using System.Collections.Generic;

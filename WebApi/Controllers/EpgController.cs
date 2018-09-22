@@ -14,6 +14,7 @@ using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 using hfa.WebApi.Models.Xmltv;
+using hfa.PlaylistBaseLibrary.Entities;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

@@ -1,7 +1,6 @@
 ﻿namespace hfa.Synker.Service.Services.Elastic
 {
     using Nest;
-    using PlaylistBaseLibrary.Entities;
     using PlaylistManager.Entities;
     using System;
     using Microsoft.Extensions.Logging;
@@ -12,6 +11,7 @@
     using System.Diagnostics;
     using System.Text;
     using System.Threading.Tasks;
+    using hfa.PlaylistBaseLibrary.Entities;
 
     public class ElasticConnectionClient : IElasticConnectionClient
     {
