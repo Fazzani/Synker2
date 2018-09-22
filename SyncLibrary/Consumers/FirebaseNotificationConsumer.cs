@@ -48,6 +48,7 @@
 
             var notif = await firebase
               .Child(FirebaseNotifications.TableName)
+              .Child($"{message.UserId}")
               .PostAsync(new FirebaseNotifications.FirebaseNotification
               {
                   Date = DateTime.UtcNow.ToShortDateString(),

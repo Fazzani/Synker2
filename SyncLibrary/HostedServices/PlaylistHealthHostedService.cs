@@ -69,7 +69,7 @@
                 await _bus.Publish(new TraceEvent
                 {
                     Message = $"Service: {nameof(DiffHostedService)}: Exception :{ex.Message}",
-                    Level = TraceEvent.LevelTrace.Error
+                    Level = TraceEvent.LevelTrace.Error,
                 }, cancellationToken);
             }
         }

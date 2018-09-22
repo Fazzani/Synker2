@@ -4,7 +4,7 @@
 
     public class TraceEvent : ApplicationEvent
     {
-        public int UserId { get; set; }
+        public int UserId { get; set; } = -1;
 
         public string Message { get; set; }
 

@@ -5,12 +5,7 @@
 
     public class ApplicationEvent : CorrelatedBy<Guid>
     {
-        public ApplicationEvent()
-        {
-            CreatedDate = DateTime.UtcNow;
-        }
-
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
         public Guid CorrelationId => Guid.NewGuid();
     }
