@@ -47,8 +47,7 @@
                             Id = pl.Id,
                             PlaylistName = pl.Freindlyname,
                             IsOnline = response.IsOnline,
-                            MediaCount = pl.TvgMedias.Count,
-                            CreatedDate = DateTime.UtcNow
+                            MediaCount = pl.TvgMedias.Count
                         }, cancellationToken);
                     }
                     catch (Exception ex)

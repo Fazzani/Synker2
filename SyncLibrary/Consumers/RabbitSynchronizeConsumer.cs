@@ -37,7 +37,6 @@
                await _bus.Publish(new TraceEvent
                 {
                     Message = eventMessage,
-                    CreatedDate = DateTime.UtcNow,
                     Level = TraceEvent.LevelTrace.Info,
                     UserId = playlist.UserId
                 }, CancellationToken.None);
