@@ -16,9 +16,7 @@ import { delay } from "q";
   templateUrl: "./home.component.html"
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  playlists: PagedResult<PlaylistModelLive> = <PagedResult<PlaylistModelLive>>{
-    results: new Array<PlaylistModelLive>()
-  };
+  playlists: PagedResult<PlaylistModelLive>;
   query: QueryListBaseModel;
 
   constructor(
@@ -27,17 +25,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
     private clipboardService: ClipboardService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.query = <QueryListBaseModel>{ pageNumber: 0, pageSize: 20 };
     this.playlists = <PagedResult<PlaylistModelLive>>this.route.snapshot.data.data;
-    this.playlistService.listWithHealthStatus(this.playlists.results.map(x => <PlaylistModelLive>{ ...x }))
-      .subscribe(res => {
-        console.log(`playlist health state changed =>${JSON.stringify(res)}`);
-        let pl = this.playlists.results.find(p => p.id == res.id);
-        Object.assign(pl, res);
-      });
+    this.playlistService.listWithHealthStatus(this.playlists.results.map(x => <PlaylistModelLive>{ ...x })).subscribe(res => {
+      console.log(`playlist health state changed =>${JSON.stringify(res)}`);
+      let pl = this.playlists.results.find(p => p.id == res.id);
+      Object.assign(pl, { ...res }, { ...pl });
+    });
   }
 
   openPlaylistInfosDialog(playlist: PlaylistModel): void {
@@ -47,7 +44,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  share(playlist: PlaylistModel): void { }
+  share(playlist: PlaylistModel): void {}
 
   copyPublicLink(link: string): void {
     if (this.clipboardService.isSupported) this.clipboardService.copyFromContent(link);

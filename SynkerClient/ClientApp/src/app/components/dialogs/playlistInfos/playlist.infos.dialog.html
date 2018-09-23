@@ -35,13 +35,13 @@
                             </mat-select>
                         </mat-form-field>
                         <mat-form-field>
-                            <input matInput [(ngModel)]="playlist.importProvider" readonly name="ImportProvider" placeholder="Import provider...">
+                            <input matInput [ngModel]="playlist.importProvider" readonly name="ImportProvider" placeholder="Import provider...">
                         </mat-form-field>
                         <mat-form-field>
-                            <input matInput [(ngModel)]="playlist.createdDate" placeholder="Created date..." readonly name="createdDate">
+                            <input matInput [ngModel]="playlist.createdDate | date:'medium'" placeholder="Created date..." readonly name="createdDate">
                         </mat-form-field>
                         <mat-form-field>
-                            <input matInput [(ngModel)]="playlist.updatedDate" placeholder="Updated date..." readonly name="updatedDate">
+                            <input matInput [ngModel]="playlist.updatedDate | date:'medium'" placeholder="Updated date..." readonly name="updatedDate">
                         </mat-form-field>
                         <mat-checkbox [(ngModel)]="playlist.synkEpg" name="synkEpg">Synchronize EPG</mat-checkbox>
                         <mat-checkbox [(ngModel)]="playlist.synkLogos" name="synkLogos">Synchronize picons</mat-checkbox>
