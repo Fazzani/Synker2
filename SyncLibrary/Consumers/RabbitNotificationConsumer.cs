@@ -55,7 +55,7 @@
 
             await _bus.Publish(new TraceEvent
             {
-                Message = $"The Playlist {message.PlaylistName} changment detected. {message.NewMediasCount} new medias wad founded and {message.RemovedMediasCount} was removed.",
+                Message = $"The Playlist {message.PlaylistName} changment detected. {message.NewMediasCount} new medias was founded and {message.RemovedMediasCount} was removed.",
                 Level = TraceEvent.LevelTrace.Info,
                 UserId = message.UserId,
                 Source = nameof(RabbitNotificationConsumer)
