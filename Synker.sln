@@ -36,6 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		appveyorSynkerRelease.yml = appveyorSynkerRelease.yml
 		appveyorWebApi.yml = appveyorWebApi.yml
 		appveyorWebClient.yml = appveyorWebClient.yml
+		build.sh = build.sh
 		fetchNewCommands.sh = fetchNewCommands.sh
 		instantWebGrab.sh = instantWebGrab.sh
 		key.pfx = key.pfx

@@ -14,7 +14,7 @@ build_only_project()
   project=$2
   dockerfilePath=$3
 
-  docker build -t "synker/${project}:${version}" -t "synker/${project}:latest" -f $dockerfilePath .
+  docker build -t "synker/${project}:${version}" -t "synker/${project}:latest" --build-arg version=$version -f $dockerfilePath .
   docker push "synker/${project}"
   trigger "Fazzani/synker-docker"
 }
@@ -33,7 +33,7 @@ if [[ "$DOCKER_BUILD" == true ]]; then
   
   # si le message contient build_webclient alors on build uniquement le client
   if [[ $TRAVIS_COMMIT_MESSAGE == *"build_webclient"* ]]; then
-    build_only_project $version "webclient" "WebClient/Dockerfile"
+    build_only_project $version "webclient" "SynkerClient/Dockerfile"
 	exit 0
   fi
 

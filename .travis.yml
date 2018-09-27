@@ -3,28 +3,35 @@ sudo: required
 mono: none
 dotnet: 2.0.0
 dist: trusty
+install: skip
+services:
+  - docker
 env:
   global:
     - CLI_VERSION: Latest
   matrix:
     - DOCKER_BUILD=true arch=x64
     #- DOCKER_BUILD=false arch=x64
+  - DOCKERFILE_PATH=SynkerClient/Dockerfile PROJECT=webclient
+  - DOCKERFILE_PATH=WebApi/Dockerfile PROJECT=webapi
+  - DOCKERFILE_PATH=SyncLibrary/Dockerfile PROJECT=batch
 os:
   - linux
 #  - osx
-branches:
-  only:
-    - /^\d+\.\d+\.\d+$/
-    - master
-services:
-  - docker
 before_install:
-  - chmod +x travis-build.sh
+  - chmod +x trigger-build.sh
 script:
-  - ./travis-build.sh $DOCKER_BUILD --quiet verify
+  - if [[ -z "$TRAVIS_TAG" ]]; then version=$TRAVIS_TAG; else version="1.0.$TRAVIS_BUILD_NUMBER" fi
+  - echo "version => $version"
+  - export version=$TRAVIS_TAG
+  - docker build -t "synker/${PROJECT}:${version}" -t "synker/${PROJECT}:latest" --build-arg version=$version -f DOCKERFILE_PATH .
+  - docker login -u=$DOCKER_USER -p=$DOCKER_PASS
+  - docker push "synker/${PROJECT}"
+  - ./trigger-build.sh "Fazzani/synker-docker" $version
 cache:
   bundler: true
     - "~/.local/share/NuGet/Cache"
+if: (commit_message =~ ^build OR type = "cron") AND (branch = master)
 notifications: # set notification options
   email:
     recipients:
