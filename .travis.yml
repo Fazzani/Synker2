@@ -30,7 +30,7 @@ jobs:
     name: Deploy
     script:
     - chmod +x trigger-build.sh
-    - if [[ -z "$TRAVIS_TAG" ]]; then version=$TRAVIS_TAG; else version="1.0.$TRAVIS_BUILD_NUMBER" fi
+    - if [[ -z "$TRAVIS_TAG" ]]; then version=$TRAVIS_TAG; else version="1.0.$TRAVIS_BUILD_NUMBER"; fi
     - export version=$TRAVIS_TAG
     - ./trigger-build.sh "Fazzani/synker-docker" $version
 cache:
