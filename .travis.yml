@@ -4,18 +4,14 @@ mono: none
 dotnet: 2.0.0
 dist: trusty
 install: skip
+matrix:
+  - DOCKER_BUILD=true arch=x64
 services:
   - docker
 env:
-  global:
-    - CLI_VERSION: Latest
-    - DOCKERFILE_PATH=SynkerClient/Dockerfile PROJECT=webclient
-    - DOCKERFILE_PATH=WebApi/Dockerfile PROJECT=webapi
-    - DOCKERFILE_PATH=SyncLibrary/Dockerfile PROJECT=batch
-  matrix:
-    - DOCKER_BUILD=true arch=x64
-    #- DOCKER_BUILD=false arch=x64
-  
+  - DOCKERFILE_PATH=SynkerClient/Dockerfile PROJECT=webclient
+  - DOCKERFILE_PATH=WebApi/Dockerfile PROJECT=webapi
+  - DOCKERFILE_PATH=SyncLibrary/Dockerfile PROJECT=batch
 os:
   - linux
 #  - osx
