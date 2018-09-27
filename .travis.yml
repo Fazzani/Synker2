@@ -1,7 +1,7 @@
 language: minimal
 sudo: required
 install: skip
-if: (commit_message =~ ^build OR type = "cron") AND (branch = master OR tag =~ ^\d+\.\d+\.\d+$)
+if: tag =~ ^\d+\.\d+\.\d+$ OR (commit_message =~ ^build OR type = "cron") AND (branch = master)
 matrix:
   - DOCKER_BUILD=true arch=x64
 services:
