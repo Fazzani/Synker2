@@ -17,7 +17,6 @@ before_install:
   - chmod +x trigger-build.sh
 script:
   - export version=${TRAVIS_TAG:-"1.0.$TRAVIS_BUILD_NUMBER"}
-  - echo "version => $version"
   - docker build -t "synker/${PROJECT}:${version}" -t "synker/${PROJECT}:latest" --build-arg version=$version -f $DOCKERFILE_PATH .
   - docker login -u=$DOCKER_USER -p=$DOCKER_PASS
   - docker push "synker/${PROJECT}"
@@ -26,10 +25,9 @@ jobs:
     stage: Trigger deploy Docker stack
     name: Deploy
     script:
-    - chmod +x trigger-build.sh
-    - if [[ -z "$TRAVIS_TAG" ]]; then version=$TRAVIS_TAG; else version="1.0.$TRAVIS_BUILD_NUMBER"; fi
-    - export version=$TRAVIS_TAG
-    - ./trigger-build.sh "Fazzani/synker-docker" $version
+      - chmod +x trigger-build.sh
+      - export version=${TRAVIS_TAG:-"1.0.$TRAVIS_BUILD_NUMBER"}
+      - ./trigger-build.sh "Fazzani/synker-docker" $version
 notifications: # set notification options
   email:
     recipients:
