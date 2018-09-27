@@ -1,7 +1,5 @@
 language: minimal
 sudo: required
-mono: none
-dotnet: 2.1.0
 install: skip
 if: (commit_message =~ ^build OR type = "cron") AND (branch = master)
 matrix:
