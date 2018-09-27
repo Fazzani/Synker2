@@ -1,9 +1,9 @@
-language: ruby
+language: minimal
 sudo: required
 mono: none
-dotnet: 2.0.0
-dist: trusty
+dotnet: 2.1.0
 install: skip
+if: (commit_message =~ ^build OR type = "cron") AND (branch = master)
 matrix:
   - DOCKER_BUILD=true arch=x64
 services:
@@ -20,7 +20,7 @@ before_install:
 script:
   - export version=${TRAVIS_TAG:-"1.0.$TRAVIS_BUILD_NUMBER"}
   - echo "version => $version"
-  - docker build -t "synker/${PROJECT}:${version}" -t "synker/${PROJECT}:latest" --build-arg version=$version -f DOCKERFILE_PATH .
+  - docker build -t "synker/${PROJECT}:${version}" -t "synker/${PROJECT}:latest" --build-arg version=$version -f $DOCKERFILE_PATH .
   - docker login -u=$DOCKER_USER -p=$DOCKER_PASS
   - docker push "synker/${PROJECT}"
 jobs:
@@ -32,10 +32,6 @@ jobs:
     - if [[ -z "$TRAVIS_TAG" ]]; then version=$TRAVIS_TAG; else version="1.0.$TRAVIS_BUILD_NUMBER"; fi
     - export version=$TRAVIS_TAG
     - ./trigger-build.sh "Fazzani/synker-docker" $version
-cache:
-  bundler: true
-    - "~/.local/share/NuGet/Cache"
-if: (commit_message =~ ^build OR type = "cron") AND (branch = master)
 notifications: # set notification options
   email:
     recipients:
