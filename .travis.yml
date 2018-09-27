@@ -24,7 +24,15 @@ script:
   - docker build -t "synker/${PROJECT}:${version}" -t "synker/${PROJECT}:latest" --build-arg version=$version -f DOCKERFILE_PATH .
   - docker login -u=$DOCKER_USER -p=$DOCKER_PASS
   - docker push "synker/${PROJECT}"
-  - ./trigger-build.sh "Fazzani/synker-docker" $version
+jobs:
+  include:
+    stage: Trigger deploy Docker stack
+    name: Deploy
+    script:
+    - chmod +x trigger-build.sh
+    - if [[ -z "$TRAVIS_TAG" ]]; then version=$TRAVIS_TAG; else version="1.0.$TRAVIS_BUILD_NUMBER" fi
+    - export version=$TRAVIS_TAG
+    - ./trigger-build.sh "Fazzani/synker-docker" $version
 cache:
   bundler: true
     - "~/.local/share/NuGet/Cache"
