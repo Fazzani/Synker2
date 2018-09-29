@@ -90,6 +90,7 @@
             if (playlistEntity.CreatedDate == default)
                 await _dbcontext.Playlist.AddAsync(playlistEntity, cancellationToken);
 
+            playlistEntity.TvgMedias = playlistEntity.TvgMedias;
             var res = await _dbcontext.SaveChangesAsync(cancellationToken);
             return playlistEntity;
         }
@@ -106,15 +107,28 @@
         {
             var playlistEntity = await _dbcontext.Playlist.FindAsync(new object[] { playlistId }, cancellationToken);
 
-            if (playlistEntity == null)
+            return await SynkPlaylistAsync(playlistEntity, resetAndSynch, cancellationToken);
+        }
+
+        /// <summary>
+        /// Synk playlist and match epg, logos and groups
+        /// </summary>
+        /// <param name="playlist">Playlist</param>
+        /// <param name="resetAndSynch">Reset and synchronize playlist from scrach</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<Playlist> SynkPlaylistAsync(Playlist playlist, bool resetAndSynch = false,
+            CancellationToken cancellationToken = default)
+        {
+            if (playlist == null)
                 throw new ArgumentNullException($"Playlist not found");
-            if (!playlistEntity.IsSynchronizable || playlistEntity.SynkConfig.AutoSynchronize)
+            if (!playlist.IsSynchronizable || playlist.SynkConfig.AutoSynchronize)
                 throw new ApplicationException($"Playlist isn't synchronizable or not auto synchrizable is disabled");
 
             PlaylistProvider<Playlist<TvgMedia>, TvgMedia> provider = null;
             try
             {
-                provider = _providerFactory.CreateInstance(playlistEntity.SynkConfig.Uri, playlistEntity.SynkConfig.Provider);
+                provider = _providerFactory.CreateInstance(playlist.SynkConfig.Uri, playlist.SynkConfig.Provider);
             }
             catch (Exception)
             {
@@ -123,29 +137,29 @@
 
             if (resetAndSynch)
             {
-                return await SynkPlaylistAsync(() => _dbcontext.Playlist.Find(playlistId), provider, false, resetAndSynch, cancellationToken);
+                return await SynkPlaylistAsync(() => _dbcontext.Playlist.Find(playlist.Id), provider, false, resetAndSynch, cancellationToken);
             }
 
-            var (tvgMedia, removed) = await DiffWithSourceAsync(() => playlistEntity, provider, true, cancellationToken);
+            var (tvgMedia, removed) = await DiffWithSourceAsync(() => playlist, provider, true, cancellationToken);
 
             var changed = false;
 
             if (removed != null && removed.Any())
             {
-                playlistEntity.TvgMedias.RemoveAll(x => removed.Any(r => r.Id == x.Id));
+                playlist.TvgMedias.RemoveAll(x => removed.Any(r => r.Id == x.Id));
                 changed = true;
             }
             if (tvgMedia != null && tvgMedia.Any())
             {
-                playlistEntity.TvgMedias.AddRange(tvgMedia);
+                playlist.TvgMedias.AddRange(tvgMedia);
                 changed = true;
             }
             if (changed)
             {
-                playlistEntity.TvgMedias = playlistEntity.TvgMedias;
+                playlist.TvgMedias = playlist.TvgMedias;
                 var resRq = await _dbcontext.SaveChangesAsync(cancellationToken);
             }
-            return playlistEntity;
+            return playlist;
         }
 
         private static void UpdateIsXtreamTag(bool isXtreamPlaylist, Playlist playlistEntity)
@@ -208,6 +222,10 @@
                 if (sourceList == null)
                 {
                     return (new List<TvgMedia>(), pl.TvgMedias ?? new List<TvgMedia>());
+                }
+                if (pl.TvgMedias == null || !pl.TvgMedias.Any())
+                {
+                    return (sourceList, null);
                 }
 
                 return (sourceList.Where(s => pl.TvgMedias.All(t => t.Url != s.Url)).ToList(), pl.TvgMedias.Where(s => sourceList.All(t => t.Url != s.Url)).ToList());

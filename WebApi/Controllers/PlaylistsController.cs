@@ -287,18 +287,6 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> SynkAsync([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken)
         {
-            //Vérifier si la playlist existe-elle avant 
-            var stopwatch = Stopwatch.StartNew();
-            PlaylistProvider<Playlist<TvgMedia>, TvgMedia> providerInstance = null;
-            try
-            {
-                providerInstance = _providerFactory.CreateInstance(playlistPostModel.Url, playlistPostModel.Provider);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
             var playlist = _dbContext.Playlist.AsNoTracking().FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.Url) ?? new Playlist
             {
                 UserId = UserId.Value,
@@ -307,14 +295,9 @@ namespace Hfa.WebApi.Controllers
                 SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
             };
 
-            using (providerInstance)
-            {
-                var pl = await _playlistService.SynkPlaylistAsync(() => playlist, providerInstance, _xtreamService.IsXtreamPlaylist(playlistPostModel.Url), cancellationToken: cancellationToken);
+            var pl = await _playlistService.SynkPlaylistAsync(playlist, true, cancellationToken: cancellationToken);
 
-                stopwatch.Stop();
-                _logger.LogInformation($"Elapsed time : {stopwatch.Elapsed.ToString("c")}");
-                return CreatedAtRoute(nameof(GetFile), new { id = UTF8Encoding.UTF8.EncodeBase64(pl.UniqueId.ToString()) }, null);
-            }
+            return CreatedAtRoute(nameof(SynkAsync), new { id = UTF8Encoding.UTF8.EncodeBase64(pl.UniqueId.ToString()) }, null);
         }
 
         /// <summary>

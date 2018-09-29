@@ -136,7 +136,7 @@ namespace Hfa.WebApi.Controllers
             return Ok(tvgSites);
         }
 
-        [ResponseCache(CacheProfileName = "Long")]
+        //[ResponseCache(CacheProfileName = "Long")]
         [HttpGet]
         [Route("sitepacks")]
         public async Task<IActionResult> SitePacksAsync([FromQuery]string filter, CancellationToken cancellationToken)

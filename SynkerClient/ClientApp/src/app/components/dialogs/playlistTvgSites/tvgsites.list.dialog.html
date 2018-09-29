@@ -5,12 +5,11 @@
     </mat-form-field>
 </div>
 <mat-dialog-content style="margin-top:70px">
-    <mat-selection-list >
-        <mat-list-option *ngFor="let tvg of tvgSites | search:'site':query" [selected]="tvg.selected" (selectionChange)="tvg.selected = $event.selected">
-            {{tvg.site}} : {{tvg.country}} 
+    <mat-selection-list #tvglist>
+        <mat-list-option *ngFor="let tvg of tvgSites | search:'site':query" [selected]="tvg.selected" [value]="tvg" (click)="tvg.selected = !tvg.selected">
+            {{tvg.site}} : {{tvg.country}}
         </mat-list-option>
     </mat-selection-list>
-
 </mat-dialog-content>
 
 <mat-action-row>

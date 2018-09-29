@@ -79,19 +79,19 @@ namespace hfa.Synker.Service.Services.Picons
             QueryContainer container = new MatchQuery
             {
                 Field = new Field("name"),
-                Query = mediaName.ToLowerInvariant(),
+                Query = $"{mediaName} hd",
                 Fuzziness = Fuzziness.Auto,
                 MinimumShouldMatch = MinimumShouldMatch.Percentage(minimumShouldMatch)
             };
 
-            if (mediaNumber.HasValue)
-            {
-                container &= new MatchQuery
-                {
-                    Field = new Field("ch_number"),
-                    Query = mediaNumber.ToString()
-                };
-            }
+            //if (mediaNumber.HasValue)
+            //{
+            //    container &= new MatchQuery
+            //    {
+            //        Field = new Field("ch_number"),
+            //        Query = mediaNumber.ToString()
+            //    };
+            //}
 
             var response = await _elasticConnectionClient.Client.Value.SearchAsync<Picon>(x => x.Query(q => container), cancellationToken);
 

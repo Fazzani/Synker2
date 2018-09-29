@@ -16,6 +16,8 @@ namespace hfa.Synker.Service.Services.Playlists
         Task<Playlist> SynkPlaylistAsync(Func<Playlist> getPlaylist, PlaylistProvider<Playlist<TvgMedia>, TvgMedia> provider, bool isXtreamPlaylist, bool force = false,
             CancellationToken cancellationToken = default);
 
+        Task<Playlist> SynkPlaylistAsync(Playlist playlist, bool resetAndSynch = false,
+            CancellationToken cancellationToken = default);
         /// <summary>
         /// Genére un rapport avec les new medias et 
         /// les médias qui n'existes plus

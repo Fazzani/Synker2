@@ -1,7 +1,7 @@
 import { catchError, map, combineLatest, filter } from "rxjs/operators";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+import { AngularFireDatabase, AngularFireList } from "@angular/fire/database";
 import { BaseService } from "../base/base.service";
 
 // All the RxJS stuff we need
@@ -45,8 +45,8 @@ export class PlaylistService extends BaseService {
   }
 
   /**
-  * playlist list with live status from firebase
-  */
+   * playlist list with live status from firebase
+   */
   listWithHealthStatus(playlistsToWatch: PlaylistModelLive[]): Observable<PlaylistModelLive> {
     const promises = playlistsToWatch.map(pl => {
       //console.warn(`playlist to watch from firebase: ${JSON.stringify(pl)}`);
@@ -55,7 +55,8 @@ export class PlaylistService extends BaseService {
     return merge(promises).pipe(
       flatMap(x => x),
       filter(x => x != null),
-       map(x => <PlaylistModelLive>{ id: x.Id, isOnline: x.IsOnline, mediaCount: x.MediaCount, freindlyname: x.Name }));
+      map(x => <PlaylistModelLive>{ id: x.Id, isOnline: x.IsOnline, mediaCount: x.MediaCount, freindlyname: x.Name })
+    );
   }
 
   synk(model: PlaylistPostModel): Observable<PlaylistModel> {
@@ -167,6 +168,7 @@ export class PlaylistService extends BaseService {
   }
 
   update(p: PlaylistModel): Observable<PlaylistModel> {
+    console.log(p);
     return this.http
       .put(`${environment.base_api_url}${this._baseUrl}/${p.publicId}`, p, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
@@ -179,8 +181,10 @@ export class PlaylistService extends BaseService {
   }
 
   updateLight(p: PlaylistModel): Observable<any> {
+    let playlist = Object.assign({}, p);
+    playlist.tvgMedias = null;
     return this.http
-      .put(`${environment.base_api_url}${this._baseUrl}/light/${p.publicId}`, p, {
+      .put(`${environment.base_api_url}${this._baseUrl}/light/${p.publicId}`, playlist, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
       })
@@ -192,13 +196,10 @@ export class PlaylistService extends BaseService {
    * @param id playlist id
    */
   groups(id: string): Observable<MediaGroup[]> {
-
-    return this.http
-      .get(`${environment.base_api_url}${this._baseUrl}/${id}/groups`)
-      .pipe(
-        map(this.handleSuccess),
-        catchError(this.handleError)
-      );
+    return this.http.get(`${environment.base_api_url}${this._baseUrl}/${id}/groups`).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError)
+    );
   }
 
   /**
@@ -207,12 +208,9 @@ export class PlaylistService extends BaseService {
    * @param group group name
    */
   childrenGroups(id: string, group: string): Observable<TvgMedia[]> {
-
-    return this.http
-      .get(`${environment.base_api_url}${this._baseUrl}/${id}/groups/${group}`)
-      .pipe(
-        map(this.handleSuccess),
-        catchError(this.handleError)
-      );
+    return this.http.get(`${environment.base_api_url}${this._baseUrl}/${id}/groups/${group}`).pipe(
+      map(this.handleSuccess),
+      catchError(this.handleError)
+    );
   }
 }
