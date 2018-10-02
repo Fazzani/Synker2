@@ -79,7 +79,7 @@ namespace hfa.Synker.Service.Services.Picons
             QueryContainer container = new MatchQuery
             {
                 Field = new Field("name"),
-                Query = $"{mediaName} hd",
+                Query = $"{mediaName.ToLowerInvariant()}",
                 Fuzziness = Fuzziness.Auto,
                 MinimumShouldMatch = MinimumShouldMatch.Percentage(minimumShouldMatch)
             };
@@ -102,18 +102,30 @@ namespace hfa.Synker.Service.Services.Picons
         /// Synk picons
         /// </summary>
         /// <param name="picons"></param>
+        /// <param name="reset">Delete the index and recreate it</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<IBulkResponse> SynkAsync(IEnumerable<Picon> picons, CancellationToken cancellationToken)
+        public async Task<IBulkResponse> SynkAsync(IEnumerable<Picon> picons, bool reset = false, CancellationToken cancellationToken = default)
         {
+            if (reset)
+            {
+                var res = await _elasticConnectionClient.Client.Value.DeleteByQueryAsync(new DeleteByQueryRequest("picons"), cancellationToken);
+                if (!res.IsValid)
+                {
+                    if (res.ServerError.Status != 404)
+                    {
+                        throw new ApplicationException(res.ServerError.Error.Reason, res.OriginalException);
+                    }
+                }
+            }
+
             var descriptor = new BulkDescriptor();
             descriptor.Pipeline(ElasticConnectionClient.PICONS_RETREIVE_CHANNEL_NUMBER_PIPELINE);
             descriptor.IndexMany(picons);
             descriptor.Refresh(Elasticsearch.Net.Refresh.True);
-            _logger.LogInformation($"Sync picons count : {picons.Count()}");
-            var response = await _elasticConnectionClient.Client.Value.BulkAsync(descriptor, cancellationToken);
 
-            return response;
+            _logger.LogInformation($"Sync picons count : {picons.Count()}");
+            return await _elasticConnectionClient.Client.Value.BulkAsync(descriptor, cancellationToken);
         }
     }
 }

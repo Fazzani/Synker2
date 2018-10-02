@@ -500,7 +500,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
    * Synchronize all picons from github
    */
   synkPiconsGlobal(): void {
-    this.piconService.synk().subscribe(res => {
+    this.piconService.synk(true).subscribe(res => {
       this.commonService.info("Success", "Picons index was synchronized");
     });
   }

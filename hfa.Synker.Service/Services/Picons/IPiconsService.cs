@@ -8,8 +8,15 @@ namespace hfa.Synker.Service.Services.Picons
 {
     public interface IPiconsService
     {
-        Task<IEnumerable<Picon>> GetPiconsFromGithubRepoAsync(SynkPiconConfig synkPiconConfig, CancellationToken cancellationToken);
-        Task<IBulkResponse> SynkAsync(IEnumerable<Picon> picons, CancellationToken cancellationToken);
+        Task<IEnumerable<Picon>> GetPiconsFromGithubRepoAsync(SynkPiconConfig synkPiconConfig, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// Synk picons
+        /// </summary>
+        /// <param name="picons"></param>
+        /// <param name="reset">Delete the index and recreate it</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<IBulkResponse> SynkAsync(IEnumerable<Picon> picons, bool reset = false, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Match by media name and media number

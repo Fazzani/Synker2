@@ -73,15 +73,16 @@ namespace Hfa.WebApi.Controllers
         /// <summary>
         /// Synchronize Picons index from Github repository
         /// </summary>
+        /// <param name="reset">Revove the indew before indexing picons</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("synk")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> Synk(CancellationToken cancellationToken)
+        public async Task<IActionResult> Synk([FromQuery] bool reset, CancellationToken cancellationToken)
         {
             var picons = await _piconsService.GetPiconsFromGithubRepoAsync(new SynkPiconConfig(), cancellationToken);
-            var elasticResponse = await _piconsService.SynkAsync(picons, cancellationToken);
+            var elasticResponse = await _piconsService.SynkAsync(picons, reset, cancellationToken);
 
             if (!elasticResponse.IsValid)
                 return BadRequest(elasticResponse.DebugInformation);
