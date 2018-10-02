@@ -3,7 +3,6 @@ import { filter, distinctUntilChanged, debounceTime } from "rxjs/operators";
 import { Router, NavigationStart, NavigationCancel, NavigationEnd, NavigationError } from "@angular/router";
 import "hammerjs";
 import "./app.component.css";
-import { NotificationService } from "../../services/notification/notification.service";
 import { MatSnackBar } from "@angular/material";
 import { CommonService, Constants } from "../../services/common/common.service";
 import { AuthService } from "../../services/auth/auth.service";

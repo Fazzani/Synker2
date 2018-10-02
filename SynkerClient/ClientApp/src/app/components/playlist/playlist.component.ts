@@ -224,16 +224,18 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
   //#region row selection
   handleKeyboardEvent(event: KeyboardEvent) {
+    console.log(event.getModifierState('Control'));
     console.log(event);
     //Select ALL
-    if (event.key == KEY.A && event.ctrlKey) {
+    if (event.getModifierState && event.getModifierState('Control') && event.key == KEY.A) {
       console.log("select All", this.dataSource.filteredData.length);
-      this.dataSource._pageData(this.dataSource.filteredData).forEach(m => (m.selected = true));
+      this.dataSource._pageData(this.dataSource.filteredData).forEach(m => m.selected = true);
       this.atLeastOneSelected.next(this.dataSource.data.filter(f => f.selected).length);
-    } else if (event.key == KEY.I && event.ctrlKey) {
+    } else if (event.key == KEY.I && event.getModifierState && event.getModifierState('Control')) {
       this.dataSource._pageData(this.dataSource.filteredData).forEach(m => (m.selected = !m.selected));
       this.atLeastOneSelected.next(this.dataSource.data.filter(f => f.selected).length);
     }
+    event.preventDefault();
   }
 
   onSelectionStart(position) {
