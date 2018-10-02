@@ -231,7 +231,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log("select All", this.dataSource.filteredData.length);
       this.dataSource._pageData(this.dataSource.filteredData).forEach(m => m.selected = true);
       this.atLeastOneSelected.next(this.dataSource.data.filter(f => f.selected).length);
-    } else if (event.key == KEY.I && event.getModifierState && event.getModifierState('Control')) {
+    } else if (event.getModifierState && event.getModifierState('Control') && event.key == KEY.I) {
       this.dataSource._pageData(this.dataSource.filteredData).forEach(m => (m.selected = !m.selected));
       this.atLeastOneSelected.next(this.dataSource.data.filter(f => f.selected).length);
     }
