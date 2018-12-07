@@ -573,13 +573,13 @@ namespace Hfa.WebApi.Controllers
         /// <param name="provider"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        [ResponseCache(CacheProfileName = "Long")]
+        //[ResponseCache(CacheProfileName = "Long")]
         [AllowAnonymous]
         [HttpGet("files/{id:required}", Name = nameof(GetFile))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(byte[]), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetFile(string id, [FromQuery] string provider = "m3u", CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> GetFile(string id, [FromQuery] string provider = "m3u", CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
 

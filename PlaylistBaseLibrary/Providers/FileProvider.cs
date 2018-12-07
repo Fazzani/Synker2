@@ -98,7 +98,7 @@ namespace hfa.PlaylistBaseLibrary.Providers
                 throw new ArgumentNullException(nameof(playlist));
 
             var data = await GetDataToPushedAsync(playlist, cancellationToken);
-            using (var sw = new StreamWriter(PlaylistStream, Encoding.UTF8, 4096, true))
+            using (var sw = new StreamWriter(_stream, Encoding.UTF8, 4096, true))
             {
                 await sw.WriteAsync(data);
             }
