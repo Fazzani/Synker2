@@ -224,6 +224,7 @@ namespace hfa.WebApi
             //MVC
             services.AddMvc(config =>
             {
+                config.EnableEndpointRouting = false;
                 config.Filters.Add(typeof(GlobalExceptionFilterAttribute));
                 config.CacheProfiles.Add("Default",
                    new CacheProfile()
@@ -413,7 +414,7 @@ namespace hfa.WebApi
                 {
                     routes.MapRoute(
                         name: "default",
-                        template: "{controller=HealthCheck}/{action=Index}");
+                        template: "{controller=HealthCheck}/{action=Index}/{id?}");
                 });
 
                 app.UseSignalR(routes =>

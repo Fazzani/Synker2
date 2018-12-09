@@ -18,7 +18,7 @@ import { NotificationsComponent } from "./components/notifications/notifications
 const appRoutes: Routes = [
   { path: "", component: HomeComponent, canActivate: [LoginRouteGuard], resolve: { data: HomeResolver } },
   { path: "tvgmedia", component: MediaComponent, canActivate: [LoginRouteGuard] },
-  //{ path: "admin", loadChildren: "./components/admin/admin.module#AdminModule" },
+  { path: "admin", loadChildren: "./components/admin/admin.module#AdminModule" },
   { path: "epg", component: EpgComponent, canActivate: [LoginRouteGuard] },
   { path: "xmltv", component: XmltvComponent, canActivate: [LoginRouteGuard] },
   { path: "sitepack", component: SitePackComponent, canActivate: [LoginRouteGuard] },

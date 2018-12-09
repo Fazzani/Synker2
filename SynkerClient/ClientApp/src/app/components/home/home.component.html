@@ -6,7 +6,7 @@
           <mat-card-header>
             <mat-card-title>{{ playlist.freindlyname }}</mat-card-title>
             <span class="mat-header-button-actions">
-              <button color="primary" mat-icon-button class="secondary-content" color="warn" (click)="delete(playlist)" i18n>
+              <button mat-icon-button class="secondary-content" color="warn" (click)="delete(playlist)" i18n>
                 <mat-icon class="md-24" aria-label="Delete Playlist">delete</mat-icon>
               </button>
               <a mat-icon-button class="secondary-content" [attr.href]="null" (click)="copyPublicLink(playlist.publicUrl)" ngxClipboard [cbContent]="playlist.publicUrl" i18n>

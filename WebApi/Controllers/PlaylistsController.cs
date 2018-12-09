@@ -40,7 +40,7 @@ namespace Hfa.WebApi.Controllers
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
-    //[ApiController]
+    [ApiController]
     [Authorize]
     public class PlaylistsController : BaseController
     {
@@ -244,6 +244,8 @@ namespace Hfa.WebApi.Controllers
 
         [HttpDelete("{id}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(Playlist), StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -560,7 +562,7 @@ namespace Hfa.WebApi.Controllers
         [Route("matchtvg/media")]
         [ValidateModel]
         [ProducesResponseType(typeof(SitePackChannel), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> MatchTvgByMedia([FromBody] TvgMedia media, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> MatchTvgByMedia([FromBody] TvgMedia media, CancellationToken cancellationToken = default)
         {
             var sitePack = await _sitePackService.MatchMediaNameAndBySiteAsync(media.DisplayName, media.Tvg.TvgSource.Site, cancellationToken);
             return Ok(sitePack);
@@ -569,24 +571,24 @@ namespace Hfa.WebApi.Controllers
         /// <summary>
         /// Get playlist file
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="publicId"></param>
         /// <param name="provider"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         //[ResponseCache(CacheProfileName = "Long")]
         [AllowAnonymous]
-        [HttpGet("files/{id:required}", Name = nameof(GetFile))]
+        [HttpGet("files/{publicId:required}", Name = nameof(GetFile))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(byte[]), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetFile(string id, [FromQuery] string provider = "m3u", CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetFile(string publicId, [FromQuery] string provider = "m3u", CancellationToken cancellationToken = default)
         {
-            var idGuid = GetInternalPlaylistId(id);
+            var idGuid = GetInternalPlaylistId(publicId);
 
             var playlist = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.UniqueId == idGuid, cancellationToken);
 
             if (playlist == null)
-                return NotFound(id);
+                return NotFound(publicId);
 
             PlaylistProvider<Playlist<TvgMedia>, TvgMedia> sourceProvider = null;
             try
@@ -623,6 +625,9 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("create/{provider}")]
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Import(string playlistName, string playlistUrl, string provider, IFormFile file, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(playlistName))
@@ -680,6 +685,9 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("create")]
         [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> ImportFromUrl([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken)
         {
             //Vérifier si la playlist existe-elle avant 
