@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Hfa.WebApi.Controllers;
-using hfa.WebApi.Common;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using hfa.WebApi.Common.Exceptions;
-using Microsoft.AspNetCore.Authorization;
-using System.Net;
-using hfa.WebApi.Models.HealthCheck;
-using hfa.Synker.Services.Dal;
-using hfa.Synker.Service.Services.Elastic;
-using hfa.Synker.Service.Elastic;
-using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using System.Threading;
-
-namespace hfa.WebApi.Controllers
+﻿namespace hfa.WebApi.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
+    using Hfa.WebApi.Controllers;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
+    using hfa.WebApi.Common.Exceptions;
+    using Microsoft.AspNetCore.Authorization;
+    using System.Net;
+    using hfa.WebApi.Models.HealthCheck;
+    using hfa.Synker.Services.Dal;
+    using hfa.Synker.Service.Services.Elastic;
+    using hfa.Synker.Service.Elastic;
+
     [AllowAnonymous]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
