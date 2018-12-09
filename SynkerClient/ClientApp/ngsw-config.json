@@ -34,7 +34,7 @@
   }],
   "dataGroups": [{
     "name": "synker.api",
-    "urls": ["/api/**"],
+    "urls": ["**/api/**"],
     "cacheConfig": {
       "strategy": "freshness",
       "maxSize": 15,
