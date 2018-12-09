@@ -1,21 +1,20 @@
-﻿using hfa.Synker.Service.Services.Elastic;
-using hfa.Synker.Service.Services.Xmltv;
-using hfa.Synker.Services.Dal;
-using Microsoft.Extensions.Logging;
-using Nest;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using System.Xml.Serialization;
-using System.Xml;
-using System.IO;
-
-namespace hfa.Synker.Service.Services
+﻿namespace hfa.Synker.Service.Services
 {
+    using hfa.Synker.Service.Services.Elastic;
+    using hfa.Synker.Service.Services.Xmltv;
+    using hfa.Synker.Services.Dal;
+    using Microsoft.Extensions.Logging;
+    using Nest;
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using System.Linq;
+    using Microsoft.EntityFrameworkCore;
+    using System.Xml.Serialization;
+    using System.Xml;
+    using System.IO;
+
     public class SitePackService : ISitePackService
     {
         private SynkerDbContext _dbcontext;

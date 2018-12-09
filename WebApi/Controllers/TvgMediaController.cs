@@ -9,7 +9,6 @@ using System.Threading;
 using Hfa.WebApi.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using hfa.WebApi.Common.Filters;
 using hfa.Synker.Services.Dal;
@@ -93,7 +92,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("matchtvg")]
         [ValidateModel]
-        public async Task<IActionResult> MatchTvg([FromBody] MatchTvgPostModel matchTvgPostModel, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> MatchTvg([FromBody] MatchTvgPostModel matchTvgPostModel, CancellationToken cancellationToken = default)
         {
             var sitePack = await _sitePackService.MatchTvgAsync(matchTvgPostModel.MediaName, matchTvgPostModel.Country, matchTvgPostModel.TvgSites, matchTvgPostModel.MinScore, cancellationToken);
             return Ok(sitePack);

@@ -17,7 +17,6 @@ using hfa.WebApi.Models.Elastic;
 using Hfa.WebApi.Commmon;
 using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Xmltv;
-using System.IO;
 using PastebinAPI;
 using hfa.WebApi.Services;
 using hfa.synker.entities;
@@ -155,7 +154,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("matchtvg/name/{mediaName}")]
-        public async Task<IActionResult> MatchTvgByMediaName([FromRoute] string mediaName, [FromQuery] string country, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> MatchTvgByMediaName([FromRoute] string mediaName, [FromQuery] string country, CancellationToken cancellationToken = default)
         {
             var sitePack = await _sitePackService.MatchMediaNameAndBySiteAsync(mediaName, country, cancellationToken);
             return Ok(sitePack);
@@ -195,7 +194,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("used")]
-        public async Task<IActionResult> GetAllFromPlaylistsAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> GetAllFromPlaylistsAsync(CancellationToken cancellationToken = default)
         {
             IEnumerable<string> result = await GetSitepacksToWebGrab(cancellationToken);
             return Ok(result);
@@ -222,7 +221,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("webgrabconfig")]
         [ValidateModel]
-        public async Task<IActionResult> WebgrabConfigBySitePackAsync([FromBody]SimpleModelPost sitePackUrl, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> WebgrabConfigBySitePackAsync([FromBody]SimpleModelPost sitePackUrl, CancellationToken cancellationToken = default)
         {
             var paste = await SynkSitePackToWebgrabAsync(sitePackUrl.Value, cancellationToken);
             return new OkObjectResult(paste);
@@ -236,7 +235,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("synk/webgrab")]
         [ValidateModel]
-        public async Task<IActionResult> SynkAllSitePackToWebGrab(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> SynkAllSitePackToWebGrab(CancellationToken cancellationToken = default)
         {
             _dbContext.WebGrabConfigDockers.RemoveRange(_dbContext.WebGrabConfigDockers);
             //TODO: Equilibrer la charge sur les différentes hosts

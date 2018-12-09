@@ -34,11 +34,11 @@
   }],
   "dataGroups": [{
     "name": "synker.api",
-    "urls": ["**/api/v1/**"],
+    "urls": ["/api/**"],
     "cacheConfig": {
       "strategy": "freshness",
       "maxSize": 15,
-      "maxAge": "1h",
+      "maxAge": "30s",
       "timeout": "30s"
     }
   }]
