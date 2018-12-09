@@ -333,15 +333,15 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     let counter: number = 1;
     from(this.dataSource.data)
       .pipe(
-        groupBy(x => x.mediaGroup.name),
+        groupBy((x: TvgMedia) => x.mediaGroup.name),
         mergeMap(x =>
           x.pipe(
             toArray(),
             map(m => m.sort((a, b) => (a.displayName === b.displayName ? 0 : a.displayName > b.displayName ? 1 : -1)))
           )
         ),
-        mergeMap(x => x),
-        tap(x => console.log(x.mediaGroup.name)),
+        mergeMap((x: TvgMedia[]) => x),
+        tap((x: TvgMedia) => console.log(x.mediaGroup.name)),
         map((t, i) => {
           t.position = counter++;
           return t;
@@ -482,7 +482,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
   delete(id: string): void {
     const confirm = window.confirm("Do you really want to delete this media?");
-    let mediaIndex = this.dataSource.data.findIndex(x => x.id == id);
+    let mediaIndex = this.dataSource.data.findIndex((x: TvgMedia) => x.id == id);
     console.log(`media ${id} with index ${mediaIndex} removed`);
     of(id)
       .pipe(
@@ -598,7 +598,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   groupMedias(): void {
     from(this.dataSource.data).pipe(
-      groupBy(x => x.mediaGroup.name),
+      groupBy((x: TvgMedia) => x.mediaGroup.name),
       mergeMap(group => group.pipe(toArray()))
     );
   }

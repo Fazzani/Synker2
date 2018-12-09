@@ -18,7 +18,7 @@ export class User {
   lastName: string;
   email: string;
   birthday: Date;
-  photo: string;
+  photo: string | ArrayBuffer;
   roles: roles = "Default";
   connectionState: ConnectionState;
   public static GENDERS = [

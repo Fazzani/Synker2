@@ -52,6 +52,7 @@ using Polly;
 using Polly.Extensions.Http;
 using RabbitMQ.Client;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.Collections.Generic;
 using System.IO;

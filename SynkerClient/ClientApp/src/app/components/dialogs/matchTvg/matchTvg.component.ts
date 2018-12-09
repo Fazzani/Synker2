@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { BehaviorSubject } from 'rxjs';
 import { MatchTvgPostModel, MatchTvgFormModel, MatchingTvgSiteTypeEnum } from '../../../types/matchTvgPostModel';
@@ -33,7 +33,7 @@ export class MatchTvgDialog implements OnInit, OnDestroy {
     [this.medias, this.tvgSites] = tup;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -60,7 +60,7 @@ export class MatchTvgDialog implements OnInit, OnDestroy {
 
       if (this.matchTvgFormModel.matchCountry) { model.country = x.lang; }
 
-      switch (this.matchTvgFormModel.matchingTvgSiteType) {
+      switch (parseInt(this.matchTvgFormModel.matchingTvgSiteType, 10)) {
         case MatchingTvgSiteTypeEnum.TvgSiteInMedia:
           model.tvgSites = [x.tvg.tvgSource.site];
           break;
@@ -90,10 +90,10 @@ export class MatchTvgDialog implements OnInit, OnDestroy {
       x => {
         console.log(x);
       },
-      err => {},
+      err => { },
       () => this.dialogRef.close(this.medias)
     );
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() { }
 }

@@ -16,7 +16,7 @@ export class GroupsDialog implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.groupMedias$ = from(this.playlist.tvgMedias).pipe(
-      groupBy(x => x.mediaGroup.name),
+      groupBy((x: TvgMedia) => x.mediaGroup.name),
       mergeMap(group =>
         group.pipe(
           reduce((acc: any, tvgmedia:GroupedObservable<string, TvgMedia>) => {

@@ -196,7 +196,7 @@ export class MediaDataSource extends DataSource<TvgMedia> {
         this.isLoadingResults = true;
         return this.getData();
       }),
-      map(data => {
+      map((data: any) => {
         console.dir(data);
         // Flip flag to show that loading has finished.
         this.isLoadingResults = false;

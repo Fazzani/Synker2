@@ -48,9 +48,9 @@ import { HomeResolver } from "./components/home/home.resolver";
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { MediaWatchDialog } from "./components/dialogs/mediaWatch/media.watch.dialog";
-import { AngularFireModule } from 'angularfire2';
-import { AngularFireDatabaseModule } from 'angularfire2/database';
-import { AngularFireAuthModule } from 'angularfire2/auth';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireDatabaseModule } from '@angular/fire/database';
+import { AngularFireAuthModule } from '@angular/fire/auth';
 import { NotificationsComponent } from "./components/notifications/notifications.component";
 
 export function tokenGetter() {
