@@ -15,6 +15,8 @@ using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 using hfa.WebApi.Models.Xmltv;
 using hfa.PlaylistBaseLibrary.Entities;
+using System.Net;
+using Microsoft.AspNetCore.Http;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -42,6 +44,9 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [ValidateModel]
         [Route("search")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> SearchAsync([FromBody] QueryListBaseModel query, CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.Value.SearchAsync<tvChannel>(rq => rq
@@ -61,6 +66,8 @@ namespace Hfa.WebApi.Controllers
 
         [ValidateModel]
         [HttpGet("{id}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.Value.SearchAsync<tvChannel>(rq => rq

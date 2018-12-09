@@ -20,6 +20,7 @@ using hfa.WebApi.Models.Elastic;
 using Hfa.WebApi.Commmon;
 using hfa.Synker.Service.Services;
 using System.Net;
+using Microsoft.AspNetCore.Http;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Hfa.WebApi.Controllers
@@ -60,6 +61,8 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("synk")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> SynkAsync(CancellationToken cancellationToken)
         {
             var result = await _mediaRefService.SynkAsync(cancellationToken);
@@ -73,6 +76,8 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("synkpicons")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> SynkPiconsAsync(CancellationToken cancellationToken)
         {
             var result = await _mediaRefService.SynkPiconsAsync(cancellationToken);
@@ -84,6 +89,9 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.Value.GetAsync(new DocumentPath<MediaRef>(id), null, cancellationToken);
@@ -97,6 +105,8 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [ValidateModel]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Save([FromBody]List<MediaRef> mediasRef, CancellationToken cancellationToken)
         {
             var response = await _mediaRefService.SaveAsync(mediasRef, cancellationToken);
@@ -109,6 +119,8 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost("merge")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Merge(CancellationToken cancellationToken)
         {
             var response = await _mediaRefService.RemoveDuplicatedMediaRefAsync(cancellationToken);
@@ -120,6 +132,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpPost(nameof(DeleteMany))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> DeleteMany([FromBody] string[] ids, CancellationToken cancellationToken)
         {
             var response = await _mediaRefService.DeleteManyAsync(ids, cancellationToken);
@@ -127,6 +140,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
         {
             var response = await _mediaRefService.DeleteManyAsync(new string[] { id }, cancellationToken);
@@ -138,6 +152,8 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         [ResponseCache(CacheProfileName = "Long")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> GroupsAsync([FromBody]ElasticQueryAggrRequest query, CancellationToken cancellationToken)
         {
             ISearchResponse<MediaRef> response = await _mediaRefService.GroupsAsync(query?.Filter, query?.Size, cancellationToken);
@@ -151,6 +167,7 @@ namespace Hfa.WebApi.Controllers
         [ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "filter" })]
         [HttpGet]
         [Route("cultures")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> CulturesAsync([FromQuery]string filter, CancellationToken cancellationToken)
         {
             var cultures = await _memoryCache.GetOrCreateAsync(CacheKeys.CulturesKey, async entry =>
@@ -165,6 +182,7 @@ namespace Hfa.WebApi.Controllers
         [ResponseCache(CacheProfileName = "Long")]
         [HttpGet]
         [Route("sitepacks")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> SitePacksAsync([FromQuery]string filter, CancellationToken cancellationToken)
         {
             var sitePacks = await _memoryCache.GetOrCreateAsync($"{CacheKeys.SitePacksKey}-{filter}", async entry =>

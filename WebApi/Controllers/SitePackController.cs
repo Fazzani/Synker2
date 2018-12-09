@@ -22,6 +22,7 @@ using hfa.WebApi.Services;
 using hfa.synker.entities;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using Microsoft.AspNetCore.Http;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Hfa.WebApi.Controllers
@@ -63,6 +64,8 @@ namespace Hfa.WebApi.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.Value.GetAsync(new DocumentPath<SitePackChannel>(id), null, cancellationToken);
@@ -77,6 +80,8 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         [Route("save")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Save([FromBody]List<SitePackChannel> sitepacks, CancellationToken cancellationToken)
         {
             sitepacks.ForEach(x =>
@@ -97,6 +102,8 @@ namespace Hfa.WebApi.Controllers
         [HttpPut("{id}")]
         [ValidateModel]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(string id, [FromBody]SitePackChannel value, CancellationToken cancellationToken)
         {
             var response = await _sitePackService.SaveAsync(new List<SitePackChannel> { value }, cancellationToken);
@@ -115,6 +122,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete([FromQuery]string id, CancellationToken cancellationToken)
         {
             var response = await _sitePackService.DeleteManyAsync(new[] { id }, cancellationToken);
@@ -124,6 +132,7 @@ namespace Hfa.WebApi.Controllers
         [ResponseCache(CacheProfileName = "Long")]
         [HttpGet]
         [Route("tvgsites")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> TvgSitesAsync(CancellationToken cancellationToken)
         {
             var tvgSites = await _memoryCache.GetOrCreateAsync(CacheKeys.SitesKey, async entry =>
@@ -138,6 +147,7 @@ namespace Hfa.WebApi.Controllers
         //[ResponseCache(CacheProfileName = "Long")]
         [HttpGet]
         [Route("sitepacks")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> SitePacksAsync([FromQuery]string filter, CancellationToken cancellationToken)
         {
             var response = await _sitePackService.ListSitePackAsync(filter, cancellationToken: cancellationToken);
@@ -154,6 +164,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("matchtvg/name/{mediaName}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> MatchTvgByMediaName([FromRoute] string mediaName, [FromQuery] string country, CancellationToken cancellationToken = default)
         {
             var sitePack = await _sitePackService.MatchMediaNameAndBySiteAsync(mediaName, country, cancellationToken);
@@ -169,6 +180,7 @@ namespace Hfa.WebApi.Controllers
         [ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "filter" })]
         [HttpGet]
         [Route("countries")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> CountriesAsync([FromQuery]string filter, CancellationToken cancellationToken)
         {
             var cultures = await _memoryCache.GetOrCreateAsync(CacheKeys.CulturesKey, async entry =>
@@ -181,6 +193,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpPost("countries")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> SyncCountryAsync(CancellationToken cancellationToken)
         {
             var response = await _sitePackService.SyncCountrySitePackAsync(cancellationToken);
@@ -194,6 +207,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("used")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllFromPlaylistsAsync(CancellationToken cancellationToken = default)
         {
             IEnumerable<string> result = await GetSitepacksToWebGrab(cancellationToken);
@@ -221,6 +235,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("webgrabconfig")]
         [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> WebgrabConfigBySitePackAsync([FromBody]SimpleModelPost sitePackUrl, CancellationToken cancellationToken = default)
         {
             var paste = await SynkSitePackToWebgrabAsync(sitePackUrl.Value, cancellationToken);
@@ -235,6 +250,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("synk/webgrab")]
         [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> SynkAllSitePackToWebGrab(CancellationToken cancellationToken = default)
         {
             _dbContext.WebGrabConfigDockers.RemoveRange(_dbContext.WebGrabConfigDockers);

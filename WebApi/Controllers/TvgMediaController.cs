@@ -17,6 +17,7 @@ using hfa.Synker.Service.Elastic;
 using hfa.WebApi.Models.TvgMedias;
 using hfa.Synker.Service.Services;
 using hfa.WebApi.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -46,6 +47,9 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [ValidateModel]
         [Route("search")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> SearchAsync([FromBody] QueryListBaseModel query, CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.Value.SearchAsync<TvgMedia>(rq => rq
@@ -64,6 +68,10 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
@@ -86,11 +94,12 @@ namespace Hfa.WebApi.Controllers
         /// <summary>
         ///  Match playlist tvg (site pack directement)
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="matchTvgPostModel"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("matchtvg")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ValidateModel]
         public async Task<IActionResult> MatchTvg([FromBody] MatchTvgPostModel matchTvgPostModel, CancellationToken cancellationToken = default)
         {
@@ -100,6 +109,8 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public IActionResult Post([FromBody]TvgMedia value)
         {
             return Ok();
@@ -107,6 +118,8 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPut("{id}")]
         [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public IActionResult Put(int id, [FromBody]TvgMedia value)
         {
             return Ok();
@@ -114,6 +127,8 @@ namespace Hfa.WebApi.Controllers
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesDefaultResponseType]
         public IActionResult Delete(int id)
         {
             return NoContent();

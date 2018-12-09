@@ -14,6 +14,7 @@ using hfa.WebApi.Models.Auth;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
+using Microsoft.AspNetCore.Http;
 
 namespace hfa.WebApi.Controllers
 {
@@ -39,6 +40,9 @@ namespace hfa.WebApi.Controllers
         [AllowAnonymous]
         [HttpPost]
         [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> GetToken([FromBody] AuthModel model)
         {
             JwtReponse jwtReponse = null;
@@ -101,6 +105,9 @@ namespace hfa.WebApi.Controllers
         [AllowAnonymous]
         [HttpPost]
         [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Register([FromBody] RegisterModel user)
         {
             if (_dbContext.Users.Any(x => x.Email == user.Email) || _dbContext.Users.Any(x => x.ConnectionState.UserName == user.UserName))
@@ -122,6 +129,9 @@ namespace hfa.WebApi.Controllers
         [Route("reset")]
         [HttpPost]
         [ValidateModel]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Reset([FromBody] ResetModel user)
         {
             if (!_dbContext.Users.Any(x => x.ConnectionState.UserName == user.UserName))

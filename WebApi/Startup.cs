@@ -66,6 +66,7 @@ using System.Threading.Tasks;
 using ZNetCS.AspNetCore.Authentication.Basic;
 using ZNetCS.AspNetCore.Authentication.Basic.Events;
 
+[assembly: ApiConventionType(typeof(DefaultApiConventions))]
 namespace hfa.WebApi
 {
     /// <summary>

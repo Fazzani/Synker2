@@ -19,6 +19,7 @@ using PlaylistManager.Entities;
 using hfa.Synker.Service.Services.Scraper;
 using hfa.WebApi.Common;
 using System.Net;
+using Microsoft.AspNetCore.Http;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -60,6 +61,8 @@ namespace Hfa.WebApi.Controllers
         [HttpGet("{id}")]
         [ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "id" })]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.Value.GetAsync(new DocumentPath<Picon>(id), null, cancellationToken);
@@ -79,6 +82,8 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("synk")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Synk([FromQuery] bool reset, CancellationToken cancellationToken)
         {
             var picons = await _piconsService.GetPiconsFromGithubRepoAsync(new SynkPiconConfig(), cancellationToken);
@@ -93,6 +98,9 @@ namespace Hfa.WebApi.Controllers
         /// <summary>
         /// Match tvgmedia names with picons
         /// </summary>
+        /// <param name="tvgmedias"></param>
+        /// <param name="distance"></param>
+        /// <param name="shouldMatchChannelNumber"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
