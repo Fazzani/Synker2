@@ -1,6 +1,6 @@
 ARG arch=x64
 ARG version=1.0.0
-FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
+FROM microsoft/dotnet:2.2-aspnetcore-runtime AS base
 ARG arch
 ARG version
 ENV VERSION=$version
@@ -15,7 +15,7 @@ LABEL maintainer="synker-team@synker.ovh" \
 WORKDIR /app
 
 ARG arch=x64
-FROM microsoft/dotnet:2.1.300-sdk AS build
+FROM microsoft/dotnet:2.2-sdk AS build
 ARG arch
 WORKDIR /src
 COPY . .
