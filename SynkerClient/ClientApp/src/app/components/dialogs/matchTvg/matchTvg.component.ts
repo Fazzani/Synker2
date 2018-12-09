@@ -60,7 +60,7 @@ export class MatchTvgDialog implements OnInit, OnDestroy {
 
       if (this.matchTvgFormModel.matchCountry) { model.country = x.lang; }
 
-      switch (parseInt(this.matchTvgFormModel.matchingTvgSiteType, 10)) {
+      switch (parseInt(this.matchTvgFormModel.matchingTvgSiteType.toString(), 10)) {
         case MatchingTvgSiteTypeEnum.TvgSiteInMedia:
           model.tvgSites = [x.tvg.tvgSource.site];
           break;
