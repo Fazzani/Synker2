@@ -16,6 +16,7 @@ using hfa.WebApi.Models.Notifications;
 using Hfa.WebApi.Controllers;
 using Hfa.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -41,8 +42,8 @@ namespace hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("search")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult List([FromBody] QueryListBaseModel query)
         {
             var response = _dbContext.Devices
@@ -60,7 +61,7 @@ namespace hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateModel]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> PostAsync([FromBody] PushSubscriptionModel pushSubscription, CancellationToken cancellationToken)
         {
             var device = new Device {
@@ -82,7 +83,7 @@ namespace hfa.WebApi.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteAsync(int id, CancellationToken cancellationToken)
         {

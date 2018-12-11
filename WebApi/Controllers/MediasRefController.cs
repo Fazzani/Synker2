@@ -60,7 +60,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [Route("synk")]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> SynkAsync(CancellationToken cancellationToken)
@@ -75,7 +75,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [Route("synkpicons")]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> SynkPiconsAsync(CancellationToken cancellationToken)
@@ -104,7 +104,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [ValidateModel]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Save([FromBody]List<MediaRef> mediasRef, CancellationToken cancellationToken)
@@ -118,7 +118,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpPost("merge")]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Merge(CancellationToken cancellationToken)
@@ -132,7 +132,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpPost(nameof(DeleteMany))]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteMany([FromBody] string[] ids, CancellationToken cancellationToken)
         {
             var response = await _mediaRefService.DeleteManyAsync(ids, cancellationToken);
@@ -140,7 +140,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
         {
             var response = await _mediaRefService.DeleteManyAsync(new string[] { id }, cancellationToken);
@@ -151,7 +151,7 @@ namespace Hfa.WebApi.Controllers
         [Route("groups")]
         [ValidateModel]
         [ResponseCache(CacheProfileName = "Long")]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> GroupsAsync([FromBody]ElasticQueryAggrRequest query, CancellationToken cancellationToken)
@@ -167,7 +167,7 @@ namespace Hfa.WebApi.Controllers
         [ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "filter" })]
         [HttpGet]
         [Route("cultures")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> CulturesAsync([FromQuery]string filter, CancellationToken cancellationToken)
         {
             var cultures = await _memoryCache.GetOrCreateAsync(CacheKeys.CulturesKey, async entry =>
@@ -182,7 +182,7 @@ namespace Hfa.WebApi.Controllers
         [ResponseCache(CacheProfileName = "Long")]
         [HttpGet]
         [Route("sitepacks")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> SitePacksAsync([FromQuery]string filter, CancellationToken cancellationToken)
         {
             var sitePacks = await _memoryCache.GetOrCreateAsync($"{CacheKeys.SitePacksKey}-{filter}", async entry =>

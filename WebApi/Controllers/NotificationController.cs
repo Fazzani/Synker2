@@ -9,6 +9,7 @@ using hfa.WebApi.Hubs;
 using hfa.WebApi.Models.Notifications;
 using Hfa.WebApi.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -50,7 +51,7 @@ namespace hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateModel]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Post([FromBody] NotificationModel notification, CancellationToken cancellationToken)
         {
             switch (notification.NotificationType)
@@ -103,8 +104,8 @@ namespace hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost("webpush")]
         [ValidateModel]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PostWebPushAsync([FromBody] WebPushModel webPushModel, CancellationToken cancellationToken)
         {
             synker.entities.Notifications.Device device = await _dbContext.Devices.FirstOrDefaultAsync(x => x.Id == webPushModel.Id, cancellationToken);
@@ -127,7 +128,7 @@ namespace hfa.WebApi.Controllers
         /// <returns></returns>
         [Route("keys")]
         [HttpGet]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetKeysAsync(CancellationToken cancellationToken)
         {
             return await Task.Run(() =>
@@ -145,7 +146,7 @@ namespace hfa.WebApi.Controllers
         /// <returns></returns>
         [Route("push")]
         [HttpPost]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
         public async Task<IActionResult> GetWebPushNotification([FromBody]BorkerMessageModel message, CancellationToken cancellationToken)
         {

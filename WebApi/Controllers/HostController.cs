@@ -18,6 +18,7 @@ using System.Threading;
 using Hfa.WebApi.Models;
 using hfa.WebApi.Models;
 using System.Net;
+using Microsoft.AspNetCore.Http;
 
 namespace hfa.WebApi.Controllers
 {
@@ -47,8 +48,8 @@ namespace hfa.WebApi.Controllers
         [HttpPost]
         [Route("search")]
         [Authorize(Policy = AuthorizePolicies.ADMIN)]
-        [ProducesResponseType(typeof(PagedResult<Host>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(PagedResult<Host>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult List([FromBody] QueryListBaseModel query)
         {
             var response = _dbContext.Hosts
@@ -60,8 +61,8 @@ namespace hfa.WebApi.Controllers
 
         [HttpGet("{id}")]
         [ValidateModel]
-        [ProducesResponseType(typeof(Host), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(Host), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get([FromRoute] int id, CancellationToken cancellationToken)
         {
             var host = await _dbContext.Hosts.SingleOrDefaultAsync(m => m.Id == id);
@@ -76,9 +77,9 @@ namespace hfa.WebApi.Controllers
 
         [HttpPut("{id}")]
         [ValidateModel]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Host host, CancellationToken cancellationToken)
         {
             if (id != host.Id)
@@ -109,7 +110,7 @@ namespace hfa.WebApi.Controllers
 
         [HttpPost]
         [ValidateModel]
-        [ProducesResponseType((int)HttpStatusCode.Created)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Post([FromBody] Host host, CancellationToken cancellationToken)
         {
             if (!string.IsNullOrEmpty(host.Authentication?.Password))
@@ -125,8 +126,8 @@ namespace hfa.WebApi.Controllers
 
         [HttpDelete("{id}")]
         [ValidateModel]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(Host), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Host), StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
         {
             var host = await _dbContext.Hosts.SingleOrDefaultAsync(m => m.Id == id);

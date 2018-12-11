@@ -74,7 +74,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost("search")]
         [ValidateModel]
-        [ProducesResponseType(typeof(PagedResult<PlaylistModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(PagedResult<PlaylistModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> ListAsync([FromBody] QueryListBaseModel query, CancellationToken cancellationToken, [FromQuery] bool light = true)
         {
             var plCacheKey = $"{UserCachePlaylistKey}_{query.GetHashCode()}_{light}";
@@ -109,8 +109,8 @@ namespace Hfa.WebApi.Controllers
 
         [HttpGet("{id}")]
         //[ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "id", "light" })]
-        [ProducesResponseType(typeof(PlaylistModel), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(PlaylistModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAsync(string id, CancellationToken cancellationToken, [FromQuery] bool light = true)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -159,8 +159,8 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPut("{id}")]
         [ValidateModel]
-        [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -202,8 +202,8 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPut("light/{id}")]
         [ValidateModel]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutLightAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -243,7 +243,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(Playlist), StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
@@ -269,7 +269,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("handlers")]
-        [ProducesResponseType(typeof(List<TvgMedia>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<TvgMedia>), StatusCodes.Status200OK)]
         public IActionResult ExecuteHandlers([FromBody]List<TvgMedia> tvgMedias, CancellationToken cancellationToken)
         {
             var result = _playlistService.ExecuteHandlersAsync(tvgMedias, cancellationToken);
@@ -286,7 +286,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("synk")]
         [ValidateModel]
-        [ProducesResponseType((int)HttpStatusCode.Created)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> SynkAsync([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken)
         {
             var playlist = _dbContext.Playlist.AsNoTracking().FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.Url) ?? new Playlist
@@ -312,8 +312,8 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("diff")]
         [ValidateModel]
-        [ProducesResponseType(typeof(IEnumerable<TvgMedia>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(IEnumerable<TvgMedia>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DiffAsync([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken)
         {
             //TODO: Déduire le provider from playlist (isXtream => xtreamProvider, m3u ou tvlist)
@@ -360,8 +360,8 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("matchfiltred/{id}")]
         [ValidateModel]
-        [ProducesResponseType(typeof(PlaylistModel), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(PlaylistModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> MatchFiltredByTvgSitesAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -415,8 +415,8 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("matchtvg/{id}")]
         [ValidateModel]
-        [ProducesResponseType(typeof(PlaylistModel), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(PlaylistModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> MatchTvgAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -472,8 +472,8 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("matchvideos/{id}")]
         [ValidateModel]
-        [ProducesResponseType(typeof(PlaylistModel), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(PlaylistModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> MatchVideosByPlaylistAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -520,8 +520,8 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("matchvideo/{name}")]
         [ValidateModel]
-        [ProducesResponseType(typeof(MediaInfo), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(MediaInfo), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> MatchVideoAsync([FromRoute] string name, CancellationToken cancellationToken = default(CancellationToken))
         {
             var matched = await _mediaScraper.SearchAsync(name, _globalOptions.TmdbAPI, _globalOptions.TmdbPosterBaseUrl, cancellationToken);
@@ -537,7 +537,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("matchvideos")]
         [ValidateModel]
-        [ProducesResponseType(typeof(IEnumerable<TvgMedia>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IEnumerable<TvgMedia>), StatusCodes.Status200OK)]
         public IActionResult MatchVideos([FromBody]List<TvgMedia> tvgmedias, CancellationToken cancellationToken = default(CancellationToken))
         {
             tvgmedias.AsParallel().WithCancellation(cancellationToken).ForAll(media =>
@@ -561,7 +561,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("matchtvg/media")]
         [ValidateModel]
-        [ProducesResponseType(typeof(SitePackChannel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(SitePackChannel), StatusCodes.Status200OK)]
         public async Task<IActionResult> MatchTvgByMedia([FromBody] TvgMedia media, CancellationToken cancellationToken = default)
         {
             var sitePack = await _sitePackService.MatchMediaNameAndBySiteAsync(media.DisplayName, media.Tvg.TvgSource.Site, cancellationToken);
@@ -578,9 +578,9 @@ namespace Hfa.WebApi.Controllers
         //[ResponseCache(CacheProfileName = "Long")]
         [AllowAnonymous]
         [HttpGet("files/{publicId:required}", Name = nameof(GetFile))]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(byte[]), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(byte[]), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetFile(string publicId, [FromQuery] string provider = "m3u", CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(publicId);
@@ -727,8 +727,8 @@ namespace Hfa.WebApi.Controllers
         #endregion
 
         [HttpGet("{id}/groups")]
-        [ProducesResponseType(typeof(PlaylistModel), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(PlaylistModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetGroupsAsync(string id, CancellationToken cancellationToken)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -740,8 +740,8 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpGet("{id}/groups/children")]
-        [ProducesResponseType(typeof(PlaylistModel), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(PlaylistModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetChildrenGroupsAsync(string id, string group, CancellationToken cancellationToken)
         {
             var idGuid = GetInternalPlaylistId(id);

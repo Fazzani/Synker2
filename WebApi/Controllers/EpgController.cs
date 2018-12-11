@@ -66,8 +66,8 @@ namespace Hfa.WebApi.Controllers
 
         [ValidateModel]
         [HttpGet("{id}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
         {
             var response = await _elasticConnectionClient.Client.Value.SearchAsync<tvChannel>(rq => rq

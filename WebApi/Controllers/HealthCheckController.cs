@@ -15,6 +15,7 @@
     using hfa.Synker.Services.Dal;
     using hfa.Synker.Service.Services.Elastic;
     using hfa.Synker.Service.Elastic;
+    using Microsoft.AspNetCore.Http;
 
     [AllowAnonymous]
     [Route("api/v{version:apiVersion}/[controller]")]
@@ -29,7 +30,8 @@
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetBy(HealthCheckEnum id)
         {
             switch (id)
@@ -47,11 +49,11 @@
                     }
                     catch (Exception)
                     {
-                        return StatusCode((int)HttpStatusCode.InternalServerError);
+                        return StatusCode(StatusCodes.Status500InternalServerError);
                     }
                 case HealthCheckEnum.Elastic:
                     var elasticResponse = await _elasticConnectionClient.Client.Value.ClusterHealthAsync(cancellationToken: HttpContext.RequestAborted);
-                    return elasticResponse.IsValid ? Ok() : StatusCode((int)HttpStatusCode.InternalServerError);
+                    return elasticResponse.IsValid ? Ok() : StatusCode(StatusCodes.Status500InternalServerError);
                 default:
                     return Ok();
             }
@@ -71,7 +73,7 @@
         ///// </summary>
         ///// <returns></returns>
         //[HttpGet("syncdatabase")]
-        //[ProducesResponseType((int)HttpStatusCode.OK)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
         //public async Task<IActionResult> GetSyncDataBases(CancellationToken cancellationToken)
         //{
         //    using (var mysqlDb = new SynkerDbContext(new DbContextOptionsBuilder().UseMySql("server=synker.ovh;user id=pl;pwd=password;port=8889;database=playlist;").Options))

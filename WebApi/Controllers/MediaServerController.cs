@@ -18,6 +18,7 @@
     using hfa.WebApi.Common;
     using hfa.WebApi.Models.MediaServer;
     using hfa.WebApi.Common.Filters;
+    using Microsoft.AspNetCore.Http;
 
     [Produces("application/json")]
     [Route("api/v{version:apiVersion}/[controller]")]
@@ -48,7 +49,7 @@
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet("server")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetServerAsync(CancellationToken cancellationToken)
         {
             var response = await _mediaServerService.GetServerStatsAsync(cancellationToken);
@@ -61,7 +62,7 @@
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet("streams")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetStreamsAsync(CancellationToken cancellationToken)
         {
             var response = await _mediaServerService.GetServerStreamsAsync(cancellationToken);
@@ -75,7 +76,7 @@
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost("live")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ValidateModel]
         public async Task<IActionResult> PostLiveAsync([FromBody]MediaServerLivePost model, CancellationToken cancellationToken)
         {
@@ -100,7 +101,7 @@
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost("stop")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ValidateModel]
         public async Task<IActionResult> PostStopLiveAsync([FromBody]MediaServerLivePost model, CancellationToken cancellationToken)
         {
@@ -113,7 +114,7 @@
         /// </summary>
         /// <returns></returns>
         [HttpGet("config")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetConfig()
         {
             return Ok(_mediaServerOptions?.Value);

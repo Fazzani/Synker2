@@ -63,7 +63,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
@@ -79,7 +79,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [ValidateModel]
         [Route("save")]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Save([FromBody]List<SitePackChannel> sitepacks, CancellationToken cancellationToken)
@@ -101,7 +101,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPut("{id}")]
         [ValidateModel]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(string id, [FromBody]SitePackChannel value, CancellationToken cancellationToken)

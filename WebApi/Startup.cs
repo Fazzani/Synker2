@@ -357,12 +357,12 @@ namespace hfa.WebApi
             synkerDbContext.Database.Migrate();
 
             //Chanllenge Let's Encrypt path
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @".well-known")),
-                RequestPath = new PathString("/.well-known"),
-                ServeUnknownFileTypes = true // serve extensionless file
-            });
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @".well-known")),
+            //    RequestPath = new PathString("/.well-known"),
+            //    ServeUnknownFileTypes = true // serve extensionless file
+            //});
 
             loggerFactory.AddFile(Configuration.GetSection("Logging"));
 

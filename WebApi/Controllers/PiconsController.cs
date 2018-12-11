@@ -60,7 +60,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpGet("{id}")]
         [ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "id" })]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
@@ -81,7 +81,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("synk")]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Synk([FromQuery] bool reset, CancellationToken cancellationToken)
