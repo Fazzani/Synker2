@@ -17,6 +17,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace hfa.WebApi.Controllers
 {
+    /// <summary>
+    /// Xtream API 
+    /// @see https://forum.xtream-codes.com/topic/3511-how-to-player-api-v2/
+    /// </summary>
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
     [Produces("application/json")]
