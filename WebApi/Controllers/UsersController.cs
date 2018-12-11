@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Http;
 
 namespace hfa.WebApi.Controllers
 {
@@ -47,6 +48,8 @@ namespace hfa.WebApi.Controllers
         [ValidateModel]
         [Authorize(Policy = AuthorizePolicies.ADMIN)]
         [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(int), StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> Put(int id, [FromBody] User userModel, CancellationToken cancellationToken)
         {
             var user = await _dbContext.Users.FindAsync(new object[] { id }, cancellationToken: cancellationToken);
@@ -137,9 +140,6 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public IActionResult List([FromBody] QueryListBaseModel query)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var response = _dbContext.Users
                 .Include(x => x.UserRoles)
                     .ThenInclude(r => r.Role)

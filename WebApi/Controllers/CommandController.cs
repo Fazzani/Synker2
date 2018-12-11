@@ -89,6 +89,8 @@ namespace hfa.WebApi.Controllers
         [HttpGet("{id}")]
         [ValidateModel]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> GetCommand([FromRoute] int id)
         {
             var command = await _dbContext.Command.SingleOrDefaultAsync(m => m.Id == id);
@@ -103,6 +105,8 @@ namespace hfa.WebApi.Controllers
 
         [HttpPut("{id}/status/{status}")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> PutCommandByStatus([FromRoute] int id, [FromRoute] CommandStatusEnum status)
         {
             var command = await _dbContext.Command.FindAsync(id);
@@ -120,6 +124,8 @@ namespace hfa.WebApi.Controllers
         [ValidateModel]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> PutCommand([FromRoute] int id, [FromBody] Command command)
         {
             if (id != command.Id)
@@ -162,6 +168,8 @@ namespace hfa.WebApi.Controllers
         [HttpDelete("{id}")]
         [ValidateModel]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> DeleteCommand([FromRoute] int id)
         {
             var command = await _dbContext.Command.SingleOrDefaultAsync(m => m.Id == id);

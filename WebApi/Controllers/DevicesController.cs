@@ -17,10 +17,8 @@ using Hfa.WebApi.Controllers;
 using Hfa.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using WebPush;
 
 namespace hfa.WebApi.Controllers
 {
@@ -47,9 +45,6 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public IActionResult List([FromBody] QueryListBaseModel query)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var response = _dbContext.Devices
                 .OrderByDescending(x => x.Id)
                 .GetPaged(query.PageNumber, query.PageSize, query.GetAll);

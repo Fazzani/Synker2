@@ -89,7 +89,7 @@
                 DashOutput = $"{_mediaServerOptions.Value.StreamBaseUrl}live/{streamId}.mpd",
                 RtmpOutput = $"{_mediaServerOptions.Value.StreamRtmpBaseUrl}live/{streamId}.mpd",
                 WsOutput = $"{_mediaServerOptions.Value.StreamWebsocketBaseUrl}live/{streamId}.flv",
-                streamId = streamId
+                streamId
             });
         }
 

@@ -51,9 +51,6 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public IActionResult List([FromBody] QueryListBaseModel query)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var response = _dbContext.Hosts
                 .OrderByDescending(x => x.Id)
                 .GetPaged(query.PageNumber, query.PageSize, query.GetAll);

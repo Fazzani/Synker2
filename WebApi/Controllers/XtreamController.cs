@@ -121,6 +121,8 @@ namespace hfa.WebApi.Controllers
         [HttpGet]
         [Route("panel/playlist/{playlistId}/{streamId}")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> GetShortEpgForStreamAsync([FromRoute]string playlistId, string streamId, CancellationToken cancellationToken)
         {
             var idGuid = GetInternalPlaylistId(playlistId);
