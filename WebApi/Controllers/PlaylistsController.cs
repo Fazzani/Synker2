@@ -575,7 +575,7 @@ namespace Hfa.WebApi.Controllers
         /// <param name="provider"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        //[ResponseCache(CacheProfileName = "Long")]
+        [ResponseCache(CacheProfileName = "Default")]
         [AllowAnonymous]
         [HttpGet("files/{publicId:required}", Name = nameof(GetFile))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
