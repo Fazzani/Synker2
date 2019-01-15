@@ -1,25 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using hfa.Synker.Service.Elastic;
+using hfa.Synker.Service.Entities.MediasRef;
+using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Services.Picons;
+using hfa.Synker.Service.Services.Scraper;
+using hfa.Synker.Services.Dal;
+using hfa.WebApi.Common;
+using hfa.WebApi.Models.Elastic;
+using hfa.WebApi.Models.Xmltv;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Threading;
 using Nest;
-using hfa.Synker.Services.Dal;
-using Microsoft.AspNetCore.Authorization;
-using hfa.Synker.Service.Services.Elastic;
-using hfa.Synker.Service.Elastic;
-using hfa.Synker.Service.Services.Picons;
-using hfa.Synker.Service.Entities.MediasRef;
-using hfa.WebApi.Models.Xmltv;
-using hfa.WebApi.Models.Elastic;
 using PlaylistManager.Entities;
-using hfa.Synker.Service.Services.Scraper;
-using hfa.WebApi.Common;
-using System.Net;
-using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -46,14 +44,15 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [Route("_search")]
-        public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
+        public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken = default)
         {
             return await SearchAsync<Picon, PiconModel>(request.ToString(), nameof(MediaRef).ToLowerInvariant(), cancellationToken);
         }
 
         [HttpPost]
         [Route("_searchstring")]
-        public async Task<IActionResult> SearchStringAsync([FromBody]SimpleQueryElastic request, CancellationToken cancellationToken)
+        public async Task<IActionResult> SearchStringAsync([FromBody]SimpleQueryElastic request,
+            CancellationToken cancellationToken = default)
         {
             return await SearchQueryStringAsync<Picon, PiconModel>(request, cancellationToken);
         }
@@ -63,7 +62,7 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Get(string id, CancellationToken cancellationToken = default)
         {
             var response = await _elasticConnectionClient.Client.Value.GetAsync(new DocumentPath<Picon>(id), null, cancellationToken);
 
@@ -84,7 +83,7 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Synk([FromQuery] bool reset, CancellationToken cancellationToken)
+        public async Task<IActionResult> Synk([FromQuery] bool reset, CancellationToken cancellationToken = default)
         {
             var picons = await _piconsService.GetPiconsFromGithubRepoAsync(new SynkPiconConfig(), cancellationToken);
             var elasticResponse = await _piconsService.SynkAsync(picons, reset, cancellationToken);
@@ -105,25 +104,28 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("match")]
-        public IActionResult Match([FromBody]List<TvgMedia> tvgmedias, [FromQuery] int distance = 90, [FromQuery] bool shouldMatchChannelNumber = true, CancellationToken cancellationToken = default(CancellationToken))
+        public IActionResult Match([FromBody]List<TvgMedia> tvgmedias,
+            [FromQuery] int distance = 90,
+            [FromQuery] bool shouldMatchChannelNumber = true,
+            CancellationToken cancellationToken = default)
         {
             tvgmedias.AsParallel().WithCancellation(cancellationToken).ForAll(m =>
                 {
                     if (m.Tvg == null)
                         m.Tvg = new Tvg();
 
-                    if (m.MediaType == MediaType.LiveTv || m.MediaType == MediaType.Radio)
-                    {
-                        var picons = _piconsService.MatchAsync(m.DisplayName, shouldMatchChannelNumber ? m.GetChannelNumber() : null, distance, cancellationToken).GetAwaiter().GetResult();
-                        m.Tvg.Logo = picons.FirstOrDefault()?.RawUrl;
-                    }
-                    else if (m.MediaType == MediaType.Video)
+                    if (m.MediaType == MediaType.Video)
                     {
                         var matched = _mediaScraper.SearchAsync(m.DisplayName, _globalOptions.TmdbAPI, _globalOptions.TmdbPosterBaseUrl, cancellationToken).GetAwaiter().GetResult();
                         if (matched != null)
                         {
                             m.Tvg.Logo = matched.FirstOrDefault().PosterPath;
                         }
+                    }
+                    else
+                    {
+                        var picons = _piconsService.MatchAsync(m.DisplayName, shouldMatchChannelNumber ? m.GetChannelNumber() : null, distance, cancellationToken).GetAwaiter().GetResult();
+                        m.Tvg.Logo = picons.FirstOrDefault()?.RawUrl;
                     }
                 });
 
@@ -138,7 +140,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("match/{mediaName}")]
-        public async Task<IActionResult> Match([FromRoute]string mediaName, CancellationToken cancellationToken)
+        public async Task<IActionResult> Match([FromRoute]string mediaName, CancellationToken cancellationToken = default)
         {
             var picons = await _piconsService.MatchAsync(mediaName, Media.GetChannelNumber(mediaName), 90, cancellationToken);
             return Ok(picons.FirstOrDefault()?.RawUrl);
