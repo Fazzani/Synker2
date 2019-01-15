@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using hfa.Synker.Service.Elastic;
+﻿using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Services.Dal;
@@ -15,11 +9,14 @@ using hfa.WebApi.Models.Admin;
 using Hfa.WebApi.Controllers;
 using Hfa.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Http;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace hfa.WebApi.Controllers
 {
@@ -50,7 +47,8 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(int), StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Put(int id, [FromBody] User userModel, CancellationToken cancellationToken)
+        public async Task<IActionResult> Put(int id, [FromBody] User userModel,
+            CancellationToken cancellationToken = default)
         {
             var user = await _dbContext.Users.FindAsync(new object[] { id }, cancellationToken: cancellationToken);
             if (user == null)
@@ -74,7 +72,7 @@ namespace hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Me(CancellationToken cancellationToken)
+        public async Task<IActionResult> Me(CancellationToken cancellationToken = default)
         {
             var user = await _dbContext.Users
                 .Include(x => x.UserRoles)
@@ -95,7 +93,7 @@ namespace hfa.WebApi.Controllers
         [Authorize(Policy = AuthorizePolicies.ADMIN)]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Put([FromBody] User userModel, CancellationToken cancellationToken)
+        public async Task<IActionResult> Put([FromBody] User userModel, CancellationToken cancellationToken = default)
         {
             var user = await _dbContext.Users.FindAsync(new object[] { UserId }, cancellationToken: cancellationToken);
             if (user == null)
@@ -123,7 +121,7 @@ namespace hfa.WebApi.Controllers
         [Authorize(Policy = AuthorizePolicies.ADMIN)]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken = default)
         {
             var user = await _dbContext.Users.FindAsync(new object[] { UserId.Value }, cancellationToken);
             return user == null ? NotFound(id) : (IActionResult)Ok(user);
@@ -161,7 +159,7 @@ namespace hfa.WebApi.Controllers
         [Authorize(Policy = AuthorizePolicies.ADMIN)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> DeleteAsync(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteAsync(int id, CancellationToken cancellationToken = default)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
             if (user == null)

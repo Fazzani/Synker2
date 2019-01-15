@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using hfa.Synker.Service.Elastic;
+﻿using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Services.Xtream;
 using hfa.Synker.Services.Dal;
 using Hfa.WebApi.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Http;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace hfa.WebApi.Controllers
 {
@@ -42,7 +40,9 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> GetAllEpgAsync([FromRoute]string playlistId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllEpgAsync(
+            [FromRoute]string playlistId, 
+            CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(playlistId);
 
@@ -59,7 +59,9 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> GetLiveCategoriesAsync([FromRoute]string playlistId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetLiveCategoriesAsync(
+            [FromRoute]string playlistId,
+            CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(playlistId);
 
@@ -76,7 +78,9 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Synker.Service.Entities.Playlists.Playlist), StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> GetLiveStreamsAsync([FromRoute]string playlistId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetLiveStreamsAsync(
+            [FromRoute]string playlistId,
+            CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(playlistId);
 
@@ -93,7 +97,10 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> GetLiveStreamsByCategoriesAsync([FromRoute]string playlistId, [FromRoute]string catId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetLiveStreamsByCategoriesAsync(
+            [FromRoute]string playlistId,
+            [FromRoute]string catId,
+            CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(playlistId);
 
@@ -110,7 +117,8 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> GetPanelAsync([FromRoute]string playlistId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetPanelAsync([FromRoute]string playlistId, 
+            CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(playlistId);
 
@@ -127,7 +135,10 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> GetShortEpgForStreamAsync([FromRoute]string playlistId, string streamId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetShortEpgForStreamAsync(
+            [FromRoute]string playlistId, 
+            string streamId,
+            CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(playlistId);
 
@@ -144,7 +155,9 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> GetUserAndServerInfoAsync([FromRoute]string playlistId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetUserAndServerInfoAsync(
+            [FromRoute]string playlistId,
+            CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(playlistId);
 
@@ -161,7 +174,9 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> GetVodStreamsAsync([FromRoute]string playlistId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetVodStreamsAsync(
+            [FromRoute]string playlistId,
+            CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(playlistId);
 
@@ -178,7 +193,9 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> GetXmltvAsync([FromRoute]string playlistId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetXmltvAsync(
+            [FromRoute]string playlistId,
+            CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(playlistId);
 

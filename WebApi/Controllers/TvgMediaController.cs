@@ -38,7 +38,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [Route("_search")]
-        public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
+        public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken = default)
         {
             return await SearchAsync<TvgMedia, TvgMediaModel>(request.ToString(), cancellationToken);
         }
@@ -50,7 +50,7 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> SearchAsync([FromBody] QueryListBaseModel query, CancellationToken cancellationToken)
+        public async Task<IActionResult> SearchAsync([FromBody] QueryListBaseModel query, CancellationToken cancellationToken = default)
         {
             var response = await _elasticConnectionClient.Client.Value.SearchAsync<TvgMedia>(rq => rq
                 .Size(query.PageSize)
@@ -72,7 +72,7 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Get(string id, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -101,7 +101,8 @@ namespace Hfa.WebApi.Controllers
         [Route("matchtvg")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ValidateModel]
-        public async Task<IActionResult> MatchTvg([FromBody] MatchTvgPostModel matchTvgPostModel, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> MatchTvg([FromBody] MatchTvgPostModel matchTvgPostModel, 
+            CancellationToken cancellationToken = default)
         {
             var sitePack = await _sitePackService.MatchTvgAsync(matchTvgPostModel.MediaName, matchTvgPostModel.Country, matchTvgPostModel.TvgSites, matchTvgPostModel.MinScore, cancellationToken);
             return Ok(sitePack);
