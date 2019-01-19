@@ -109,7 +109,7 @@ namespace hfa.Synker.Service.Services.Picons
         {
             if (reset)
             {
-                var res = await _elasticConnectionClient.Client.Value.DeleteByQueryAsync(new DeleteByQueryRequest("picons"), cancellationToken);
+                var res = await _elasticConnectionClient.Client.Value.DeleteByQueryAsync<Picon>(r => r.Query(rq => rq.Wildcard(f => f.Name, "*")), cancellationToken);
                 if (!res.IsValid)
                 {
                     if (res.ServerError.Status != 404)
