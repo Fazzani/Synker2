@@ -1,6 +1,7 @@
 ﻿namespace PlaylistManager.Entities
 {
     using hfa.PlaylistBaseLibrary.Entities;
+    using MongoDB.Bson.Serialization.Attributes;
     using PlaylistBaseLibrary.Entities;
     using System;
     [Serializable]
@@ -18,6 +19,7 @@
         }
 
         private string _streamId;
+        [BsonIgnore]
         public string StreamId
         {
             get
@@ -36,8 +38,10 @@
             }
         }
         //public List<string> Urls { get; set; }
+        [BsonElement("c")]
         public Culture Culture { get; set; }
 
+        [BsonElement(nameof(Tvg))]
         public Tvg Tvg { get; set; }
 
         public override string Format(IMediaFormatter mediaFormatter) => mediaFormatter.Format(this);

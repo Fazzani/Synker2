@@ -1,5 +1,6 @@
 ﻿using hfa.PlaylistBaseLibrary.Entities;
 using hfa.PlaylistBaseLibrary.Providers;
+using hfa.Synker.Service.Dal;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Entities.MediaScraper;
 using hfa.Synker.Service.Entities.Playlists;
@@ -24,13 +25,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using PlaylistManager.Entities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -51,12 +52,22 @@ namespace Hfa.WebApi.Controllers
         private readonly GlobalOptions _globalOptions;
         private readonly IXtreamService _xtreamService;
         private readonly IProviderFactory _providerFactory;
+        private readonly PlaylistContext _playlistContext;
 
         private string UserCachePlaylistKey => $"{UserId}:{CacheKeys.PlaylistByUser}";
 
-        public PlaylistsController(IMemoryCache memoryCache, IMediaScraper mediaScraper, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IOptions<GlobalOptions> globalOptions,
-            IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IPlaylistService playlistService, ISitePackService sitePackService, IXtreamService xtreamService,
-            IProviderFactory providerFactory)
+        public PlaylistsController(IMemoryCache memoryCache, 
+            IMediaScraper mediaScraper, 
+            IOptions<ElasticConfig> config, 
+            ILoggerFactory loggerFactory, 
+            IOptions<GlobalOptions> globalOptions,
+            IElasticConnectionClient elasticConnectionClient, 
+            SynkerDbContext context, 
+            IPlaylistService playlistService, 
+            ISitePackService sitePackService, 
+            IXtreamService xtreamService,
+            IProviderFactory providerFactory,
+            PlaylistContext playlistContext)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
             _playlistService = playlistService ?? throw new ArgumentNullException(nameof(playlistService));
@@ -66,6 +77,7 @@ namespace Hfa.WebApi.Controllers
             _globalOptions = globalOptions.Value ?? throw new ArgumentNullException(nameof(globalOptions));
             _xtreamService = xtreamService ?? throw new ArgumentNullException(nameof(xtreamService));
             _providerFactory = providerFactory ?? throw new ArgumentNullException(nameof(providerFactory));
+            _playlistContext = playlistContext ?? throw new ArgumentNullException(nameof(playlistContext));
         }
 
         /// <summary>
@@ -75,7 +87,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost("search")]
         [ValidateModel]
         [ProducesResponseType(typeof(PagedResult<PlaylistModel>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> ListAsync([FromBody] QueryListBaseModel query, CancellationToken cancellationToken, [FromQuery] bool light = true)
+        public async Task<IActionResult> ListAsync([FromBody] QueryListBaseModel query, CancellationToken cancellationToken = default, [FromQuery] bool light = true)
         {
             var plCacheKey = $"{UserCachePlaylistKey}_{query.GetHashCode()}_{light}";
             var playlists = await _memoryCache.GetOrCreateAsync(plCacheKey, async entry =>
@@ -111,7 +123,7 @@ namespace Hfa.WebApi.Controllers
         //[ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "id", "light" })]
         [ProducesResponseType(typeof(PlaylistModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAsync(string id, CancellationToken cancellationToken, [FromQuery] bool light = true)
+        public async Task<IActionResult> GetAsync(string id, CancellationToken cancellationToken = default, [FromQuery] bool light = true)
         {
             var idGuid = GetInternalPlaylistId(id);
             var playlist = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.UniqueId == idGuid, cancellationToken);
@@ -161,7 +173,7 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken)
+        public async Task<IActionResult> PutAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
 
@@ -195,16 +207,18 @@ namespace Hfa.WebApi.Controllers
                 }
             }
 
-            var updatedCount = await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation($"Updated Count : {updatedCount}");
-            return Ok(updatedCount);
+            //var updatedCount = await _dbContext.SaveChangesAsync(cancellationToken);
+            await _playlistContext.Playlists.InsertOneAsync(playlistEntity, null, cancellationToken);
+            //_logger.LogInformation($"Updated Count : {updatedCount}");
+            //return Ok(updatedCount);
+            return Ok();
         }
 
         [HttpPut("light/{id}")]
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutLightAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken)
+        public async Task<IActionResult> PutLightAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
 
@@ -246,7 +260,7 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(Playlist), StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
 
@@ -270,7 +284,7 @@ namespace Hfa.WebApi.Controllers
         [HttpPost]
         [Route("handlers")]
         [ProducesResponseType(typeof(List<TvgMedia>), StatusCodes.Status200OK)]
-        public IActionResult ExecuteHandlers([FromBody]List<TvgMedia> tvgMedias, CancellationToken cancellationToken)
+        public IActionResult ExecuteHandlers([FromBody]List<TvgMedia> tvgMedias, CancellationToken cancellationToken = default)
         {
             var result = _playlistService.ExecuteHandlersAsync(tvgMedias, cancellationToken);
             return Ok(result);
@@ -287,7 +301,7 @@ namespace Hfa.WebApi.Controllers
         [Route("synk")]
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> SynkAsync([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken)
+        public async Task<IActionResult> SynkAsync([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken = default)
         {
             var playlist = _dbContext.Playlist.AsNoTracking().FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.Url) ?? new Playlist
             {
@@ -314,7 +328,7 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         [ProducesResponseType(typeof(IEnumerable<TvgMedia>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DiffAsync([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken)
+        public async Task<IActionResult> DiffAsync([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken = default)
         {
             //TODO: Déduire le provider from playlist (isXtream => xtreamProvider, m3u ou tvlist)
             // Load dynmaiquement all providers (singleton)
@@ -362,7 +376,7 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         [ProducesResponseType(typeof(PlaylistModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> MatchFiltredByTvgSitesAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> MatchFiltredByTvgSitesAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
 
@@ -417,7 +431,7 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         [ProducesResponseType(typeof(PlaylistModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> MatchTvgAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> MatchTvgAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
 
@@ -474,7 +488,7 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         [ProducesResponseType(typeof(PlaylistModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> MatchVideosByPlaylistAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> MatchVideosByPlaylistAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
 
@@ -522,7 +536,7 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         [ProducesResponseType(typeof(MediaInfo), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> MatchVideoAsync([FromRoute] string name, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IActionResult> MatchVideoAsync([FromRoute] string name, CancellationToken cancellationToken = default)
         {
             var matched = await _mediaScraper.SearchAsync(name, _globalOptions.TmdbAPI, _globalOptions.TmdbPosterBaseUrl, cancellationToken);
 
@@ -538,7 +552,7 @@ namespace Hfa.WebApi.Controllers
         [Route("matchvideos")]
         [ValidateModel]
         [ProducesResponseType(typeof(IEnumerable<TvgMedia>), StatusCodes.Status200OK)]
-        public IActionResult MatchVideos([FromBody]List<TvgMedia> tvgmedias, CancellationToken cancellationToken = default(CancellationToken))
+        public IActionResult MatchVideos([FromBody]List<TvgMedia> tvgmedias, CancellationToken cancellationToken = default)
         {
             tvgmedias.AsParallel().WithCancellation(cancellationToken).ForAll(media =>
            {
@@ -752,6 +766,7 @@ namespace Hfa.WebApi.Controllers
             return Ok(playlist.TvgMedias
                 .Where(x => x.MediaGroup.Name.Equals(group, StringComparison.InvariantCultureIgnoreCase)));
         }
+
         private void ClearCache()
         {
             if (_memoryCache.TryGetValue(UserCachePlaylistKey, out List<string> list))

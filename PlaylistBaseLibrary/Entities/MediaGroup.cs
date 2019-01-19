@@ -1,5 +1,6 @@
 ﻿namespace hfa.PlaylistBaseLibrary.Entities
 {
+    using MongoDB.Bson.Serialization.Attributes;
     using System;
     using System.Collections.Generic;
     public class MediaGroup
@@ -13,8 +14,12 @@
         {
             Name = name;
         }
+
+        [BsonElement("n")]
         public string Name { get; set; }
+        [BsonElement("d")]
         public bool Disabled { get; set; } = false;
+        [BsonElement("p")]
         public int Position { get; set; }
 
         /// <summary>

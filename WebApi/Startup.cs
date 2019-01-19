@@ -6,6 +6,7 @@ using hfa.PlaylistBaseLibrary.Common;
 using hfa.PlaylistBaseLibrary.Options;
 using hfa.PlaylistBaseLibrary.Providers;
 using hfa.Synker.Service;
+using hfa.Synker.Service.Dal;
 using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Service.Services;
@@ -42,7 +43,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -119,8 +119,14 @@ namespace hfa.WebApi
                .AddScoped<ICommandService, CommandService>()
                .AddScoped<IXtreamService, XtreamService>()
                .AddScoped<IMediaScraper, MediaScraper>()
+               .AddSingleton(s =>
+               {
+                   var options = Configuration.GetSection("MongoOptions").Get<MongoOptions>();
+                   return new PlaylistContext(options.ConnectionString, options.Database);
+               })
                .AddScoped<IWebGrabConfigService, WebGrabConfigService>()
                .AddScoped<IMessageQueueService, MessageQueueService>()
+               .Configure<MongoOptions>(Configuration.GetSection(nameof(MongoOptions)))
                .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection(PlaylistProviderOption.PlaylistProvidersConfigurationKeyName))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
@@ -133,7 +139,7 @@ namespace hfa.WebApi
             var retryPolicy = HttpPolicyExtensions
                    .HandleTransientHttpError()
                    .RetryAsync(3);
-                   //.CircuitBreaker(5, TimeSpan.FromSeconds(30));
+            //.CircuitBreaker(5, TimeSpan.FromSeconds(30));
 
             var noOp = Policy.NoOpAsync().AsAsyncPolicy<HttpResponseMessage>();
             services.AddHttpClient<MediaServerService>(c =>
@@ -449,7 +455,7 @@ namespace hfa.WebApi
 
             services.AddMassTransit(x =>
             {
-               // x.AddConsumer<DiffPlaylistConsumer>();
+                // x.AddConsumer<DiffPlaylistConsumer>();
                 // x.AddConsumer<TraceConsumer>();
             });
 

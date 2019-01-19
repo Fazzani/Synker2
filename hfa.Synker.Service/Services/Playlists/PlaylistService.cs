@@ -3,6 +3,7 @@
     using hfa.Brokers.Messages;
     using hfa.PlaylistBaseLibrary.ChannelHandlers;
     using hfa.PlaylistBaseLibrary.Providers;
+    using hfa.Synker.Service.Dal;
     using hfa.Synker.Service.Elastic;
     using hfa.Synker.Service.Entities.Playlists;
     using hfa.Synker.Service.Services.Elastic;
@@ -28,9 +29,13 @@
         private IOptions<ElasticConfig> _elasticConfig;
         private ISitePackService _sitePackService;
         private IProviderFactory _providerFactory;
+        private PlaylistContext _playlistContext;
 
         public PlaylistService(SynkerDbContext synkerDbContext, IElasticConnectionClient elasticConnectionClient,
-            IContextTvgMediaHandler contextHandler, ILoggerFactory loggerFactory, IOptions<ElasticConfig> elasticConfig, ISitePackService sitePackService, IProviderFactory providerFactory)
+            IContextTvgMediaHandler contextHandler, ILoggerFactory loggerFactory, IOptions<ElasticConfig> elasticConfig, 
+            ISitePackService sitePackService, 
+            IProviderFactory providerFactory,
+            PlaylistContext playlistContext)
         {
             _dbcontext = synkerDbContext;
             _elasticConnectionClient = elasticConnectionClient;
@@ -39,6 +44,7 @@
             _elasticConfig = elasticConfig;
             _sitePackService = sitePackService;
             _providerFactory = providerFactory;
+            _playlistContext = playlistContext;
         }
 
         public async Task<IEnumerable<Playlist>> ListByUserAsync(int userId)

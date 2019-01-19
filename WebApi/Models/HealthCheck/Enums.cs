@@ -4,6 +4,7 @@
     {
         WebApi = 0,
         Database = 1,
-        Elastic = 2
+        Elastic = 2,
+        MongoDB = 3
     }
 }

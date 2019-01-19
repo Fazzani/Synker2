@@ -29,7 +29,9 @@ namespace Hfa.WebApi.Controllers
     {
         private readonly ISitePackService _sitePackService;
 
-        public TvgMediaController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
+        public TvgMediaController(IOptions<ElasticConfig> config, 
+            ILoggerFactory loggerFactory, 
+            IElasticConnectionClient elasticConnectionClient,
             SynkerDbContext context, ISitePackService sitePackService)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
@@ -74,9 +76,6 @@ namespace Hfa.WebApi.Controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken = default)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var response = await _elasticConnectionClient.Client.Value.SearchAsync<TvgMedia>(rq => rq
                 .From(0)
                 .Size(1)

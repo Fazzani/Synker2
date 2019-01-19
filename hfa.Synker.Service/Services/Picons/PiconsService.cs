@@ -5,13 +5,11 @@ using Microsoft.Extensions.Options;
 using Nest;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PlaylistManager.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,7 +19,7 @@ namespace hfa.Synker.Service.Services.Picons
     {
         private IElasticConnectionClient _elasticConnectionClient;
         private ILogger _logger;
-        private IOptions<ElasticConfig> _elasticConfig;
+        private readonly IOptions<ElasticConfig> _elasticConfig;
 
         public PiconsService(IElasticConnectionClient elasticConnectionClient, ILoggerFactory loggerFactory, IOptions<ElasticConfig> elasticConfig)
         {
@@ -109,7 +107,7 @@ namespace hfa.Synker.Service.Services.Picons
         {
             if (reset)
             {
-                var res = await _elasticConnectionClient.Client.Value.DeleteByQueryAsync(new DeleteByQueryRequest("picons"), cancellationToken);
+                var res = await _elasticConnectionClient.Client.Value.DeleteByQueryAsync<Picon>(r => r.Query(rq => rq.Wildcard(f => f.Name, "*")), cancellationToken);
                 if (!res.IsValid)
                 {
                     if (res.ServerError.Status != 404)

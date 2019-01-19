@@ -86,7 +86,7 @@ namespace Hfa.WebApi.Controllers
         public async Task<IActionResult> Synk([FromQuery] bool reset, CancellationToken cancellationToken = default)
         {
             var picons = await _piconsService.GetPiconsFromGithubRepoAsync(new SynkPiconConfig(), cancellationToken);
-            var elasticResponse = await _piconsService.SynkAsync(picons, reset, cancellationToken);
+            var elasticResponse = await _piconsService.SynkAsync(picons, true, cancellationToken);
 
             if (!elasticResponse.IsValid)
                 return BadRequest(elasticResponse.DebugInformation);

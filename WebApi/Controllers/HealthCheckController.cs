@@ -1,21 +1,19 @@
 ﻿namespace hfa.WebApi.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
+    using hfa.Synker.Service.Dal;
+    using hfa.Synker.Service.Elastic;
+    using hfa.Synker.Service.Services.Elastic;
+    using hfa.Synker.Services.Dal;
+    using hfa.WebApi.Common.Exceptions;
+    using hfa.WebApi.Models.HealthCheck;
     using Hfa.WebApi.Controllers;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
-    using hfa.WebApi.Common.Exceptions;
-    using Microsoft.AspNetCore.Authorization;
-    using System.Net;
-    using hfa.WebApi.Models.HealthCheck;
-    using hfa.Synker.Services.Dal;
-    using hfa.Synker.Service.Services.Elastic;
-    using hfa.Synker.Service.Elastic;
-    using Microsoft.AspNetCore.Http;
+    using System;
+    using System.Threading.Tasks;
 
     [AllowAnonymous]
     [Route("api/v{version:apiVersion}/[controller]")]
@@ -23,10 +21,15 @@
     [ApiController]
     public class HealthCheckController : BaseController
     {
-        public HealthCheckController(IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
-            SynkerDbContext context)
+        PlaylistContext _playlistContext;
+        public HealthCheckController(IOptions<ElasticConfig> config,
+            ILoggerFactory loggerFactory,
+            IElasticConnectionClient elasticConnectionClient,
+            SynkerDbContext context,
+            PlaylistContext playlistContext)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
+            _playlistContext = playlistContext;
         }
 
         [HttpGet("{id}")]
@@ -36,6 +39,15 @@
         {
             switch (id)
             {
+                case HealthCheckEnum.MongoDB:
+                    if (_playlistContext.HealthCheck())
+                    {
+                        return Ok();
+                    }
+                    else
+                    {
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+                    }
                 case HealthCheckEnum.WebApi:
                     return Ok();
                 case HealthCheckEnum.Database:

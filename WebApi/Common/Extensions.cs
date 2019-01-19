@@ -71,7 +71,7 @@ namespace System.Linq
             result.PageCount = (int)Math.Ceiling(pageCount);
 
             result.Results = getAll ? query.ToList() : query.Skip(page * pageSize).Take(pageSize).ToList();
-
+            
             return result;
         }
 

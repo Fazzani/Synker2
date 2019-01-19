@@ -122,4 +122,10 @@ namespace hfa.WebApi.Common
         public string Password { get; set; }
     }
 
+    public class MongoOptions
+    {
+        public string ConnectionString { get; set; }
+        public string Database { get; set; }
+    }
+
 }
