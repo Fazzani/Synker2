@@ -1,27 +1,29 @@
-﻿using hfa.Synker.Service.Elastic;
-using hfa.Synker.Service.Entities.MediasRef;
-using hfa.Synker.Service.Services.Elastic;
-using hfa.Synker.Service.Services.Picons;
-using hfa.Synker.Service.Services.Scraper;
-using hfa.Synker.Services.Dal;
-using hfa.WebApi.Common;
-using hfa.WebApi.Models.Elastic;
-using hfa.WebApi.Models.Xmltv;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Nest;
-using PlaylistManager.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
+﻿
 namespace Hfa.WebApi.Controllers
 {
+    using hfa.Synker.Service.Elastic;
+    using hfa.Synker.Service.Entities.MediasRef;
+    using hfa.Synker.Service.Services.Elastic;
+    using hfa.Synker.Service.Services.Picons;
+    using hfa.Synker.Service.Services.Scraper;
+    using hfa.Synker.Services.Dal;
+    using hfa.WebApi.Common;
+    using hfa.WebApi.Models.Elastic;
+    using hfa.WebApi.Models.Xmltv;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
+    using Nest;
+    using PlaylistManager.Entities;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+
 #if !DEBUG
+    using Microsoft.AspNetCore.Authorization;
     [Authorize]
 #endif
     [Route("api/v{version:apiVersion}/[controller]")]
