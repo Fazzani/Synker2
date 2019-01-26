@@ -1,28 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using hfa.synker.entities;
+using hfa.Synker.Service.Elastic;
+using hfa.Synker.Service.Services;
+using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Service.Services.Xmltv;
+using hfa.Synker.Services.Dal;
+using hfa.WebApi.Common.Filters;
+using hfa.WebApi.Models;
+using hfa.WebApi.Models.Elastic;
+using hfa.WebApi.Services;
+using Hfa.WebApi.Commmon;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Threading;
 using Nest;
-using hfa.Synker.Services.Dal;
-using hfa.Synker.Service.Services.Elastic;
-using hfa.Synker.Service.Elastic;
-using hfa.WebApi.Models;
-using hfa.WebApi.Common.Filters;
-using Microsoft.Extensions.Caching.Memory;
-using hfa.WebApi.Models.Elastic;
-using Hfa.WebApi.Commmon;
-using hfa.Synker.Service.Services;
-using hfa.Synker.Service.Services.Xmltv;
 using PastebinAPI;
-using hfa.WebApi.Services;
-using hfa.synker.entities;
-using Microsoft.EntityFrameworkCore;
-using System.Net;
-using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Hfa.WebApi.Controllers
@@ -50,7 +49,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [Route("_search")]
-        public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken)
+        public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken = default)
         {
             return await SearchAsync<SitePackChannel, SitePackModel>(request.ToString(), nameof(SitePackChannel).ToLowerInvariant(), cancellationToken);
         }
@@ -82,7 +81,7 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Save([FromBody]List<SitePackChannel> sitepacks, CancellationToken cancellationToken)
+        public async Task<IActionResult> Save([FromBody]List<SitePackChannel> sitepacks, CancellationToken cancellationToken = default)
         {
             sitepacks.ForEach(x =>
             {
@@ -104,7 +103,7 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Put(string id, [FromBody]SitePackChannel value, CancellationToken cancellationToken)
+        public async Task<IActionResult> Put(string id, [FromBody]SitePackChannel value, CancellationToken cancellationToken = default)
         {
             var response = await _sitePackService.SaveAsync(new List<SitePackChannel> { value }, cancellationToken);
 
@@ -115,7 +114,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         [HttpPost(nameof(DeleteMany))]
-        public async Task<IActionResult> DeleteMany([FromBody] string[] ids, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteMany([FromBody] string[] ids, CancellationToken cancellationToken = default)
         {
             var response = await _sitePackService.DeleteManyAsync(ids, cancellationToken);
             return new OkObjectResult(response);
@@ -123,7 +122,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Delete([FromQuery]string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete([FromQuery]string id, CancellationToken cancellationToken = default)
         {
             var response = await _sitePackService.DeleteManyAsync(new[] { id }, cancellationToken);
             return new OkObjectResult(response);
@@ -133,7 +132,7 @@ namespace Hfa.WebApi.Controllers
         [HttpGet]
         [Route("tvgsites")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> TvgSitesAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> TvgSitesAsync(CancellationToken cancellationToken = default)
         {
             var tvgSites = await _memoryCache.GetOrCreateAsync(CacheKeys.SitesKey, async entry =>
             {
@@ -148,7 +147,7 @@ namespace Hfa.WebApi.Controllers
         [HttpGet]
         [Route("sitepacks")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> SitePacksAsync([FromQuery]string filter, CancellationToken cancellationToken)
+        public async Task<IActionResult> SitePacksAsync([FromQuery]string filter, CancellationToken cancellationToken = default)
         {
             var response = await _sitePackService.ListSitePackAsync(filter, cancellationToken: cancellationToken);
             var sitePacks = response.Select(x => new { x.Site, x.Country });
@@ -181,7 +180,7 @@ namespace Hfa.WebApi.Controllers
         [HttpGet]
         [Route("countries")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> CountriesAsync([FromQuery]string filter, CancellationToken cancellationToken)
+        public async Task<IActionResult> CountriesAsync([FromQuery]string filter, CancellationToken cancellationToken = default)
         {
             var cultures = await _memoryCache.GetOrCreateAsync(CacheKeys.CulturesKey, async entry =>
             {
@@ -194,7 +193,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost("countries")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> SyncCountryAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> SyncCountryAsync(CancellationToken cancellationToken = default)
         {
             var response = await _sitePackService.SyncCountrySitePackAsync(cancellationToken);
             return Ok(response);
@@ -285,7 +284,7 @@ namespace Hfa.WebApi.Controllers
             return Ok();
         }
 
-        private async Task<Paste> SynkSitePackToWebgrabAsync(string sitePackUrl, CancellationToken cancellationToken)
+        private async Task<Paste> SynkSitePackToWebgrabAsync(string sitePackUrl, CancellationToken cancellationToken = default)
         {
             var tab = sitePackUrl.Split("/");
             var fileName = $"{PREFIX_WEBGRAB_FILENAME}_{tab[tab.Length - 1]}";
