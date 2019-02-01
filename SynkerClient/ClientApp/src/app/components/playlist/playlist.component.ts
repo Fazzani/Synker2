@@ -1,7 +1,7 @@
 import { of, from, fromEvent, Subscription, BehaviorSubject } from "rxjs";
 import { toArray, distinct, map, tap, mergeMap, filter, merge, debounceTime, distinctUntilChanged, switchMap, groupBy } from "rxjs/operators";
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, AfterViewInit } from "@angular/core";
-import { MatPaginator, PageEvent, MatSort, MatDialog, MatSnackBar, MatTableDataSource } from "@angular/material";
+import { MatPaginator, PageEvent, MatSort, MatDialog, MatSnackBar, MatTableDataSource, MatSlideToggleChange } from "@angular/material";
 import { CommonService, Constants } from "../../services/common/common.service";
 import { PlaylistModel, PlaylistPostModel } from "../../types/playlist.type";
 import { PlaylistService } from "../../services/playlists/playlist.service";
@@ -122,6 +122,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild("filter") filter: ElementRef;
+  @ViewChild("active") active: ElementRef;
   dataSource: MatTableDataSource<TvgMedia> | null;
   routeSub: any;
   playlistId: string;
@@ -191,12 +192,16 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
             return data[values[0].trim()] == undefined || data[values[0].trim()] == null || data[values[0].trim()] == "";
           } else if (values.length > 1 && data[values[0].trim()]) {
             {
-              return (
-                data[values[0].trim()]
-                  .trim()
-                  .toLowerCase()
-                  .indexOf(values[1].toLowerCase().trim()) != -1
-              );
+              const type = data[values[0].trim()];
+              if (typeof type === 'string')
+                return (
+                  type
+                    .trim()
+                    .toLowerCase()
+                    .indexOf(values[1].toLowerCase().trim()) != -1
+                );
+              if (typeof type === 'boolean')
+                return type === !!values[1];
             }
           } else {
             return data.name.toLowerCase().indexOf(filter) != -1;
@@ -545,6 +550,14 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.playlistBS.next(res);
         this.commonService.info("Success", "Playlist was synchronized with source");
       });
+  }
+
+  /**
+   * Display enabled channels
+   */
+  activeChannelsFilterToggle(event: MatSlideToggleChange): void {
+    console.log(`${event.checked}`);
+    this.dataSource.filter = `enabled:${event.checked}`;
   }
 
   /**

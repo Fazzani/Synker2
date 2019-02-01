@@ -35,6 +35,9 @@
   flex-grow: 1;
   margin-left: 32px;
 }
+.form-section {
+  margin: 10px;
+}
 
 img {
   image-rendering: -moz-crisp-edges;
@@ -67,6 +70,10 @@ img {
 
   .mat-table {
     margin-bottom: 56px;
+
+    &.mat-table-sticky {
+      height: 56px;
+    }
   }
 }
 
@@ -331,10 +338,8 @@ $dotborder: 4px;
 $dot: 11px;
 $line: 4px;
 
-$font-title: 'Saira',
-sans-serif;
-$font-text: 'Chivo',
-sans-serif;
+$font-title: 'Saira', sans-serif;
+$font-text: 'Chivo', sans-serif;
 
 strong {
   font-weight: 600;
@@ -450,9 +455,9 @@ h1 {
 
 @media(max-width: 600px) {
   .mobile-label {
-    width: 80px;
     display: inline-block;
-    font-weight: bold;
+    padding-right: 8px;
+    color: #cec88f;
   }
 
   .mat-header-row {
@@ -461,7 +466,22 @@ h1 {
 
   .mat-row {
     flex-direction: column;
-    align-items: start;
+    align-items: flex-start;
     padding: 8px 24px;
+    position: relative !important;
+
+    &:after {
+      content: none !important;
+    }
+
+    .cdk-column-actions {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+    }
   }
+  .mat-form-field {
+    display: block !important;
+  }
+  
 }
