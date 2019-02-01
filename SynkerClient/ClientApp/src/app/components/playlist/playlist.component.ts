@@ -8,7 +8,7 @@ import { PlaylistService } from "../../services/playlists/playlist.service";
 import { ActivatedRoute } from "@angular/router";
 import { TvgMedia, Tvg, TvgSource } from "../../types/media.type";
 import { TvgMediaModifyDialog } from "../media/media.component";
-import { KEY, PageListState } from "../../types/common.type";
+import { KEY, PageListState, ColumnTable } from "../../types/common.type";
 import { snakbar_duration } from "../../variables";
 import { PiconService } from "../../services/picons/picons.service";
 import { PlaylistBulkUpdate } from "../dialogs/playlistBulkUpdate/playlistBulkUpdate";
@@ -33,7 +33,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
   manualPage: number | null;
   key: number;
   displayedColumns: string[];
-  columnDefs: any[];
+  columnDefs: ColumnTable[];
   subscriptionTableEvent: Subscription;
   columns = [
     {

@@ -1,4 +1,4 @@
-﻿import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 
 export class QueryListBaseModel {
   public searchDict: Map<string>;
@@ -109,4 +109,13 @@ export class LoadmoreFlatNode<T> {
               public level: number = 1,
               public expandable: boolean = false,
               public loadMoreParentItem: string | null = null) {}
+}
+
+export interface ColumnTable {
+  columnDef: string;
+  header: string;
+  cell: any;
+  showed: boolean;
+  actionColumn: boolean;
+  isMobile: boolean;
 }
