@@ -32,6 +32,8 @@ import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
   manualPage: number | null;
   key: number;
+  displayedColumns: string[];
+  columnDefs: any[];
   subscriptionTableEvent: Subscription;
   columns = [
     {
