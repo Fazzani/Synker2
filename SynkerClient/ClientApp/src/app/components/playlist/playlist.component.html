@@ -81,7 +81,10 @@
     <mat-table #table [dataSource]="dataSource" matSort class="noselect grid-wide" [trackBy]="trackByPosition" color="primary">
         <!-- Generic column definition -->
         <ng-container *ngFor="let column of columnDefs" [matColumnDef]="column.columnDef">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.header }} </mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            <span class="mobile-label">{{ column.header }}:</span>
+            {{ column.header }}
+          </mat-header-cell>
             <mat-cell *matCellDef="let row">
                 <span *ngIf="!column.isImage">{{ column.cell(row) }}</span>
                 <img [src]="column.cell(row)" class="logo-grid" *ngIf="column.isImage" />

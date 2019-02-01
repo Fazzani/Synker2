@@ -1,100 +1,118 @@
 <div fxLayout="column" style="margin-top:56px">
-    <mat-toolbar color="accent" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlexFill>
-        <div style="display:flex; flex:1">
-            <mat-form-field floatPlaceholder="never">
-                <input matInput #filter placeholder="Filter site packs...">
-            </mat-form-field>
-        </div>
-        <div fxLayout="row">
-
-            <!-- Buttons -->
-            <a mat-icon-button>
-                <mat-icon class="mat-24" aria-label="Save" matTooltip="Save" (click)="save()">save</mat-icon>
-            </a>
-            <a mat-icon-button>
-                <mat-icon class="mat-24" aria-label="Save all" matTooltip="Save all" (click)="saveAll()">done_all</mat-icon>
-            </a>
-            <a mat-icon-button>
-                <mat-icon class="mat-24" aria-label="Update" matTooltip="Update" (click)="reload()">update</mat-icon>
-            </a>
-            <a mat-icon-button>
-                <mat-icon class="mat-24" aria-label="Synchronize picons global" matTooltip="Synchronize picons global (from github)" (click)="synkPiconsGlobal()">add_a_photo</mat-icon>
-            </a>
-            <a mat-icon-button>
-                <mat-icon class="mat-24" aria-label="Synchronize countries" matTooltip="Synchronize countries" (click)="synkCountries()">language</mat-icon>
-            </a>
-            <a mat-icon-button>
-                <mat-icon class="mat-24" aria-label="Synchronize webgrab configs" matTooltip="Synchronize webgrab configs" (click)="synkWebgrab()">
-                    compare_arrows
-                </mat-icon>
-            </a>
-        </div>
-    </mat-toolbar>
-    <mat-table #table [dataSource]="dataSource" matSort class="noselect grid-wide" color="primary">
-        <!-- logo -->
-        <ng-container matColumnDef="logo">
-            <mat-header-cell *matHeaderCellDef> Logo </mat-header-cell>
-            <mat-cell *matCellDef="let row">
-                <img [src]="row.logo" class="logo-grid" />
-            </mat-cell>
-        </ng-container>
-        <!-- update date -->
-        <ng-container matColumnDef="update">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Update </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.update | date : 'medium'}} </mat-cell>
-        </ng-container>
-        <!-- displaynames -->
-        <ng-container matColumnDef="displayNames">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Names </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.displayNames}} </mat-cell>
-        </ng-container>
-
-        <!-- site -->
-        <ng-container matColumnDef="site">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Site </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.site}} </mat-cell>
-        </ng-container>
-
-        <!-- Country -->
-        <ng-container matColumnDef="country">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Country </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.country}} </mat-cell>
-        </ng-container>
-
-        <!-- MediaType Column -->
-        <ng-container matColumnDef="mediaType">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Media Type </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.mediaType}} </mat-cell>
-        </ng-container>
-
-        <!-- channel_name -->
-        <ng-container matColumnDef="channel_name">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Channel name </mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.channel_name}} </mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="actions" sticky>
-            <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
-            <mat-cell *matCellDef="let row">
-                <button mat-icon-button color="warn" (click)="openDialog(row)">
-                    <mat-icon class="mat-24" aria-label="Edit">edit</mat-icon>
-                </button>
-                <button mat-icon-button color="primary" (click)="delete(row.id)">
-                    <mat-icon class="mat-24" aria-label="">delete</mat-icon>
-                </button>
-            </mat-cell>
-        </ng-container>
-        <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected" class="noselect"></mat-row>
-    </mat-table>
-    <div class="container footer mat-app-background" fxLayout="row">
-        <div class="page-select" fxLayout="row" fxShow="false" fxShow.gt-sm>
-            <mat-form-field floatPlaceholder="never">
-                <input matInput [(ngModel)]="paginator.pageIndex" placeholder="Page..." type="number" (ngModelChange)="updateManualPage($event)">
-            </mat-form-field>
-        </div>
-        <mat-paginator fxLayoutAlign="end center" fxFlex #paginator [length]="dataSource.paginator.length" [pageIndex]="dataSource.paginator.pageIndex" [pageSize]="dataSource.paginator.pageSize"
-                       [pageSizeOptions]="dataSource.paginator.pageSizeOptions" class="noselect">
-        </mat-paginator>
+  <mat-toolbar color="accent" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlexFill>
+    <div style="display:flex; flex:1">
+      <mat-form-field floatPlaceholder="never">
+        <input matInput #filter placeholder="Filter site packs...">
+      </mat-form-field>
     </div>
+    <div fxLayout="row">
+
+      <!-- Buttons -->
+      <a mat-icon-button>
+        <mat-icon class="mat-24" aria-label="Save" matTooltip="Save" (click)="save()">save</mat-icon>
+      </a>
+      <a mat-icon-button>
+        <mat-icon class="mat-24" aria-label="Save all" matTooltip="Save all" (click)="saveAll()">done_all</mat-icon>
+      </a>
+      <a mat-icon-button>
+        <mat-icon class="mat-24" aria-label="Update" matTooltip="Update" (click)="reload()">update</mat-icon>
+      </a>
+      <a mat-icon-button>
+        <mat-icon class="mat-24" aria-label="Synchronize picons global" matTooltip="Synchronize picons global (from github)" (click)="synkPiconsGlobal()">add_a_photo</mat-icon>
+      </a>
+      <a mat-icon-button>
+        <mat-icon class="mat-24" aria-label="Synchronize countries" matTooltip="Synchronize countries" (click)="synkCountries()">language</mat-icon>
+      </a>
+      <a mat-icon-button>
+        <mat-icon class="mat-24" aria-label="Synchronize webgrab configs" matTooltip="Synchronize webgrab configs" (click)="synkWebgrab()">
+          compare_arrows
+        </mat-icon>
+      </a>
+    </div>
+  </mat-toolbar>
+  <mat-table #table [dataSource]="dataSource" matSort class="noselect grid-wide" color="primary">
+    <!-- logo -->
+    <ng-container matColumnDef="logo">
+      <mat-header-cell *matHeaderCellDef> Logo </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <img [src]="row.logo" class="logo-grid" />
+      </mat-cell>
+    </ng-container>
+    <!-- update date -->
+    <ng-container matColumnDef="update">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Update </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span class="mobile-label">Update:</span>
+        {{row.update | date : 'medium'}}
+      </mat-cell>
+    </ng-container>
+    <!-- displaynames -->
+    <ng-container matColumnDef="displayNames">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Names </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span class="mobile-label">Names:</span>
+        {{row.displayNames}}
+      </mat-cell>
+    </ng-container>
+
+    <!-- site -->
+    <ng-container matColumnDef="site">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Site </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span class="mobile-label">Names:</span>
+        {{row.site}}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Country -->
+    <ng-container matColumnDef="country">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Country </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span class="mobile-label">Country:</span>
+        {{row.country}}
+      </mat-cell>
+    </ng-container>
+
+    <!-- MediaType Column -->
+    <ng-container matColumnDef="mediaType">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Media Type </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span class="mobile-label">Media Type:</span>
+        {{row.mediaType}}
+      </mat-cell>
+    </ng-container>
+
+    <!-- channel_name -->
+    <ng-container matColumnDef="channel_name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Channel name </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span class="mobile-label">Channel name:</span>
+        {{row.channel_name}}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions" sticky>
+      <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <button mat-icon-button color="warn" (click)="openDialog(row)">
+          <mat-icon class="mat-24" aria-label="Edit">edit</mat-icon>
+        </button>
+        <button mat-icon-button color="primary" (click)="delete(row.id)">
+          <mat-icon class="mat-24" aria-label="">delete</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected" class="noselect"></mat-row>
+  </mat-table>
+  <div class="container footer mat-app-background" fxLayout="row">
+    <div class="page-select" fxLayout="row" fxShow="false" fxShow.gt-sm>
+      <mat-form-field floatPlaceholder="never">
+        <input matInput [(ngModel)]="paginator.pageIndex" placeholder="Page..." type="number" (ngModelChange)="updateManualPage($event)">
+      </mat-form-field>
+    </div>
+    <mat-paginator fxLayoutAlign="end center" fxFlex #paginator [length]="dataSource.paginator.length" [pageIndex]="dataSource.paginator.pageIndex" [pageSize]="dataSource.paginator.pageSize"
+                   [pageSizeOptions]="dataSource.paginator.pageSizeOptions" class="noselect">
+    </mat-paginator>
+  </div>
 </div>
