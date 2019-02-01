@@ -12,6 +12,7 @@ import { PiconService } from "../../services/picons/picons.service";
 import { SitePackService } from "../../services/sitepack/sitepack.service";
 import { sitePackChannel } from "../../types/sitepackchannel.type";
 import { SimpleQueryElastic } from "../../types/elasticQuery.type";
+import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 
 @Component({
   selector: "sitepack",
@@ -21,8 +22,7 @@ import { SimpleQueryElastic } from "../../types/elasticQuery.type";
 /** mediaref component*/
 export class SitePackComponent implements OnInit, OnDestroy {
   subscriptionTableEvent: Subscription;
-
-  displayedColumns = ["logo", "update", "displayNames", "site", 'country', 'mediaType', 'channel_name', 'actions'];
+  displayedColumns : Array<string>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('filter') filter: ElementRef;
@@ -35,8 +35,15 @@ export class SitePackComponent implements OnInit, OnDestroy {
     private piconService: PiconService,
     private commonService: CommonService,
     public dialog: MatDialog,
-    public snackBar: MatSnackBar
-  ) { }
+    public snackBar: MatSnackBar,
+    breakpointObserver: BreakpointObserver
+  ) {
+    breakpointObserver.observe(['(max-width: 600px)']).subscribe(result => {
+      this.displayedColumns = result.matches ?
+        ["displayNames", 'country', 'channel_name', 'actions']:
+        ["logo", "update", "displayNames", "site", 'country', 'mediaType', 'channel_name', 'actions'];
+    });
+  }
 
   /** Called by Angular after media component initialized */
   ngOnInit(): void {

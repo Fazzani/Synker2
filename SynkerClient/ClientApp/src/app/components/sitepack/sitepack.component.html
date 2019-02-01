@@ -73,7 +73,7 @@
             <mat-cell *matCellDef="let row"> {{row.channel_name}} </mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="actions">
+        <ng-container matColumnDef="actions" sticky>
             <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
             <mat-cell *matCellDef="let row">
                 <button mat-icon-button color="warn" (click)="openDialog(row)">
@@ -84,7 +84,7 @@
                 </button>
             </mat-cell>
         </ng-container>
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelected(row, $event)" [class.active]="row.selected" class="noselect"></mat-row>
     </mat-table>
     <div class="container footer mat-app-background" fxLayout="row">

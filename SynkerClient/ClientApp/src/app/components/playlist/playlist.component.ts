@@ -18,6 +18,7 @@ import { GroupsDialog } from "../dialogs/group/groups.component";
 import { MatchTvgDialog } from "../dialogs/matchTvg/matchTvg.component";
 import { debug } from "util";
 import { MediaWatchDialog } from "../dialogs/mediaWatch/media.watch.dialog";
+import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 
 @Component({
   selector: "playlist",
@@ -38,7 +39,8 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
       header: "Position",
       cell: (row: TvgMedia) => `${row.position}`,
       showed: true,
-      actionColumn: false
+      actionColumn: false,
+      isMobile: false
     },
     {
       columnDef: "tvg.logo",
@@ -46,68 +48,74 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
       cell: (row: TvgMedia) => `${row.tvg.logo}`,
       showed: true,
       actionColumn: false,
-      isImage: true
+      isImage: true,
+      isMobile: false
     },
     {
       columnDef: "name",
       header: "Name",
       cell: (row: TvgMedia) => `${row.name}`,
       showed: true,
-      actionColumn: false
+      actionColumn: false,
+      isMobile: true
     },
     {
       columnDef: "displayName",
       header: "DisplayName",
       cell: (row: TvgMedia) => `${row.displayName}`,
       showed: true,
-      actionColumn: false
+      actionColumn: false,
+      isMobile: false
     },
     {
       columnDef: "lang",
       header: "Lang",
       cell: (row: TvgMedia) => `${row.lang}`,
       showed: true,
-      actionColumn: false
+      actionColumn: false,
+      isMobile: false
     },
     {
       columnDef: "group",
       header: "Group",
       cell: (row: TvgMedia) => `${row.mediaGroup.name}`,
       showed: true,
-      actionColumn: false
+      actionColumn: false,
+      isMobile: true
     },
     {
       columnDef: "groupdisabled",
       header: "Group Disabled",
       cell: (row: TvgMedia) => `${row.mediaGroup.disabled}`,
       showed: true,
-      actionColumn: false
+      actionColumn: false,
+      isMobile: false
     },
     {
       columnDef: "tvg.name",
       header: "Tvg name",
       cell: (row: TvgMedia) => `${row.tvg.name}`,
       showed: true,
-      actionColumn: false
+      actionColumn: false,
+      isMobile: false
     },
     {
       columnDef: "tvg.tvgIdentify",
       header: "Tvg id",
       cell: (row: TvgMedia) => `${row.tvg.tvgIdentify}`,
       showed: true,
-      actionColumn: false
+      actionColumn: false,
+      isMobile: true
     },
     {
       columnDef: "actions",
       header: "Actions",
       cell: (row: TvgMedia) => ``,
       showed: true,
-      actionColumn: true
+      actionColumn: true,
+      isMobile: true
     }
   ];
-
-  columnDefs = this.columns.filter(x => !x.actionColumn && x.showed);
-  displayedColumns = this.columns.map(x => x.columnDef);
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -128,8 +136,21 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
     private playlistService: PlaylistService,
     private commonService: CommonService,
     public dialog: MatDialog,
-    public snackBar: MatSnackBar
-  ) { }
+    public snackBar: MatSnackBar,
+    breakpointObserver: BreakpointObserver
+  ) {
+    this.columnDefs = this.columns.filter(x => !x.actionColumn && x.showed);
+    this.displayedColumns = this.columns.map(x => x.columnDef);
+    breakpointObserver.observe(['(max-width: 600px)']).subscribe(result => {
+      if (result.matches)//Mobile version
+      {
+        this.displayedColumns = this.columns.filter(x => x.showed && x.isMobile).map(x => x.columnDef);
+      }
+      else { //Desktop version
+        this.displayedColumns = this.columns.filter(x => x.showed).map(x => x.columnDef);
+      }
+    });
+  }
 
   /** Called by Angular after media component initialized */
   ngOnInit(): void {

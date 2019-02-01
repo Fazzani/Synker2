@@ -87,7 +87,7 @@
                 <img [src]="column.cell(row)" class="logo-grid" *ngIf="column.isImage" />
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="actions">
+        <ng-container matColumnDef="actions" sticky>
             <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
             <mat-cell *matCellDef="let row">
               <button mat-icon-button color="primary" (click)="openDialog(row)" matTooltip="Edit">
@@ -104,7 +104,7 @@
               </button>
             </mat-cell>
         </ng-container>
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" (mousedown)="onSelectionStart(row.position)"
                  (mouseenter)="onSelection(row.position)" (mouseup)="onSelectionEnd()" (click)="toggleSelected(row, $event)" [class.active]="row.selected" [class.disabled]="!row.enabled" class="noselect"></mat-row>
     </mat-table>
