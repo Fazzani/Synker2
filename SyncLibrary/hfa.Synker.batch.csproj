@@ -23,10 +23,10 @@
     <PackageReference Include="CommandLineParser" Version="2.3.0" />
     <PackageReference Include="Docker.DotNet" Version="3.125.2" />
     <PackageReference Include="Docker.DotNet.X509" Version="3.125.2" />
-    <PackageReference Include="Elasticsearch.Net" Version="6.1.0" />
-    <PackageReference Include="FirebaseDatabase.net" Version="3.3.3" />
-    <PackageReference Include="MassTransit" Version="5.1.5" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="5.1.5" />
+    <PackageReference Include="Elasticsearch.Net" Version="6.5.0" />
+    <PackageReference Include="FirebaseDatabase.net" Version="4.0.1" />
+    <PackageReference Include="MassTransit" Version="5.2.3" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="5.2.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="2.2.0" />
@@ -42,7 +42,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" />
     <PackageReference Include="ncrontab" Version="3.3.0" />
-    <PackageReference Include="NEST" Version="6.1.0" />
+    <PackageReference Include="NEST" Version="6.5.0" />
     <PackageReference Include="RabbitMQ.Client" Version="5.1.0" />
     <PackageReference Include="RazorLight" Version="2.0.0-beta1" />
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />

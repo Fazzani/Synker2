@@ -24,10 +24,10 @@
     <None Remove="Services\Auth\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MassTransit.RabbitMQ" Version="5.1.5" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="5.2.3" />
     <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.2.0" />
-    <PackageReference Include="NEST" Version="6.1.0" />
+    <PackageReference Include="NEST" Version="6.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0" />
     <PackageReference Include="RabbitMQ.Client" Version="5.1.0" />
