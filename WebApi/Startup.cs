@@ -332,6 +332,9 @@ namespace hfa.WebApi
         public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env, ILoggerFactory loggerFactory,
             SynkerDbContext synkerDbContext, Microsoft.AspNetCore.Hosting.IApplicationLifetime applicationLifetime, IServiceProvider serviceProvider)
         {
+            app.UseCookiePolicy();
+            app.UseCors("CorsPolicy");
+
             ILogger<Startup> log = loggerFactory.CreateLogger<Startup>();
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
             app.Map("/liveness", lapp => lapp.Run(async ctx => ctx.Response.StatusCode = 200));
@@ -374,8 +377,6 @@ namespace hfa.WebApi
 
             try
             {
-                app.UseCors("CorsPolicy");
-
                 if (Configuration.GetValue<bool>("UseLoadTest"))
                 {
                     app.UseMiddleware<ByPassAuthMiddleware>();

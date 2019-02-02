@@ -185,7 +185,8 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.dataSource = new MatTableDataSource<TvgMedia>(x.tvgMedias);
         this.dataSource.filterPredicate = (data: TvgMedia, filter: string) => {
           filter = filter.toLowerCase();
-          //console.debug(`filter : ${filter}`);
+
+          //TODO: multi filters
 
           let values = filter.split(":");
           if ((values.length > 1 && values[1] == "null") || values[1] == "undefined") {
