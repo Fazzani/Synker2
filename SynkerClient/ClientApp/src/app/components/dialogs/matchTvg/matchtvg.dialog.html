@@ -6,7 +6,7 @@
                 <mat-card-content>
                     <mat-form-field>
                         <mat-select placeholder="Match tvg type" [(ngModel)]="matchTvgFormModel.matchingTvgSiteType" name="MatchingTvgSiteType" [compareWith]="compareFn">
-                            <mat-option *ngFor="let matchTvgSiteType of matchingTvgSiteTypes | keys" [value]="matchTvgSiteType.value">
+                            <mat-option *ngFor="let matchTvgSiteType of matchingTvgSiteTypes | keys" [value]="matchTvgSiteType">
                                 {{matchTvgSiteType.key}}
                             </mat-option>
                         </mat-select>

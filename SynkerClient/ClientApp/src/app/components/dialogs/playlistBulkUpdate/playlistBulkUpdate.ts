@@ -28,6 +28,7 @@ export class PlaylistBulkUpdate implements OnInit, OnDestroy {
   group: string;
   searchGroups$ = new Subject<KeyboardEvent>();
   @ViewChild(MatAutocompleteTrigger) autoTrigger: MatAutocompleteTrigger;
+  compareFn: ((f1: any, f2: any) => boolean) | null = (o: any, o2: any) => o.name === o2.name;
 
   constructor(
     private sitePackService: SitePackService,
@@ -36,9 +37,7 @@ export class PlaylistBulkUpdate implements OnInit, OnDestroy {
   ) {
     this.data = tup[0];
     tup[1].subscribe(x => (this.groups = x));
-
     this.mediaTypes = MediaType;
-
     // AutoComplete sitepacks
     const subscription = this.keyUpSitePack.pipe(
       map(event => '*' + event.target.value + '*'),
@@ -57,9 +56,8 @@ export class PlaylistBulkUpdate implements OnInit, OnDestroy {
           this.groupsfiltred = [];
         }),
         map(m => this.groups.filter(f => f.toLowerCase().indexOf(this.group.toLowerCase()) >= 0)),
-        distinct(),)
+        distinct())
         .subscribe(x => {
-          console.log(x);
           this.groupsfiltred = x;
         });
     }
@@ -131,5 +129,5 @@ export class PlaylistBulkUpdate implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void { }
 }

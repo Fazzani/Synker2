@@ -1,4 +1,4 @@
-﻿export class MatchTvgPostModel {
+export class MatchTvgPostModel {
   constructor() {
     this.minScore = 0.5;
   }
@@ -14,7 +14,7 @@
 export class MatchTvgFormModel {
   constructor() {
     this.minScore = 0.5;
-    this.overrideTvg = false;
+    this.overrideTvg = true;
     this.matchAll = false;
     this.matchingTvgSiteType = MatchingTvgSiteTypeEnum.TvgSiteInMedia;
   }

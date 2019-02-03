@@ -20,7 +20,7 @@ export class MatchTvgDialog implements OnInit, OnDestroy {
   matchTvgFormModel: MatchTvgFormModel = new MatchTvgFormModel();
   progress = 0;
   matchingTvgSiteTypes: typeof MatchingTvgSiteTypeEnum;
-  compareFn: ((f1: any, f2: any) => boolean) | null = this.compareByValue;
+  compareFn: ((f1: any, f2: any) => boolean) | null = this.compareByName;
 
   obs: BehaviorSubject<TvgMedia> = new BehaviorSubject<TvgMedia>(null);
 
@@ -39,8 +39,8 @@ export class MatchTvgDialog implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
-  compareByValue(f1: any, f2: any) {
-    return f1 != null && f2 != null && f1 === f2;
+  compareByName(f1: any, f2: any) {
+    return f1.name == f2.name;
   }
 
   /**

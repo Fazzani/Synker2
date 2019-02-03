@@ -7,13 +7,13 @@
                     Cultures and Groups
                 </mat-panel-title>
                 <mat-panel-description>
-                    Cultures and Groups
+                  Cultures and Groups
                 </mat-panel-description>
             </mat-expansion-panel-header>
 
             <!-- Lang -->
             <mat-form-field>
-                <mat-select placeholder="Lang" [(ngModel)]="selectedLang" (ngModelChange)="onChangeLang($event)" name="data.lang">
+                <mat-select placeholder="Lang" [(ngModel)]="selectedLang" (ngModelChange)="onChangeLang($event)" name="data.lang" >
                     <mat-option *ngFor="let cult of cultures" [value]="cult">
                         {{cult}}
                     </mat-option>
@@ -21,15 +21,17 @@
             </mat-form-field>
             <!-- MadiaType -->
             <mat-form-field>
-                <mat-select placeholder="Media Type" [(ngModel)]="selectedMediaType" (ngModelChange)="onChangeMediaType(selectedMediaType)" name="data.mediatype">
-                    <mat-option *ngFor="let mediatype of mediaTypes | keys" [value]="mediatype.value">
+                <mat-select placeholder="Media Type" [(ngModel)]="selectedMediaType" (ngModelChange)="onChangeMediaType(selectedMediaType)"
+                            name="data.mediatype" [compareWith]="compareFn">
+                    <mat-option *ngFor="let mediatype of mediaTypes | keys" [value]="mediatype">
                         {{mediatype.key}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
             <!-- Groups -->
             <mat-form-field floatPlaceholder="never">
-                <input matInput placeholder="Groups..." [(ngModel)]="group" [matAutocomplete]="autoGroup" (keyup)="searchGroups$.next($event)" (blur)="onBlurGroup()">
+                <input matInput placeholder="Groups..." [(ngModel)]="group" [matAutocomplete]="autoGroup" (keyup)="searchGroups$.next($event)"
+                       (blur)="onBlurGroup()">
                 <mat-autocomplete #autoGroup="matAutocomplete">
                     <mat-option *ngFor="let g of groupsfiltred" [value]="g" (onSelectionChange)="onChangeGroup(g)">
                         <span>{{ g }}</span>
@@ -60,7 +62,6 @@
             </mat-form-field>
             <button mat-raised-button color="primary" (click)="applyFixChannelName(replaceInput.value)">Apply</button>
         </mat-expansion-panel>
-
         <!-- TvgSource -->
         <mat-expansion-panel (opened)="panelOpenState = true"
                              (closed)="panelOpenState = false">
@@ -76,12 +77,13 @@
                 <input matInput placeholder="Filter tvg sites..." aria-label="TvgSource Site" [matAutocomplete]="auto" (keyup)="keyUpSitePack.next($event)">
                 <mat-autocomplete #auto="matAutocomplete">
                     <mat-option *ngFor="let sitePack of sitePacks" [value]="sitePack.site" (onSelectionChange)="onChangeTvgSourceSite(sitePack)">
-                        <span>{{ sitePack.site }}</span>
-                        <small style="color:aqua">{{ sitePack.country }}</small>
-                    </mat-option>
-                </mat-autocomplete>
-            </mat-form-field>
-        </mat-expansion-panel>
+                        <span>{{ sitePack.site
+              }}</span>
+              <small style="color:aqua">{{ sitePack.country }}</small>
+              </mat-option>
+              </mat-autocomplete>
+              </mat-form-field>
+</mat-expansion-panel>
     </mat-accordion>
 </mat-dialog-content>
 <mat-action-row>
