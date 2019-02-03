@@ -11,6 +11,12 @@ export class MatchTvgPostModel {
   public minScore: number;
 }
 
+export enum MatchingTvgSiteTypeEnum {
+  TvgSiteInMedia = 0,
+  TvgSitePlaylist,
+  All
+}
+
 export class MatchTvgFormModel {
   constructor() {
     this.minScore = 0.5;
@@ -38,10 +44,5 @@ export class MatchTvgFormModel {
    * Minimum scoring matching
    */
   public minScore: number;
-}
-
-export enum MatchingTvgSiteTypeEnum {
-  TvgSiteInMedia = 0,
-  TvgSitePlaylist,
-  All
+  public static MatchingTvgSiteTYPES: string[] = Object.keys(MatchingTvgSiteTypeEnum).slice(Object.keys(MatchingTvgSiteTypeEnum).length / 2);
 }

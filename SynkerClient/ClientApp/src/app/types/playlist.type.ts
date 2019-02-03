@@ -1,4 +1,4 @@
-﻿import { TvgMedia } from "./media.type";
+import { TvgMedia } from "./media.type";
 import { PlayerApi } from "./xtream.type";
 
 /**
@@ -26,15 +26,15 @@ export class SynkConfig {
   public notifcationTypeInsertedMedia: NotificationTypeEnum;
 }
 export enum SynkGroupEnum {
-  none = 0,
-  byCountry = 1,
-  byLanguage = 2,
-  custom = 3
+  None = 0,
+  ByCountry = 1,
+  ByLanguage = 2,
+  Custom = 3
 }
 
 export enum PlaylistStatus {
-  enabled = 0,
-  disabled = 1
+  Enabled = 0,
+  Disabled = 1
 }
 
 export enum Providers {
@@ -72,6 +72,7 @@ export class PlaylistModel {
   public tags: any;
   public static PROVIDERS: string[] = Object.keys(Providers).slice(Object.keys(Providers).length / 2);
   public static SYNKGROUP: string[] = Object.keys(SynkGroupEnum).slice(Object.keys(SynkGroupEnum).length / 2);
+  public static STATUS: string[] = Object.keys(PlaylistStatus).slice(Object.keys(PlaylistStatus).length / 2);
 }
 
 export class PlaylistModelLive {

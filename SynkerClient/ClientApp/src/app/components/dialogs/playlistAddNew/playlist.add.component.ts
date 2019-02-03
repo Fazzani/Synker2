@@ -20,7 +20,7 @@ export class PlaylistAddDialog implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.playlist = new PlaylistPostModel();
-    this.playlist.status = PlaylistStatus.enabled;
+    this.playlist.status = PlaylistStatus.Enabled;
     this.playlist.provider = "m3u";
     this.providers = Object.keys(Providers);
   }

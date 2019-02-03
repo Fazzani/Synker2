@@ -56,7 +56,7 @@
         {
             get
             {
-                return _urlHelper?.Action("GetFile", "Playlists", new { Id = PublicId }, _urlHelper.ActionContext.HttpContext.Request.Scheme);
+                return _urlHelper?.Action("GetFile", "Playlists", new { PublicId }, _urlHelper.ActionContext.HttpContext.Request.Scheme);
             }
         }
 

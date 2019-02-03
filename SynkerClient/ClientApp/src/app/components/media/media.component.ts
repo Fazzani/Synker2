@@ -32,7 +32,6 @@ export class MediaComponent implements OnInit, OnDestroy {
   /** Called by Angular after media component initialized */
   ngOnInit(): void {
     let storedQuery = this.commonService.JsonToObject<ElasticQuery>(localStorage.getItem(Constants.LS_MediaQueryKey));
-    console.log("storedQuery ", storedQuery);
     this.paginator.pageIndex = storedQuery != null ? Math.floor(storedQuery.from / storedQuery.size) : 0;
     this.paginator.pageSizeOptions = [50, 100, 250, 1000];
     this.paginator.pageSize = storedQuery != null ? storedQuery.size : this.paginator.pageSizeOptions[0];
@@ -56,7 +55,6 @@ export class MediaComponent implements OnInit, OnDestroy {
           return;
         }
         let objectQuery = this.commonService.JsonToObject(this.filter.nativeElement.value);
-        console.log("objectQuery => ", objectQuery);
         this.paginator.pageIndex = 0;
         this.dataSource.filter = objectQuery != null ? objectQuery : this.filter.nativeElement.value;
       });
@@ -103,7 +101,6 @@ export class TvgMediaModifyDialog implements OnInit, OnDestroy {
   ) {
     this.mediaTypes = MediaType;
 
-    console.log("mediaAndTvgSites => ", mediaAndTvgSites);
     if (mediaAndTvgSites[0].tvg == null) {
       mediaAndTvgSites[0].tvg = <Tvg>{};
     }
@@ -129,7 +126,7 @@ export class TvgMediaModifyDialog implements OnInit, OnDestroy {
   }
 
   compareByValue(f1: any, f2: any) {
-    return f1 != null && f2 != null && f1 == f2;
+    return f1 != null && f2 != null && f1.value == f2.value;
   }
 
   tvgSelectionChange(event: MatAutocompleteSelectedEvent): void {

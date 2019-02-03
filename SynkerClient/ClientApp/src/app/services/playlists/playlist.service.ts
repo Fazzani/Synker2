@@ -1,12 +1,9 @@
-import { catchError, map, combineLatest, filter } from "rxjs/operators";
+import { Observable, merge } from "rxjs";
+import { catchError, map, flatMap, filter } from "rxjs/operators";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { AngularFireDatabase, AngularFireList } from "@angular/fire/database";
+import { AngularFireDatabase } from "@angular/fire/database";
 import { BaseService } from "../base/base.service";
-
-// All the RxJS stuff we need
-import { Observable, from, forkJoin, of, merge } from "rxjs";
-import { flatMap } from "rxjs/operators";
 import { HttpHeaders, HttpParams } from "@angular/common/http";
 import { PlaylistModel, PlaylistPostModel, PlaylistModelLive } from "../../types/playlist.type";
 import { QueryListBaseModel, PagedResult } from "../../types/common.type";
@@ -168,7 +165,6 @@ export class PlaylistService extends BaseService {
   }
 
   update(p: PlaylistModel): Observable<PlaylistModel> {
-    console.log(p);
     return this.http
       .put(`${environment.base_api_url}${this._baseUrl}/${p.publicId}`, p, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
@@ -181,7 +177,7 @@ export class PlaylistService extends BaseService {
   }
 
   updateLight(p: PlaylistModel): Observable<any> {
-    let playlist = Object.assign({}, p);
+    let playlist: PlaylistModel = Object.assign({}, p);
     playlist.tvgMedias = null;
     return this.http
       .put(`${environment.base_api_url}${this._baseUrl}/light/${p.publicId}`, playlist, {

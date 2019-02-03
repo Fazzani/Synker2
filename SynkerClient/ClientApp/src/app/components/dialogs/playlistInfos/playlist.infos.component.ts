@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 import { PlaylistService } from "../../../services/playlists/playlist.service";
-import { PlaylistModel, PlaylistStatus, SynkGroupEnum } from "../../../types/playlist.type";
+import { PlaylistModel } from "../../../types/playlist.type";
 import { CommonService } from "../../../services/common/common.service";
 import { XtreamService } from "../../../services/xtream/xtream.service";
 
@@ -16,14 +16,8 @@ import { XtreamService } from "../../../services/xtream/xtream.service";
 export class PlaylistInfosDialog implements OnInit, OnDestroy {
   providersEnum: string[] = PlaylistModel.PROVIDERS;
 
-  PlaylistStatusVaLues = PlaylistStatus;
-  SynkGroupEnumValues = SynkGroupEnum;
-
-  compareFn: ((f1: any, f2: any) => boolean) | null = this.compareByValue;
-
-  compareByValue(f1: any, f2: any) {
-    return f1 != null && f2 != null && f1 == f2;
-  }
+  PlaylistStatusVaLues: string[] = PlaylistModel.STATUS;
+  SynkGroupEnumValues: string[] = PlaylistModel.SYNKGROUP;
 
   constructor(
     public dialogRef: MatDialogRef<PlaylistInfosDialog>,
@@ -62,5 +56,5 @@ export class PlaylistInfosDialog implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() { }
 }
