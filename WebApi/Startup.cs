@@ -42,7 +42,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -133,7 +132,7 @@ namespace hfa.WebApi
             var retryPolicy = HttpPolicyExtensions
                    .HandleTransientHttpError()
                    .RetryAsync(3);
-                   //.CircuitBreaker(5, TimeSpan.FromSeconds(30));
+            //.CircuitBreaker(5, TimeSpan.FromSeconds(30));
 
             var noOp = Policy.NoOpAsync().AsAsyncPolicy<HttpResponseMessage>();
             services.AddHttpClient<MediaServerService>(c =>
@@ -299,7 +298,7 @@ namespace hfa.WebApi
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
+                    builder => builder.WithOrigins(CurrentEnvironment.IsDevelopment() ? "http://localhost:56810" : "https://synker.ovh", "https://www.synker.ovh", "https://xviewer.synker.ovh", "https://holo.synker.ovh")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
@@ -450,7 +449,7 @@ namespace hfa.WebApi
 
             services.AddMassTransit(x =>
             {
-               // x.AddConsumer<DiffPlaylistConsumer>();
+                // x.AddConsumer<DiffPlaylistConsumer>();
                 // x.AddConsumer<TraceConsumer>();
             });
 
