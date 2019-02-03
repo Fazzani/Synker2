@@ -9,7 +9,7 @@
     "build": "ng build",
     "build:ssr": "npm run build -- --app ssr --output-hashing=media",
     "build:ssr:prod": "npm run build:ssr -- --prod",
-    "build:both:prod": "npm run build:prod && npm run build:ssr:prod",
+    "build:both:prod": "npm run build --prod && npm run build:ssr:prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
