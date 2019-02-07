@@ -25,10 +25,10 @@
     </mat-form-field>
     <!-- Media type -->
     <mat-form-field>
-        <mat-select placeholder="Media Type" [(ngModel)]="mediaAndTvgSites[0].mediaType" name="media.mediatype" [compareWith]="compareFn">
-            <mat-option *ngFor="let mediatype of mediaTypes | keys" [value]="mediatype.value">
-                {{mediatype.key}}
-            </mat-option>
+        <mat-select placeholder="Media Type" [(ngModel)]="mediaAndTvgSites[0].mediaType" name="media.mediatype">
+            <mat-option *ngFor="let mediatype of mediaTypes" [value]="mediatype">
+                {{mediatype}} 
+            </mat-option> 
         </mat-select>
     </mat-form-field>
     <!-- Enabled -->

@@ -88,19 +88,16 @@ export class MediaComponent implements OnInit, OnDestroy {
   templateUrl: "./media.dialog.html"
 })
 export class TvgMediaModifyDialog implements OnInit, OnDestroy {
-  mediaTypes: typeof MediaType;
+  mediaTypes: string[] = TvgMedia.MEDIA_TYPES;
   tvgMedias: Observable<sitePackChannel[]>;
   private searchTerms = new Subject<string>();
   public filter: string;
-  compareFn: ((f1: any, f2: any) => boolean) | null = this.compareByValue;
 
   constructor(
     public dialogRef: MatDialogRef<TvgMediaModifyDialog>,
     private sitePackService: SitePackService,
     @Inject(MAT_DIALOG_DATA) public mediaAndTvgSites: [TvgMedia, string[]]
   ) {
-    this.mediaTypes = MediaType;
-
     if (mediaAndTvgSites[0].tvg == null) {
       mediaAndTvgSites[0].tvg = <Tvg>{};
     }
@@ -123,10 +120,6 @@ export class TvgMediaModifyDialog implements OnInit, OnDestroy {
         return of<sitePackChannel[]>([]);
       })
     );
-  }
-
-  compareByValue(f1: any, f2: any) {
-    return f1 != null && f2 != null && f1.value == f2.value;
   }
 
   tvgSelectionChange(event: MatAutocompleteSelectedEvent): void {

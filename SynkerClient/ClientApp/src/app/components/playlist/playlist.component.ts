@@ -1,7 +1,7 @@
 import { of, from, fromEvent, Subscription, BehaviorSubject } from "rxjs";
 import { toArray, distinct, map, tap, mergeMap, filter, merge, debounceTime, distinctUntilChanged, switchMap, groupBy } from "rxjs/operators";
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, AfterViewInit } from "@angular/core";
-import { MatPaginator, PageEvent, MatSort, MatDialog, MatSnackBar, MatTableDataSource, MatSlideToggleChange } from "@angular/material";
+import { MatPaginator, PageEvent, MatSort, MatDialog, MatSnackBar, MatTableDataSource, MatSlideToggleChange, MatSlideToggle } from "@angular/material";
 import { CommonService, Constants } from "../../services/common/common.service";
 import { PlaylistModel, PlaylistPostModel } from "../../types/playlist.type";
 import { PlaylistService } from "../../services/playlists/playlist.service";
@@ -122,7 +122,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild("filter") filter: ElementRef;
-  @ViewChild("active") active: ElementRef;
+  @ViewChild("active") active: MatSlideToggle;
   dataSource: MatTableDataSource<TvgMedia> | null;
   routeSub: any;
   playlistId: string;
@@ -131,6 +131,12 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
   mouseDown: boolean = false;
   select: boolean = false;
   atLeastOneSelected: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+
+  filterValues = {
+    name: '',
+    enabled: true,
+    mediaGroup: { disabled: null }
+  };
 
   /** media ctor */
   constructor(
@@ -164,7 +170,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.routeSub = this.route.params.subscribe(params => {
       this.playlistId = params["id"]; // (+) converts string 'id' to a number
-      console.log("Loading playlist ", this.playlistId);
+      //console.log("Loading playlist ", this.playlistId);
       this.pagelistState = this.commonService.JsonToObject<PageListState>(localStorage.getItem(Constants.MediaPageListKey + this.playlistId));
       if (this.pagelistState == null)
         this.pagelistState = <PageListState>{
@@ -173,39 +179,25 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
           pageSize: this.paginator.pageSizeOptions[0]
         };
 
-      console.log("pagelistState => ", this.pagelistState);
+      //console.log("pagelistState => ", this.pagelistState);
 
       this.initPaginator();
       this.playlistBS.next(<PlaylistModel>this.route.snapshot.data.data);
     });
 
     this.playlistBS.subscribe(x => {
-      console.log("playlist updated");
+      //console.log("playlist updated");
       if (x != null && x.tvgMedias != null) {
         this.dataSource = new MatTableDataSource<TvgMedia>(x.tvgMedias);
         this.dataSource.filterPredicate = (data: TvgMedia, filter: string) => {
-          filter = filter.toLowerCase();
-
-          //TODO: multi filters
-
-          let values = filter.split(":");
-          if ((values.length > 1 && values[1] == "null") || values[1] == "undefined") {
-            return data[values[0].trim()] == undefined || data[values[0].trim()] == null || data[values[0].trim()] == "";
-          } else if (values.length > 1 && data[values[0].trim()]) {
-            {
-              const type = data[values[0].trim()];
-              if (typeof type === 'string')
-                return (
-                  type
-                    .trim()
-                    .toLowerCase()
-                    .indexOf(values[1].toLowerCase().trim()) != -1
-                );
-              if (typeof type === 'boolean')
-                return type === !!values[1];
-            }
-          } else {
-            return data.name.toLowerCase().indexOf(filter) != -1;
+          let searchTerms = JSON.parse(filter);
+          if (searchTerms.mediaGroup.disabled !== undefined) {
+            return data.name.toLowerCase().indexOf(searchTerms.name) !== -1
+              && data.enabled === searchTerms.enabled
+              && !data.mediaGroup!.disabled !== searchTerms.mediaGroup.disabled;
+          }
+          else {
+            return data.name.toLowerCase().indexOf(searchTerms.name) !== -1;
           }
         };
         this.initPaginator();
@@ -216,6 +208,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
       .asObservable()
       .pipe(
         merge(fromEvent<KeyboardEvent>(this.filter.nativeElement, "keyup")),
+        merge(fromEvent<Event>(this.active._inputElement.nativeElement, "change")),
         debounceTime(1000),
         distinctUntilChanged()
       )
@@ -223,7 +216,7 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         if (!this.dataSource) {
           return;
         }
-        console.log("subscriptionTableEvent => ", x);
+        //console.log("subscriptionTableEvent => ", x);
         this.paginator.pageIndex = 0;
         if ((x as PageEvent) && (x as PageEvent).pageIndex !== undefined) {
           this.paginator.pageIndex = (x as PageEvent).pageIndex;
@@ -234,7 +227,17 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.pagelistState.pageSize = this.dataSource.paginator.pageSize;
 
         this.pagelistState.filter = this.filter.nativeElement.value;
-        this.dataSource.filter = (this.pagelistState.filter as string).toLowerCase().trim();
+        this.filterValues.name = this.filter.nativeElement.value;
+        if (!this.active.checked) {
+          this.filterValues.enabled = this.filterValues.mediaGroup.disabled = null;
+        }
+        else {
+          this.filterValues.enabled = this.active.checked;
+          this.filterValues.mediaGroup.disabled = !this.active.checked;
+        }
+        this.dataSource.filter = JSON.stringify(this.filterValues, (key, value) => {
+          if (value !== null) return value
+        });
         localStorage.setItem(Constants.MediaPageListKey + this.playlistId, JSON.stringify(this.pagelistState));
       });
   }
@@ -253,11 +256,11 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
 
   //#region row selection
   handleKeyboardEvent(event: KeyboardEvent) {
-    console.log(event.getModifierState('Control'));
-    console.log(event);
+    //console.log(event.getModifierState('Control'));
+    //console.log(event);
     //Select ALL
     if (event.getModifierState && event.getModifierState('Control') && event.key == KEY.A) {
-      console.log("select All", this.dataSource.filteredData.length);
+      //console.log("select All", this.dataSource.filteredData.length);
       this.dataSource._pageData(this.dataSource.filteredData).forEach(m => m.selected = true);
       this.atLeastOneSelected.next(this.dataSource.data.filter(f => f.selected).length);
     } else if (event.getModifierState && event.getModifierState('Control') && event.key == KEY.I) {
@@ -551,14 +554,6 @@ export class PlaylistComponent implements OnInit, OnDestroy, AfterViewInit {
         this.playlistBS.next(res);
         this.commonService.info("Success", "Playlist was synchronized with source");
       });
-  }
-
-  /**
-   * Display enabled channels
-   */
-  activeChannelsFilterToggle(event: MatSlideToggleChange): void {
-    console.log(`${event.checked}`);
-    this.dataSource.filter = `enabled:${event.checked}`;
   }
 
   /**

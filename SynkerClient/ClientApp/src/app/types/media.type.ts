@@ -1,4 +1,12 @@
-﻿import { ISelectable } from "./common.type";
+import { ISelectable } from "./common.type";
+
+export enum MediaType {
+  LiveTv = 0,
+  Radio = 1,
+  Video = 2,
+  Audio = 3,
+  Other = 4
+}
 
 /**
  * Tvg media (channel)
@@ -22,15 +30,9 @@ export class TvgMedia implements ISelectable {
   startLineHeader?: string;
   group: string;
   mediaGroup: MediaGroup;
+  public static MEDIA_TYPES: string[] = Object.keys(MediaType).slice(Object.keys(MediaType).length / 2);
 }
 
-export enum MediaType {
-  LiveTv = 0,
-  Radio = 1,
-  Video = 2,
-  Audio = 3,
-  Other = 4
-}
 /**
  * Tvg channel field
  *
