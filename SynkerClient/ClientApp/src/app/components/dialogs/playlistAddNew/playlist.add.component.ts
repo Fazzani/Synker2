@@ -12,7 +12,6 @@ import { PlaylistPostModel, PlaylistStatus, Providers, PlaylistModel } from "../
   templateUrl: "./playlist.add.dialog.html"
 })
 export class PlaylistAddDialog implements OnInit, OnDestroy {
-  providers: string[];
   SynkGroupEnumValues: string[] = PlaylistModel.SYNKGROUP;
   providersEnum: string[] = PlaylistModel.PROVIDERS;
 
@@ -24,7 +23,6 @@ export class PlaylistAddDialog implements OnInit, OnDestroy {
     this.playlist = new PlaylistPostModel();
     this.playlist.status = PlaylistStatus.Enabled;
     this.playlist.provider = "m3u";
-    this.providers = Object.keys(Providers);
   }
 
   onNoClick(): void {

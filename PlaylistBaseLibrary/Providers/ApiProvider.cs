@@ -21,6 +21,11 @@ namespace hfa.PlaylistBaseLibrary.Providers
             Url = url;
         }
 
+        protected ApiProvider(Uri uri)
+        {
+            Url = uri.ToString();
+        }
+
         public override object _(Expression expression)
         {
             //if (!IsQueryOverDataSource(expression))

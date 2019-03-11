@@ -25,6 +25,10 @@ namespace hfa.PlaylistBaseLibrary.Providers
         {
         }
 
+        public XtreamProvider(Uri uri) : base(uri)
+        {
+        }
+
         public override IEnumerable<TvgMedia> Pull()
         {
             _panel = _panel ?? GetApiResultAsync(CancellationToken.None).GetAwaiter().GetResult();
