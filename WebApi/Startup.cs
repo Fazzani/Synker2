@@ -27,7 +27,6 @@ using hfa.WebApi.Http;
 using hfa.WebApi.Hubs;
 using hfa.WebApi.Services;
 using MassTransit;
-using MassTransit.ExtensionsDependencyInjectionIntegration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -124,6 +123,7 @@ namespace hfa.WebApi
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection(PlaylistProviderOption.PlaylistProvidersConfigurationKeyName))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
                .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))
+               .Configure<StsOptions>(Configuration.GetSection(nameof(StsOptions)))
                .Configure<MediaServerOptions>(Configuration.GetSection(nameof(MediaServerOptions)))
                .Configure<GlobalOptions>(Configuration.GetSection(nameof(GlobalOptions)))
                .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)))

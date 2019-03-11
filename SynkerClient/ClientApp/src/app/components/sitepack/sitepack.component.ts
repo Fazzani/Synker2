@@ -40,8 +40,8 @@ export class SitePackComponent implements OnInit, OnDestroy {
   ) {
     breakpointObserver.observe(['(max-width: 600px)']).subscribe(result => {
       this.displayedColumns = result.matches ?
-        ["displayNames", 'country', 'channel_name', 'actions']:
-        ["logo", "update", "displayNames", "site", 'country', 'mediaType', 'channel_name', 'actions'];
+        ["displayNames", 'country', 'channel_name','site_id', 'actions']:
+        ["logo", "update", "displayNames", "site", 'country', 'mediaType', 'channel_name', 'site_id', 'actions'];
     });
   }
 
@@ -133,7 +133,6 @@ export class SitePackComponent implements OnInit, OnDestroy {
   }
 
   save(): void {
-    console.log('saving site pack..');
     this.dataSource.save().subscribe(res => {
       this.snackBar.open('site pack was saved successfully');
     });
@@ -143,7 +142,6 @@ export class SitePackComponent implements OnInit, OnDestroy {
    * Force save all site packs
    */
   saveAll(): void {
-    console.log('saving all site pack..');
     this.dataSource.saveAll();
   }
 
@@ -170,7 +168,6 @@ export class SitePackComponent implements OnInit, OnDestroy {
   }
 
   updateManualPage(index) {
-    console.log(`go to page ${index}`);
     this.paginator.page.emit(<PageEvent>{ pageIndex: index });
   }
 
@@ -314,7 +311,6 @@ export class SitePackDataSource extends DataSource<sitePackChannel> {
     localStorage.setItem(Constants.LS_SiteQueryKey, JSON.stringify(query));
 
     const res = this.sitePackService.search<sitePackChannel>(query).pipe(map((v, i) => {
-      console.log('Getting sitepacks ', v);
       this._paginator.value.length = v.total;
       return v.result;
     }));

@@ -122,4 +122,9 @@ namespace hfa.WebApi.Common
         public string Password { get; set; }
     }
 
+    public class StsOptions
+    {
+        public string ClientId { get; set; }
+        public string Secret { get; set; }
+    }
 }

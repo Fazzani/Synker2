@@ -12,7 +12,7 @@ namespace hfa.Synker.Service.Services.Xtream
 {
     public class XtreamService : IXtreamService
     {
-        private const string XtreamUrlPattern = @"^(?<portocol>https?)://(?<host>.*):(?<port>\d{2,4})/get\.php\?username=(?<username>.*)&password=(?<password>\w+)";
+        private const string XtreamUrlPattern = @"^(?<portocol>https?)://(?<host>.*):(?<port>\d{2,5})/get\.php\?username=(?<username>.*)&password=(?<password>\w+)";
 
         public async Task<PlayerApi> GetUserAndServerInfoAsync(string playlistUrl, CancellationToken cancellationToken) => 
             await GetFromApi<PlayerApi>(playlistUrl, XtreamApiEnum.Player_Api, cancellationToken);

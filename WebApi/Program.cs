@@ -1,13 +1,13 @@
-﻿using hfa.WebApi;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Serilog;
-using System;
-using System.IO;
-
-namespace Web
+﻿namespace Web
 {
+    using hfa.WebApi;
+    using Microsoft.AspNetCore;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Configuration;
+    using Serilog;
+    using System;
+    using System.IO;
+
     public class Program
     {
         public static IConfiguration Configuration { get; } = new ConfigurationBuilder()

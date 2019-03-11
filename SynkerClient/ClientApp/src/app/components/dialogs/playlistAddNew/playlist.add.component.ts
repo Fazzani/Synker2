@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
 import { MatDialogRef } from "@angular/material";
 import { PlaylistService } from "../../../services/playlists/playlist.service";
-import { PlaylistPostModel, PlaylistStatus, Providers } from "../../../types/playlist.type";
+import { PlaylistPostModel, PlaylistStatus, Providers, PlaylistModel } from "../../../types/playlist.type";
 
 /**
  *  url tests
@@ -13,6 +13,8 @@ import { PlaylistPostModel, PlaylistStatus, Providers } from "../../../types/pla
 })
 export class PlaylistAddDialog implements OnInit, OnDestroy {
   providers: string[];
+  SynkGroupEnumValues: string[] = PlaylistModel.SYNKGROUP;
+  providersEnum: string[] = PlaylistModel.PROVIDERS;
 
   playlist: PlaylistPostModel;
 
