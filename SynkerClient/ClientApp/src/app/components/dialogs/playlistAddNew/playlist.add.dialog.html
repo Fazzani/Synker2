@@ -8,7 +8,7 @@
     </mat-form-field>
     <!--<mat-checkbox [(ngModel)]="playlist.status" name="status">Enabled</mat-checkbox>-->
     <mat-form-field>
-      <mat-select placeholder="Providers" [(ngModel)]="playlist.importProvider" name="provider">
+      <mat-select placeholder="Providers" [(ngModel)]="playlist.provider" name="provider">
         <mat-option *ngFor="let provider of providersEnum" [value]="provider">
           {{provider}}
         </mat-option>
