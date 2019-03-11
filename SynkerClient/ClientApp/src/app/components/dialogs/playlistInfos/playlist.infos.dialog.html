@@ -14,7 +14,7 @@
                             <input matInput [(ngModel)]="playlist.url" placeholder="Url Source..." name="url" required>
                         </mat-form-field>
                         <mat-form-field>
-                            <mat-select placeholder="Providers" [(ngModel)]="playlist.importProvider" name="provider">
+                            <mat-select placeholder="Providers" [(ngModel)]="playlist.provider" name="provider">
                                 <mat-option *ngFor="let provider of providersEnum" [value]="provider">
                                     {{provider}}
                                 </mat-option>
