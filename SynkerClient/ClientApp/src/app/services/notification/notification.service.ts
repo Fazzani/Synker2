@@ -6,7 +6,7 @@ import { BaseService } from "../base/base.service";
 import { environment } from "../../../environments/environment";
 import { HubConnection, HubConnectionBuilder } from "@aspnet/signalr";
 import { CommonService } from "../common/common.service";
-import { AuthService } from "../auth/auth.service";
+//import { AuthService } from "../auth/auth.service";
 import { AngularFireDatabase, AngularFireList } from "@angular/fire/database";
 import FirebaseNotification from "../../types/firebase.type";
 
@@ -17,12 +17,16 @@ export class NotificationService extends BaseService {
   private hubConnection: HubConnection | undefined;
   readonly hubName: string = "hubs/notification";
 
-  constructor(private db: AngularFireDatabase, protected http: HttpClient, private commonService: CommonService, private authService: AuthService) {
+  constructor(private db: AngularFireDatabase,
+    protected http: HttpClient,
+    private commonService: CommonService
+    //private authService: AuthService
+  ) {
     super(http);
     console.log(`NotificationHub Url : ${environment.base_hub_url}${this.hubName}`);
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(`${environment.base_hub_url}${this.hubName}`, {
-        accessTokenFactory: () => this.authService.getToken()
+        accessTokenFactory: () => null//this.authService.getToken()
       })
       .build();
 

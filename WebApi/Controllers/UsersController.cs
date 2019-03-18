@@ -170,5 +170,11 @@ namespace hfa.WebApi.Controllers
             await _dbContext.SaveChangesAsync(cancellationToken);
             return NoContent();
         }
+
+        [HttpGet("identity")]
+        public IActionResult GetIdentity()
+        {
+            return new JsonResult(from c in User.Claims select new { c.Type, c.Value });
+        }
     }
 }

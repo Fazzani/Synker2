@@ -358,14 +358,6 @@ namespace hfa.WebApi
 
             synkerDbContext.Database.Migrate();
 
-            //Chanllenge Let's Encrypt path
-            //app.UseStaticFiles(new StaticFileOptions
-            //{
-            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @".well-known")),
-            //    RequestPath = new PathString("/.well-known"),
-            //    ServeUnknownFileTypes = true // serve extensionless file
-            //});
-
             loggerFactory.AddFile(Configuration.GetSection("Logging"));
 
             if (env.IsDevelopment())
@@ -508,8 +500,11 @@ namespace hfa.WebApi
             {
                 jwtBearerOptions.SaveToken = true;
                 //jwtBearerOptions.BackchannelHttpHandler
+                jwtBearerOptions.Authority = "https://idp.synker.ovh";
                 jwtBearerOptions.RequireHttpsMetadata = true;
                 jwtBearerOptions.TokenValidationParameters = authService.Parameters;
+                jwtBearerOptions.Audience = "synkerapi";
+
                 // We have to hook the OnMessageReceived event in order to
                 // allow the JWT authentication handler to read the access
                 // token from the query string when a WebSocket or 
@@ -550,7 +545,6 @@ namespace hfa.WebApi
 
                             context.Principal = principal;
                             return Task.FromResult(AuthenticateResult.Success(ticket));
-                            //return Task.CompletedTask;
                         }
 
                         return Task.FromResult(AuthenticateResult.Fail("Authentication failed."));

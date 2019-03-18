@@ -52,6 +52,9 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { NotificationsComponent } from "./components/notifications/notifications.component";
+import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
+import { AuthGuardService } from './services/auth/auth-guard.service';
+import { AuthService } from './services/auth/idpauth.service';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -71,6 +74,7 @@ export function getAboutApplication(initService: InitAppService) {
     EpgComponent,
     XmltvComponent,
     UserComponent,
+    AuthCallbackComponent,
     NotificationsComponent,
     GroupComponent,
     LoaderComponent,
@@ -162,7 +166,9 @@ export function getAboutApplication(initService: InitAppService) {
     PlaylistDetailResolver,
     HostsResolver,
     UsersResolver,
-    HomeResolver
+    HomeResolver,
+    AuthGuardService,
+    AuthService
   ],
   bootstrap: [AppComponent]
 })

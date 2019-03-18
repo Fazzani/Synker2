@@ -1,0 +1,745 @@
+2019-03-18 14:44:06.874 +01:00 [INF] You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+2019-03-18 14:44:06.949 +01:00 [INF] Using the default authentication scheme idsrv for IdentityServer
+2019-03-18 14:44:06.960 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for authentication
+2019-03-18 14:44:06.964 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-in
+2019-03-18 14:44:06.968 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-out
+2019-03-18 14:44:06.976 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for challenge
+2019-03-18 14:44:06.979 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for forbid
+2019-03-18 16:10:20.278 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 16:10:20.422 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 16:10:20.425 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 16:10:20.939 +01:00 [DBG] Login Url: /Account/Login
+2019-03-18 16:10:20.942 +01:00 [DBG] Login Return Url Parameter: ReturnUrl
+2019-03-18 16:10:20.944 +01:00 [DBG] Logout Url: /Account/Logout
+2019-03-18 16:10:20.947 +01:00 [DBG] ConsentUrl Url: /consent
+2019-03-18 16:10:20.950 +01:00 [DBG] Consent Return Url Parameter: returnUrl
+2019-03-18 16:10:20.957 +01:00 [DBG] Error Url: /home/error
+2019-03-18 16:10:20.961 +01:00 [DBG] Error Id Parameter: errorId
+2019-03-18 16:10:21.012 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 16:10:21.021 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 16:10:21.024 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 16:10:21.039 +01:00 [DBG] Start discovery request
+2019-03-18 16:10:21.523 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 16:10:21.535 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 16:10:21.538 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 16:10:21.548 +01:00 [DBG] Start authorize request
+2019-03-18 16:10:21.573 +01:00 [DBG] No user present in authorize request
+2019-03-18 16:10:21.607 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 16:10:21.662 +01:00 [ERR] Unknown client or not enabled: synkerclient
+{"ClientId":null,"ClientName":null,"RedirectUri":null,"AllowedRedirectUris":null,"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"9a1352e0270048309e7debac07b44a35","nonce":"6713efc79f0d441aa29ff22ba66b7ce1"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 16:10:21.722 +01:00 [ERR] Request validation failed
+2019-03-18 16:10:21.725 +01:00 [INF] {"ClientId":null,"ClientName":null,"RedirectUri":null,"AllowedRedirectUris":null,"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"9a1352e0270048309e7debac07b44a35","nonce":"6713efc79f0d441aa29ff22ba66b7ce1"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 16:10:21.842 +01:00 [INF] {"ClientId":"synkerclient","ClientName":null,"RedirectUri":null,"Endpoint":"Authorize","SubjectId":null,"Scopes":"","GrantType":null,"Error":"unauthorized_client","ErrorDescription":"Unknown client or client not enabled","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBMFAPP92H:00000001","TimeStamp":"2019-03-18T15:10:21.0000000Z","ProcessId":25720,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 16:10:57.339 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 16:10:57.343 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 16:10:57.348 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 16:10:57.351 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 16:10:57.354 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 16:10:57.358 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 16:10:57.362 +01:00 [DBG] Start discovery request
+2019-03-18 16:11:26.665 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 16:11:26.671 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 16:11:26.675 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 16:11:26.681 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 16:11:26.685 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 16:11:26.690 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 16:11:26.694 +01:00 [DBG] Start discovery request
+2019-03-18 16:11:26.722 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 16:11:26.725 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 16:11:26.730 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 16:11:26.735 +01:00 [DBG] Start authorize request
+2019-03-18 16:11:26.740 +01:00 [DBG] No user present in authorize request
+2019-03-18 16:11:26.743 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 16:11:26.747 +01:00 [ERR] Unknown client or not enabled: synkerclient
+{"ClientId":null,"ClientName":null,"RedirectUri":null,"AllowedRedirectUris":null,"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"625c4004c7d645f2ace3b90cfb64f83f","nonce":"53635c88e24d4197a0308c852636c73e"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 16:11:26.780 +01:00 [ERR] Request validation failed
+2019-03-18 16:11:26.784 +01:00 [INF] {"ClientId":null,"ClientName":null,"RedirectUri":null,"AllowedRedirectUris":null,"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"625c4004c7d645f2ace3b90cfb64f83f","nonce":"53635c88e24d4197a0308c852636c73e"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 16:11:26.807 +01:00 [INF] {"ClientId":"synkerclient","ClientName":null,"RedirectUri":null,"Endpoint":"Authorize","SubjectId":null,"Scopes":"","GrantType":null,"Error":"unauthorized_client","ErrorDescription":"Unknown client or client not enabled","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBMFAPP92I:00000005","TimeStamp":"2019-03-18T15:11:26.0000000Z","ProcessId":25720,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 16:11:27.665 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 16:11:27.672 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 16:11:27.678 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 16:11:27.687 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 16:11:27.692 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 16:11:27.696 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 16:11:27.701 +01:00 [DBG] Start discovery request
+2019-03-18 16:11:28.049 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 16:11:28.053 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 16:11:28.056 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 16:11:28.059 +01:00 [DBG] Start authorize request
+2019-03-18 16:11:28.062 +01:00 [DBG] No user present in authorize request
+2019-03-18 16:11:28.065 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 16:11:28.067 +01:00 [ERR] Unknown client or not enabled: synkerclient
+{"ClientId":null,"ClientName":null,"RedirectUri":null,"AllowedRedirectUris":null,"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"eec5e64d15474d5d916ef9c070e111b8","nonce":"b9ab4517f7614c6eb413af76618188cc"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 16:11:28.093 +01:00 [ERR] Request validation failed
+2019-03-18 16:11:28.095 +01:00 [INF] {"ClientId":null,"ClientName":null,"RedirectUri":null,"AllowedRedirectUris":null,"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"eec5e64d15474d5d916ef9c070e111b8","nonce":"b9ab4517f7614c6eb413af76618188cc"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 16:11:28.119 +01:00 [INF] {"ClientId":"synkerclient","ClientName":null,"RedirectUri":null,"Endpoint":"Authorize","SubjectId":null,"Scopes":"","GrantType":null,"Error":"unauthorized_client","ErrorDescription":"Unknown client or client not enabled","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBMFAPP92M:00000001","TimeStamp":"2019-03-18T15:11:28.0000000Z","ProcessId":25720,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 16:49:45.333 +01:00 [INF] You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+2019-03-18 16:49:45.372 +01:00 [INF] Using the default authentication scheme idsrv for IdentityServer
+2019-03-18 16:49:45.378 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for authentication
+2019-03-18 16:49:45.380 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-in
+2019-03-18 16:49:45.382 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-out
+2019-03-18 16:49:45.384 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for challenge
+2019-03-18 16:49:45.386 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for forbid
+2019-03-18 16:50:52.714 +01:00 [INF] You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+2019-03-18 16:50:52.759 +01:00 [INF] Using the default authentication scheme idsrv for IdentityServer
+2019-03-18 16:50:52.765 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for authentication
+2019-03-18 16:50:52.768 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-in
+2019-03-18 16:50:52.770 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-out
+2019-03-18 16:50:52.774 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for challenge
+2019-03-18 16:50:52.778 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for forbid
+2019-03-18 16:52:02.909 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 16:52:02.925 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 16:52:02.929 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 16:52:02.972 +01:00 [DBG] Login Url: /Account/Login
+2019-03-18 16:52:02.978 +01:00 [DBG] Login Return Url Parameter: ReturnUrl
+2019-03-18 16:52:02.982 +01:00 [DBG] Logout Url: /Account/Logout
+2019-03-18 16:52:02.986 +01:00 [DBG] ConsentUrl Url: /consent
+2019-03-18 16:52:02.988 +01:00 [DBG] Consent Return Url Parameter: returnUrl
+2019-03-18 16:52:02.991 +01:00 [DBG] Error Url: /home/error
+2019-03-18 16:52:02.993 +01:00 [DBG] Error Id Parameter: errorId
+2019-03-18 16:52:03.022 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 16:52:03.029 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 16:52:03.034 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 16:52:03.040 +01:00 [DBG] Start discovery request
+2019-03-18 16:52:03.441 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 16:52:03.452 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 16:52:03.456 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 16:52:03.466 +01:00 [DBG] Start authorize request
+2019-03-18 16:52:03.481 +01:00 [DBG] No user present in authorize request
+2019-03-18 16:52:03.493 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 16:52:03.519 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 16:52:03.541 +01:00 [ERR] Invalid redirect_uri: http://localhost:5000/auth-callback
+{"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"AllowedRedirectUris":["http://localhost:56810/index.html","http://localhost:56810/callback.html","http://localhost:56810/silent.html","http://localhost:56810/popup.html"],"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"effd9aacaa7a4f5a9d852a4b10ee0db3","nonce":"ca9549399ca84eab85dc25256cbaa830"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 16:52:03.580 +01:00 [ERR] Request validation failed
+2019-03-18 16:52:03.583 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"AllowedRedirectUris":["http://localhost:56810/index.html","http://localhost:56810/callback.html","http://localhost:56810/silent.html","http://localhost:56810/popup.html"],"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"effd9aacaa7a4f5a9d852a4b10ee0db3","nonce":"ca9549399ca84eab85dc25256cbaa830"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 16:52:03.618 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"Endpoint":"Authorize","SubjectId":null,"Scopes":"","GrantType":null,"Error":"unauthorized_client","ErrorDescription":"Invalid redirect_uri","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBN6JOGIDH:00000001","TimeStamp":"2019-03-18T15:52:03.0000000Z","ProcessId":22664,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 16:53:33.326 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 16:53:33.329 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 16:53:33.336 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 16:53:33.339 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 16:53:33.343 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 16:53:33.346 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 16:53:33.351 +01:00 [DBG] Start discovery request
+2019-03-18 16:53:33.808 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 16:53:33.816 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 16:53:33.822 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 16:53:33.828 +01:00 [DBG] Start authorize request
+2019-03-18 16:53:33.832 +01:00 [DBG] No user present in authorize request
+2019-03-18 16:53:33.836 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 16:53:33.839 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 16:53:33.843 +01:00 [ERR] Invalid redirect_uri: http://localhost:5000/auth-callback
+{"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"AllowedRedirectUris":["http://localhost:56810/index.html","http://localhost:56810/callback.html","http://localhost:56810/silent.html","http://localhost:56810/popup.html"],"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"29a23dc0de7c4791b01e7c7b2a297502","nonce":"4ebefe85e0a2408da2b2d1e569f0466a"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 16:53:33.871 +01:00 [ERR] Request validation failed
+2019-03-18 16:53:33.875 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"AllowedRedirectUris":["http://localhost:56810/index.html","http://localhost:56810/callback.html","http://localhost:56810/silent.html","http://localhost:56810/popup.html"],"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"29a23dc0de7c4791b01e7c7b2a297502","nonce":"4ebefe85e0a2408da2b2d1e569f0466a"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 16:53:33.902 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"Endpoint":"Authorize","SubjectId":null,"Scopes":"","GrantType":null,"Error":"unauthorized_client","ErrorDescription":"Invalid redirect_uri","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBN6JOGIDJ:00000003","TimeStamp":"2019-03-18T15:53:33.0000000Z","ProcessId":22664,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 16:54:10.053 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 16:54:10.058 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 16:54:10.064 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 16:54:10.068 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 16:54:10.075 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 16:54:10.081 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 16:54:10.089 +01:00 [DBG] Start discovery request
+2019-03-18 16:54:10.637 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 16:54:10.641 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 16:54:10.646 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 16:54:10.652 +01:00 [DBG] Start authorize request
+2019-03-18 16:54:10.657 +01:00 [DBG] No user present in authorize request
+2019-03-18 16:54:10.663 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 16:54:10.670 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 16:54:10.676 +01:00 [ERR] Invalid redirect_uri: http://localhost:5000/auth-callback
+{"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"AllowedRedirectUris":["http://localhost:56810/index.html","http://localhost:56810/callback.html","http://localhost:56810/silent.html","http://localhost:56810/popup.html"],"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"bbdbdfc050e64d939e66fc7ccc9a47dd","nonce":"3e1e340d5534493192b2325b87986bdc"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 16:54:10.726 +01:00 [ERR] Request validation failed
+2019-03-18 16:54:10.731 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"AllowedRedirectUris":["http://localhost:56810/index.html","http://localhost:56810/callback.html","http://localhost:56810/silent.html","http://localhost:56810/popup.html"],"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"bbdbdfc050e64d939e66fc7ccc9a47dd","nonce":"3e1e340d5534493192b2325b87986bdc"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 16:54:10.778 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"Endpoint":"Authorize","SubjectId":null,"Scopes":"","GrantType":null,"Error":"unauthorized_client","ErrorDescription":"Invalid redirect_uri","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBN6JOGIDJ:00000005","TimeStamp":"2019-03-18T15:54:10.0000000Z","ProcessId":22664,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 16:54:29.464 +01:00 [INF] You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+2019-03-18 16:54:29.500 +01:00 [INF] Using the default authentication scheme idsrv for IdentityServer
+2019-03-18 16:54:29.505 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for authentication
+2019-03-18 16:54:29.509 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-in
+2019-03-18 16:54:29.511 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-out
+2019-03-18 16:54:29.513 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for challenge
+2019-03-18 16:54:29.515 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for forbid
+2019-03-18 16:54:38.104 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 16:54:38.117 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 16:54:38.121 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 16:54:38.167 +01:00 [DBG] Login Url: /Account/Login
+2019-03-18 16:54:38.170 +01:00 [DBG] Login Return Url Parameter: ReturnUrl
+2019-03-18 16:54:38.173 +01:00 [DBG] Logout Url: /Account/Logout
+2019-03-18 16:54:38.176 +01:00 [DBG] ConsentUrl Url: /consent
+2019-03-18 16:54:38.179 +01:00 [DBG] Consent Return Url Parameter: returnUrl
+2019-03-18 16:54:38.184 +01:00 [DBG] Error Url: /home/error
+2019-03-18 16:54:38.187 +01:00 [DBG] Error Id Parameter: errorId
+2019-03-18 16:54:38.221 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 16:54:38.231 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 16:54:38.235 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 16:54:38.243 +01:00 [DBG] Start discovery request
+2019-03-18 16:54:38.607 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 16:54:38.618 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 16:54:38.624 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 16:54:38.634 +01:00 [DBG] Start authorize request
+2019-03-18 16:54:38.655 +01:00 [DBG] No user present in authorize request
+2019-03-18 16:54:38.666 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 16:54:38.693 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 16:54:38.719 +01:00 [ERR] Invalid redirect_uri: http://localhost:5000/auth-callback
+{"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"AllowedRedirectUris":["http://localhost:56810/index.html","http://localhost:56810/auth-callback","http://localhost:56810/silent.html","http://localhost:56810/popup.html"],"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"5366ef08581d47569d08fa1d19dafdfa","nonce":"f6471f1af9934bf6af590057ef92c9e7"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 16:54:38.764 +01:00 [ERR] Request validation failed
+2019-03-18 16:54:38.766 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"AllowedRedirectUris":["http://localhost:56810/index.html","http://localhost:56810/auth-callback","http://localhost:56810/silent.html","http://localhost:56810/popup.html"],"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"5366ef08581d47569d08fa1d19dafdfa","nonce":"f6471f1af9934bf6af590057ef92c9e7"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 16:54:38.803 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"Endpoint":"Authorize","SubjectId":null,"Scopes":"","GrantType":null,"Error":"unauthorized_client","ErrorDescription":"Invalid redirect_uri","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBN81V6VOA:00000001","TimeStamp":"2019-03-18T15:54:38.0000000Z","ProcessId":28168,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 19:49:05.113 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 19:49:05.122 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 19:49:05.125 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 19:49:05.130 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 19:49:05.133 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 19:49:05.138 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 19:49:05.145 +01:00 [DBG] Start discovery request
+2019-03-18 19:49:05.524 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 19:49:05.529 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 19:49:05.533 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 19:49:05.540 +01:00 [DBG] Start authorize request
+2019-03-18 19:49:05.544 +01:00 [DBG] No user present in authorize request
+2019-03-18 19:49:05.547 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 19:49:05.551 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 19:49:05.556 +01:00 [ERR] Invalid redirect_uri: http://localhost:5000/auth-callback
+{"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"AllowedRedirectUris":["http://localhost:56810/index.html","http://localhost:56810/auth-callback","http://localhost:56810/silent.html","http://localhost:56810/popup.html"],"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"516a982f00cb4ee7ae1d9ecb958af7e2","nonce":"12aae1ecb9444becbfba4788bae82eb1"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 19:49:05.601 +01:00 [ERR] Request validation failed
+2019-03-18 19:49:05.605 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"AllowedRedirectUris":["http://localhost:56810/index.html","http://localhost:56810/auth-callback","http://localhost:56810/silent.html","http://localhost:56810/popup.html"],"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"516a982f00cb4ee7ae1d9ecb958af7e2","nonce":"12aae1ecb9444becbfba4788bae82eb1"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 19:49:05.633 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"Endpoint":"Authorize","SubjectId":null,"Scopes":"","GrantType":null,"Error":"unauthorized_client","ErrorDescription":"Invalid redirect_uri","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBN81V6VOD:00000001","TimeStamp":"2019-03-18T18:49:05.0000000Z","ProcessId":28168,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 19:52:30.609 +01:00 [INF] You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+2019-03-18 19:52:30.644 +01:00 [INF] Using the default authentication scheme idsrv for IdentityServer
+2019-03-18 19:52:30.650 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for authentication
+2019-03-18 19:52:30.652 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-in
+2019-03-18 19:52:30.654 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-out
+2019-03-18 19:52:30.655 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for challenge
+2019-03-18 19:52:30.657 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for forbid
+2019-03-18 19:53:02.564 +01:00 [INF] You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+2019-03-18 19:53:02.598 +01:00 [INF] Using the default authentication scheme idsrv for IdentityServer
+2019-03-18 19:53:02.603 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for authentication
+2019-03-18 19:53:02.605 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-in
+2019-03-18 19:53:02.607 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-out
+2019-03-18 19:53:02.609 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for challenge
+2019-03-18 19:53:02.611 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for forbid
+2019-03-18 19:54:20.121 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 19:54:20.133 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 19:54:20.137 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 19:54:20.176 +01:00 [DBG] Login Url: /Account/Login
+2019-03-18 19:54:20.179 +01:00 [DBG] Login Return Url Parameter: ReturnUrl
+2019-03-18 19:54:20.181 +01:00 [DBG] Logout Url: /Account/Logout
+2019-03-18 19:54:20.183 +01:00 [DBG] ConsentUrl Url: /consent
+2019-03-18 19:54:20.185 +01:00 [DBG] Consent Return Url Parameter: returnUrl
+2019-03-18 19:54:20.187 +01:00 [DBG] Error Url: /home/error
+2019-03-18 19:54:20.190 +01:00 [DBG] Error Id Parameter: errorId
+2019-03-18 19:54:20.210 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 19:54:20.215 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 19:54:20.219 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 19:54:20.226 +01:00 [DBG] Start discovery request
+2019-03-18 19:54:20.486 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 19:54:20.504 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 19:54:20.509 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 19:54:20.517 +01:00 [DBG] Start authorize request
+2019-03-18 19:54:20.535 +01:00 [DBG] No user present in authorize request
+2019-03-18 19:54:20.544 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 19:54:20.564 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 19:54:20.583 +01:00 [ERR] Invalid redirect_uri: http://localhost:5000/auth-callback
+{"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"1adaf0c36b7243ae88b926571b3293fc","nonce":"180a8243372b4441964ef9fed2c46b36"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 19:54:20.626 +01:00 [ERR] Request validation failed
+2019-03-18 19:54:20.630 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"1adaf0c36b7243ae88b926571b3293fc","nonce":"180a8243372b4441964ef9fed2c46b36"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 19:54:20.656 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"Endpoint":"Authorize","SubjectId":null,"Scopes":"","GrantType":null,"Error":"unauthorized_client","ErrorDescription":"Invalid redirect_uri","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBQCFGHFCH:00000001","TimeStamp":"2019-03-18T18:54:20.0000000Z","ProcessId":31664,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:00:57.611 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:00:57.616 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:00:57.619 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:00:57.622 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:00:57.624 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:00:57.627 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:00:57.633 +01:00 [DBG] Start discovery request
+2019-03-18 20:00:57.984 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:00:57.987 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:00:57.990 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:00:57.994 +01:00 [DBG] Start authorize request
+2019-03-18 20:00:57.997 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:00:57.999 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:00:58.001 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:00:58.002 +01:00 [ERR] Invalid redirect_uri: http://localhost:5000/auth-callback
+{"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"413d75cee766415abb958695b599078b","nonce":"58850f0abaa8415e931513083a99656a"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:00:58.022 +01:00 [ERR] Request validation failed
+2019-03-18 20:00:58.023 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":null,"ResponseMode":null,"GrantType":null,"RequestedScopes":"","State":null,"UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:5000/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"413d75cee766415abb958695b599078b","nonce":"58850f0abaa8415e931513083a99656a"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:00:58.047 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":null,"Endpoint":"Authorize","SubjectId":null,"Scopes":"","GrantType":null,"Error":"unauthorized_client","ErrorDescription":"Invalid redirect_uri","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBQCFGHFCK:00000001","TimeStamp":"2019-03-18T19:00:58.0000000Z","ProcessId":31664,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:05:44.766 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:05:44.774 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:05:44.777 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:05:44.780 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:05:44.782 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:05:44.786 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:05:44.789 +01:00 [DBG] Start discovery request
+2019-03-18 20:05:44.827 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:05:44.830 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:05:44.834 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:05:44.837 +01:00 [DBG] Start authorize request
+2019-03-18 20:05:44.839 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:05:44.841 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:05:44.843 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:05:44.874 +01:00 [ERR] Invalid scope: email
+2019-03-18 20:05:44.876 +01:00 [ERR] Request validation failed
+2019-03-18 20:05:44.878 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile email synkerapi.full_access","State":"f6c0abe12e0341f2b4b0e23bc10fa78f","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile email synkerapi.full_access","state":"f6c0abe12e0341f2b4b0e23bc10fa78f","nonce":"feaa742b127440238ba8ef53ad712c70"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:05:44.897 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile email synkerapi.full_access","GrantType":"implicit","Error":"invalid_scope","ErrorDescription":"Invalid scope","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBQCFGHFCN:00000001","TimeStamp":"2019-03-18T19:05:44.0000000Z","ProcessId":31664,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:06:17.128 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:06:17.131 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:06:17.136 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:06:17.139 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:06:17.143 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:06:17.147 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:06:17.151 +01:00 [DBG] Start discovery request
+2019-03-18 20:06:17.535 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:06:17.540 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:06:17.544 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:06:17.548 +01:00 [DBG] Start authorize request
+2019-03-18 20:06:17.552 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:06:17.554 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:06:17.557 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:06:17.560 +01:00 [ERR] response_type requires the openid scope
+{"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"synkerapi.full_access","State":"70746e027f6c468aab3fff87baa487e8","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"synkerapi.full_access","state":"70746e027f6c468aab3fff87baa487e8","nonce":"ee9a5e4b6c22409f80cb68ef22fcfb26"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:06:17.581 +01:00 [ERR] Request validation failed
+2019-03-18 20:06:17.583 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"synkerapi.full_access","State":"70746e027f6c468aab3fff87baa487e8","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"synkerapi.full_access","state":"70746e027f6c468aab3fff87baa487e8","nonce":"ee9a5e4b6c22409f80cb68ef22fcfb26"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:06:17.612 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"synkerapi.full_access","GrantType":"implicit","Error":"invalid_request","ErrorDescription":"Missing openid scope","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBQCFGHFCN:00000003","TimeStamp":"2019-03-18T19:06:17.0000000Z","ProcessId":31664,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:06:39.276 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:06:39.280 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:06:39.283 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:06:39.285 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:06:39.288 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:06:39.290 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:06:39.293 +01:00 [DBG] Start discovery request
+2019-03-18 20:06:39.413 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:06:39.416 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:06:39.418 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:06:39.420 +01:00 [DBG] Start authorize request
+2019-03-18 20:06:39.422 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:06:39.424 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:06:39.426 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:06:39.428 +01:00 [ERR] Invalid scope: synkerapi.full_access
+2019-03-18 20:06:39.431 +01:00 [ERR] Request validation failed
+2019-03-18 20:06:39.433 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid synkerapi.full_access","State":"6df50ec04b8346fea6e4e02a197c96a8","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid synkerapi.full_access","state":"6df50ec04b8346fea6e4e02a197c96a8","nonce":"d4c5d8044357446084ab41b901f907b8"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:06:39.451 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid synkerapi.full_access","GrantType":"implicit","Error":"invalid_scope","ErrorDescription":"Invalid scope","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBQCFGHFCN:00000005","TimeStamp":"2019-03-18T19:06:39.0000000Z","ProcessId":31664,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:07:35.869 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:07:35.873 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:07:35.876 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:07:35.879 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:07:35.882 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:07:35.884 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:07:35.886 +01:00 [DBG] Start discovery request
+2019-03-18 20:07:36.253 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:07:36.257 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:07:36.261 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:07:36.264 +01:00 [DBG] Start authorize request
+2019-03-18 20:07:36.267 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:07:36.270 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:07:36.273 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:07:36.278 +01:00 [ERR] Invalid scope: synkerapi.full_access
+2019-03-18 20:07:36.281 +01:00 [ERR] Request validation failed
+2019-03-18 20:07:36.284 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi.full_access","State":"2acf1fcc51054f2d9e597eaeb1a7fa86","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi.full_access","state":"2acf1fcc51054f2d9e597eaeb1a7fa86","nonce":"b6a08d035a0246b59e9a1e93a0484ce2"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:07:36.316 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile synkerapi.full_access","GrantType":"implicit","Error":"invalid_scope","ErrorDescription":"Invalid scope","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBQCFGHFCN:00000007","TimeStamp":"2019-03-18T19:07:36.0000000Z","ProcessId":31664,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:08:17.058 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:08:17.062 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:08:17.066 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:08:17.069 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:08:17.072 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:08:17.074 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:08:17.077 +01:00 [DBG] Start discovery request
+2019-03-18 20:08:17.116 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:08:17.119 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:08:17.122 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:08:17.125 +01:00 [DBG] Start authorize request
+2019-03-18 20:08:17.127 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:08:17.130 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:08:17.132 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:08:17.134 +01:00 [ERR] Invalid scope: synkerapi.full_access
+2019-03-18 20:08:17.136 +01:00 [ERR] Request validation failed
+2019-03-18 20:08:17.138 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi.full_access","State":"bfdcbf88163f4a94b35ba6181f57a6b7","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi.full_access","state":"bfdcbf88163f4a94b35ba6181f57a6b7","nonce":"9466557263204e99b17d8663fd6374ad"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:08:17.159 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile synkerapi.full_access","GrantType":"implicit","Error":"invalid_scope","ErrorDescription":"Invalid scope","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBQCFGHFCN:00000009","TimeStamp":"2019-03-18T19:08:17.0000000Z","ProcessId":31664,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:09:47.915 +01:00 [INF] You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+2019-03-18 20:09:47.952 +01:00 [INF] Using the default authentication scheme idsrv for IdentityServer
+2019-03-18 20:09:47.957 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for authentication
+2019-03-18 20:09:47.960 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-in
+2019-03-18 20:09:47.962 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-out
+2019-03-18 20:09:47.964 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for challenge
+2019-03-18 20:09:47.965 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for forbid
+2019-03-18 20:09:55.777 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:09:55.790 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:09:55.793 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:09:55.826 +01:00 [DBG] Login Url: /Account/Login
+2019-03-18 20:09:55.828 +01:00 [DBG] Login Return Url Parameter: ReturnUrl
+2019-03-18 20:09:55.829 +01:00 [DBG] Logout Url: /Account/Logout
+2019-03-18 20:09:55.831 +01:00 [DBG] ConsentUrl Url: /consent
+2019-03-18 20:09:55.833 +01:00 [DBG] Consent Return Url Parameter: returnUrl
+2019-03-18 20:09:55.834 +01:00 [DBG] Error Url: /home/error
+2019-03-18 20:09:55.836 +01:00 [DBG] Error Id Parameter: errorId
+2019-03-18 20:09:55.858 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:09:55.863 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:09:55.865 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:09:55.870 +01:00 [DBG] Start discovery request
+2019-03-18 20:09:56.162 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:09:56.171 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:09:56.176 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:09:56.183 +01:00 [DBG] Start authorize request
+2019-03-18 20:09:56.203 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:09:56.211 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:09:56.235 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:09:56.280 +01:00 [DBG] Calling into custom validator: IdentityServer4.Validation.DefaultCustomAuthorizeRequestValidator
+2019-03-18 20:09:56.297 +01:00 [INF] ValidatedAuthorizeRequest
+{"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi","State":"1d3f22b4f952448c9e58842df416204a","UiLocales":null,"Nonce":"ae1cffb8d93b467c8a6a4a70dc5494d7","AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi","state":"1d3f22b4f952448c9e58842df416204a","nonce":"ae1cffb8d93b467c8a6a4a70dc5494d7"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:09:56.339 +01:00 [INF] Showing login: User is not authenticated
+2019-03-18 20:09:56.474 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:09:56.476 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:09:56.479 +01:00 [DBG] Calling into custom validator: IdentityServer4.Validation.DefaultCustomAuthorizeRequestValidator
+2019-03-18 20:09:56.483 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:11:46.885 +01:00 [INF] You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+2019-03-18 20:11:46.919 +01:00 [INF] Using the default authentication scheme idsrv for IdentityServer
+2019-03-18 20:11:46.924 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for authentication
+2019-03-18 20:11:46.926 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-in
+2019-03-18 20:11:46.928 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-out
+2019-03-18 20:11:46.929 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for challenge
+2019-03-18 20:11:46.931 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for forbid
+2019-03-18 20:11:54.302 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:11:54.314 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:11:54.318 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:11:54.352 +01:00 [DBG] Login Url: /Account/Login
+2019-03-18 20:11:54.355 +01:00 [DBG] Login Return Url Parameter: ReturnUrl
+2019-03-18 20:11:54.357 +01:00 [DBG] Logout Url: /Account/Logout
+2019-03-18 20:11:54.359 +01:00 [DBG] ConsentUrl Url: /consent
+2019-03-18 20:11:54.361 +01:00 [DBG] Consent Return Url Parameter: returnUrl
+2019-03-18 20:11:54.362 +01:00 [DBG] Error Url: /home/error
+2019-03-18 20:11:54.364 +01:00 [DBG] Error Id Parameter: errorId
+2019-03-18 20:11:54.380 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:11:54.385 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:11:54.389 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:11:54.393 +01:00 [DBG] Start discovery request
+2019-03-18 20:11:54.677 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:11:54.685 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:11:54.688 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:11:54.695 +01:00 [DBG] Start authorize request
+2019-03-18 20:11:54.710 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:11:54.717 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:11:54.739 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:11:54.769 +01:00 [ERR] Invalid scope: synkerapi
+2019-03-18 20:11:54.774 +01:00 [ERR] Request validation failed
+2019-03-18 20:11:54.793 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi","State":"5b13da9c1dab48ed8e9e7c8dfd8d1f58","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi","state":"5b13da9c1dab48ed8e9e7c8dfd8d1f58","nonce":"8ca322cd91554b7890fd54980fe42262"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:11:54.830 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile synkerapi","GrantType":"implicit","Error":"invalid_scope","ErrorDescription":"Invalid scope","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBQM9LVD37:00000001","TimeStamp":"2019-03-18T19:11:54.0000000Z","ProcessId":29700,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:12:07.615 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:12:07.619 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:12:07.627 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:12:07.630 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:12:07.632 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:12:07.635 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:12:07.638 +01:00 [DBG] Start discovery request
+2019-03-18 20:12:07.752 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:12:07.754 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:12:07.757 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:12:07.759 +01:00 [DBG] Start authorize request
+2019-03-18 20:12:07.761 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:12:07.763 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:12:07.766 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:12:07.779 +01:00 [ERR] Requested scope not allowed: synkerapi.full_access
+2019-03-18 20:12:07.781 +01:00 [ERR] Request validation failed
+2019-03-18 20:12:07.782 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi.full_access","State":"f3664a76f09549bb85d2f7a226ae1a8c","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi.full_access","state":"f3664a76f09549bb85d2f7a226ae1a8c","nonce":"a808e8ec7c1e4989b2ff0ec4e4b9dc28"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:12:07.808 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile synkerapi.full_access","GrantType":"implicit","Error":"unauthorized_client","ErrorDescription":"Invalid scope for client","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBQM9LVD37:00000003","TimeStamp":"2019-03-18T19:12:07.0000000Z","ProcessId":29700,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:12:15.843 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:12:15.847 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:12:15.850 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:12:15.856 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:12:15.860 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:12:15.863 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:12:15.867 +01:00 [DBG] Start discovery request
+2019-03-18 20:12:16.029 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:12:16.033 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:12:16.037 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:12:16.041 +01:00 [DBG] Start authorize request
+2019-03-18 20:12:16.043 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:12:16.046 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:12:16.049 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:12:16.051 +01:00 [ERR] Requested scope not allowed: synkerapi.full_access
+2019-03-18 20:12:16.054 +01:00 [ERR] Request validation failed
+2019-03-18 20:12:16.061 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi.full_access","State":"e3757925d1eb44acbcaa64c8bc3d73cb","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi.full_access","state":"e3757925d1eb44acbcaa64c8bc3d73cb","nonce":"766c11e5c1194401898c72a665df26d7"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:12:16.085 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile synkerapi.full_access","GrantType":"implicit","Error":"unauthorized_client","ErrorDescription":"Invalid scope for client","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBQM9LVD37:00000005","TimeStamp":"2019-03-18T19:12:16.0000000Z","ProcessId":29700,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:13:27.054 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:13:27.058 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:13:27.062 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:13:27.065 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:13:27.069 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:13:27.071 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:13:27.074 +01:00 [DBG] Start discovery request
+2019-03-18 20:13:27.107 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:13:27.110 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:13:27.112 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:13:27.114 +01:00 [DBG] Start authorize request
+2019-03-18 20:13:27.117 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:13:27.120 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:13:27.122 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:13:27.125 +01:00 [ERR] Invalid scope: synkerapi
+2019-03-18 20:13:27.126 +01:00 [ERR] Request validation failed
+2019-03-18 20:13:27.129 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi","State":"148ae859a6d8462ea5348994f21d680a","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi","state":"148ae859a6d8462ea5348994f21d680a","nonce":"35381c2531614c42baa42de2385dd65d"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:13:27.150 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile synkerapi","GrantType":"implicit","Error":"invalid_scope","ErrorDescription":"Invalid scope","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBQM9LVD37:00000007","TimeStamp":"2019-03-18T19:13:27.0000000Z","ProcessId":29700,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:40:36.290 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:40:36.294 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:40:36.296 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:40:36.298 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:40:36.300 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:40:36.301 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:40:36.303 +01:00 [DBG] Start discovery request
+2019-03-18 20:40:36.331 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:40:36.333 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:40:36.335 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:40:36.337 +01:00 [DBG] Start authorize request
+2019-03-18 20:40:36.338 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:40:36.339 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:40:36.340 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:40:36.342 +01:00 [ERR] Invalid scope: synkerapi
+2019-03-18 20:40:36.343 +01:00 [ERR] Request validation failed
+2019-03-18 20:40:36.344 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi","State":"0a92b9458ea043e3bf7e5a2e245502c4","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi","state":"0a92b9458ea043e3bf7e5a2e245502c4","nonce":"82d80d267f81445b89d305a2f1ee8e7d"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:40:36.360 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile synkerapi","GrantType":"implicit","Error":"invalid_scope","ErrorDescription":"Invalid scope","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBQM9LVD3C:00000001","TimeStamp":"2019-03-18T19:40:36.0000000Z","ProcessId":29700,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:44:07.313 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:44:07.317 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:44:07.320 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:44:07.322 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:44:07.324 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:44:07.325 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:44:07.327 +01:00 [DBG] Start discovery request
+2019-03-18 20:44:07.351 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:44:07.355 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:44:07.357 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:44:07.359 +01:00 [DBG] Start authorize request
+2019-03-18 20:44:07.361 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:44:07.362 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:44:07.363 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:44:07.365 +01:00 [ERR] Requested scope not allowed: synkerapi.full_access
+2019-03-18 20:44:07.366 +01:00 [ERR] Request validation failed
+2019-03-18 20:44:07.367 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi.full_access","State":"0049e831303a43c5b27d97a62e48200e","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi.full_access","state":"0049e831303a43c5b27d97a62e48200e","nonce":"be8408c7746447fab49c2d3894eeadda"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:44:07.382 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile synkerapi.full_access","GrantType":"implicit","Error":"unauthorized_client","ErrorDescription":"Invalid scope for client","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBQM9LVD3H:00000001","TimeStamp":"2019-03-18T19:44:07.0000000Z","ProcessId":29700,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:44:22.693 +01:00 [INF] You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+2019-03-18 20:44:22.725 +01:00 [INF] Using the default authentication scheme idsrv for IdentityServer
+2019-03-18 20:44:22.729 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for authentication
+2019-03-18 20:44:22.730 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-in
+2019-03-18 20:44:22.732 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-out
+2019-03-18 20:44:22.734 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for challenge
+2019-03-18 20:44:22.735 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for forbid
+2019-03-18 20:44:28.647 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:44:28.655 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:44:28.657 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:44:28.681 +01:00 [DBG] Login Url: /Account/Login
+2019-03-18 20:44:28.683 +01:00 [DBG] Login Return Url Parameter: ReturnUrl
+2019-03-18 20:44:28.684 +01:00 [DBG] Logout Url: /Account/Logout
+2019-03-18 20:44:28.686 +01:00 [DBG] ConsentUrl Url: /consent
+2019-03-18 20:44:28.687 +01:00 [DBG] Consent Return Url Parameter: returnUrl
+2019-03-18 20:44:28.688 +01:00 [DBG] Error Url: /home/error
+2019-03-18 20:44:28.689 +01:00 [DBG] Error Id Parameter: errorId
+2019-03-18 20:44:28.704 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:44:28.709 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:44:28.711 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:44:28.716 +01:00 [DBG] Start discovery request
+2019-03-18 20:44:28.983 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:44:28.991 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:44:28.994 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:44:29.001 +01:00 [DBG] Start authorize request
+2019-03-18 20:44:29.017 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:44:29.027 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:44:29.046 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:44:29.074 +01:00 [ERR] Requested scope not allowed: synkerapi.full_access
+2019-03-18 20:44:29.078 +01:00 [ERR] Request validation failed
+2019-03-18 20:44:29.091 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi.full_access","State":"36a114c3c5b0443db64d36f52379c953","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi.full_access","state":"36a114c3c5b0443db64d36f52379c953","nonce":"7d7e9f7a2d4d4607860ec79f946b6b1c"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:44:29.122 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile synkerapi.full_access","GrantType":"implicit","Error":"unauthorized_client","ErrorDescription":"Invalid scope for client","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBR8G6IF27:00000001","TimeStamp":"2019-03-18T19:44:29.0000000Z","ProcessId":26668,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:47:12.708 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:47:12.711 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:47:12.713 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:47:12.715 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:47:12.718 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:47:12.719 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:47:12.721 +01:00 [DBG] Start discovery request
+2019-03-18 20:47:12.760 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:47:12.763 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:47:12.765 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:47:12.767 +01:00 [DBG] Start authorize request
+2019-03-18 20:47:12.768 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:47:12.769 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:47:12.771 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:47:12.773 +01:00 [ERR] Requested scope not allowed: synkerapi.full_access
+2019-03-18 20:47:12.775 +01:00 [ERR] Request validation failed
+2019-03-18 20:47:12.777 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi.full_access","State":"7136497f14b941ee9270f5261b6fcc4e","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi.full_access","state":"7136497f14b941ee9270f5261b6fcc4e","nonce":"3b89ef92b2fe4e169d450c058a176b8a"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:47:12.794 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile synkerapi.full_access","GrantType":"implicit","Error":"unauthorized_client","ErrorDescription":"Invalid scope for client","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBR8G6IF2A:00000001","TimeStamp":"2019-03-18T19:47:12.0000000Z","ProcessId":26668,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:48:34.046 +01:00 [INF] You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+2019-03-18 20:48:34.078 +01:00 [INF] Using the default authentication scheme idsrv for IdentityServer
+2019-03-18 20:48:34.084 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for authentication
+2019-03-18 20:48:34.085 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-in
+2019-03-18 20:48:34.087 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-out
+2019-03-18 20:48:34.088 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for challenge
+2019-03-18 20:48:34.089 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for forbid
+2019-03-18 20:48:42.977 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:48:42.987 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:48:42.989 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:48:43.017 +01:00 [DBG] Login Url: /Account/Login
+2019-03-18 20:48:43.019 +01:00 [DBG] Login Return Url Parameter: ReturnUrl
+2019-03-18 20:48:43.020 +01:00 [DBG] Logout Url: /Account/Logout
+2019-03-18 20:48:43.022 +01:00 [DBG] ConsentUrl Url: /consent
+2019-03-18 20:48:43.023 +01:00 [DBG] Consent Return Url Parameter: returnUrl
+2019-03-18 20:48:43.024 +01:00 [DBG] Error Url: /home/error
+2019-03-18 20:48:43.026 +01:00 [DBG] Error Id Parameter: errorId
+2019-03-18 20:48:43.043 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:48:43.047 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:48:43.050 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:48:43.056 +01:00 [DBG] Start discovery request
+2019-03-18 20:48:43.342 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:48:43.350 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:48:43.354 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:48:43.360 +01:00 [DBG] Start authorize request
+2019-03-18 20:48:43.371 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:48:43.377 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:48:43.391 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:48:43.417 +01:00 [ERR] Requested scope not allowed: synkerapi.full_access
+2019-03-18 20:48:43.420 +01:00 [ERR] Request validation failed
+2019-03-18 20:48:43.434 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi.full_access","State":"b6a8652dd66e4eb5bf0979242000d038","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi.full_access","state":"b6a8652dd66e4eb5bf0979242000d038","nonce":"ef30adf7fb3f445ca219b39f02ece037"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:48:43.467 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile synkerapi.full_access","GrantType":"implicit","Error":"unauthorized_client","ErrorDescription":"Invalid scope for client","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBRARVG3GQ:00000001","TimeStamp":"2019-03-18T19:48:43.0000000Z","ProcessId":28100,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:49:28.914 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:49:28.918 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:49:28.921 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:49:28.924 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:49:28.926 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:49:28.929 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:49:28.933 +01:00 [DBG] Start discovery request
+2019-03-18 20:49:29.333 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:49:29.337 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:49:29.341 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:49:29.343 +01:00 [DBG] Start authorize request
+2019-03-18 20:49:29.346 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:49:29.348 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:49:29.352 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:49:29.354 +01:00 [ERR] Requested scope not allowed: synkerapi.full_access
+2019-03-18 20:49:29.356 +01:00 [ERR] Request validation failed
+2019-03-18 20:49:29.358 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi.full_access","State":"eb5ffef74aed45e682687bbf9ea1d242","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi.full_access","state":"eb5ffef74aed45e682687bbf9ea1d242","nonce":"4ebae4f45ffe41bdbf1f49d9f2e3e0f6"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:49:29.379 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile synkerapi.full_access","GrantType":"implicit","Error":"unauthorized_client","ErrorDescription":"Invalid scope for client","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBRARVG3GQ:00000003","TimeStamp":"2019-03-18T19:49:29.0000000Z","ProcessId":28100,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:52:21.912 +01:00 [INF] You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+2019-03-18 20:52:21.954 +01:00 [INF] Using the default authentication scheme idsrv for IdentityServer
+2019-03-18 20:52:21.959 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for authentication
+2019-03-18 20:52:21.962 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-in
+2019-03-18 20:52:21.964 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-out
+2019-03-18 20:52:21.967 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for challenge
+2019-03-18 20:52:21.970 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for forbid
+2019-03-18 20:52:35.525 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:52:35.536 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:52:35.539 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:52:35.581 +01:00 [DBG] Login Url: /Account/Login
+2019-03-18 20:52:35.584 +01:00 [DBG] Login Return Url Parameter: ReturnUrl
+2019-03-18 20:52:35.587 +01:00 [DBG] Logout Url: /Account/Logout
+2019-03-18 20:52:35.589 +01:00 [DBG] ConsentUrl Url: /consent
+2019-03-18 20:52:35.591 +01:00 [DBG] Consent Return Url Parameter: returnUrl
+2019-03-18 20:52:35.593 +01:00 [DBG] Error Url: /home/error
+2019-03-18 20:52:35.596 +01:00 [DBG] Error Id Parameter: errorId
+2019-03-18 20:52:35.628 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:52:35.635 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:52:35.637 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:52:35.643 +01:00 [DBG] Start discovery request
+2019-03-18 20:52:36.041 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:52:36.053 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:52:36.058 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:52:36.066 +01:00 [DBG] Start authorize request
+2019-03-18 20:52:36.087 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:52:36.094 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:52:36.117 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:52:36.154 +01:00 [ERR] Requested scope not allowed: synkerapi_full_access
+2019-03-18 20:52:36.161 +01:00 [ERR] Request validation failed
+2019-03-18 20:52:36.179 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi_full_access","State":"5d30ab1bedb74e31a712179ce16517f3","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi_full_access","state":"5d30ab1bedb74e31a712179ce16517f3","nonce":"5e556402fe0c4dbabfc43c0225b0faf4"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:52:36.226 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile synkerapi_full_access","GrantType":"implicit","Error":"unauthorized_client","ErrorDescription":"Invalid scope for client","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBRD0U3PVL:00000001","TimeStamp":"2019-03-18T19:52:36.0000000Z","ProcessId":32848,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:55:32.568 +01:00 [INF] You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+2019-03-18 20:55:32.603 +01:00 [INF] Using the default authentication scheme idsrv for IdentityServer
+2019-03-18 20:55:32.608 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for authentication
+2019-03-18 20:55:32.609 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-in
+2019-03-18 20:55:32.610 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-out
+2019-03-18 20:55:32.612 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for challenge
+2019-03-18 20:55:32.614 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for forbid
+2019-03-18 20:55:32.851 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:55:32.861 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:55:32.862 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:55:32.896 +01:00 [DBG] Login Url: /Account/Login
+2019-03-18 20:55:32.898 +01:00 [DBG] Login Return Url Parameter: ReturnUrl
+2019-03-18 20:55:32.900 +01:00 [DBG] Logout Url: /Account/Logout
+2019-03-18 20:55:32.901 +01:00 [DBG] ConsentUrl Url: /consent
+2019-03-18 20:55:32.904 +01:00 [DBG] Consent Return Url Parameter: returnUrl
+2019-03-18 20:55:32.906 +01:00 [DBG] Error Url: /home/error
+2019-03-18 20:55:32.909 +01:00 [DBG] Error Id Parameter: errorId
+2019-03-18 20:55:32.931 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:55:32.936 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:55:32.941 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:55:32.947 +01:00 [DBG] Start discovery request
+2019-03-18 20:55:33.197 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:55:33.203 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:55:33.209 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:55:33.216 +01:00 [DBG] Start authorize request
+2019-03-18 20:55:33.229 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:55:33.240 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:55:33.261 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:55:33.296 +01:00 [ERR] Requested scope not allowed: synkerapi_full_access
+2019-03-18 20:55:33.301 +01:00 [ERR] Request validation failed
+2019-03-18 20:55:33.318 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi_full_access","State":"f36a8e1a19f142dbac44c1ab6de0d29c","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi_full_access","state":"f36a8e1a19f142dbac44c1ab6de0d29c","nonce":"9533f3082f6f46d0ac94144d307e5d55"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:55:33.365 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile synkerapi_full_access","GrantType":"implicit","Error":"unauthorized_client","ErrorDescription":"Invalid scope for client","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBREN2Q71B:00000001","TimeStamp":"2019-03-18T19:55:33.0000000Z","ProcessId":15256,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:56:27.206 +01:00 [INF] You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+2019-03-18 20:56:27.238 +01:00 [INF] Using the default authentication scheme idsrv for IdentityServer
+2019-03-18 20:56:27.243 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for authentication
+2019-03-18 20:56:27.245 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-in
+2019-03-18 20:56:27.247 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-out
+2019-03-18 20:56:27.248 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for challenge
+2019-03-18 20:56:27.250 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for forbid
+2019-03-18 20:56:34.518 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:56:34.531 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:56:34.533 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:56:34.580 +01:00 [DBG] Login Url: /Account/Login
+2019-03-18 20:56:34.582 +01:00 [DBG] Login Return Url Parameter: ReturnUrl
+2019-03-18 20:56:34.583 +01:00 [DBG] Logout Url: /Account/Logout
+2019-03-18 20:56:34.585 +01:00 [DBG] ConsentUrl Url: /consent
+2019-03-18 20:56:34.587 +01:00 [DBG] Consent Return Url Parameter: returnUrl
+2019-03-18 20:56:34.591 +01:00 [DBG] Error Url: /home/error
+2019-03-18 20:56:34.593 +01:00 [DBG] Error Id Parameter: errorId
+2019-03-18 20:56:34.621 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:56:34.628 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:56:34.631 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:56:34.638 +01:00 [DBG] Start discovery request
+2019-03-18 20:56:35.069 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:56:35.082 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:56:35.086 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:56:35.096 +01:00 [DBG] Start authorize request
+2019-03-18 20:56:35.114 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:56:35.127 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:56:35.154 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:56:35.205 +01:00 [ERR] Requested scope not allowed: synkerapi.full_access
+2019-03-18 20:56:35.210 +01:00 [ERR] Request validation failed
+2019-03-18 20:56:35.233 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi.full_access","State":"409fed036573421ab63a4865049eebea","UiLocales":null,"Nonce":null,"AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi.full_access","state":"409fed036573421ab63a4865049eebea","nonce":"c0fdf33f73d3425f9d19607706512877"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:56:35.292 +01:00 [INF] {"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","Endpoint":"Authorize","SubjectId":null,"Scopes":"openid profile synkerapi.full_access","GrantType":"implicit","Error":"unauthorized_client","ErrorDescription":"Invalid scope for client","Category":"Token","Name":"Token Issued Failure","EventType":"Failure","Id":2001,"Message":null,"ActivityId":"0HLLBRF82CIKG:00000001","TimeStamp":"2019-03-18T19:56:35.0000000Z","ProcessId":20600,"LocalIpAddress":"::1:5000","RemoteIpAddress":"::1","$type":"TokenIssuedFailureEvent"}
+2019-03-18 20:56:58.686 +01:00 [INF] You are using the in-memory version of the persisted grant store. This will store consent decisions, authorization codes, refresh and reference tokens in memory only. If you are using any of those features in production, you want to switch to a different store implementation.
+2019-03-18 20:56:58.738 +01:00 [INF] Using the default authentication scheme idsrv for IdentityServer
+2019-03-18 20:56:58.747 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for authentication
+2019-03-18 20:56:58.749 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-in
+2019-03-18 20:56:58.752 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for sign-out
+2019-03-18 20:56:58.754 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for challenge
+2019-03-18 20:56:58.757 +01:00 [DBG] Using idsrv as default ASP.NET Core scheme for forbid
+2019-03-18 20:57:06.766 +01:00 [DBG] CORS request made for path: /.well-known/openid-configuration from origin: http://localhost:56810
+2019-03-18 20:57:06.780 +01:00 [DBG] Client list checked and origin: http://localhost:56810 is allowed
+2019-03-18 20:57:06.783 +01:00 [DBG] CorsPolicyService allowed origin: http://localhost:56810
+2019-03-18 20:57:06.831 +01:00 [DBG] Login Url: /Account/Login
+2019-03-18 20:57:06.834 +01:00 [DBG] Login Return Url Parameter: ReturnUrl
+2019-03-18 20:57:06.836 +01:00 [DBG] Logout Url: /Account/Logout
+2019-03-18 20:57:06.838 +01:00 [DBG] ConsentUrl Url: /consent
+2019-03-18 20:57:06.840 +01:00 [DBG] Consent Return Url Parameter: returnUrl
+2019-03-18 20:57:06.842 +01:00 [DBG] Error Url: /home/error
+2019-03-18 20:57:06.843 +01:00 [DBG] Error Id Parameter: errorId
+2019-03-18 20:57:06.869 +01:00 [DBG] Request path /.well-known/openid-configuration matched to endpoint type Discovery
+2019-03-18 20:57:06.876 +01:00 [DBG] Endpoint enabled: Discovery, successfully created handler: IdentityServer4.Endpoints.DiscoveryEndpoint
+2019-03-18 20:57:06.879 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.DiscoveryEndpoint for /.well-known/openid-configuration
+2019-03-18 20:57:06.885 +01:00 [DBG] Start discovery request
+2019-03-18 20:57:07.303 +01:00 [DBG] Request path /connect/authorize matched to endpoint type Authorize
+2019-03-18 20:57:07.314 +01:00 [DBG] Endpoint enabled: Authorize, successfully created handler: IdentityServer4.Endpoints.AuthorizeEndpoint
+2019-03-18 20:57:07.317 +01:00 [INF] Invoking IdentityServer endpoint: IdentityServer4.Endpoints.AuthorizeEndpoint for /connect/authorize
+2019-03-18 20:57:07.324 +01:00 [DBG] Start authorize request
+2019-03-18 20:57:07.340 +01:00 [DBG] No user present in authorize request
+2019-03-18 20:57:07.347 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:57:07.370 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:57:07.419 +01:00 [DBG] Calling into custom validator: IdentityServer4.Validation.DefaultCustomAuthorizeRequestValidator
+2019-03-18 20:57:07.440 +01:00 [INF] ValidatedAuthorizeRequest
+{"ClientId":"synkerclient","ClientName":"SPA Synker Client","RedirectUri":"http://localhost:56810/auth-callback","AllowedRedirectUris":["http://localhost:56810/auth-callback","http://localhost:56810/silent-refresh.html"],"SubjectId":"anonymous","ResponseType":"id_token token","ResponseMode":"fragment","GrantType":"implicit","RequestedScopes":"openid profile synkerapi.full_access","State":"27c61036b0ca446da8e5d694d293208a","UiLocales":null,"Nonce":"5ee4a7aef7974f0f8fb8e87e512231ae","AuthenticationContextReferenceClasses":null,"DisplayMode":null,"PromptMode":null,"MaxAge":null,"LoginHint":null,"SessionId":null,"Raw":{"client_id":"synkerclient","redirect_uri":"http://localhost:56810/auth-callback","response_type":"id_token token","scope":"openid profile synkerapi.full_access","state":"27c61036b0ca446da8e5d694d293208a","nonce":"5ee4a7aef7974f0f8fb8e87e512231ae"},"$type":"AuthorizeRequestValidationLog"}
+2019-03-18 20:57:07.483 +01:00 [INF] Showing login: User is not authenticated
+2019-03-18 20:57:07.665 +01:00 [DBG] Start authorize request protocol validation
+2019-03-18 20:57:07.667 +01:00 [DBG] client configuration validation for client synkerclient succeeded.
+2019-03-18 20:57:07.669 +01:00 [DBG] Calling into custom validator: IdentityServer4.Validation.DefaultCustomAuthorizeRequestValidator
+2019-03-18 20:57:07.673 +01:00 [DBG] client configuration validation for client synkerclient succeeded.

@@ -20,7 +20,9 @@
             "assets": [
               "src/assets",
               "src/favicon.ico",
-              "src/manifest.json"
+              "src/manifest.json",
+              "src/silent-refresh.html",
+              "src/oidc-client.min.js"
             ],
             "styles": [
               "src/styles/loader.scss",

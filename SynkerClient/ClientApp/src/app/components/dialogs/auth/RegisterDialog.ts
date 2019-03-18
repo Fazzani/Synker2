@@ -1,6 +1,6 @@
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatSnackBar, MatDialogConfig } from "@angular/material";
 import { Inject, Component, OnInit } from "@angular/core";
-import { AuthService } from "../../../services/auth/auth.service";
+//import { AuthService } from "../../../services/auth/auth.service";
 import { CommonService } from "../../../services/common/common.service";
 import { RegisterUser, User } from "../../../types/auth.type";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -16,7 +16,7 @@ export class RegisterDialog {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: RegisterUser,
     public dialogRef: MatDialogRef<RegisterDialog>,
-    private authService: AuthService,
+    //private authService: AuthService,
     private commonService: CommonService
   ) {
     this.registerUser = data || <RegisterUser>{};
@@ -25,14 +25,14 @@ export class RegisterDialog {
   genders = User.GENDERS;
 
   register(): void {
-    if (this.registerUser != null)
-      this.authService.Register(this.registerUser).subscribe(
-        res => {
-          //console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
-          this.dialogRef.close(true);
-        },
-        err => this.commonService.displayError("Registration Failure", err.error)
-      );
+   // if (this.registerUser != null)
+      //this.authService.Register(this.registerUser).subscribe(
+      //  res => {
+      //    //console.log(`${res.accessToken} refreshToken ${res.refreshToken}`);
+      //    this.dialogRef.close(true);
+      //  },
+      //  err => this.commonService.displayError("Registration Failure", err.error)
+      //);
   }
 
   changeListener($event): void {

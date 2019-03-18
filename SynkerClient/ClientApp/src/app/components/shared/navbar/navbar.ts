@@ -5,10 +5,10 @@ import { MatButtonModule, MatMenuModule } from "@angular/material";
 import { RouterModule } from "@angular/router";
 import { AppModuleMaterialModule } from "../../../app.module.material.module";
 import { User } from "../../../types/auth.type";
-import { AuthService } from "../../../services/auth/auth.service";
+//import { AuthService } from "../../../services/auth/auth.service";
 import { BehaviorSubject, Subscription, Observable } from "rxjs";
 import { EqualValidator } from "../../../directives/equal-validator.directive";
-import { AuthorizedRouteGuard } from "../../../services/auth/authorizedRouteGuard.service";
+//import { AuthorizedRouteGuard } from "../../../services/auth/authorizedRouteGuard.service";
 import { InitAppService } from "../../../services/initApp/InitAppService";
 import { AboutApplication } from "../../../types/aboutApplication.type";
 import { NotificationService } from "../../../services/notification/notification.service";
@@ -35,25 +35,25 @@ export class NavBar implements OnInit, OnDestroy {
   notificationOn: boolean = true;
 
   constructor(
-    private authService: AuthService,
-    public authorizedGuard: AuthorizedRouteGuard,
+    //private authService: AuthService,
+    //public authorizedGuard: AuthorizedRouteGuard,
     private initAppService: InitAppService,
     private notificationService: NotificationService
   ) {
-    this.isAuthenticated = this.authService.authenticated;
-    this.user = this.authService.user;
-    this.authService.connect();
+    //this.isAuthenticated = this.authService.authenticated;
+    //this.user = this.authService.user;
+    //this.authService.connect();
     this.aboutApp = this.initAppService.about;
   }
 
   ngOnInit(): void {
-    this.userSubscription = this.user.subscribe(user => {
-      if (user != undefined) {
-        console.log(`User ${user.firstName} is authenticated...${user.id}`);
-        this.notifications$ = this.notificationService.list(user.id, 5).valueChanges();
-        this.notificationsCount$ = this.notificationService.count(user.id);
-      }
-    });
+    //this.userSubscription = this.user.subscribe(user => {
+    //  if (user != undefined) {
+    //    console.log(`User ${user.firstName} is authenticated...${user.id}`);
+    //    this.notifications$ = this.notificationService.list(user.id, 5).valueChanges();
+    //    this.notificationsCount$ = this.notificationService.count(user.id);
+    //  }
+    //});
   }
 
   onSetTheme(theme) {
@@ -66,7 +66,7 @@ export class NavBar implements OnInit, OnDestroy {
 
   signout(): void {
     this.isAuthenticated.next(false);
-    this.authService.signout();
+    //this.authService.signout();
   }
 
   toggleNotification = () => {

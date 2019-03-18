@@ -5,9 +5,9 @@ import "hammerjs";
 import "./app.component.css";
 import { MatSnackBar } from "@angular/material";
 import { CommonService, Constants } from "../../services/common/common.service";
-import { AuthService } from "../../services/auth/auth.service";
+//import { AuthService } from "../../services/auth/auth.service";
 import { Exception } from "../../types/common.type";
-import * as variables from "../../variables";
+//import * as variables from "../../variables";
 import { OverlayContainer } from "@angular/cdk/overlay";
 import { SwUpdate, SwPush } from "@angular/service-worker";
 import { DeviceService } from "../../services/device/device.service";
@@ -29,7 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
     public snackBar: MatSnackBar,
     private deviceService: DeviceService,
     private commonService: CommonService,
-    private authService: AuthService,
+    //private authService: AuthService,
     private router: Router,
     private overlayContainer: OverlayContainer
   ) {
@@ -41,31 +41,31 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.setTheme(localStorage.getItem(Constants.ThemeKey) || "dark-theme");
 
-    this.authService
-      .isAuthenticated()
-      .pipe(distinctUntilChanged())
-      .subscribe(isAuth => {
-        console.log(
-          `----------- JwtInterceptor 401 isAuth = ${isAuth} current url ${this.router.routerState.snapshot.url} this.authService.redirectUrl: ${
-            this.authService.redirectUrl
-          }`
-        );
-        if (
-          !isAuth &&
-          this.router.routerState.snapshot.url != "" &&
-          (this.router.routerState.snapshot.url != variables.SIGN_IN_URL && this.router.routerState.snapshot.url != variables.REGISTER_URL)
-        ) {
-          this.authService.redirectUrl = this.router.routerState.snapshot.url == variables.SIGN_IN_URL ? "/home" : this.router.routerState.snapshot.url;
-          this.router.navigate(["signin"]);
-        }
-      });
+    //this.authService
+    //  .isAuthenticated()
+    //  .pipe(distinctUntilChanged())
+    //  .subscribe(isAuth => {
+    //    console.log(
+    //      `----------- JwtInterceptor 401 isAuth = ${isAuth} current url ${this.router.routerState.snapshot.url} this.authService.redirectUrl: ${
+    //        this.authService.redirectUrl
+    //      }`
+    //    );
+    //    if (
+    //      !isAuth &&
+    //      this.router.routerState.snapshot.url != "" &&
+    //      (this.router.routerState.snapshot.url != variables.SIGN_IN_URL && this.router.routerState.snapshot.url != variables.REGISTER_URL)
+    //    ) {
+    //      this.authService.redirectUrl = this.router.routerState.snapshot.url == variables.SIGN_IN_URL ? "/home" : this.router.routerState.snapshot.url;
+    //      this.router.navigate(["signin"]);
+    //    }
+    //  });
 
-    this.authService.authenticated.pipe(distinctUntilChanged()).subscribe(isAuth => {
-      if (!isAuth && this.router.url != variables.SIGN_IN_URL && this.router.url != variables.REGISTER_URL) {
-        this.authService.redirectUrl = this.router.routerState.snapshot.url;
-        this.router.navigate(["signin"]);
-      }
-    });
+    //this.authService.authenticated.pipe(distinctUntilChanged()).subscribe(isAuth => {
+    //  if (!isAuth && this.router.url != variables.SIGN_IN_URL && this.router.url != variables.REGISTER_URL) {
+    //    this.authService.redirectUrl = this.router.routerState.snapshot.url;
+    //    this.router.navigate(["signin"]);
+    //  }
+    //});
 
     this.commonService.loaderStatus
       .pipe(

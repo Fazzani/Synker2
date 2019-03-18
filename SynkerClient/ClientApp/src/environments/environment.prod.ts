@@ -12,5 +12,17 @@ export const environment = {
     projectId: "holo-970f4",
     storageBucket: "holo-970f4.appspot.com",
     messagingSenderId: "685189543315"
+  },
+  idp: {
+    authority: 'https://idp.synker.ovh',
+    client_id: 'synkerclient',
+    redirect_uri: 'https://synker.ovh/auth-callback',
+    post_logout_redirect_uri: 'https://synker.ovh/',
+    response_type: "id_token token",
+    scope: "openid profile email synkerapi.full_access",
+    filterProtocolClaims: true,
+    loadUserInfo: true,
+    automaticSilentRenew: true,
+    silent_redirect_uri: 'https://synker.ovh/silent-refresh.html'
   }
 };
