@@ -14,6 +14,7 @@ import { PlaylistDetailResolver } from "./components/playlist/playlist.resolver"
 import { HomeResolver } from "./components/home/home.resolver";
 import { NotificationsComponent } from "./components/notifications/notifications.component";
 import { AuthGuardService } from './services/auth/auth-guard.service';
+import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
 
 const appRoutes: Routes = [
   { path: "", component: HomeComponent, canActivate: [AuthGuardService], resolve: { data: HomeResolver } },
@@ -28,6 +29,10 @@ const appRoutes: Routes = [
   { path: "me", component: UserComponent, canActivate: [AuthGuardService] }, 
   { path: "signin", component: DialogComponent },
   { path: "register", component: RegisterComponent },
+  {
+    path: 'auth-callback',
+    component: AuthCallbackComponent
+  },
   { path: "**", redirectTo: "", pathMatch: "full" }
 ];
 
