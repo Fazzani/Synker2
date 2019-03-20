@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-
-import { AuthService } from '../../services/auth/idpauth.service';
+import { OAuthService } from "angular-oauth2-oidc";
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-auth-callback',
@@ -9,9 +9,15 @@ import { AuthService } from '../../services/auth/idpauth.service';
 })
 export class AuthCallbackComponent implements OnInit {
 
-  constructor(private authService: AuthService) { }
+  constructor(private oauthService: OAuthService, private router: Router) { }
 
   ngOnInit() {
-    this.authService.completeAuthentication();
+    this.oauthService.loadDiscoveryDocumentAndTryLogin().then(_ => {
+      if (!this.oauthService.hasValidIdToken() || !this.oauthService.hasValidAccessToken()) {
+        this.oauthService.initImplicitFlow('login');
+      } else {
+        this.router.navigate(["/home"]);
+      }
+    });
   }
 }

@@ -11,6 +11,8 @@ import { Exception } from "../../types/common.type";
 import { OverlayContainer } from "@angular/cdk/overlay";
 import { SwUpdate, SwPush } from "@angular/service-worker";
 import { DeviceService } from "../../services/device/device.service";
+import { OAuthService, JwksValidationHandler, AuthConfig } from 'angular-oauth2-oidc';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: "app",
@@ -29,18 +31,50 @@ export class AppComponent implements OnInit, OnDestroy {
     public snackBar: MatSnackBar,
     private deviceService: DeviceService,
     private commonService: CommonService,
-    //private authService: AuthService,
     private router: Router,
-    private overlayContainer: OverlayContainer
+    private overlayContainer: OverlayContainer,
+    private oauthService: OAuthService
   ) {
     this.objLoaderStatus = false;
-    
+
     this.loading = true;
+    this.configureWithNewConfigApi();
+  }
+
+  private configureWithNewConfigApi() {
+    this.oauthService.configure(<AuthConfig>{
+      clientId: environment.idp.client_id,
+      issuer: environment.idp.authority,
+      redirectUri: environment.idp.redirect_uri,
+      scope: environment.idp.scope
+    });
+    this.oauthService.tokenValidationHandler = new JwksValidationHandler();
+    this.oauthService.showDebugInformation = true;
+    this.oauthService.loadDiscoveryDocument().then((doc) => {
+      this.oauthService.tryLogin()
+        .catch(err => {
+          console.error(err);
+        })
+        .then(() => {
+          if (!this.oauthService.hasValidAccessToken()) {
+            this.oauthService.initImplicitFlow();
+          }
+        });
+    });
+    this.oauthService.setupAutomaticSilentRefresh();
   }
 
   ngOnInit() {
     this.setTheme(localStorage.getItem(Constants.ThemeKey) || "dark-theme");
-
+    this.oauthService.events.subscribe(e => {
+      console.debug('oauth/oidc event', e);
+      //if (e.type === "token_received") {
+      //  this.oauthService.loadUserProfile().then(user => {
+      //    debugger
+      //    console.log(`claims => ${user}`);
+      //  });
+      //}
+    });
     //this.authService
     //  .isAuthenticated()
     //  .pipe(distinctUntilChanged())
@@ -113,18 +147,19 @@ export class AppComponent implements OnInit, OnDestroy {
     overlayContainerClasses.add(theme);
   }
 
-  handelSubscribeToWebPush(event:any) {
+  handelSubscribeToWebPush(event: any) {
     this.swPush
       .requestSubscription({
         serverPublicKey: this.VAPID_PUBLIC_KEY
       })
       .then(sub => {
         console.log('PushSubscription: ', JSON.stringify(sub));
-        return this.deviceService.create(sub).subscribe();} )
+        return this.deviceService.create(sub).subscribe();
+      })
       .catch(err => console.error("Could not subscribe to notifications", err));
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void { }
 
   ngAfterViewInit() {
     this.router.events.subscribe(event => {

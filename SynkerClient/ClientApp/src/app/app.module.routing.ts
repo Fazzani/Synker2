@@ -13,27 +13,27 @@ import { GroupComponent } from "./components/group/group.component";
 import { PlaylistDetailResolver } from "./components/playlist/playlist.resolver";
 import { HomeResolver } from "./components/home/home.resolver";
 import { NotificationsComponent } from "./components/notifications/notifications.component";
-import { AuthGuardService } from './services/auth/auth-guard.service';
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
+import { AuthGuard } from './services/auth/AuthGuard';
+import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 
 const appRoutes: Routes = [
-  { path: "", component: HomeComponent, canActivate: [AuthGuardService], resolve: { data: HomeResolver } },
-  { path: "tvgmedia", component: MediaComponent, canActivate: [AuthGuardService] },
+  { path: "home", component: HomeComponent, canActivate: [AuthGuard], resolve: { data: HomeResolver } },
+  { path: "tvgmedia", component: MediaComponent, canActivate: [AuthGuard] },
   { path: "admin", loadChildren: "./components/admin/admin.module#AdminModule" },
-  { path: "epg", component: EpgComponent, canActivate: [AuthGuardService] },
-  { path: "xmltv", component: XmltvComponent, canActivate: [AuthGuardService] },
-  { path: "sitepack", component: SitePackComponent, canActivate: [AuthGuardService] },
-  { path: "playlist/:id", component: PlaylistComponent, canActivate: [AuthGuardService], resolve: { data: PlaylistDetailResolver } },
-  { path: "playlist/:id/groups", component: GroupComponent, canActivate: [AuthGuardService] },
-  { path: "notifications", component: NotificationsComponent, canActivate: [AuthGuardService] },
-  { path: "me", component: UserComponent, canActivate: [AuthGuardService] }, 
+  { path: "epg", component: EpgComponent, canActivate: [AuthGuard] },
+  { path: "xmltv", component: XmltvComponent },
+  { path: "unauthorized", component: UnauthorizedComponent  },
+  { path: "sitepack", component: SitePackComponent, canActivate: [AuthGuard] },
+  { path: "playlist/:id", component: PlaylistComponent, canActivate: [AuthGuard], resolve: { data: PlaylistDetailResolver } },
+  { path: "playlist/:id/groups", component: GroupComponent, canActivate: [AuthGuard] },
+  { path: "notifications", component: NotificationsComponent, canActivate: [AuthGuard] },
+  { path: "me", component: UserComponent, canActivate: [AuthGuard] }, 
   { path: "signin", component: DialogComponent },
   { path: "register", component: RegisterComponent },
-  {
-    path: 'auth-callback',
-    component: AuthCallbackComponent
-  },
-  { path: "**", redirectTo: "", pathMatch: "full" }
+  { path: 'auth-callback', component: AuthCallbackComponent },
+  { path: "", redirectTo: "/home", pathMatch: "full" },
+  { path: "**", redirectTo: "/home", pathMatch: "full" }
 ];
 
 @NgModule({
@@ -43,6 +43,7 @@ const appRoutes: Routes = [
       { enableTracing: false } // <-- debugging purposes only
     )
   ],
+  providers: [AuthGuard], // -- AQUI
   exports: [RouterModule]
 })
 export class AppRoutingModule {}

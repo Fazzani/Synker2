@@ -1,4 +1,3 @@
-import { JwtModule } from "@auth0/angular-jwt";
 import { NgModule, APP_INITIALIZER } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -15,12 +14,10 @@ import { DialogComponent } from "./components/shared/dialogs/dialog.component";
 
 import { NavBarModule } from "./components/shared/navbar/navbar";
 import { FlexLayoutModule } from "@angular/flex-layout";
-import { DefaultHttpInterceptor } from "./infrastructure/DefaultHttpInterceptor";
 import { PlaylistComponent } from "./components/playlist/playlist.component";
 import { SearchPipe } from "./pipes/search.pipe";
 import { SitePackComponent, SitePackModifyDialog } from "./components/sitepack/sitepack.component";
 import { KeysPipe } from "./pipes/enumKey.pipe";
-import { JwtInterceptor } from "./infrastructure/JwtInterceptor";
 import { ToastrModule } from "ngx-toastr";
 import { PushNotificationsModule } from "ng-push";
 import { ClipboardModule } from "ngx-clipboard";
@@ -53,16 +50,27 @@ import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { NotificationsComponent } from "./components/notifications/notifications.component";
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
-import { AuthGuardService } from './services/auth/auth-guard.service';
-import { AuthService } from './services/auth/idpauth.service';
+import { OAuthModule, ValidationHandler, OAuthStorage, JwksValidationHandler, OAuthModuleConfig } from 'angular-oauth2-oidc';
+import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
+import { PlaylistService } from './services/playlists/playlist.service';
 
-export function tokenGetter() {
-  return localStorage.getItem("access_token");
-}
+//export function tokenGetter() {
+//  const user = <User>JSON.parse(localStorage.getItem("user")) || { access_token: '' };
+//  console.log(`access_token ${user.access_token}`)
+//  return user.access_token;
+//}
 
 export function getAboutApplication(initService: InitAppService) {
   return () => initService.getAboutApplication();
 }
+
+const authModuleConfig: OAuthModuleConfig = {
+  // Inject "Authorization: Bearer ..." header for these APIs:
+  resourceServer: {
+    allowedUrls: ["//localhost:56800/api"],
+    sendAccessToken: true
+  },
+};
 
 @NgModule({
   declarations: [
@@ -78,6 +86,7 @@ export function getAboutApplication(initService: InitAppService) {
     NotificationsComponent,
     GroupComponent,
     LoaderComponent,
+    UnauthorizedComponent,
     TvgMediaModifyDialog,
     EpgModifyDialog,
     DialogComponent,
@@ -120,13 +129,7 @@ export function getAboutApplication(initService: InitAppService) {
     ClipboardModule,
     AppRoutingModule,
     OverlayModule,
-    JwtModule.forRoot({
-      config: {
-        tokenGetter: tokenGetter,
-        whitelistedDomains: ["localhost:56800", "api.synker.ovh"],
-        blacklistedRoutes: [""]
-      }
-    }),
+    OAuthModule.forRoot(authModuleConfig),
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
   ],
   entryComponents: [
@@ -148,16 +151,6 @@ export function getAboutApplication(initService: InitAppService) {
   ],
   providers: [
     {
-      provide: HTTP_INTERCEPTORS,
-      useClass: DefaultHttpInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: JwtInterceptor,
-      multi: true
-    },
-    {
       provide: APP_INITIALIZER,
       useFactory: getAboutApplication,
       multi: true,
@@ -167,8 +160,7 @@ export function getAboutApplication(initService: InitAppService) {
     HostsResolver,
     UsersResolver,
     HomeResolver,
-    AuthGuardService,
-    AuthService
+    PlaylistService
   ],
   bootstrap: [AppComponent]
 })

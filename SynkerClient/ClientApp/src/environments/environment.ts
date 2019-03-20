@@ -22,7 +22,7 @@ export const environment = {
     authority: 'http://localhost:5000',
     client_id: 'synkerclient',
     redirect_uri: 'http://localhost:56810/auth-callback',
-    post_logout_redirect_uri: 'http://localhost:56810/',
+    post_logout_redirect_uri: 'http://localhost:5000/',
     response_type: "id_token token",
     scope: "openid profile synkerapi.full_access",
     filterProtocolClaims: true,

@@ -12,15 +12,21 @@ import { AppModuleMaterialModule } from "../../app.module.material.module";
 import {  HTTP_INTERCEPTORS } from "@angular/common/http";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { CommonModule } from "@angular/common";
-import { JwtInterceptor } from "@auth0/angular-jwt";
 import { DefaultHttpInterceptor } from "../../infrastructure/DefaultHttpInterceptor";
-import { AuthGuardService } from '../../services/auth/auth-guard.service';
-
+import { AuthGuard } from '../../services/auth/AuthGuard';
+import { OAuthModule, OAuthModuleConfig } from 'angular-oauth2-oidc';
+const authModuleConfig: OAuthModuleConfig = {
+  // Inject "Authorization: Bearer ..." header for these APIs:
+  resourceServer: {
+    allowedUrls: ["http://localhost:56800/api"],
+    sendAccessToken: true
+  },
+};
 const adminRoutes: Routes = [
   {
     path: "",
     component: AdminComponent,
-    canActivate: [AuthGuardService],
+    canActivate: [AuthGuard],
     children: [
       {
         path: "",
@@ -49,22 +55,23 @@ const adminRoutes: Routes = [
   declarations: [AdminDashboardComponent, AdminComponent, HostsComponent, UsersComponent],
   imports: [
     RouterModule.forChild(adminRoutes),
+    OAuthModule.forRoot(authModuleConfig),
     AppModuleMaterialModule,
     CommonModule,
     FlexLayoutModule
   ],
   exports: [RouterModule],
   providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: DefaultHttpInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: JwtInterceptor,
-      multi: true
-    },
+    //{
+    //  provide: HTTP_INTERCEPTORS,
+    //  useClass: DefaultHttpInterceptor,
+    //  multi: true
+    //},
+    //{
+    //  provide: HTTP_INTERCEPTORS,
+    //  useClass: JwtInterceptor,
+    //  multi: true
+    //},
     HostsResolver,
     UsersResolver
   ]

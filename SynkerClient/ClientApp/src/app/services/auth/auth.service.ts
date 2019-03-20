@@ -11,7 +11,7 @@
 //@Injectable({
 //  providedIn: 'root',
 //})
-//export class AuthService extends BaseService {
+//export class AuthServiceLegacy extends BaseService {
 //  /**
 //   * Is user authenticated
 //   *

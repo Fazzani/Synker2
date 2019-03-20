@@ -21,8 +21,7 @@
               "src/assets",
               "src/favicon.ico",
               "src/manifest.json",
-              "src/silent-refresh.html",
-              "src/oidc-client.min.js"
+              "src/silent-refresh.html"
             ],
             "styles": [
               "src/styles/loader.scss",

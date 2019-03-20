@@ -5,14 +5,13 @@ import { MatButtonModule, MatMenuModule } from "@angular/material";
 import { RouterModule } from "@angular/router";
 import { AppModuleMaterialModule } from "../../../app.module.material.module";
 import { User } from "../../../types/auth.type";
-//import { AuthService } from "../../../services/auth/auth.service";
 import { BehaviorSubject, Subscription, Observable } from "rxjs";
 import { EqualValidator } from "../../../directives/equal-validator.directive";
-//import { AuthorizedRouteGuard } from "../../../services/auth/authorizedRouteGuard.service";
 import { InitAppService } from "../../../services/initApp/InitAppService";
 import { AboutApplication } from "../../../types/aboutApplication.type";
 import { NotificationService } from "../../../services/notification/notification.service";
 import FirebaseNotification from "../../../types/firebase.type";
+import { OAuthService, OAuthEvent } from "angular-oauth2-oidc";
 
 @Component({
   selector: "app-navbar",
@@ -38,11 +37,29 @@ export class NavBar implements OnInit, OnDestroy {
     //private authService: AuthService,
     //public authorizedGuard: AuthorizedRouteGuard,
     private initAppService: InitAppService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private authService: OAuthService
   ) {
-    //this.isAuthenticated = this.authService.authenticated;
-    //this.user = this.authService.user;
+    this.isAuthenticated = new BehaviorSubject<boolean>(false);
+    this.user = new BehaviorSubject<User>(null);
     //this.authService.connect();
+    this.authService.events.subscribe((authEvent: OAuthEvent) => {
+
+      if (authEvent.type == 'user_profile_loaded' && this.user.getValue() == null) {
+        this.isAuthenticated.next(true);
+
+        // TODO: Share the some user && adding user photo, id to scope
+        // TODO: gérer le cas de déconnexion (expired_token, auth_failed, signout, etc...)
+        // TODO: explicit signout
+
+        this.authService.loadUserProfile().then((userProfile: any) => {
+          //{"name":"Admin Smith","given_name":"Admin","family_name":"Administrator","email":"admin@email.com","website":"http://admin.com","sub":"88421153"}
+          this.user.next(<User>{ email: userProfile.email, firstName: userProfile.given_name, lastName: userProfile.name, photo: userProfile.picture })
+        });
+      } else if (authEvent.type == 'logout' || authEvent.type === 'token_expires') {
+        this.isAuthenticated.next(false);
+      }
+    });
     this.aboutApp = this.initAppService.about;
   }
 
@@ -84,4 +101,4 @@ export class NavBar implements OnInit, OnDestroy {
   exports: [NavBar, EqualValidator],
   declarations: [NavBar, EqualValidator]
 })
-export class NavBarModule {}
+export class NavBarModule { }

@@ -28,6 +28,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    debugger
     this.query = <QueryListBaseModel>{ pageNumber: 0, pageSize: 20 };
     this.playlists = <PagedResult<PlaylistModelLive>>this.route.snapshot.data.data;
     this.playlistService.listWithHealthStatus(this.playlists.results.map(x => <PlaylistModelLive>{ ...x })).subscribe(res => {

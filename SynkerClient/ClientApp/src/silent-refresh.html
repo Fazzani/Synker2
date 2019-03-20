@@ -1,12 +1,6 @@
-<head>
-  <title></title>
-</head>
+<!doctype html>
+<html>
 <body>
-  <script src="oidc-client.min.js"></script>
-  <script>
-    new UserManager().signinSilentCallback()
-        .catch((err) => {
-            console.log(err);
-        });
-  </script>
+  <script>parent.postMessage(location.hash, location.origin);</script>
 </body>
+</html>
