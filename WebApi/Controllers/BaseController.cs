@@ -110,7 +110,7 @@ namespace Hfa.WebApi.Controllers
                 return me;
             }
 
-            return default(IPromise<IList<ISort>>);
+            return default;
         }
 
         internal class NestPromise<T> : IPromise<T> where T : class

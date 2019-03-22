@@ -61,7 +61,7 @@ namespace IdentityServer
                 {
                     options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
                     options.ClientId = Configuration.GetValue<string>("StsAuthentificationConfiguration:Google:ClientId");
-                    options.ClientSecret = Configuration.GetValue<string>("StsAuthentificationConfiguration:Google:ClientId");
+                    options.ClientSecret = Configuration.GetValue<string>("StsAuthentificationConfiguration:Google:Secret");
                 });
         }
 

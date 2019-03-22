@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using hfa.Synker.Service.Elastic;
+using hfa.Synker.Service.Entities;
+using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Services.Dal;
+using hfa.WebApi.Common.Auth;
+using hfa.WebApi.Common.Filters;
+using hfa.WebApi.Models;
+using Hfa.WebApi.Controllers;
+using Hfa.WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Hfa.WebApi.Controllers;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authorization;
-using hfa.WebApi.Common.Filters;
-using hfa.Synker.Services.Dal;
-using hfa.Synker.Service.Services.Elastic;
-using hfa.Synker.Service.Elastic;
-using hfa.Synker.Service.Entities;
-using hfa.WebApi.Common.Auth;
+using Microsoft.Extensions.Options;
+using System;
+using System.Linq;
 using System.Threading;
-using Hfa.WebApi.Models;
-using hfa.WebApi.Models;
-using System.Net;
-using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace hfa.WebApi.Controllers
 {
@@ -29,16 +27,13 @@ namespace hfa.WebApi.Controllers
     [ApiController]
     public class HostController : BaseController
     {
-        private readonly IAuthentificationService _authentificationService;
 
-        public HostController(IAuthentificationService authentificationService,
-            IOptions<ElasticConfig> config,
+        public HostController(IOptions<ElasticConfig> config,
             ILoggerFactory loggerFactory,
             IElasticConnectionClient elasticConnectionClient,
             SynkerDbContext context)
             : base(config, loggerFactory, elasticConnectionClient, context)
         {
-            _authentificationService = authentificationService ?? throw new ArgumentNullException(nameof(authentificationService));
         }
 
         /// <summary>
@@ -108,21 +103,21 @@ namespace hfa.WebApi.Controllers
             return NoContent();
         }
 
-        [HttpPost]
-        [ValidateModel]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> Post([FromBody] Host host, CancellationToken cancellationToken)
-        {
-            if (!string.IsNullOrEmpty(host.Authentication?.Password))
-            {
-                host.Authentication.Password.HashPassword(_authentificationService.Salt);
-            }
+        //[HttpPost]
+        //[ValidateModel]
+        //[ProducesResponseType(StatusCodes.Status201Created)]
+        //public async Task<IActionResult> Post([FromBody] Host host, CancellationToken cancellationToken)
+        //{
+        //    if (!string.IsNullOrEmpty(host.Authentication?.Password))
+        //    {
+        //        host.Authentication.Password.HashPassword(_authentificationService.Salt);
+        //    }
 
-            _dbContext.Hosts.Add(host);
-            await _dbContext.SaveChangesAsync();
+        //    _dbContext.Hosts.Add(host);
+        //    await _dbContext.SaveChangesAsync();
 
-            return CreatedAtAction("Get", new { id = host.Id }, host);
-        }
+        //    return CreatedAtAction("Get", new { id = host.Id }, host);
+        //}
 
         [HttpDelete("{id}")]
         [ValidateModel]

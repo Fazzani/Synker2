@@ -27,7 +27,6 @@ using hfa.WebApi.Http;
 using hfa.WebApi.Hubs;
 using hfa.WebApi.Services;
 using MassTransit;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -61,8 +60,6 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using ZNetCS.AspNetCore.Authentication.Basic;
-using ZNetCS.AspNetCore.Authentication.Basic.Events;
 
 [assembly: ApiConventionType(typeof(DefaultApiConventions))]
 namespace hfa.WebApi
@@ -106,7 +103,7 @@ namespace hfa.WebApi
             services.
                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                .AddSingleton<IPasteBinService, PasteBinService>()
-               .AddScoped<IAuthentificationService, AuthentificationService>()
+               //.AddScoped<IAuthentificationService, AuthentificationService>()
                .AddSingleton<IProviderFactory, ProviderFactory>()
                .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
                .AddScoped<IXmltvService, XmltvService>()
@@ -122,8 +119,7 @@ namespace hfa.WebApi
                .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection(PlaylistProviderOption.PlaylistProvidersConfigurationKeyName))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
-               .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))
-               .Configure<StsOptions>(Configuration.GetSection(nameof(StsOptions)))
+               .Configure<JwtBearerOptions>(Configuration.GetSection(nameof(JwtBearerOptions)))
                .Configure<MediaServerOptions>(Configuration.GetSection(nameof(MediaServerOptions)))
                .Configure<GlobalOptions>(Configuration.GetSection(nameof(GlobalOptions)))
                .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)))
@@ -401,7 +397,7 @@ namespace hfa.WebApi
                 app.UseResponseCaching();
 
                 app.UseStaticFiles();
-
+                app.UseAuthentication();
                 app.UseMvc(routes =>
                 {
                     routes.MapRoute(
@@ -489,74 +485,53 @@ namespace hfa.WebApi
         /// <param name="services"></param>
         private void ConfigSecurity(IServiceCollection services)
         {
-            // Resolve the services from the service provider
-            IAuthentificationService authService = Provider.GetService<IAuthentificationService>();
-
             services.AddAuthentication(options =>
             {
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(jwtBearerOptions =>
-            {
-                jwtBearerOptions.SaveToken = true;
-                //jwtBearerOptions.BackchannelHttpHandler
-                jwtBearerOptions.Authority = "https://idp.synker.ovh";
-                jwtBearerOptions.RequireHttpsMetadata = true;
-                jwtBearerOptions.TokenValidationParameters = authService.Parameters;
-                jwtBearerOptions.Audience = "synkerapi";
+                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtBearerOptions =>
+             {
+                 var jwtOptions = Configuration.GetSection(nameof(JwtBearerOptions)).Get<JwtBearerOptions>();
+                 jwtBearerOptions.SaveToken = jwtOptions.SaveToken;
+                 jwtBearerOptions.Authority = jwtOptions.Authority;
+                 jwtBearerOptions.RequireHttpsMetadata = jwtOptions.RequireHttpsMetadata;
+                 jwtBearerOptions.Audience = jwtOptions.Audience;
+                 jwtBearerOptions.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                 {
+                     ValidateAudience = true,
+                     ValidateIssuer = true
+                 };
 
                 // We have to hook the OnMessageReceived event in order to
                 // allow the JWT authentication handler to read the access
                 // token from the query string when a WebSocket or 
                 // Server-Sent Events request comes in.
                 jwtBearerOptions.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        var accessToken = context.Request.Query["access_token"];
+                 {
+                     OnMessageReceived = context =>
+                     {
+                         var accessToken = context.Request.Query["access_token"];
 
                         // If the request is for our hub...
                         var path = context.HttpContext.Request.Path;
-                        if (!string.IsNullOrEmpty(accessToken) &&
-                            (path.StartsWithSegments("/hubs/notification")))
-                        {
+                         if (!string.IsNullOrEmpty(accessToken) &&
+                             (path.StartsWithSegments("/hubs/notification")))
+                         {
                             // Read the token out of the query string
                             context.Token = accessToken;
-                        }
-                        return Task.CompletedTask;
-                    }
-                };
-            }).AddBasicAuthentication(
-            options =>
-            {
-                options.Realm = "Synker";
-                options.Events = new BasicAuthenticationEvents
-                {
-                    OnValidatePrincipal = context =>
-                    {
-                        var basic = new BasicAuthenticationMiddleware();
-                        var principal = basic.Invoke(context.HttpContext, authService, Provider.GetService<SynkerDbContext>(), Provider.GetService<ILoggerFactory>());
-                        if (principal != null)
-                        {
-                            var ticket = new AuthenticationTicket(
-                                principal,
-                                new AuthenticationProperties(),
-                                BasicAuthenticationDefaults.AuthenticationScheme);
-
-                            context.Principal = principal;
-                            return Task.FromResult(AuthenticateResult.Success(ticket));
-                        }
-
-                        return Task.FromResult(AuthenticateResult.Fail("Authentication failed."));
-                    }
-                };
-            });
+                         }
+                         return Task.CompletedTask;
+                     }
+                 };
+             });
 
             services.AddAuthorization(authorizationOptions =>
             {
                 authorizationOptions.AddPolicy(AuthorizePolicies.ADMIN, policyBuilder => policyBuilder.RequireClaim(ClaimTypes.Role, Role.ADMIN_ROLE_NAME));
                 authorizationOptions.AddPolicy(AuthorizePolicies.VIP, policyBuilder => policyBuilder.RequireClaim(AuthorizePolicies.VIP));
-                authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme, "Basic").RequireAuthenticatedUser().Build();
+                authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
             });
         }
 
