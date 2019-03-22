@@ -67,7 +67,7 @@ export function getAboutApplication(initService: InitAppService) {
 const authModuleConfig: OAuthModuleConfig = {
   // Inject "Authorization: Bearer ..." header for these APIs:
   resourceServer: {
-    allowedUrls: ["//localhost:56800/api"],
+    allowedUrls: ["//localhost:56800/api", "//api.synker.ovh/api"],
     sendAccessToken: true
   },
 };
