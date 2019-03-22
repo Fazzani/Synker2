@@ -51,7 +51,7 @@ namespace Hfa.WebApi.Controllers
         private readonly IXtreamService _xtreamService;
         private readonly IProviderFactory _providerFactory;
 
-        private string UserCachePlaylistKey => $"{UserId}:{CacheKeys.PlaylistByUser}";
+        private string UserCachePlaylistKey => $"{UserEmail}:{CacheKeys.PlaylistByUser}";
 
         public PlaylistsController(IMemoryCache memoryCache, IMediaScraper mediaScraper, IOptions<ElasticConfig> config, ILoggerFactory loggerFactory, IOptions<GlobalOptions> globalOptions,
             IElasticConnectionClient elasticConnectionClient, SynkerDbContext context, IPlaylistService playlistService, ISitePackService sitePackService, IXtreamService xtreamService,
@@ -74,8 +74,14 @@ namespace Hfa.WebApi.Controllers
         [HttpPost("search")]
         [ValidateModel]
         [ProducesResponseType(typeof(PagedResult<PlaylistModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> ListAsync([FromBody] QueryListBaseModel query, [FromQuery] bool light = true, CancellationToken cancellationToken = default)
         {
+            //TODO: A virer apres la migration de l'auth
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
+            if (user == null) return BadRequest($"User {this.UserEmail} not found");
+
             var plCacheKey = $"{UserCachePlaylistKey}_{query.GetHashCode()}_{light}";
             var playlists = await _memoryCache.GetOrCreateAsync(plCacheKey, async entry =>
             {
@@ -89,13 +95,12 @@ namespace Hfa.WebApi.Controllers
                 }
 
                 _memoryCache.Set(UserCachePlaylistKey, list);
-
                 entry.SlidingExpiration = TimeSpan.FromHours(2);
-
+               
                 return await Task.Run(() =>
                 {
                     var response = _dbContext.Playlist
-                   .Where(x => x.UserId == UserId)
+                   .Where(x => x.UserId == user.Id)
                    .OrderByDescending(x => x.Id)
                    .Select(pl => light ? PlaylistModel.ToLightModel(pl, Url) : PlaylistModel.ToModel(pl, Url))
                    .GetPaged(query.PageNumber, query.PageSize);
@@ -288,9 +293,13 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> SynkAsync([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken = default)
         {
+            //TODO: A virer apres la migration de l'auth
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
+            if (user == null) return BadRequest($"User {this.UserEmail} not found");
+
             var playlist = _dbContext.Playlist.AsNoTracking().FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.Url) ?? new Playlist
             {
-                UserId = UserId.Value,
+                UserId = user.Id,
                 Freindlyname = playlistPostModel.Freindlyname,
                 Status = playlistPostModel.Status,
                 SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
@@ -329,9 +338,13 @@ namespace Hfa.WebApi.Controllers
 
             try
             {
+                //TODO: A virer apres la migration de l'auth
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
+                if (user == null) return BadRequest($"User {this.UserEmail} not found");
+
                 var playlist = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.SynkConfig.Url == playlistPostModel.Url, cancellationToken) ?? new Playlist
                 {
-                    UserId = UserId.Value,
+                    UserId = user.Id,
                     Freindlyname = playlistPostModel.Freindlyname,
                     Status = playlistPostModel.Status,
                     SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
@@ -662,9 +675,13 @@ namespace Hfa.WebApi.Controllers
 
             using (providerInstance)
             {
+                //TODO: A virer apres la migration de l'auth
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
+                if (user == null) return BadRequest($"User {this.UserEmail} not found");
+
                 var pl = await _playlistService.SynkPlaylistAsync(() => new Playlist
                 {
-                    UserId = UserId.Value,
+                    UserId = user.Id,
                     Freindlyname = playlistName,
                     Status = PlaylistStatus.Enabled,
                     SynkConfig = null,
@@ -707,9 +724,13 @@ namespace Hfa.WebApi.Controllers
 
             using (providerInstance)
             {
+                //TODO: A virer apres la migration de l'auth
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
+                if (user == null) return BadRequest($"User {this.UserEmail} not found");
+
                 var pl = await _playlistService.SynkPlaylistAsync(() => new Playlist
                 {
-                    UserId = UserId.Value,
+                    UserId = user.Id,
                     Freindlyname = playlistPostModel.Freindlyname,
                     Status = PlaylistStatus.Enabled,
                     SynkConfig = new SynkConfig { Url = playlistPostModel.Url },

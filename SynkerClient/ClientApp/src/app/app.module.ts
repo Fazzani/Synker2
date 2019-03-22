@@ -53,6 +53,7 @@ import { AuthCallbackComponent } from './components/auth-callback/auth-callback.
 import { OAuthModule, ValidationHandler, OAuthStorage, JwksValidationHandler, OAuthModuleConfig } from 'angular-oauth2-oidc';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 import { PlaylistService } from './services/playlists/playlist.service';
+import { JwtInterceptor } from "./infrastructure/JwtInterceptor";
 
 //export function tokenGetter() {
 //  const user = <User>JSON.parse(localStorage.getItem("user")) || { access_token: '' };
@@ -150,6 +151,11 @@ const authModuleConfig: OAuthModuleConfig = {
     MediaWatchDialog
   ],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
+      multi: true
+    },
     {
       provide: APP_INITIALIZER,
       useFactory: getAboutApplication,

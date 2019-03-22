@@ -16,6 +16,7 @@ using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 using System.Net;
+using System.Threading;
 
 namespace hfa.WebApi.Controllers
 {
@@ -39,9 +40,10 @@ namespace hfa.WebApi.Controllers
         /// All commands or commands by connected user
         /// </summary>
         /// <param name="all">if true get all commands</param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetCommand([FromQuery] bool? all)
+        public async Task<IActionResult> GetCommand([FromQuery] bool? all, CancellationToken cancellationToken = default)
         {
             if (all.HasValue && all.Value)
             {
@@ -51,9 +53,13 @@ namespace hfa.WebApi.Controllers
                   .Select(x => x.CommandText));
             }
 
+            //TODO: A virer apres la migration de l'auth
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
+            if (user == null) return BadRequest($"User {this.UserEmail} not found");
+
             return new OkObjectResult((await _dbContext
                     .Command
-                    .Where(x => x.UserId == UserId && x.TreatedDate == null)
+                    .Where(x => x.UserId == user.Id && x.TreatedDate == null)
                     .OrderByDescending(x => x.Id)
                     .ToListAsync())
                   .Select(x => x.CommandText));
@@ -61,7 +67,7 @@ namespace hfa.WebApi.Controllers
 
         [HttpGet("users/{userId}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetCommandsByUser([FromRoute] int userId, [FromQuery] bool? all)
+        public async Task<IActionResult> GetCommandsByUser([FromRoute] int userId, [FromQuery] bool? all, CancellationToken cancellationToken = default)
         {
             if (await _dbContext.Users.FindAsync(userId) == null)
             {

@@ -529,7 +529,7 @@ namespace hfa.WebApi
 
             services.AddAuthorization(authorizationOptions =>
             {
-                authorizationOptions.AddPolicy(AuthorizePolicies.ADMIN, policyBuilder => policyBuilder.RequireClaim(ClaimTypes.Role, Role.ADMIN_ROLE_NAME));
+                authorizationOptions.AddPolicy(AuthorizePolicies.ADMIN, policyBuilder => policyBuilder.RequireClaim("scope", "synkerapi.full_access"));
                 authorizationOptions.AddPolicy(AuthorizePolicies.VIP, policyBuilder => policyBuilder.RequireClaim(AuthorizePolicies.VIP));
                 authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
             });

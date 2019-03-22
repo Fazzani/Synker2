@@ -80,7 +80,7 @@
         [ValidateModel]
         public async Task<IActionResult> PostLiveAsync([FromBody]MediaServerLivePost model, CancellationToken cancellationToken)
         {
-            var streamId = $"{UserId}_{Guid.NewGuid()}";
+            var streamId = $"{UserEmail}_{Guid.NewGuid()}";
             var response = await _mediaServerService.PublishLiveAsync(model.Stream, streamId, cancellationToken);
             return Ok(new
             {

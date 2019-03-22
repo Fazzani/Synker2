@@ -16,67 +16,8 @@ namespace hfa.WebApi.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
-                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
+                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
-
-            modelBuilder.Entity("hfa.synker.entities.Notifications.Device", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("Name")
-                        .IsRequired();
-
-                    b.Property<string>("PushAuth")
-                        .IsRequired();
-
-                    b.Property<string>("PushEndpoint")
-                        .IsRequired();
-
-                    b.Property<string>("PushP256DH")
-                        .IsRequired();
-
-                    b.Property<DateTime>("UpdatedDate");
-
-                    b.Property<int?>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Devices");
-                });
-
-            modelBuilder.Entity("hfa.synker.entities.WebGrabConfigDocker", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("Cron")
-                        .IsRequired();
-
-                    b.Property<string>("DockerImage")
-                        .IsRequired();
-
-                    b.Property<int>("HostId");
-
-                    b.Property<string>("MountSourcePath");
-
-                    b.Property<DateTime>("UpdatedDate");
-
-                    b.Property<string>("WebgrabConfigUrl")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HostId");
-
-                    b.ToTable("WebGrabConfigDockers");
-                });
 
             modelBuilder.Entity("hfa.Synker.Service.Entities.Auth.Command", b =>
                 {
@@ -150,30 +91,10 @@ namespace hfa.WebApi.Migrations
                     b.ToTable("ConnectionState");
                 });
 
-            modelBuilder.Entity("hfa.Synker.Service.Entities.Auth.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(32);
-
-                    b.Property<DateTime>("UpdatedDate");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-                });
-
             modelBuilder.Entity("hfa.Synker.Service.Entities.Auth.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("BirthDay");
 
                     b.Property<int>("ConnectionStateId");
 
@@ -181,18 +102,6 @@ namespace hfa.WebApi.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired();
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(64);
-
-                    b.Property<byte>("Gender");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(64);
-
-                    b.Property<string>("Photo");
 
                     b.Property<DateTime>("UpdatedDate");
 
@@ -203,26 +112,7 @@ namespace hfa.WebApi.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("FirstName", "LastName");
-
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("hfa.Synker.Service.Entities.Auth.UserRole", b =>
-                {
-                    b.Property<int>("UserId");
-
-                    b.Property<int>("RoleId");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<DateTime>("UpdatedDate");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("UserRole");
                 });
 
             modelBuilder.Entity("hfa.Synker.Service.Entities.Host", b =>
@@ -296,17 +186,61 @@ namespace hfa.WebApi.Migrations
 
             modelBuilder.Entity("hfa.synker.entities.Notifications.Device", b =>
                 {
-                    b.HasOne("hfa.Synker.Service.Entities.Auth.User", "User")
-                        .WithMany("Devices")
-                        .HasForeignKey("UserId");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<string>("PushAuth")
+                        .IsRequired();
+
+                    b.Property<string>("PushEndpoint")
+                        .IsRequired();
+
+                    b.Property<string>("PushP256DH")
+                        .IsRequired();
+
+                    b.Property<DateTime>("UpdatedDate");
+
+                    b.Property<int?>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Devices");
                 });
 
             modelBuilder.Entity("hfa.synker.entities.WebGrabConfigDocker", b =>
                 {
-                    b.HasOne("hfa.Synker.Service.Entities.Host", "RunnableHost")
-                        .WithMany("WebGrabConfigDockers")
-                        .HasForeignKey("HostId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("Cron")
+                        .IsRequired();
+
+                    b.Property<string>("DockerImage")
+                        .IsRequired();
+
+                    b.Property<int>("HostId");
+
+                    b.Property<string>("MountSourcePath");
+
+                    b.Property<DateTime>("UpdatedDate");
+
+                    b.Property<string>("WebgrabConfigUrl")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HostId");
+
+                    b.ToTable("WebGrabConfigDockers");
                 });
 
             modelBuilder.Entity("hfa.Synker.Service.Entities.Auth.Command", b =>
@@ -325,30 +259,19 @@ namespace hfa.WebApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("hfa.Synker.Service.Entities.Auth.UserRole", b =>
-                {
-                    b.HasOne("hfa.Synker.Service.Entities.Auth.Role", "Role")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("hfa.Synker.Service.Entities.Auth.User", "User")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("hfa.Synker.Service.Entities.Host", b =>
                 {
                     b.OwnsOne("hfa.Synker.Service.Entities.Authentication", "Authentication", b1 =>
                         {
-                            b1.Property<int?>("HostId");
+                            b1.Property<int>("HostId");
 
                             b1.Property<string>("CertPath");
 
                             b1.Property<string>("Password");
 
                             b1.Property<string>("Username");
+
+                            b1.HasKey("HostId");
 
                             b1.ToTable("Hosts");
 
@@ -368,7 +291,7 @@ namespace hfa.WebApi.Migrations
 
                     b.OwnsOne("hfa.Synker.Service.Entities.Playlists.SynkConfig", "SynkConfig", b1 =>
                         {
-                            b1.Property<int?>("PlaylistId");
+                            b1.Property<int>("PlaylistId");
 
                             b1.Property<bool>("AutoSynchronize");
 
@@ -386,6 +309,8 @@ namespace hfa.WebApi.Migrations
 
                             b1.Property<string>("Url");
 
+                            b1.HasKey("PlaylistId");
+
                             b1.ToTable("Playlist");
 
                             b1.HasOne("hfa.Synker.Service.Entities.Playlists.Playlist")
@@ -393,6 +318,21 @@ namespace hfa.WebApi.Migrations
                                 .HasForeignKey("hfa.Synker.Service.Entities.Playlists.SynkConfig", "PlaylistId")
                                 .OnDelete(DeleteBehavior.Cascade);
                         });
+                });
+
+            modelBuilder.Entity("hfa.synker.entities.Notifications.Device", b =>
+                {
+                    b.HasOne("hfa.Synker.Service.Entities.Auth.User", "User")
+                        .WithMany("Devices")
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("hfa.synker.entities.WebGrabConfigDocker", b =>
+                {
+                    b.HasOne("hfa.Synker.Service.Entities.Host", "RunnableHost")
+                        .WithMany("WebGrabConfigDockers")
+                        .HasForeignKey("HostId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

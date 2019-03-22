@@ -16,6 +16,7 @@ using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 using hfa.WebApi.Models.Elastic;
 using System.Text;
+using System.Security.Claims;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -122,7 +123,8 @@ namespace Hfa.WebApi.Controllers
             public T Value { get; }
         }
 
-        protected int? UserId => Convert.ToInt32(User.FindFirst("id")?.Value);
+        protected string UserEmail => User.FindFirst(ClaimTypes.Email)?.Value;
+        //protected int? UserId => Convert.ToInt32(User.FindFirst("id")?.Value);
     }
 
     public class Constants

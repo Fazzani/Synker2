@@ -16,7 +16,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,11 +51,16 @@ namespace hfa.WebApi.Controllers
         [HttpPost]
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Post([FromBody] NotificationModel notification, CancellationToken cancellationToken)
+        public async Task<IActionResult> Post([FromBody] NotificationModel notification, CancellationToken cancellationToken = default)
         {
+            //TODO: A virer apres la migration de l'auth
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
+            if (user == null) return BadRequest($"User {this.UserEmail} not found");
+
             switch (notification.NotificationType)
             {
                 case NotificationTypeEnum.Email:
+
                     await _notificationService.SendMailAsync(new EmailNotification
                     {
                         Body = notification.Body,
@@ -68,7 +72,7 @@ namespace hfa.WebApi.Controllers
                         FromDisplayName = notification.FromDisplayName,
                         IsBodyHtml = notification.IsBodyHtml,
                         AppId = Assembly.GetExecutingAssembly().FullName,
-                        UserId = UserId.Value.ToString()
+                        UserId = user.Id.ToString()
                     }, cancellationToken);
                     break;
                 case NotificationTypeEnum.Sms:
@@ -89,7 +93,7 @@ namespace hfa.WebApi.Controllers
                         FromDisplayName = notification.FromDisplayName,
                         IsBodyHtml = notification.IsBodyHtml,
                         AppId = Assembly.GetExecutingAssembly().FullName,
-                        UserId = UserId.Value.ToString()
+                        UserId = user.Id.ToString()
                     }, cancellationToken);
                     break;
             }
@@ -106,7 +110,7 @@ namespace hfa.WebApi.Controllers
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PostWebPushAsync([FromBody] WebPushModel webPushModel, CancellationToken cancellationToken)
+        public async Task<IActionResult> PostWebPushAsync([FromBody] WebPushModel webPushModel, CancellationToken cancellationToken = default)
         {
             synker.entities.Notifications.Device device = await _dbContext.Devices.FirstOrDefaultAsync(x => x.Id == webPushModel.Id, cancellationToken);
             if (device == null)
@@ -129,7 +133,7 @@ namespace hfa.WebApi.Controllers
         [Route("keys")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetKeysAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetKeysAsync(CancellationToken cancellationToken = default)
         {
             return await Task.Run(() =>
             {
@@ -148,7 +152,7 @@ namespace hfa.WebApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
-        public async Task<IActionResult> GetWebPushNotification([FromBody]BorkerMessageModel message, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetWebPushNotification([FromBody]BorkerMessageModel message, CancellationToken cancellationToken = default)
         {
             await _notifcationHubContext.Clients.All.SendAsync("SendMessage", User.Identity.Name, message.Message, cancellationToken);
             return Ok();
