@@ -1,4 +1,4 @@
-import { Component, NgModule, OnInit, OnDestroy, Output, EventEmitter } from "@angular/core";
+import { Component, NgModule, OnInit, OnDestroy, Output, EventEmitter, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule, MatMenuModule } from "@angular/material";
@@ -12,6 +12,7 @@ import { AboutApplication } from "../../../types/aboutApplication.type";
 import { NotificationService } from "../../../services/notification/notification.service";
 import FirebaseNotification from "../../../types/firebase.type";
 import { OAuthService, OAuthEvent } from "angular-oauth2-oidc";
+import { get } from 'http';
 
 @Component({
   selector: "app-navbar",
@@ -20,8 +21,23 @@ import { OAuthService, OAuthEvent } from "angular-oauth2-oidc";
 })
 export class NavBar implements OnInit, OnDestroy {
   aboutApp: AboutApplication;
-  isAuthenticated: BehaviorSubject<boolean>;
-  user: BehaviorSubject<User>;
+
+  private _isAuthenticated: boolean;
+  @Input()
+  set isAuthenticated(isAuthenticated: boolean) {
+    console.log(`isAuthenticated   =>>>>>  ${isAuthenticated}`);
+    this._isAuthenticated = isAuthenticated;
+  }
+  get isAuthenticated(): boolean { return this._isAuthenticated; }
+
+  private _user: User;
+  @Input()
+  set user(user: User) {
+    console.log(`user   =>>>>>  ${(user || { email: '' }).email}`);
+    this._user = user;
+  }
+  get user(): User { return this._user; }
+
   userSubscription: Subscription;
   notifications$: Observable<FirebaseNotification[]>;
   @Output()
@@ -38,28 +54,9 @@ export class NavBar implements OnInit, OnDestroy {
     //public authorizedGuard: AuthorizedRouteGuard,
     private initAppService: InitAppService,
     private notificationService: NotificationService,
-    private authService: OAuthService
+    private oauthService: OAuthService
   ) {
-    this.isAuthenticated = new BehaviorSubject<boolean>(false);
-    this.user = new BehaviorSubject<User>(null);
-    //this.authService.connect();
-    this.authService.events.subscribe((authEvent: OAuthEvent) => {
 
-      if (authEvent.type == 'user_profile_loaded' && this.user.getValue() == null) {
-        this.isAuthenticated.next(true);
-
-        // TODO: Share the some user && adding user photo, id to scope
-        // TODO: gérer le cas de déconnexion (expired_token, auth_failed, signout, etc...)
-        // TODO: explicit signout
-
-        this.authService.loadUserProfile().then((userProfile: any) => {
-          //{"name":"Admin Smith","given_name":"Admin","family_name":"Administrator","email":"admin@email.com","website":"http://admin.com","sub":"88421153"}
-          this.user.next(<User>{ email: userProfile.email, firstName: userProfile.given_name, lastName: userProfile.name, photo: userProfile.picture })
-        });
-      } else if (authEvent.type == 'logout' || authEvent.type === 'token_expires') {
-        this.isAuthenticated.next(false);
-      }
-    });
     this.aboutApp = this.initAppService.about;
   }
 
@@ -82,8 +79,7 @@ export class NavBar implements OnInit, OnDestroy {
   }
 
   signout(): void {
-    this.isAuthenticated.next(false);
-    //this.authService.signout();
+    this.oauthService.logOut(false);
   }
 
   toggleNotification = () => {

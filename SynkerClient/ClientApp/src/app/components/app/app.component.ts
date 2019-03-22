@@ -11,8 +11,10 @@ import { Exception } from "../../types/common.type";
 import { OverlayContainer } from "@angular/cdk/overlay";
 import { SwUpdate, SwPush } from "@angular/service-worker";
 import { DeviceService } from "../../services/device/device.service";
-import { OAuthService, JwksValidationHandler, AuthConfig } from 'angular-oauth2-oidc';
+import { OAuthService, JwksValidationHandler, AuthConfig, OAuthEvent } from 'angular-oauth2-oidc';
 import { environment } from '../../../environments/environment';
+import { BehaviorSubject } from 'rxjs';
+import { User } from "../../../types/auth.type";
 
 @Component({
   selector: "app",
@@ -24,6 +26,8 @@ export class AppComponent implements OnInit, OnDestroy {
   objLoaderStatus: boolean;
   loading: boolean;
   readonly VAPID_PUBLIC_KEY = "BBxqxISU8686kkJSKc_DQdjHWQUG6THMmKai6QKHDS_RuA_dYCR9EwaNpWQzhRUViLpV_ttEmiJfxNvHjE7F7Rc";
+  user = new BehaviorSubject<User>(null);
+  isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(
     private swPush: SwPush,
@@ -58,6 +62,10 @@ export class AppComponent implements OnInit, OnDestroy {
         .then(() => {
           if (!this.oauthService.hasValidAccessToken()) {
             this.oauthService.initImplicitFlow();
+          } else {
+            this.oauthService.loadUserProfile().then((userProfile: any) => {
+              this.user.next(<User>{ email: userProfile.email, firstName: userProfile.given_name, lastName: userProfile.name, photo: userProfile.picture })
+            })
           }
         });
     });
@@ -66,15 +74,25 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.setTheme(localStorage.getItem(Constants.ThemeKey) || "dark-theme");
-    this.oauthService.events.subscribe(e => {
-      console.debug('oauth/oidc event', e);
-      //if (e.type === "token_received") {
-      //  this.oauthService.loadUserProfile().then(user => {
-      //    debugger
-      //    console.log(`claims => ${user}`);
-      //  });
-      //}
+    this.oauthService.events.subscribe((authEvent: OAuthEvent) => {
+
+      console.debug('oauth/oidc event', authEvent);
+      if (authEvent.type == 'user_profile_loaded' && this.user.getValue() == null) {
+        this.isAuthenticated.next(true);
+
+        // TODO: Share the some user && adding user photo, id to scope
+        // TODO: gérer le cas de déconnexion (expired_token, auth_failed, signout, etc...)
+        // TODO: explicit signout
+
+        this.oauthService.loadUserProfile().then((userProfile: any) => {
+          //{"name":"Admin Smith","given_name":"Admin","family_name":"Administrator","email":"admin@email.com","website":"http://admin.com","sub":"88421153"}
+          this.user.next(<User>{ email: userProfile.email, firstName: userProfile.given_name, lastName: userProfile.name, photo: userProfile.picture })
+        });
+      } else if (authEvent.type == 'logout' || authEvent.type === 'token_expires') {
+        this.isAuthenticated.next(false);
+      }
     });
+
     //this.authService
     //  .isAuthenticated()
     //  .pipe(distinctUntilChanged())

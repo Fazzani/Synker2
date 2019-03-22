@@ -1,5 +1,5 @@
 <mat-progress-bar mode="indeterminate" style="position:fixed;top:0;z-index:99" color="warn" *ngIf="objLoaderStatus">></mat-progress-bar>
-<app-navbar class="mat-elevation-z6 primary" (onThemeChanged)="handleThemeChanged($event)" (onWebPushClicked)="handelSubscribeToWebPush($event)">
+<app-navbar class="mat-elevation-z6 primary" [user]="(user | async)" [isAuthenticated]="(isAuthenticated | async)" (onThemeChanged)="handleThemeChanged($event)" (onWebPushClicked)="handelSubscribeToWebPush($event)">
 </app-navbar>
 <ng-template #loading>
 <div class="loading" [hidden]="!loading">
