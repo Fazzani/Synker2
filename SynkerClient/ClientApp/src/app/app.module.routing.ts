@@ -5,8 +5,6 @@ import { EpgComponent } from "./components/epg/epg.component";
 import { XmltvComponent } from "./components/xmltv/xmltv.component";
 import { SitePackComponent } from "./components/sitepack/sitepack.component";
 import { PlaylistComponent } from "./components/playlist/playlist.component";
-import { DialogComponent } from "./components/shared/dialogs/dialog.component";
-import { RegisterComponent } from "./components/dialogs/auth/RegisterDialog";
 import { MediaComponent } from "./components/media/media.component";
 import { UserComponent } from "./components/user/user.component";
 import { GroupComponent } from "./components/group/group.component";
@@ -30,8 +28,6 @@ const appRoutes: Routes = [
   { path: "playlist/:id/groups", component: GroupComponent, canActivate: [AuthGuard] },
   { path: "notifications", component: NotificationsComponent, canActivate: [AuthGuard] },
   { path: "me", component: UserComponent, canActivate: [AuthGuard], resolve: { user: UserResolver } }, 
-  { path: "signin", component: DialogComponent },
-  { path: "register", component: RegisterComponent },
   { path: 'auth-callback', component: AuthCallbackComponent },
   { path: "", redirectTo: "/home", pathMatch: "full" },
   { path: "**", redirectTo: "/home", pathMatch: "full" }

@@ -1,43 +1,32 @@
 <div class="site-container">
-  <form #UserRegister="ngForm" novalidate *ngIf="user; else loading" fxLayout="column">
-    <img [src]="user.photo" class="logo-medium" style="width:80px" />
-    <mat-select placeholder="Gender..." [(ngModel)]="user.gender" name="gender">
-      <mat-option *ngFor="let gender of genders" [value]="gender.value">
-        {{ gender.viewValue }}
-      </mat-option>
-    </mat-select>
-    <mat-form-field>
-      <input matInput [(ngModel)]="user.firstName" name="firstName" placeholder="Firstname..." required #firstnameControl="ngModel">
-      <mat-error *ngIf="firstnameControl.touched && firstnameControl.invalid">
-        <span *ngIf="firstnameControl.errors.required">firstname is required </span>
-      </mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput [(ngModel)]="user.lastName" name="lastName" placeholder="Lastname..." required #lastnameControl="ngModel">
-      <mat-error *ngIf="lastnameControl.touched && lastnameControl.invalid">
-        <span *ngIf="lastnameControl.errors.required">lastname is required </span>
-      </mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput [(ngModel)]="user.email" name="email" placeholder="Email..." required #emailControl="ngModel">
-      <mat-error *ngIf="emailControl.touched && emailControl.invalid">
-        <span *ngIf="emailControl.errors.required">email is required </span>
-      </mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput [matDatepicker]="picker" name="Birthdate" placeholder="Birthdate..." [formControl]="birthdate">
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-    <!--<mat-form-field>
-      <input matInput [value]="user.createdDate | date:'medium'" name="createdDate" readonly>
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput [value]="user.updatedDate | date:'medium'" name="updatedDate" readonly>
-    </mat-form-field>-->
-    <button mat-raised-button [disabled]="!UserRegister.form.valid" (click)="save()">Save</button>
-  </form>
-    <ng-template #loading>
-        <loader></loader>
-    </ng-template>
+  <mat-card class="user-card">
+    <mat-card-content>
+      <form #UserRegister="ngForm" novalidate fxLayout="row" fxLayoutGap="20px">
+        <img [src]="user.photo" class="logo-medium" fxFlex="10" />
+        <div fxLayout="column" fxFlex="50"  fxFlex.gt-sm="100">
+          <mat-select placeholder="Gender..." [(ngModel)]="user.gender" name="gender">
+            <mat-option *ngFor="let gender of genders" [value]="gender">
+              {{ gender }}
+            </mat-option>
+          </mat-select>
+          <mat-form-field class="full-width">
+            <input matInput [(ngModel)]="user.firstName" name="firstName" placeholder="Firstname..." readonly>
+          </mat-form-field>
+          <mat-form-field class="full-width">
+            <input matInput [(ngModel)]="user.lastName" name="lastName" placeholder="Lastname..." readonly>
+          </mat-form-field>
+          <mat-form-field class="full-width">
+            <input matInput [(ngModel)]="user.email" name="email" placeholder="Email..." readonly>
+          </mat-form-field>
+          <mat-form-field class="full-width">
+            <input matInput [matDatepicker]="picker" name="Birthdate" placeholder="Birthdate..." [formControl]="birthdate" readonly>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+          <div fxLayout="column" fxFlex fxHide.gt-sm>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
 </div>

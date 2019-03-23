@@ -15,7 +15,6 @@ import { XtreamService } from "../../../services/xtream/xtream.service";
 })
 export class PlaylistInfosDialog implements OnInit, OnDestroy {
   providersEnum: string[] = PlaylistModel.PROVIDERS;
-
   PlaylistStatusVaLues: string[] = PlaylistModel.STATUS;
   SynkGroupEnumValues: string[] = PlaylistModel.SYNKGROUP;
 

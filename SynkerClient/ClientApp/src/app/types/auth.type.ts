@@ -21,16 +21,7 @@ export class User {
   birthdate: Date;
   photo: string | ArrayBuffer;
   roles: roles = "Default";
-  public static GENDERS = [
-    {
-      value: 0,
-      viewValue: "Mr"
-    },
-    {
-      value: 1,
-      viewValue: "Mrs"
-    }
-  ];
+  public static GENDERS = ["Mr", "Mrs"];
 
   public static FromUserProfile(userProfile: any): User {
     if (userProfile != null) {

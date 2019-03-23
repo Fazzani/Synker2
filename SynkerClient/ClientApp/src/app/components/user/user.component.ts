@@ -12,7 +12,7 @@ import * as moment from 'moment';
   templateUrl: "./user.component.html"
 })
 export class UserComponent implements OnInit, OnDestroy {
-  genders: { value: number; viewValue: string }[];
+  genders: string[];
   birthdate = new FormControl(moment());
 
   user: User = <User>{};
@@ -25,24 +25,6 @@ export class UserComponent implements OnInit, OnDestroy {
     this.genders = User.GENDERS;
     this.user = <User>this.route.snapshot.data.user;
     this.birthdate.setValue(this.user.birthdate);
-  }
-
-  save(): void {
-   // this.usersService.update(this.user).subscribe(x => this.authService.user.next(this.user));
-  }
-
-  changeListener($event): void {
-    this.readThis($event.target);
-  }
-
-  readThis(inputValue: any): void {
-    var file: File = inputValue.files[0];
-    var myReader: FileReader = new FileReader();
-
-    myReader.onloadend = e => {
-      this.user.photo = myReader.result;
-    };
-    myReader.readAsDataURL(file);
   }
 
   ngOnDestroy() {}

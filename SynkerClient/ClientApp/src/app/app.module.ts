@@ -10,7 +10,6 @@ import { HomeComponent } from "./components/home/home.component";
 import { MediaComponent, TvgMediaModifyDialog } from "./components/media/media.component";
 import { EpgComponent, EpgModifyDialog } from "./components/epg/epg.component";
 import { XmltvComponent, XmltvModifyDialog } from "./components/xmltv/xmltv.component";
-import { DialogComponent } from "./components/shared/dialogs/dialog.component";
 
 import { NavBarModule } from "./components/shared/navbar/navbar";
 import { FlexLayoutModule } from "@angular/flex-layout";
@@ -28,8 +27,6 @@ import { PlaylistDiffDialog } from "./components/dialogs/playlistDiff/playlist.d
 import { PlaylistUpdateDialog } from "./components/dialogs/playlistUpdate/playlist.update.dialog";
 import { GroupsDialog } from "./components/dialogs/group/groups.component";
 import { MatchTvgDialog } from "./components/dialogs/matchTvg/matchTvg.component";
-import { RegisterComponent, RegisterDialog } from "./components/dialogs/auth/RegisterDialog";
-import { LoginDialog } from "./components/dialogs/auth/LoginDialog";
 import { PlaylistInfosDialog } from "./components/dialogs/playlistInfos/playlist.infos.component";
 import { UserComponent } from "./components/user/user.component";
 import { AppRoutingModule } from "./app.module.routing";
@@ -79,7 +76,6 @@ const authModuleConfig: OAuthModuleConfig = {
     HomeComponent,
     MediaComponent,
     SitePackComponent,
-    RegisterComponent,
     EpgComponent,
     XmltvComponent,
     UserComponent,
@@ -90,9 +86,6 @@ const authModuleConfig: OAuthModuleConfig = {
     UnauthorizedComponent,
     TvgMediaModifyDialog,
     EpgModifyDialog,
-    DialogComponent,
-    LoginDialog,
-    RegisterDialog,
     PlaylistComponent,
     PlaylistUpdateDialog,
     PlaylistBulkUpdate,
@@ -136,8 +129,6 @@ const authModuleConfig: OAuthModuleConfig = {
   entryComponents: [
     TvgMediaModifyDialog,
     EpgModifyDialog,
-    LoginDialog,
-    RegisterDialog,
     PlaylistBulkUpdate,
     PlaylistTvgSitesDialog,
     PlaylistAddDialog,

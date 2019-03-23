@@ -29,8 +29,6 @@
     <None Remove="ClientApp\src\app\app.module.routing.ts" />
     <None Remove="ClientApp\src\app\components\admin\admin.component.ts" />
     <None Remove="ClientApp\src\app\components\admin\dashboard\admin.dashboard.component.ts" />
-    <None Remove="ClientApp\src\app\components\dialogs\auth\LoginDialog.ts" />
-    <None Remove="ClientApp\src\app\components\dialogs\auth\RegisterDialog.ts" />
     <None Remove="ClientApp\src\app\components\dialogs\mediaWatch\media.watch.dialog.ts" />
     <None Remove="ClientApp\src\app\components\dialogs\playlistBulkUpdate\playlistBulkUpdate.ts" />
     <None Remove="ClientApp\src\app\components\dialogs\playlistTvgSites\PlaylistTvgSitesDialog.ts" />
@@ -148,8 +146,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\app.module.routing.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\admin\admin.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\admin\dashboard\admin.dashboard.component.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\auth\LoginDialog.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\auth\RegisterDialog.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\playlistBulkUpdate\playlistBulkUpdate.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\playlistTvgSites\PlaylistTvgSitesDialog.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\mediaWatch\media.watch.dialog.ts" />
