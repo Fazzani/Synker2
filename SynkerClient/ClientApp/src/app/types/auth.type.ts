@@ -1,5 +1,4 @@
-import moment = require('moment');
-
+import * as moment from 'moment';
 /**
  * Authentification response
  * @description Authentification response.

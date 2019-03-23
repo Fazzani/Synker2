@@ -5,7 +5,7 @@ import { UsersService } from "../../services/admin/users.service";
 import { User } from "../../types/auth.type";
 import { ActivatedRoute } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import moment = require('moment');
+import * as moment from 'moment';
 
 @Component({
   selector: "user",

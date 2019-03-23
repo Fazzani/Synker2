@@ -5,14 +5,13 @@ import { MatButtonModule, MatMenuModule } from "@angular/material";
 import { RouterModule } from "@angular/router";
 import { AppModuleMaterialModule } from "../../../app.module.material.module";
 import { User } from "../../../types/auth.type";
-import { BehaviorSubject, Subscription, Observable } from "rxjs";
+import { Subscription, Observable } from "rxjs";
 import { EqualValidator } from "../../../directives/equal-validator.directive";
 import { InitAppService } from "../../../services/initApp/InitAppService";
 import { AboutApplication } from "../../../types/aboutApplication.type";
 import { NotificationService } from "../../../services/notification/notification.service";
 import FirebaseNotification from "../../../types/firebase.type";
 import { OAuthService, OAuthEvent } from "angular-oauth2-oidc";
-import { get } from 'http';
 
 @Component({
   selector: "app-navbar",
