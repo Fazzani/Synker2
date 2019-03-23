@@ -1,3 +1,5 @@
+import moment = require('moment');
+
 /**
  * Authentification response
  * @description Authentification response.
@@ -17,10 +19,9 @@ export class User {
   firstName: string;
   lastName: string;
   email: string;
-  birthday: Date;
+  birthdate: Date;
   photo: string | ArrayBuffer;
   roles: roles = "Default";
-  connectionState: ConnectionState;
   public static GENDERS = [
     {
       value: 0,
@@ -31,6 +32,20 @@ export class User {
       viewValue: "Mrs"
     }
   ];
+
+  public static FromUserProfile(userProfile: any): User {
+    if (userProfile != null) {
+      return <User>{
+        email: userProfile.email,
+        firstName: userProfile.given_name,
+        lastName: userProfile.name,
+        photo: userProfile.picture,
+        gender: userProfile.gender,
+        birthdate: moment(userProfile.birthdate, "DD-MM-YYYY").toDate()
+      }
+    }
+    return null;
+  }
 }
 
 export type roles = "Default" | "Guest" | "Administrator";
@@ -59,12 +74,4 @@ export class AuthModel {
 export enum GrantType {
   password = 0,
   refreshToken
-}
-
-export class ConnectionState {
-  public id: number;
-  public userName: string;
-  public lastConnection: Date;
-  public disabled: boolean;
-  public approved: boolean;
 }

@@ -11,7 +11,6 @@ export class AuthGuard implements CanActivate {
 
     canActivate() {
       if (this.oauthService.hasValidIdToken() || this.oauthService.hasValidAccessToken()) {
-        console.log('User has valid token');
             return true;
         }
 

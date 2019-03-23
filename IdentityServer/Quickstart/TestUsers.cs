@@ -16,8 +16,10 @@ namespace IdentityServer4.Quickstart.UI
                 Claims =
                 {
                     new Claim(JwtClaimTypes.Name, "Heni Fazzani"),
+                    new Claim(JwtClaimTypes.Gender, "Mr"),
                     new Claim(JwtClaimTypes.GivenName, "Heni"),
                     new Claim(JwtClaimTypes.FamilyName, "Fazzani"),
+                    new Claim(JwtClaimTypes.BirthDate, "28/08/1982"),
                     new Claim(JwtClaimTypes.Email, "tunisienheni@gmail.com"),
                     new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
                     new Claim(JwtClaimTypes.WebSite, "http://synker.ovh"),
@@ -29,7 +31,9 @@ namespace IdentityServer4.Quickstart.UI
                 Claims = 
                 {
                     new Claim(JwtClaimTypes.Name, "Alice Smith"),
+                    new Claim(JwtClaimTypes.Gender, "Mrs"),
                     new Claim(JwtClaimTypes.GivenName, "Alice"),
+                    new Claim(JwtClaimTypes.BirthDate, "25/05/2000"),
                     new Claim(JwtClaimTypes.FamilyName, "Smith"),
                     new Claim(JwtClaimTypes.Email, "AliceSmith@email.com"),
                     new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
@@ -42,7 +46,9 @@ namespace IdentityServer4.Quickstart.UI
                 Claims = 
                 {
                     new Claim(JwtClaimTypes.Name, "Bob Smith"),
+                    new Claim(JwtClaimTypes.Gender, "Mr"),
                     new Claim(JwtClaimTypes.GivenName, "Bob"),
+                    new Claim(JwtClaimTypes.BirthDate, "02/11/1991"),
                     new Claim(JwtClaimTypes.FamilyName, "Smith"),
                     new Claim(JwtClaimTypes.Email, "BobSmith@email.com"),
                     new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
@@ -56,7 +62,9 @@ namespace IdentityServer4.Quickstart.UI
                 Claims =
                 {
                     new Claim(JwtClaimTypes.Name, "Admin Smith"),
+                    new Claim(JwtClaimTypes.Gender, "Mr"),
                     new Claim(JwtClaimTypes.GivenName, "Admin"),
+                    new Claim(JwtClaimTypes.BirthDate, "01/01/2019"),
                     new Claim(JwtClaimTypes.FamilyName, "Administrator"),
                     new Claim(JwtClaimTypes.Email, "admin@email.com"),
                     new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),

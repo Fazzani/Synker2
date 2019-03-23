@@ -14,7 +14,7 @@ import { DeviceService } from "../../services/device/device.service";
 import { OAuthService, JwksValidationHandler, AuthConfig, OAuthEvent } from 'angular-oauth2-oidc';
 import { environment } from '../../../environments/environment';
 import { BehaviorSubject } from 'rxjs';
-import { User } from "../../../types/auth.type";
+import { User } from "../../types/auth.type";
 
 @Component({
   selector: "app",
@@ -63,9 +63,9 @@ export class AppComponent implements OnInit, OnDestroy {
           if (!this.oauthService.hasValidAccessToken()) {
             this.oauthService.initImplicitFlow();
           } else {
-            this.oauthService.loadUserProfile().then((userProfile: any) => {
-              this.user.next(<User>{ email: userProfile.email, firstName: userProfile.given_name, lastName: userProfile.name, photo: userProfile.picture })
-            })
+            this.oauthService.loadUserProfile().then((userProfile: any) => 
+              this.user.next(User.FromUserProfile(userProfile))
+            )
           }
         });
     });

@@ -41,10 +41,7 @@
     <None Remove="ClientApp\src\app\infrastructure\JwtInterceptor.ts" />
     <None Remove="ClientApp\src\app\pipes\enumKey.pipe.ts" />
     <None Remove="ClientApp\src\app\pipes\search.pipe.ts" />
-    <None Remove="ClientApp\src\app\services\auth\auth.service.spec.ts" />
-    <None Remove="ClientApp\src\app\services\auth\auth.service.ts" />
     <None Remove="ClientApp\src\app\services\auth\AuthGuard.ts" />
-    <None Remove="ClientApp\src\app\services\auth\loginRouteGuard.service.ts" />
     <None Remove="ClientApp\src\app\services\base\base.service.spec.ts" />
     <None Remove="ClientApp\src\app\services\common\common.service.spec.ts" />
     <None Remove="ClientApp\src\app\services\common\common.service.ts" />
@@ -163,10 +160,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\infrastructure\JwtInterceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pipes\enumKey.pipe.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pipes\search.pipe.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\services\auth\auth.service.spec.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\services\auth\auth.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\auth\AuthGuard.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\services\auth\loginRouteGuard.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\base\base.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\common\common.service.spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\common\common.service.ts" />
