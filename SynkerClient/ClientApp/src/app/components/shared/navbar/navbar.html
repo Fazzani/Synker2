@@ -17,7 +17,7 @@
     <mat-icon>notifications</mat-icon>
     <!--<span class="mderial-icons mdl-badge mdl-badge--overlap" matTooltip="You have {{messages?.rowCount}} messages !" [attr.data-badge]="messages?.rowCount">message</span>-->
   </a>
-  <a routerLink="/me" class="dropdown-toggle" data-toggle="dropdown" *ngIf="isAuthenticated">
+  <a routerLink="/me" class="dropdown-toggle" data-toggle="dropdown" *ngIf="isAuthenticated && user">
     <img [src]="user.photo" class="profile-image img-circle" [alt]="user.firstName">
   </a>
   <a mat-icon-button [matMenuTriggerFor]="menu" *ngIf="isAuthenticated" fxHide="false">
@@ -33,7 +33,7 @@
   </mat-menu>
   <mat-menu x-position="before" #menu="matMenu">
 
-    <button mat-menu-item *ngIf="isAuthenticated" class="profile-image-menu">
+    <button mat-menu-item *ngIf="isAuthenticated && user" class="profile-image-menu">
       <img [src]="user.photo" class="img-circle" [alt]="user.firstName">
       <span>{{user.firstName}} {{user.lastName}}</span>
     </button>

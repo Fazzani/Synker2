@@ -12,13 +12,15 @@ export class AuthCallbackComponent implements OnInit {
   constructor(private oauthService: OAuthService, private router: Router) { }
 
   ngOnInit() {
-    this.oauthService.loadDiscoveryDocumentAndTryLogin().then(_ => {
-      if (!this.oauthService.hasValidIdToken() || !this.oauthService.hasValidAccessToken()) {
-        this.oauthService.initImplicitFlow('login');
-      } else {
-        console.log('navigate to HOOOOOOOOOOOOOOME');
-        this.router.navigate(["/home"]);
-      }
-    });
+    //this.oauthService.loadDiscoveryDocumentAndTryLogin().then(_ => {
+    //  if (!this.oauthService.hasValidIdToken() || !this.oauthService.hasValidAccessToken()) {
+    //    this.oauthService.initImplicitFlow('login');
+    //  } else {
+    //    //const uri = sessionStorage.getItem('activeUri');
+    //    //if (uri !== null) {
+    //    //  this.router.navigate([uri], { skipLocationChange: true });
+    //    //}
+    //  }
+    //});
   }
 }

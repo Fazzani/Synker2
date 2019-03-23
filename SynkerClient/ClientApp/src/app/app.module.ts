@@ -51,6 +51,7 @@ import { OAuthModule } from 'angular-oauth2-oidc';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 import { PlaylistService } from './services/playlists/playlist.service';
 import { LoaderHttpInterceptor } from "./infrastructure/LoaderHttpInterceptor";
+import { ShouldLoginComponent } from './components/login/should-login.component';
 
 export function getAboutApplication(initService: InitAppService) {
   return () => initService.getAboutApplication();
@@ -70,6 +71,7 @@ export function getAboutApplication(initService: InitAppService) {
     GroupComponent,
     LoaderComponent,
     UnauthorizedComponent,
+    ShouldLoginComponent,
     TvgMediaModifyDialog,
     EpgModifyDialog,
     PlaylistComponent,

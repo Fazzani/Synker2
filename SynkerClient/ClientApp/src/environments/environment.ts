@@ -23,22 +23,25 @@ export const environment = {
   idp: {
     authority: 'http://localhost:5000',
     client_id: 'synkerclient',
-    redirect_uri: 'http://localhost:56810/auth-callback',
+    redirect_uri: 'http://localhost:56810/index.html',
     post_logout_redirect_uri: 'http://localhost:5000/',
     response_type: "id_token token",
     scope: "openid profile synkerapi.full_access",
     filterProtocolClaims: true,
     loadUserInfo: true,
     automaticSilentRenew: true,
-    silent_redirect_uri: 'http://localhost:56810/silent-refresh.html'
+    silent_redirect_uri: 'http://localhost:56810/silent-refresh.html',
+    sessionChecksEnabled: true,
+    showDebugInformation: true, // Also requires enabling "Verbose" level in devtools
+    clearHashAfterLogin: false, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040
   },
-  authModuleConfig:{
-  // Inject "Authorization: Bearer ..." header for these APIs:
-  resourceServer: {
-    allowedUrls: ["//localhost:56800/api", "//api.synker.ovh/api"],
+  authModuleConfig: {
+    // Inject "Authorization: Bearer ..." header for these APIs:
+    resourceServer: {
+      allowedUrls: ["//localhost:56800/api", "//api.synker.ovh/api"],
       sendAccessToken: true
+    }
   }
-}
 }
 
 export const authModuleConfig: OAuthModuleConfig = environment.authModuleConfig;

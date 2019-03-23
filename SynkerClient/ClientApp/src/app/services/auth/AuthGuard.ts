@@ -1,19 +1,17 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
-import { OAuthService } from "angular-oauth2-oidc";
+import { CanActivate, Router, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
+import { AuthService } from './auth.service';
+import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
 
     constructor(
-        private router: Router,
-        private oauthService: OAuthService) { }
+        private authService: AuthService) { }
 
-    canActivate() {
-      if (this.oauthService.hasValidIdToken() || this.oauthService.hasValidAccessToken()) {
-            return true;
-        }
-
-        this.router.navigate(["/unauthorized"]);
+  canActivate(route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,) {
+      return this.authService.canActivateProtectedRoutes$
+        .pipe(tap(x => console.log('You tried to go to ' + state.url + ' and this guard said ' + x)));
     }
 }

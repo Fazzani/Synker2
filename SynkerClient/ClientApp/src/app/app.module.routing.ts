@@ -15,6 +15,7 @@ import { AuthCallbackComponent } from './components/auth-callback/auth-callback.
 import { AuthGuard } from './services/auth/AuthGuard';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 import { UserResolver } from './components/user/user.resolver';
+import { ShouldLoginComponent } from './components/login/should-login.component';
 
 const appRoutes: Routes = [
   { path: "home", component: HomeComponent, canActivate: [AuthGuard], resolve: { data: HomeResolver } },
@@ -22,7 +23,8 @@ const appRoutes: Routes = [
   { path: "admin", loadChildren: "./components/admin/admin.module#AdminModule" },
   { path: "epg", component: EpgComponent, canActivate: [AuthGuard] },
   { path: "xmltv", component: XmltvComponent },
-  { path: "unauthorized", component: UnauthorizedComponent  },
+  { path: "should-login", component: ShouldLoginComponent },
+  //{ path: "unauthorized", component: UnauthorizedComponent  },
   { path: "sitepack", component: SitePackComponent, canActivate: [AuthGuard] },
   { path: "playlist/:id", component: PlaylistComponent, canActivate: [AuthGuard], resolve: { data: PlaylistDetailResolver } },
   { path: "playlist/:id/groups", component: GroupComponent, canActivate: [AuthGuard] },

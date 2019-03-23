@@ -13,8 +13,9 @@ import { SwUpdate, SwPush } from "@angular/service-worker";
 import { DeviceService } from "../../services/device/device.service";
 import { OAuthService, JwksValidationHandler, AuthConfig, OAuthEvent } from 'angular-oauth2-oidc';
 import { environment } from '../../../environments/environment';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from "../../types/auth.type";
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: "app",
@@ -26,8 +27,10 @@ export class AppComponent implements OnInit, OnDestroy {
   objLoaderStatus: boolean;
   loading: boolean;
   readonly VAPID_PUBLIC_KEY = "BBxqxISU8686kkJSKc_DQdjHWQUG6THMmKai6QKHDS_RuA_dYCR9EwaNpWQzhRUViLpV_ttEmiJfxNvHjE7F7Rc";
-  user = new BehaviorSubject<User>(null);
-  isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  user: Observable<User>;
+  isAuthenticated: Observable<boolean>;
+  isDoneLoading: Observable<boolean>;
+  canActivateProtectedRoutes: Observable<boolean>;
 
   constructor(
     private swPush: SwPush,
@@ -37,9 +40,14 @@ export class AppComponent implements OnInit, OnDestroy {
     private commonService: CommonService,
     private router: Router,
     private overlayContainer: OverlayContainer,
-    private oauthService: OAuthService
+    private oauthService: OAuthService,
+    private authService: AuthService
   ) {
     this.objLoaderStatus = false;
+    this.isAuthenticated = this.authService.isAuthenticated$;
+    this.isDoneLoading = this.authService.isDoneLoading$;
+    this.user = this.authService.user$;
+    this.canActivateProtectedRoutes = this.authService.canActivateProtectedRoutes$;
 
     this.loading = true;
     this.configureWithNewConfigApi();
@@ -54,71 +62,13 @@ export class AppComponent implements OnInit, OnDestroy {
     });
     this.oauthService.tokenValidationHandler = new JwksValidationHandler();
     this.oauthService.showDebugInformation = true;
-    this.oauthService.loadDiscoveryDocument().then((doc) => {
-      this.oauthService.tryLogin()
-        .catch(err => {
-          console.error(err);
-        })
-        .then(() => {
-          if (!this.oauthService.hasValidAccessToken()) {
-            this.oauthService.initImplicitFlow();
-          } else {
-            this.oauthService.loadUserProfile().then((userProfile: any) => 
-              this.user.next(User.FromUserProfile(userProfile))
-            )
-          }
-        });
-    });
-    this.oauthService.setupAutomaticSilentRefresh();
+
+    this.authService.runInitialLoginSequence();
   }
 
   ngOnInit() {
     this.setTheme(localStorage.getItem(Constants.ThemeKey) || "dark-theme");
-    this.oauthService.events.subscribe((authEvent: OAuthEvent) => {
-
-      console.debug('oauth/oidc event', authEvent);
-      if (authEvent.type == 'user_profile_loaded' && this.user.getValue() == null) {
-        this.isAuthenticated.next(true);
-
-        // TODO: Share the some user && adding user photo, id to scope
-        // TODO: gérer le cas de déconnexion (expired_token, auth_failed, signout, etc...)
-        // TODO: explicit signout
-
-        this.oauthService.loadUserProfile().then((userProfile: any) => {
-          //{"name":"Admin Smith","given_name":"Admin","family_name":"Administrator","email":"admin@email.com","website":"http://admin.com","sub":"88421153"}
-          this.user.next(<User>{ email: userProfile.email, firstName: userProfile.given_name, lastName: userProfile.name, photo: userProfile.picture })
-        });
-      } else if (authEvent.type == 'logout' || authEvent.type === 'token_expires') {
-        this.isAuthenticated.next(false);
-      }
-    });
-
-    //this.authService
-    //  .isAuthenticated()
-    //  .pipe(distinctUntilChanged())
-    //  .subscribe(isAuth => {
-    //    console.log(
-    //      `----------- JwtInterceptor 401 isAuth = ${isAuth} current url ${this.router.routerState.snapshot.url} this.authService.redirectUrl: ${
-    //        this.authService.redirectUrl
-    //      }`
-    //    );
-    //    if (
-    //      !isAuth &&
-    //      this.router.routerState.snapshot.url != "" &&
-    //      (this.router.routerState.snapshot.url != variables.SIGN_IN_URL && this.router.routerState.snapshot.url != variables.REGISTER_URL)
-    //    ) {
-    //      this.authService.redirectUrl = this.router.routerState.snapshot.url == variables.SIGN_IN_URL ? "/home" : this.router.routerState.snapshot.url;
-    //      this.router.navigate(["signin"]);
-    //    }
-    //  });
-
-    //this.authService.authenticated.pipe(distinctUntilChanged()).subscribe(isAuth => {
-    //  if (!isAuth && this.router.url != variables.SIGN_IN_URL && this.router.url != variables.REGISTER_URL) {
-    //    this.authService.redirectUrl = this.router.routerState.snapshot.url;
-    //    this.router.navigate(["signin"]);
-    //  }
-    //});
-
+   
     this.commonService.loaderStatus
       .pipe(
         distinctUntilChanged(),

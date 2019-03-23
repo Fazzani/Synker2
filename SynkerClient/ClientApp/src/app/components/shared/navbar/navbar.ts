@@ -11,7 +11,8 @@ import { InitAppService } from "../../../services/initApp/InitAppService";
 import { AboutApplication } from "../../../types/aboutApplication.type";
 import { NotificationService } from "../../../services/notification/notification.service";
 import FirebaseNotification from "../../../types/firebase.type";
-import { OAuthService, OAuthEvent } from "angular-oauth2-oidc";
+import { OAuthService } from "angular-oauth2-oidc";
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: "app-navbar",
@@ -49,8 +50,7 @@ export class NavBar implements OnInit, OnDestroy {
   notificationOn: boolean = true;
 
   constructor(
-    //private authService: AuthService,
-    //public authorizedGuard: AuthorizedRouteGuard,
+    private authService: AuthService,
     private initAppService: InitAppService,
     private notificationService: NotificationService,
     private oauthService: OAuthService
@@ -60,13 +60,14 @@ export class NavBar implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    //this.userSubscription = this.user.subscribe(user => {
-    //  if (user != undefined) {
-    //    console.log(`User ${user.firstName} is authenticated...${user.id}`);
-    //    this.notifications$ = this.notificationService.list(user.id, 5).valueChanges();
-    //    this.notificationsCount$ = this.notificationService.count(user.id);
-    //  }
-    //});
+    this.userSubscription = this.authService.user$.subscribe(user => {
+      if (user != undefined) {
+        console.log(`User ${user.firstName} is authenticated...${user.id}`);
+        //TODO: Notifications by email Or getting userId from Synker API
+        this.notifications$ = this.notificationService.list(user.id, 5).valueChanges();
+        this.notificationsCount$ = this.notificationService.count(user.id);
+      }
+    });
   }
 
   onSetTheme(theme) {
@@ -78,7 +79,7 @@ export class NavBar implements OnInit, OnDestroy {
   }
 
   signout(): void {
-    this.oauthService.logOut(false);
+    this.oauthService.logOut(true);
   }
 
   toggleNotification = () => {
