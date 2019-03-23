@@ -34,9 +34,8 @@
     <None Remove="ClientApp\src\app\components\dialogs\playlistTvgSites\PlaylistTvgSitesDialog.ts" />
     <None Remove="ClientApp\src\app\components\dialogs\playlistUpdate\playlist.update.dialog.ts" />
     <None Remove="ClientApp\src\app\components\unauthorized\unauthorized.component.ts" />
-    <None Remove="ClientApp\src\app\infrastructure\DefaultHttpInterceptor.ts" />
     <None Remove="ClientApp\src\app\infrastructure\DefaultOAuthInterceptor.ts" />
-    <None Remove="ClientApp\src\app\infrastructure\JwtInterceptor.ts" />
+    <None Remove="ClientApp\src\app\infrastructure\LoaderHttpInterceptor.ts" />
     <None Remove="ClientApp\src\app\pipes\enumKey.pipe.ts" />
     <None Remove="ClientApp\src\app\pipes\search.pipe.ts" />
     <None Remove="ClientApp\src\app\services\auth\AuthGuard.ts" />
@@ -151,9 +150,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\mediaWatch\media.watch.dialog.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\dialogs\playlistUpdate\playlist.update.dialog.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\unauthorized\unauthorized.component.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\infrastructure\DefaultHttpInterceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\infrastructure\DefaultOAuthInterceptor.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\infrastructure\JwtInterceptor.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\infrastructure\LoaderHttpInterceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pipes\enumKey.pipe.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pipes\search.pipe.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\auth\AuthGuard.ts" />

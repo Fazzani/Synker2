@@ -6,7 +6,7 @@ import { Injectable, Injector } from "@angular/core";
 import { CommonService } from "../services/common/common.service";
 
 @Injectable()
-export class JwtInterceptor implements HttpInterceptor {
+export class LoaderHttpInterceptor implements HttpInterceptor {
   private commonService: CommonService;
 
   constructor(private injector: Injector, private router: Router) {}
@@ -20,7 +20,7 @@ export class JwtInterceptor implements HttpInterceptor {
       .handle(request).pipe(
       tap(
         (event: HttpEvent<any>) => {
-          console.log("IN JwtInterceptor", event);
+          console.log("IN LoaderHttpInterceptor", event);
           if (event instanceof HttpResponse) {
             // do stuff with response if you want
           }

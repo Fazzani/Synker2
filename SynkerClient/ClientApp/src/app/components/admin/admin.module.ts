@@ -1,7 +1,5 @@
 import { Routes, RouterModule } from "@angular/router";
 import { AdminComponent } from "./admin.component";
-//import { LoginRouteGuard } from "../../services/auth/loginRouteGuard.service";
-//import { AuthorizedRouteGuard } from "../../services/auth/authorizedRouteGuard.service";
 import { UsersComponent } from "./users/users.component";
 import { UsersResolver } from "./users/users.resolver";
 import { HostsComponent } from "./hosts/hosts.component";
@@ -9,19 +7,12 @@ import { HostsResolver } from "./hosts/hosts.resolver";
 import { AdminDashboardComponent } from "./dashboard/admin.dashboard.component";
 import { NgModule } from "@angular/core";
 import { AppModuleMaterialModule } from "../../app.module.material.module";
-import {  HTTP_INTERCEPTORS } from "@angular/common/http";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { CommonModule } from "@angular/common";
-import { DefaultHttpInterceptor } from "../../infrastructure/DefaultHttpInterceptor";
 import { AuthGuard } from '../../services/auth/AuthGuard';
-import { OAuthModule, OAuthModuleConfig } from 'angular-oauth2-oidc';
-const authModuleConfig: OAuthModuleConfig = {
-  // Inject "Authorization: Bearer ..." header for these APIs:
-  resourceServer: {
-    allowedUrls: ["http://localhost:56800/api"],
-    sendAccessToken: true
-  },
-};
+import { OAuthModule } from 'angular-oauth2-oidc';
+import { authModuleConfig } from '../../../environments/environment';
+
 const adminRoutes: Routes = [
   {
     path: "",
@@ -62,16 +53,6 @@ const adminRoutes: Routes = [
   ],
   exports: [RouterModule],
   providers: [
-    //{
-    //  provide: HTTP_INTERCEPTORS,
-    //  useClass: DefaultHttpInterceptor,
-    //  multi: true
-    //},
-    //{
-    //  provide: HTTP_INTERCEPTORS,
-    //  useClass: JwtInterceptor,
-    //  multi: true
-    //},
     HostsResolver,
     UsersResolver
   ]

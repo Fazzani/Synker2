@@ -40,35 +40,21 @@ import { UsersResolver } from "./components/admin/users/users.resolver";
 import { HostsResolver } from "./components/admin/hosts/hosts.resolver";
 import { HomeResolver } from "./components/home/home.resolver";
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
+import { environment, authModuleConfig } from '../environments/environment';
 import { MediaWatchDialog } from "./components/dialogs/mediaWatch/media.watch.dialog";
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { NotificationsComponent } from "./components/notifications/notifications.component";
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
-import { OAuthModule, ValidationHandler, OAuthStorage, JwksValidationHandler, OAuthModuleConfig } from 'angular-oauth2-oidc';
+import { OAuthModule } from 'angular-oauth2-oidc';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 import { PlaylistService } from './services/playlists/playlist.service';
-import { JwtInterceptor } from "./infrastructure/JwtInterceptor";
-
-//export function tokenGetter() {
-//  const user = <User>JSON.parse(localStorage.getItem("user")) || { access_token: '' };
-//  console.log(`access_token ${user.access_token}`)
-//  return user.access_token;
-//}
+import { LoaderHttpInterceptor } from "./infrastructure/LoaderHttpInterceptor";
 
 export function getAboutApplication(initService: InitAppService) {
   return () => initService.getAboutApplication();
 }
-
-const authModuleConfig: OAuthModuleConfig = {
-  // Inject "Authorization: Bearer ..." header for these APIs:
-  resourceServer: {
-    allowedUrls: ["//localhost:56800/api", "//api.synker.ovh/api"],
-    sendAccessToken: true
-  },
-};
 
 @NgModule({
   declarations: [
@@ -144,7 +130,7 @@ const authModuleConfig: OAuthModuleConfig = {
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: JwtInterceptor,
+      useClass: LoaderHttpInterceptor,
       multi: true
     },
     {
