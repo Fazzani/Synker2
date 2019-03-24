@@ -54,12 +54,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private configureWithNewConfigApi() {
-    this.oauthService.configure(<AuthConfig>{
-      clientId: environment.idp.client_id,
-      issuer: environment.idp.authority,
-      redirectUri: environment.idp.redirect_uri,
-      scope: environment.idp.scope
-    });
+    this.oauthService.configure(<AuthConfig>environment.idp);
     this.oauthService.tokenValidationHandler = new JwksValidationHandler();
     this.oauthService.showDebugInformation = true;
 

@@ -81,8 +81,10 @@ export class AuthService {
             photo: userProfile.picture
           })));
 
+    //silent_refresh_timeout
+    //token_expires
     this.oauthService.events
-      .pipe(filter(e => ['session_terminated', 'session_error', 'silent_refresh_timeout'].includes(e.type)))
+      .pipe(filter(e => ['session_terminated', 'session_error'].includes(e.type)))
       .subscribe(e => this.navigateToLoginPage());
 
     this.oauthService.setupAutomaticSilentRefresh();

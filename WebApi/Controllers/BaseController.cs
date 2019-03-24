@@ -29,7 +29,6 @@ namespace Hfa.WebApi.Controllers
 
         protected Guid GetInternalPlaylistId(string id) => new Guid(Encoding.UTF8.DecodeBase64(id));
 
-
         public BaseController(IOptions<ElasticConfig> elasticConfig, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
             SynkerDbContext context)
         {

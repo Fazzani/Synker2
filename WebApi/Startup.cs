@@ -7,7 +7,6 @@ using hfa.PlaylistBaseLibrary.Options;
 using hfa.PlaylistBaseLibrary.Providers;
 using hfa.Synker.Service;
 using hfa.Synker.Service.Elastic;
-using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Services.MediaRefs;
@@ -48,6 +47,7 @@ using Newtonsoft.Json.Converters;
 using Polly;
 using Polly.Extensions.Http;
 using RabbitMQ.Client;
+using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
@@ -57,7 +57,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.WebSockets;
 using System.Reflection;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -256,6 +255,8 @@ namespace hfa.WebApi
             });
 
             //https://github.com/domaindrivendev/Swashbuckle.AspNetCore
+            var jwtOptions = Configuration.GetSection(nameof(JwtBearerOptions)).Get<JwtBearerOptions>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
@@ -268,27 +269,27 @@ namespace hfa.WebApi
                     License = new License { Name = "Use under MIT", Url = "" },
 
                 });
+                c.AddSecurityDefinition("oauth2", new OAuth2Scheme
+                {
+                    Type = "oauth2",
+                    Description= "OAuth2 Implicit Grant",
+                    Flow = "implicit",
+                    AuthorizationUrl = $"{jwtOptions.Authority}/connect/authorize",
+                    TokenUrl = $"{jwtOptions.Authority}/connect/token",
+                    Scopes = new Dictionary<string, string>
+                    {
+                        { "synkerapi.full_access", "Full access operations" },
+                        { "synkerapi.readonly", "ReadOnly access operations" }
+                    }
 
-                c.OperationFilter<AuthResponsesOperationFilter>();
+                });
+               
+                c.OperationFilter<SecurityRequirementsOperationFilter>();
                 c.DescribeAllEnumsAsStrings();
                 c.DescribeStringEnumsInCamelCase();
                 c.IgnoreObsoleteActions();
                 c.IgnoreObsoleteProperties();
                 c.SchemaFilter<AutoRestSchemaFilter>();
-
-                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
-                {
-                    In = "header",
-                    Description = "Please insert JWT with Bearer into field",
-                    Name = "Authorization",
-                    Type = "apiKey"
-                });
-
-                c.AddSecurityDefinition("Basic", new BasicAuthScheme
-                {
-                    Description = "Please insert username/password into fields",
-                    Type = "basic"
-                });
             });
 
             services.AddCors(options =>
@@ -368,14 +369,17 @@ namespace hfa.WebApi
                 {
                     app.UseMiddleware<ByPassAuthMiddleware>();
                 }
+                app.UseAuthentication();
 
                 #region Swagger
 
                 app.UseSwagger();
-                // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Synker API V1");
+                    c.OAuthClientId("synker_swagger_api");
+                    c.OAuthAppName("Synker API - Swagger");
                     //c.DefaultModelExpandDepth(2);
                     //c.DefaultModelRendering(ModelRendering.Model);
                     //c.DefaultModelsExpandDepth(-1);
@@ -397,7 +401,6 @@ namespace hfa.WebApi
                 app.UseResponseCaching();
 
                 app.UseStaticFiles();
-                app.UseAuthentication();
                 app.UseMvc(routes =>
                 {
                     routes.MapRoute(
@@ -491,7 +494,8 @@ namespace hfa.WebApi
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtBearerOptions =>
+            })
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtBearerOptions =>
              {
                  var jwtOptions = Configuration.GetSection(nameof(JwtBearerOptions)).Get<JwtBearerOptions>();
                  jwtBearerOptions.SaveToken = jwtOptions.SaveToken;
@@ -500,27 +504,26 @@ namespace hfa.WebApi
                  jwtBearerOptions.Audience = jwtOptions.Audience;
                  jwtBearerOptions.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                  {
-                     ValidateAudience = true,
                      ValidateIssuer = true
                  };
 
-                // We have to hook the OnMessageReceived event in order to
-                // allow the JWT authentication handler to read the access
-                // token from the query string when a WebSocket or 
-                // Server-Sent Events request comes in.
-                jwtBearerOptions.Events = new JwtBearerEvents
+                 // We have to hook the OnMessageReceived event in order to
+                 // allow the JWT authentication handler to read the access
+                 // token from the query string when a WebSocket or 
+                 // Server-Sent Events request comes in.
+                 jwtBearerOptions.Events = new JwtBearerEvents
                  {
                      OnMessageReceived = context =>
                      {
                          var accessToken = context.Request.Query["access_token"];
 
-                        // If the request is for our hub...
-                        var path = context.HttpContext.Request.Path;
+                         // If the request is for our hub...
+                         var path = context.HttpContext.Request.Path;
                          if (!string.IsNullOrEmpty(accessToken) &&
                              (path.StartsWithSegments("/hubs/notification")))
                          {
-                            // Read the token out of the query string
-                            context.Token = accessToken;
+                             // Read the token out of the query string
+                             context.Token = accessToken;
                          }
                          return Task.CompletedTask;
                      }
@@ -529,8 +532,9 @@ namespace hfa.WebApi
 
             services.AddAuthorization(authorizationOptions =>
             {
-                authorizationOptions.AddPolicy(AuthorizePolicies.ADMIN, policyBuilder => policyBuilder.RequireClaim("scope", "synkerapi.full_access"));
-                authorizationOptions.AddPolicy(AuthorizePolicies.VIP, policyBuilder => policyBuilder.RequireClaim(AuthorizePolicies.VIP));
+                authorizationOptions.AddPolicy(AuthorizePolicies.ADMIN, policyBuilder => policyBuilder.RequireRole(AuthorizePolicies.ADMIN));
+                authorizationOptions.AddPolicy(AuthorizePolicies.FULLACCESS, policyBuilder => policyBuilder.RequireClaim("scope", "synkerapi.full_access"));
+                authorizationOptions.AddPolicy(AuthorizePolicies.READER, policyBuilder => policyBuilder.RequireClaim("scope", "synkerapi.readonly"));
                 authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
             });
         }

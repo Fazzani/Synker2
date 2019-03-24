@@ -21,19 +21,21 @@ export const environment = {
     messagingSenderId: "685189543315"
   },
   idp: {
-    authority: 'http://localhost:5000',
-    client_id: 'synkerclient',
-    redirect_uri: 'http://localhost:56810/index.html',
-    post_logout_redirect_uri: 'http://localhost:5000/',
-    response_type: "id_token token",
-    scope: "openid profile synkerapi.full_access",
+    issuer: 'http://localhost:5000',
+    clientId: 'synkerclient',
+    redirectUri: 'http://localhost:56810/index.html',
+    postLogoutRedirectUri: 'http://localhost:5000/',
+    responseType: "id_token token",
+    scope: "openid profile synkerapi.full_access offline_access",
     filterProtocolClaims: true,
     loadUserInfo: true,
     automaticSilentRenew: true,
     silent_redirect_uri: 'http://localhost:56810/silent-refresh.html',
     sessionChecksEnabled: true,
     showDebugInformation: true, // Also requires enabling "Verbose" level in devtools
-    clearHashAfterLogin: false, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040
+    clearHashAfterLogin: false, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,
+    silentRefreshTimeout: 5000, // For faster testing
+    timeoutFactor: 0.25, // For faster testing
   },
   authModuleConfig: {
     // Inject "Authorization: Bearer ..." header for these APIs:

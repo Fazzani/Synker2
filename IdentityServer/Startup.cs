@@ -24,6 +24,7 @@ namespace IdentityServer
         public Startup(IHostingEnvironment environment, IConfiguration configuration)
         {
             Environment = environment;
+          
             Configuration = configuration;
         }
 

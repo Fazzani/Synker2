@@ -4,10 +4,12 @@
 
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
+using System.IO;
 
 namespace IdentityServer
 {
@@ -24,6 +26,12 @@ namespace IdentityServer
         {
             return WebHost.CreateDefaultBuilder(args)
                     .UseStartup<Startup>()
+                    .ConfigureAppConfiguration((hostingContext, config) =>
+                    {
+                        config.SetBasePath(Directory.GetCurrentDirectory());
+                        config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                        config.AddEnvironmentVariables();
+                    })
                     .UseSerilog((context, configuration) =>
                     {
                         configuration
