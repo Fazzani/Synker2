@@ -65,6 +65,7 @@ namespace IdentityServer4.Quickstart.UI
                     new Claim(JwtClaimTypes.Gender, "Mr"),
                     new Claim(JwtClaimTypes.GivenName, "Admin"),
                     new Claim(JwtClaimTypes.BirthDate, "01/01/2019"),
+                    new Claim(JwtClaimTypes.Role, "Administrators"),
                     new Claim(JwtClaimTypes.FamilyName, "Administrator"),
                     new Claim(JwtClaimTypes.Email, "admin@email.com"),
                     new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),

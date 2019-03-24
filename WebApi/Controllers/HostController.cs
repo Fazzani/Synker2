@@ -22,7 +22,7 @@ namespace hfa.WebApi.Controllers
 {
     [Produces("application/json")]
     [Route("api/v{version:apiVersion}/[controller]")]
-    [Authorize]
+    [Authorize(Policy = AuthorizePolicies.ADMIN)]
     [ApiVersion("1.0")]
     [ApiController]
     public class HostController : BaseController
@@ -42,7 +42,6 @@ namespace hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("search")]
-        [Authorize(Policy = AuthorizePolicies.ADMIN)]
         [ProducesResponseType(typeof(PagedResult<Host>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult List([FromBody] QueryListBaseModel query)

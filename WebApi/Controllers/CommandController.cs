@@ -44,6 +44,8 @@ namespace hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [Authorize(Policy = AuthorizePolicies.READER)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetCommand([FromQuery] bool? all, CancellationToken cancellationToken = default)
         {
             if (all.HasValue && all.Value)
@@ -68,6 +70,7 @@ namespace hfa.WebApi.Controllers
 
         [HttpGet("users/{userId}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [Authorize(Policy = AuthorizePolicies.READER)]
         public async Task<IActionResult> GetCommandsByUser([FromRoute] int userId, [FromQuery] bool? all, CancellationToken cancellationToken = default)
         {
