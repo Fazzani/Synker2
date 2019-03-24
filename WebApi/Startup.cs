@@ -42,6 +42,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Polly;
@@ -502,9 +503,10 @@ namespace hfa.WebApi
                  jwtBearerOptions.Authority = jwtOptions.Authority;
                  jwtBearerOptions.RequireHttpsMetadata = jwtOptions.RequireHttpsMetadata;
                  jwtBearerOptions.Audience = jwtOptions.Audience;
-                 jwtBearerOptions.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                 jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                  {
-                     ValidateIssuer = true
+                     ValidateIssuer = true,
+                     ValidateAudience = true
                  };
 
                  // We have to hook the OnMessageReceived event in order to
