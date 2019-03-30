@@ -1,3 +1,5 @@
+import { OAuthModuleConfig } from 'angular-oauth2-oidc';
+
 export const environment = {
   production: true,
   base_url: "/",
@@ -33,8 +35,9 @@ export const environment = {
   authModuleConfig: {
     // Inject "Authorization: Bearer ..." header for these APIs:
     resourceServer: {
-      allowedUrls: ["//localhost:56800/api", "//api.synker.ovh/api"],
+      allowedUrls: ["//api.synker.ovh/api"],
       sendAccessToken: true
     }
   }
 };
+export const authModuleConfig: OAuthModuleConfig = environment.authModuleConfig;
