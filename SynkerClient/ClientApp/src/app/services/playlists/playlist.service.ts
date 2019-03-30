@@ -11,9 +11,7 @@ import { TvgMedia, MediaGroup } from "../../types/media.type";
 import { environment } from "../../../environments/environment";
 import { FirebasePlaylistHealthState } from "../../types/firebase.type";
 
-@Injectable({
-  providedIn: "root"
-})
+@Injectable()
 export class PlaylistService extends BaseService {
   constructor(protected http: HttpClient, private db: AngularFireDatabase) {
     super(http);

@@ -38,7 +38,7 @@
                 {
                     Message = eventMessage,
                     Level = TraceEvent.LevelTrace.Info,
-                    UserId = playlist.UserId,
+                    UserId = playlist.User.Email,
                     Source = nameof(RabbitSynchronizeConsumer)
                 }, CancellationToken.None);
 

@@ -15,7 +15,8 @@ using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Services.Dal;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
-using System.Net;
+using System.Threading;
+using hfa.WebApi.Common.Auth;
 
 namespace hfa.WebApi.Controllers
 {
@@ -39,9 +40,13 @@ namespace hfa.WebApi.Controllers
         /// All commands or commands by connected user
         /// </summary>
         /// <param name="all">if true get all commands</param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetCommand([FromQuery] bool? all)
+        [Authorize(Policy = AuthorizePolicies.READER)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCommand([FromQuery] bool? all, CancellationToken cancellationToken = default)
         {
             if (all.HasValue && all.Value)
             {
@@ -51,9 +56,13 @@ namespace hfa.WebApi.Controllers
                   .Select(x => x.CommandText));
             }
 
+            //TODO: A virer apres la migration de l'auth
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
+            if (user == null) return BadRequest($"User {this.UserEmail} not found");
+
             return new OkObjectResult((await _dbContext
                     .Command
-                    .Where(x => x.UserId == UserId && x.TreatedDate == null)
+                    .Where(x => x.UserId == user.Id && x.TreatedDate == null)
                     .OrderByDescending(x => x.Id)
                     .ToListAsync())
                   .Select(x => x.CommandText));
@@ -61,7 +70,9 @@ namespace hfa.WebApi.Controllers
 
         [HttpGet("users/{userId}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetCommandsByUser([FromRoute] int userId, [FromQuery] bool? all)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Policy = AuthorizePolicies.READER)]
+        public async Task<IActionResult> GetCommandsByUser([FromRoute] int userId, [FromQuery] bool? all, CancellationToken cancellationToken = default)
         {
             if (await _dbContext.Users.FindAsync(userId) == null)
             {
@@ -91,6 +102,7 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
+        [Authorize(Policy = AuthorizePolicies.READER)]
         public async Task<IActionResult> GetCommand([FromRoute] int id)
         {
             var command = await _dbContext.Command.SingleOrDefaultAsync(m => m.Id == id);
@@ -107,6 +119,7 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
+        [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
         public async Task<IActionResult> PutCommandByStatus([FromRoute] int id, [FromRoute] CommandStatusEnum status)
         {
             var command = await _dbContext.Command.FindAsync(id);
@@ -126,6 +139,7 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesDefaultResponseType]
+        [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
         public async Task<IActionResult> PutCommand([FromRoute] int id, [FromBody] Command command)
         {
             if (id != command.Id)
@@ -157,6 +171,7 @@ namespace hfa.WebApi.Controllers
         [HttpPost]
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
         public async Task<IActionResult> PostCommand([FromBody] Command command)
         {
             _dbContext.Command.Add(command);
@@ -170,6 +185,7 @@ namespace hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
+        [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
         public async Task<IActionResult> DeleteCommand([FromRoute] int id)
         {
             var command = await _dbContext.Command.SingleOrDefaultAsync(m => m.Id == id);

@@ -9,6 +9,7 @@
     using hfa.Synker.Service.Services.TvgMediaHandlers;
     using hfa.Synker.Services.Dal;
     using hfa.Synkerk.Service.Services.TvgMediaHandlers;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using PlaylistManager.Entities;
@@ -22,11 +23,11 @@
     public class PlaylistService : IPlaylistService
     {
         private SynkerDbContext _dbcontext;
-        private IElasticConnectionClient _elasticConnectionClient;
-        private IContextTvgMediaHandler _contextHandler;
-        private ILogger _logger;
-        private IOptions<ElasticConfig> _elasticConfig;
-        private ISitePackService _sitePackService;
+        private readonly IElasticConnectionClient _elasticConnectionClient;
+        private readonly IContextTvgMediaHandler _contextHandler;
+        private readonly ILogger _logger;
+        private readonly IOptions<ElasticConfig> _elasticConfig;
+        private readonly ISitePackService _sitePackService;
         private IProviderFactory _providerFactory;
 
         public PlaylistService(SynkerDbContext synkerDbContext, IElasticConnectionClient elasticConnectionClient,
@@ -99,15 +100,17 @@
         /// Synk playlist and match epg, logos and groups
         /// </summary>
         /// <param name="playlistId">Playlist id</param>
-        /// <param name="resetAndSynch">Reset and synchronize playlist from scrach</param>
+        /// <param name="resetAndsynch">Reset and synchronize playlist from scrach</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<Playlist> SynkPlaylistAsync(int playlistId, bool resetAndSynch = false,
+        public async Task<Playlist> SynkPlaylistAsync(int playlistId, bool resetAndsynch = false,
             CancellationToken cancellationToken = default)
         {
-            var playlistEntity = await _dbcontext.Playlist.FindAsync(new object[] { playlistId }, cancellationToken);
+            var playlistEntity = await _dbcontext.Playlist
+                .Include(x => x.User)
+                .FirstOrDefaultAsync(x => x.Id == playlistId, cancellationToken);
 
-            return await SynkPlaylistAsync(playlistEntity, resetAndSynch, cancellationToken);
+            return await SynkPlaylistAsync(playlistEntity, resetAndsynch, cancellationToken);
         }
 
         /// <summary>

@@ -1,10 +1,8 @@
 ﻿namespace hfa.Brokers.Messages.Contracts
 {
-    using System;
-
     public class TraceEvent : ApplicationEvent
     {
-        public int UserId { get; set; } = -1;
+        public string UserId { get; set; }
 
         public string Message { get; set; }
 

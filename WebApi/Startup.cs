@@ -7,7 +7,6 @@ using hfa.PlaylistBaseLibrary.Options;
 using hfa.PlaylistBaseLibrary.Providers;
 using hfa.Synker.Service;
 using hfa.Synker.Service.Elastic;
-using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Services.MediaRefs;
@@ -27,7 +26,6 @@ using hfa.WebApi.Http;
 using hfa.WebApi.Hubs;
 using hfa.WebApi.Services;
 using MassTransit;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -44,25 +42,25 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Polly;
 using Polly.Extensions.Http;
 using RabbitMQ.Client;
+using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.WebSockets;
 using System.Reflection;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using ZNetCS.AspNetCore.Authentication.Basic;
-using ZNetCS.AspNetCore.Authentication.Basic.Events;
 
 [assembly: ApiConventionType(typeof(DefaultApiConventions))]
 namespace hfa.WebApi
@@ -106,7 +104,7 @@ namespace hfa.WebApi
             services.
                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                .AddSingleton<IPasteBinService, PasteBinService>()
-               .AddScoped<IAuthentificationService, AuthentificationService>()
+               //.AddScoped<IAuthentificationService, AuthentificationService>()
                .AddSingleton<IProviderFactory, ProviderFactory>()
                .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
                .AddScoped<IXmltvService, XmltvService>()
@@ -122,8 +120,7 @@ namespace hfa.WebApi
                .Configure<RabbitMQConfiguration>(Configuration.GetSection(nameof(RabbitMQConfiguration)))
                .Configure<List<PlaylistProviderOption>>(Configuration.GetSection(PlaylistProviderOption.PlaylistProvidersConfigurationKeyName))
                .Configure<ElasticConfig>(Configuration.GetSection(nameof(ElasticConfig)))
-               .Configure<SecurityOptions>(Configuration.GetSection(nameof(SecurityOptions)))
-               .Configure<StsOptions>(Configuration.GetSection(nameof(StsOptions)))
+               .Configure<JwtBearerOptions>(Configuration.GetSection(nameof(JwtBearerOptions)))
                .Configure<MediaServerOptions>(Configuration.GetSection(nameof(MediaServerOptions)))
                .Configure<GlobalOptions>(Configuration.GetSection(nameof(GlobalOptions)))
                .Configure<PastBinOptions>(Configuration.GetSection(nameof(PastBinOptions)))
@@ -260,6 +257,8 @@ namespace hfa.WebApi
             });
 
             //https://github.com/domaindrivendev/Swashbuckle.AspNetCore
+            var jwtOptions = Configuration.GetSection(nameof(JwtBearerOptions)).Get<JwtBearerOptions>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
@@ -272,27 +271,27 @@ namespace hfa.WebApi
                     License = new License { Name = "Use under MIT", Url = "" },
 
                 });
+                c.AddSecurityDefinition("oauth2", new OAuth2Scheme
+                {
+                    Type = "oauth2",
+                    Description = "OAuth2 Implicit Grant",
+                    Flow = "implicit",
+                    AuthorizationUrl = $"{jwtOptions.Authority}/connect/authorize",
+                    TokenUrl = $"{jwtOptions.Authority}/connect/token",
+                    Scopes = new Dictionary<string, string>
+                    {
+                        { "synkerapi.full_access", "Full access operations" },
+                        { "synkerapi.readonly", "ReadOnly access operations" }
+                    }
 
-                c.OperationFilter<AuthResponsesOperationFilter>();
+                });
+
+                c.OperationFilter<SecurityRequirementsOperationFilter>();
                 c.DescribeAllEnumsAsStrings();
                 c.DescribeStringEnumsInCamelCase();
                 c.IgnoreObsoleteActions();
                 c.IgnoreObsoleteProperties();
                 c.SchemaFilter<AutoRestSchemaFilter>();
-
-                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
-                {
-                    In = "header",
-                    Description = "Please insert JWT with Bearer into field",
-                    Name = "Authorization",
-                    Type = "apiKey"
-                });
-
-                c.AddSecurityDefinition("Basic", new BasicAuthScheme
-                {
-                    Description = "Please insert username/password into fields",
-                    Type = "basic"
-                });
             });
 
             services.AddCors(options =>
@@ -358,14 +357,6 @@ namespace hfa.WebApi
 
             synkerDbContext.Database.Migrate();
 
-            //Chanllenge Let's Encrypt path
-            //app.UseStaticFiles(new StaticFileOptions
-            //{
-            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @".well-known")),
-            //    RequestPath = new PathString("/.well-known"),
-            //    ServeUnknownFileTypes = true // serve extensionless file
-            //});
-
             loggerFactory.AddFile(Configuration.GetSection("Logging"));
 
             if (env.IsDevelopment())
@@ -380,14 +371,17 @@ namespace hfa.WebApi
                 {
                     app.UseMiddleware<ByPassAuthMiddleware>();
                 }
+                app.UseAuthentication();
 
                 #region Swagger
 
                 app.UseSwagger();
-                // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Synker API V1");
+                    c.OAuthClientId("synker_swagger_api");
+                    c.OAuthAppName("Synker API - Swagger");
                     //c.DefaultModelExpandDepth(2);
                     //c.DefaultModelRendering(ModelRendering.Model);
                     //c.DefaultModelsExpandDepth(-1);
@@ -409,7 +403,6 @@ namespace hfa.WebApi
                 app.UseResponseCaching();
 
                 app.UseStaticFiles();
-
                 app.UseMvc(routes =>
                 {
                     routes.MapRoute(
@@ -497,72 +490,57 @@ namespace hfa.WebApi
         /// <param name="services"></param>
         private void ConfigSecurity(IServiceCollection services)
         {
-            // Resolve the services from the service provider
-            IAuthentificationService authService = Provider.GetService<IAuthentificationService>();
-
             services.AddAuthentication(options =>
             {
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(jwtBearerOptions =>
-            {
-                jwtBearerOptions.SaveToken = true;
-                //jwtBearerOptions.BackchannelHttpHandler
-                jwtBearerOptions.RequireHttpsMetadata = true;
-                jwtBearerOptions.TokenValidationParameters = authService.Parameters;
-                // We have to hook the OnMessageReceived event in order to
-                // allow the JWT authentication handler to read the access
-                // token from the query string when a WebSocket or 
-                // Server-Sent Events request comes in.
-                jwtBearerOptions.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        var accessToken = context.Request.Query["access_token"];
+                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddCookie()
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtBearerOptions =>
+             {
+                 var jwtOptions = Configuration.GetSection(nameof(JwtBearerOptions)).Get<JwtBearerOptions>();
+                 jwtBearerOptions.SaveToken = jwtOptions.SaveToken;
+                 jwtBearerOptions.Authority = jwtOptions.Authority;
+                 jwtBearerOptions.RequireHttpsMetadata = jwtOptions.RequireHttpsMetadata;
+                 jwtBearerOptions.Audience = jwtOptions.Audience;
+                 jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                 {
+                     ValidateIssuer = true,
+                     ValidateAudience = true
+                 };
 
-                        // If the request is for our hub...
-                        var path = context.HttpContext.Request.Path;
-                        if (!string.IsNullOrEmpty(accessToken) &&
-                            (path.StartsWithSegments("/hubs/notification")))
-                        {
-                            // Read the token out of the query string
-                            context.Token = accessToken;
-                        }
-                        return Task.CompletedTask;
-                    }
-                };
-            }).AddBasicAuthentication(
-            options =>
-            {
-                options.Realm = "Synker";
-                options.Events = new BasicAuthenticationEvents
-                {
-                    OnValidatePrincipal = context =>
-                    {
-                        var basic = new BasicAuthenticationMiddleware();
-                        var principal = basic.Invoke(context.HttpContext, authService, Provider.GetService<SynkerDbContext>(), Provider.GetService<ILoggerFactory>());
-                        if (principal != null)
-                        {
-                            var ticket = new AuthenticationTicket(
-                                principal,
-                                new AuthenticationProperties(),
-                                BasicAuthenticationDefaults.AuthenticationScheme);
+                 // We have to hook the OnMessageReceived event in order to
+                 // allow the JWT authentication handler to read the access
+                 // token from the query string when a WebSocket or 
+                 // Server-Sent Events request comes in.
+                 jwtBearerOptions.Events = new JwtBearerEvents
+                 {
+                     OnMessageReceived = context =>
+                     {
+                         var accessToken = context.Request.Query["access_token"];
 
-                            context.Principal = principal;
-                            return Task.FromResult(AuthenticateResult.Success(ticket));
-                            //return Task.CompletedTask;
-                        }
-
-                        return Task.FromResult(AuthenticateResult.Fail("Authentication failed."));
-                    }
-                };
-            });
+                         // If the request is for our hub...
+                         var path = context.HttpContext.Request.Path;
+                         if (!string.IsNullOrEmpty(accessToken) &&
+                             (path.StartsWithSegments("/hubs/notification")))
+                         {
+                             // Read the token out of the query string
+                             context.Token = accessToken;
+                         }
+                         return Task.CompletedTask;
+                     }
+                 };
+             });
 
             services.AddAuthorization(authorizationOptions =>
             {
-                authorizationOptions.AddPolicy(AuthorizePolicies.ADMIN, policyBuilder => policyBuilder.RequireClaim(ClaimTypes.Role, Role.ADMIN_ROLE_NAME));
-                authorizationOptions.AddPolicy(AuthorizePolicies.VIP, policyBuilder => policyBuilder.RequireClaim(AuthorizePolicies.VIP));
-                authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme, "Basic").RequireAuthenticatedUser().Build();
+                authorizationOptions.AddPolicy(AuthorizePolicies.ADMIN, policyBuilder => policyBuilder.RequireRole(AuthorizePolicies.ADMIN));
+                authorizationOptions.AddPolicy(AuthorizePolicies.FULLACCESS, policyBuilder => policyBuilder.RequireClaim("scope", "synkerapi.full_access"));
+                authorizationOptions.AddPolicy(AuthorizePolicies.READER_ONLY, policyBuilder => policyBuilder.RequireClaim("scope", "synkerapi.readonly"));
+                authorizationOptions.AddPolicy(AuthorizePolicies.READER, policyBuilder => policyBuilder.RequireAssertion(a => a.User.Claims.Where(c => c.Type == "scope").Any(scope => scope.Value == "synkerapi.full_access" || scope.Value == "synkerapi.readonly")));
+                authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
             });
         }
 

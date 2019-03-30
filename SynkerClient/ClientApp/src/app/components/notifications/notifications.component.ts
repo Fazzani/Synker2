@@ -2,12 +2,12 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { MatSnackBar } from "@angular/material";
 import { ActivatedRoute } from "@angular/router";
 import { NotificationService } from "../../services/notification/notification.service";
-import { AuthService } from "../../services/auth/auth.service";
 import FirebaseNotification from "../../types/firebase.type";
 import { User } from "../../types/auth.type";
 import { map } from "rxjs/operators";
 import { Observable } from "rxjs";
 import * as moment from "moment";
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: "notifications",
@@ -19,17 +19,16 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   notificationsCount$: Observable<number>;
 
   constructor(
-    private route: ActivatedRoute,
     private authService: AuthService,
     public snackBar: MatSnackBar,
     private notificationService: NotificationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.authService.user.subscribe(user => {
+    this.authService.user$.subscribe((user: User) => {
       this.user = user;
       this.notifications$ = this.notificationService
-        .list(user.id, 100)
+        .list(this.user.email, 100)
         .snapshotChanges()
         .pipe(
           map(changes =>
@@ -39,17 +38,19 @@ export class NotificationsComponent implements OnInit, OnDestroy {
             })
           )
         );
-      this.notificationsCount$ = this.notificationService.count(user.id);
+      this.notificationsCount$ = this.notificationService.count(this.user.email);
     });
   }
 
   markAsRead(notif: FirebaseNotification): void {
-    this.notificationService.remove(this.user.id, notif.Key);
+    if (this.user)
+      this.notificationService.remove(this.user.email, notif.Key);
   }
 
   markAllAsRead(): void {
-    this.notificationService.removeAll(this.user.id);
+    if (this.user)
+      this.notificationService.removeAll(this.user.email);
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() { }
 }

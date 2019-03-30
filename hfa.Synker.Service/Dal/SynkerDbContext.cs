@@ -15,8 +15,6 @@ namespace hfa.Synker.Services.Dal
     {
         public DbSet<User> Users { get; set; }
 
-        public DbSet<Role> Roles { get; set; }
-
         public DbSet<Device> Devices { get; set; }
 
         public DbSet<Command> Command { get; set; }
@@ -39,7 +37,7 @@ namespace hfa.Synker.Services.Dal
             .IsUnique();
 
             modelBuilder.Entity<User>()
-            .HasIndex(b => new { b.FirstName, b.LastName });
+            .HasIndex(b => b.Email);
 
             modelBuilder.Entity<Host>()
             .HasIndex(b => new { b.Address, b.Port });
@@ -54,13 +52,9 @@ namespace hfa.Synker.Services.Dal
             .IsUnique();
 
             modelBuilder.Entity<Playlist>().OwnsOne(x => x.SynkConfig);
-
-            modelBuilder.Entity<UserRole>().HasKey(pc => new { pc.UserId, pc.RoleId });
-
+            
             modelBuilder.Entity<WebGrabConfigDocker>().HasOne(r => r.RunnableHost).WithMany(x => x.WebGrabConfigDockers).HasForeignKey(x => x.HostId);
-            modelBuilder.Entity<UserRole>().HasOne(r => r.User).WithMany(x => x.UserRoles).HasForeignKey(x => x.UserId);
-            modelBuilder.Entity<UserRole>().HasOne(r => r.Role).WithMany(x => x.UserRoles).HasForeignKey(x => x.RoleId);
-
+           
             base.OnModelCreating(modelBuilder);
         }
 

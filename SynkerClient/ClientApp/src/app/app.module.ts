@@ -1,4 +1,3 @@
-import { JwtModule } from "@auth0/angular-jwt";
 import { NgModule, APP_INITIALIZER } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -11,16 +10,13 @@ import { HomeComponent } from "./components/home/home.component";
 import { MediaComponent, TvgMediaModifyDialog } from "./components/media/media.component";
 import { EpgComponent, EpgModifyDialog } from "./components/epg/epg.component";
 import { XmltvComponent, XmltvModifyDialog } from "./components/xmltv/xmltv.component";
-import { DialogComponent } from "./components/shared/dialogs/dialog.component";
 
 import { NavBarModule } from "./components/shared/navbar/navbar";
 import { FlexLayoutModule } from "@angular/flex-layout";
-import { DefaultHttpInterceptor } from "./infrastructure/DefaultHttpInterceptor";
 import { PlaylistComponent } from "./components/playlist/playlist.component";
 import { SearchPipe } from "./pipes/search.pipe";
 import { SitePackComponent, SitePackModifyDialog } from "./components/sitepack/sitepack.component";
 import { KeysPipe } from "./pipes/enumKey.pipe";
-import { JwtInterceptor } from "./infrastructure/JwtInterceptor";
 import { ToastrModule } from "ngx-toastr";
 import { PushNotificationsModule } from "ng-push";
 import { ClipboardModule } from "ngx-clipboard";
@@ -31,8 +27,6 @@ import { PlaylistDiffDialog } from "./components/dialogs/playlistDiff/playlist.d
 import { PlaylistUpdateDialog } from "./components/dialogs/playlistUpdate/playlist.update.dialog";
 import { GroupsDialog } from "./components/dialogs/group/groups.component";
 import { MatchTvgDialog } from "./components/dialogs/matchTvg/matchTvg.component";
-import { RegisterComponent, RegisterDialog } from "./components/dialogs/auth/RegisterDialog";
-import { LoginDialog } from "./components/dialogs/auth/LoginDialog";
 import { PlaylistInfosDialog } from "./components/dialogs/playlistInfos/playlist.infos.component";
 import { UserComponent } from "./components/user/user.component";
 import { AppRoutingModule } from "./app.module.routing";
@@ -46,16 +40,18 @@ import { UsersResolver } from "./components/admin/users/users.resolver";
 import { HostsResolver } from "./components/admin/hosts/hosts.resolver";
 import { HomeResolver } from "./components/home/home.resolver";
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
+import { environment, authModuleConfig } from '../environments/environment';
 import { MediaWatchDialog } from "./components/dialogs/mediaWatch/media.watch.dialog";
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { NotificationsComponent } from "./components/notifications/notifications.component";
-
-export function tokenGetter() {
-  return localStorage.getItem("access_token");
-}
+import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
+import { OAuthModule } from 'angular-oauth2-oidc';
+import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
+import { PlaylistService } from './services/playlists/playlist.service';
+import { LoaderHttpInterceptor } from "./infrastructure/LoaderHttpInterceptor";
+import { ShouldLoginComponent } from './components/login/should-login.component';
 
 export function getAboutApplication(initService: InitAppService) {
   return () => initService.getAboutApplication();
@@ -67,18 +63,17 @@ export function getAboutApplication(initService: InitAppService) {
     HomeComponent,
     MediaComponent,
     SitePackComponent,
-    RegisterComponent,
     EpgComponent,
     XmltvComponent,
     UserComponent,
+    AuthCallbackComponent,
     NotificationsComponent,
     GroupComponent,
     LoaderComponent,
+    UnauthorizedComponent,
+    ShouldLoginComponent,
     TvgMediaModifyDialog,
     EpgModifyDialog,
-    DialogComponent,
-    LoginDialog,
-    RegisterDialog,
     PlaylistComponent,
     PlaylistUpdateDialog,
     PlaylistBulkUpdate,
@@ -116,20 +111,12 @@ export function getAboutApplication(initService: InitAppService) {
     ClipboardModule,
     AppRoutingModule,
     OverlayModule,
-    JwtModule.forRoot({
-      config: {
-        tokenGetter: tokenGetter,
-        whitelistedDomains: ["localhost:56800", "api.synker.ovh"],
-        blacklistedRoutes: [""]
-      }
-    }),
+    OAuthModule.forRoot(authModuleConfig),
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
   ],
   entryComponents: [
     TvgMediaModifyDialog,
     EpgModifyDialog,
-    LoginDialog,
-    RegisterDialog,
     PlaylistBulkUpdate,
     PlaylistTvgSitesDialog,
     PlaylistAddDialog,
@@ -145,12 +132,7 @@ export function getAboutApplication(initService: InitAppService) {
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: DefaultHttpInterceptor,
-      multi: true
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: JwtInterceptor,
+      useClass: LoaderHttpInterceptor,
       multi: true
     },
     {
@@ -162,7 +144,8 @@ export function getAboutApplication(initService: InitAppService) {
     PlaylistDetailResolver,
     HostsResolver,
     UsersResolver,
-    HomeResolver
+    HomeResolver,
+    PlaylistService
   ],
   bootstrap: [AppComponent]
 })

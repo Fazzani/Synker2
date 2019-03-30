@@ -1,3 +1,5 @@
+import { OAuthModuleConfig } from 'angular-oauth2-oidc';
+
 // The file contents for the current environment will overwrite these during build.
 // The build system defaults to the dev environment which uses `environment.ts`, but if you do
 // `ng build --env=prod` then `environment.prod.ts` will be used instead.
@@ -17,5 +19,31 @@ export const environment = {
     projectId: "holo-970f4",
     storageBucket: "holo-970f4.appspot.com",
     messagingSenderId: "685189543315"
+  },
+  idp: {
+    issuer: 'http://localhost:5000',
+    clientId: 'synkerclient',
+    redirectUri: 'http://localhost:56810/index.html',
+    postLogoutRedirectUri: 'http://localhost:5000/',
+    responseType: "id_token token",
+    scope: "openid profile synkerapi.full_access",
+    filterProtocolClaims: true,
+    loadUserInfo: true,
+    automaticSilentRenew: true,
+    silent_redirect_uri: 'http://localhost:56810/silent-refresh.html',
+    sessionChecksEnabled: true,
+    showDebugInformation: true, // Also requires enabling "Verbose" level in devtools
+    clearHashAfterLogin: false, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,
+    silentRefreshTimeout: 5000, // For faster testing
+    timeoutFactor: 0.25, // For faster testing
+  },
+  authModuleConfig: {
+    // Inject "Authorization: Bearer ..." header for these APIs:
+    resourceServer: {
+      allowedUrls: ["//localhost:56800/api", "//api.synker.ovh/api"],
+      sendAccessToken: true
+    }
   }
 }
+
+export const authModuleConfig: OAuthModuleConfig = environment.authModuleConfig;

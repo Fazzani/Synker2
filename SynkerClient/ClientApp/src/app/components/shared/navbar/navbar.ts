@@ -1,18 +1,19 @@
-import { Component, NgModule, OnInit, OnDestroy, Output, EventEmitter } from "@angular/core";
+import { Component, NgModule, OnInit, OnDestroy, Output, EventEmitter, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule, MatMenuModule } from "@angular/material";
 import { RouterModule } from "@angular/router";
 import { AppModuleMaterialModule } from "../../../app.module.material.module";
 import { User } from "../../../types/auth.type";
-import { AuthService } from "../../../services/auth/auth.service";
-import { BehaviorSubject, Subscription, Observable } from "rxjs";
+import { Subscription, Observable, BehaviorSubject } from "rxjs";
 import { EqualValidator } from "../../../directives/equal-validator.directive";
-import { AuthorizedRouteGuard } from "../../../services/auth/authorizedRouteGuard.service";
 import { InitAppService } from "../../../services/initApp/InitAppService";
 import { AboutApplication } from "../../../types/aboutApplication.type";
 import { NotificationService } from "../../../services/notification/notification.service";
 import FirebaseNotification from "../../../types/firebase.type";
+import { OAuthService } from "angular-oauth2-oidc";
+import { AuthService } from '../../../services/auth/auth.service';
+import { AdminRole } from '../../../variables';
 
 @Component({
   selector: "app-navbar",
@@ -21,9 +22,24 @@ import FirebaseNotification from "../../../types/firebase.type";
 })
 export class NavBar implements OnInit, OnDestroy {
   aboutApp: AboutApplication;
-  isAuthenticated: BehaviorSubject<boolean>;
-  user: BehaviorSubject<User>;
+
+  private _isAuthenticated: boolean;
+  @Input()
+  set isAuthenticated(isAuthenticated: boolean) {
+    console.log(`isAuthenticated   =>>>>>  ${isAuthenticated}`);
+    this._isAuthenticated = isAuthenticated;
+  }
+  get isAuthenticated(): boolean { return this._isAuthenticated; }
+
+  private _user: User;
+  @Input()
+  set user(user: User) {
+    this._user = user;
+  }
+  get user(): User { return this._user; }
+
   userSubscription: Subscription;
+  isAdmin$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   notifications$: Observable<FirebaseNotification[]>;
   @Output()
   onThemeChanged = new EventEmitter();
@@ -36,22 +52,22 @@ export class NavBar implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    public authorizedGuard: AuthorizedRouteGuard,
     private initAppService: InitAppService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private oauthService: OAuthService
   ) {
-    this.isAuthenticated = this.authService.authenticated;
-    this.user = this.authService.user;
-    this.authService.connect();
+
     this.aboutApp = this.initAppService.about;
   }
 
   ngOnInit(): void {
-    this.userSubscription = this.user.subscribe(user => {
+    this.userSubscription = this.authService.user$.subscribe(user => {
       if (user != undefined) {
-        console.log(`User ${user.firstName} is authenticated...${user.id}`);
-        this.notifications$ = this.notificationService.list(user.id, 5).valueChanges();
-        this.notificationsCount$ = this.notificationService.count(user.id);
+        console.log(`User ${user.firstName} is authenticated...${user.email}`);
+        //TODO: Notifications by email Or getting userId from Synker API
+        this.notifications$ = this.notificationService.list(user.email, 5).valueChanges();
+        this.notificationsCount$ = this.notificationService.count(user.email);
+        this.isAdmin$.next(this.authService.hasRole(AdminRole) as boolean);
       }
     });
   }
@@ -65,8 +81,7 @@ export class NavBar implements OnInit, OnDestroy {
   }
 
   signout(): void {
-    this.isAuthenticated.next(false);
-    this.authService.signout();
+    this.oauthService.logOut(true);
   }
 
   toggleNotification = () => {
@@ -84,4 +99,4 @@ export class NavBar implements OnInit, OnDestroy {
   exports: [NavBar, EqualValidator],
   declarations: [NavBar, EqualValidator]
 })
-export class NavBarModule {}
+export class NavBarModule { }

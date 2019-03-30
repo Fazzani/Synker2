@@ -71,7 +71,7 @@
                         {
                             Id = pl.Id,
                             PlaylistName = pl.Freindlyname,
-                            UserId = pl.UserId,
+                            UserId = pl.User.Email,
                             RemovedMediasCount = removed.Count(),
                             RemovedMedias = removed.Take(10),
                             NewMediasCount = tvgMedia.Count(),
@@ -85,7 +85,7 @@
                     await _bus.Publish(new TraceEvent
                     {
                         Message = $"playlistId : {pl.Id}, Exception :{ex.Message}",
-                        UserId = pl.UserId,
+                        UserId = pl.User.Email,
                         Level = TraceEvent.LevelTrace.Error,
                         Source = nameof(DiffHostedService)
                     }, cancellationToken);

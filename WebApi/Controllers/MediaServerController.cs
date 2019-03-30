@@ -13,12 +13,12 @@
     using hfa.Synker.Service.Services.Elastic;
     using hfa.Synker.Service.Elastic;
     using hfa.Synker.Service.Services;
-    using System.Net;
     using System.Threading;
     using hfa.WebApi.Common;
     using hfa.WebApi.Models.MediaServer;
     using hfa.WebApi.Common.Filters;
     using Microsoft.AspNetCore.Http;
+    using hfa.WebApi.Common.Auth;
 
     [Produces("application/json")]
     [Route("api/v{version:apiVersion}/[controller]")]
@@ -50,6 +50,7 @@
         /// <returns></returns>
         [HttpGet("server")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Policy = AuthorizePolicies.ADMIN)]
         public async Task<IActionResult> GetServerAsync(CancellationToken cancellationToken)
         {
             var response = await _mediaServerService.GetServerStatsAsync(cancellationToken);
@@ -80,7 +81,7 @@
         [ValidateModel]
         public async Task<IActionResult> PostLiveAsync([FromBody]MediaServerLivePost model, CancellationToken cancellationToken)
         {
-            var streamId = $"{UserId}_{Guid.NewGuid()}";
+            var streamId = $"{UserEmail}_{Guid.NewGuid()}";
             var response = await _mediaServerService.PublishLiveAsync(model.Stream, streamId, cancellationToken);
             return Ok(new
             {

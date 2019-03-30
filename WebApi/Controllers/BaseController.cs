@@ -16,6 +16,7 @@ using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Elastic;
 using hfa.WebApi.Models.Elastic;
 using System.Text;
+using System.Security.Claims;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -27,7 +28,6 @@ namespace Hfa.WebApi.Controllers
         readonly protected SynkerDbContext _dbContext;
 
         protected Guid GetInternalPlaylistId(string id) => new Guid(Encoding.UTF8.DecodeBase64(id));
-
 
         public BaseController(IOptions<ElasticConfig> elasticConfig, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
             SynkerDbContext context)
@@ -110,7 +110,7 @@ namespace Hfa.WebApi.Controllers
                 return me;
             }
 
-            return default(IPromise<IList<ISort>>);
+            return default;
         }
 
         internal class NestPromise<T> : IPromise<T> where T : class
@@ -122,7 +122,8 @@ namespace Hfa.WebApi.Controllers
             public T Value { get; }
         }
 
-        protected int? UserId => Convert.ToInt32(User.FindFirst("id")?.Value);
+        protected string UserEmail => User.FindFirst(ClaimTypes.Email)?.Value;
+        //protected int? UserId => Convert.ToInt32(User.FindFirst("id")?.Value);
     }
 
     public class Constants

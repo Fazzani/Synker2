@@ -11,6 +11,7 @@ using hfa.Synker.Service.Elastic;
 using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Services.Dal;
+using hfa.WebApi.Common.Auth;
 using hfa.WebApi.Common.Filters;
 using hfa.WebApi.Models.Notifications;
 using Hfa.WebApi.Controllers;
@@ -25,7 +26,7 @@ namespace hfa.WebApi.Controllers
 {
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    [Authorize]
+    [Authorize(Policy = AuthorizePolicies.ADMIN)]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class DevicesController : BaseController

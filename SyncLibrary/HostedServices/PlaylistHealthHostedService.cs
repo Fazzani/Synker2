@@ -55,7 +55,7 @@
                         await _bus.Publish(new TraceEvent
                         {
                             Message = $"playlistId : {pl?.Id}, Exception :{ex.Message}",
-                            UserId = pl?.UserId ?? -1,
+                            UserId = pl?.User?.Email ?? string.Empty,
                             Level = TraceEvent.LevelTrace.Error,
                             Source = nameof(PlaylistHealthHostedService)
                         }, cancellationToken);

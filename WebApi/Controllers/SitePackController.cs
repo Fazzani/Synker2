@@ -56,7 +56,8 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [Route("_searchstring")]
-        public async Task<IActionResult> SearchStringAsync([FromBody]SimpleQueryElastic request, CancellationToken cancellationToken)
+        public async Task<IActionResult> SearchStringAsync([FromBody]SimpleQueryElastic request, 
+            CancellationToken cancellationToken = default)
         {
             return await SearchQueryStringAsync<SitePackChannel, SitePackModel>(request, cancellationToken);
         }
@@ -65,9 +66,10 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Get(string id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Get(string id, CancellationToken cancellationToken = default)
         {
-            var response = await _elasticConnectionClient.Client.Value.GetAsync(new DocumentPath<SitePackChannel>(id), null, cancellationToken);
+            var response = await _elasticConnectionClient.Client.Value
+                .GetAsync(new DocumentPath<SitePackChannel>(id), null, cancellationToken);
 
             if (!response.IsValid)
                 return BadRequest(response.DebugInformation);
@@ -164,7 +166,8 @@ namespace Hfa.WebApi.Controllers
         [HttpGet]
         [Route("matchtvg/name/{mediaName}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> MatchTvgByMediaName([FromRoute] string mediaName, [FromQuery] string country, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> MatchTvgByMediaName([FromRoute] string mediaName, [FromQuery] string country, 
+            CancellationToken cancellationToken = default)
         {
             var sitePack = await _sitePackService.MatchMediaNameAndBySiteAsync(mediaName, country, cancellationToken);
             return Ok(sitePack);
@@ -235,7 +238,8 @@ namespace Hfa.WebApi.Controllers
         [Route("webgrabconfig")]
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> WebgrabConfigBySitePackAsync([FromBody]SimpleModelPost sitePackUrl, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> WebgrabConfigBySitePackAsync([FromBody]SimpleModelPost sitePackUrl, 
+            CancellationToken cancellationToken = default)
         {
             var paste = await SynkSitePackToWebgrabAsync(sitePackUrl.Value, cancellationToken);
             return new OkObjectResult(paste);
@@ -271,7 +275,7 @@ namespace Hfa.WebApi.Controllers
                         WebgrabConfigUrl = paste.RawUrl
                     }, cancellationToken);
 
-                    _logger.LogInformation($"Adding new cronned command to webgrab {sitePackUrl} from {nameof(WebgrabConfigBySitePackAsync)} by {UserId}");
+                    _logger.LogInformation($"Adding new cronned command to webgrab {sitePackUrl} from {nameof(WebgrabConfigBySitePackAsync)} by {UserEmail}");
                 }
                 catch (Exception ex)
                 {

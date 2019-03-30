@@ -5,12 +5,16 @@ import "hammerjs";
 import "./app.component.css";
 import { MatSnackBar } from "@angular/material";
 import { CommonService, Constants } from "../../services/common/common.service";
-import { AuthService } from "../../services/auth/auth.service";
 import { Exception } from "../../types/common.type";
-import * as variables from "../../variables";
 import { OverlayContainer } from "@angular/cdk/overlay";
 import { SwUpdate, SwPush } from "@angular/service-worker";
 import { DeviceService } from "../../services/device/device.service";
+import { OAuthService, JwksValidationHandler, AuthConfig } from 'angular-oauth2-oidc';
+import { environment } from '../../../environments/environment';
+import { Observable } from 'rxjs';
+import { User } from "../../types/auth.type";
+import { AuthService } from '../../services/auth/auth.service';
+import { VAPID_PUBLIC_KEY } from '../../variables';
 
 @Component({
   selector: "app",
@@ -21,7 +25,10 @@ export class AppComponent implements OnInit, OnDestroy {
   color = "primary";
   objLoaderStatus: boolean;
   loading: boolean;
-  readonly VAPID_PUBLIC_KEY = "BBxqxISU8686kkJSKc_DQdjHWQUG6THMmKai6QKHDS_RuA_dYCR9EwaNpWQzhRUViLpV_ttEmiJfxNvHjE7F7Rc";
+  user: Observable<User>;
+  isAuthenticated: Observable<boolean>;
+  isDoneLoading: Observable<boolean>;
+  canActivateProtectedRoutes: Observable<boolean>;
 
   constructor(
     private swPush: SwPush,
@@ -29,44 +36,32 @@ export class AppComponent implements OnInit, OnDestroy {
     public snackBar: MatSnackBar,
     private deviceService: DeviceService,
     private commonService: CommonService,
-    private authService: AuthService,
     private router: Router,
-    private overlayContainer: OverlayContainer
+    private overlayContainer: OverlayContainer,
+    private oauthService: OAuthService,
+    private authService: AuthService
   ) {
     this.objLoaderStatus = false;
-    
+    this.isAuthenticated = this.authService.isAuthenticated$;
+    this.isDoneLoading = this.authService.isDoneLoading$;
+    this.user = this.authService.user$;
+    this.canActivateProtectedRoutes = this.authService.canActivateProtectedRoutes$;
+
     this.loading = true;
+    this.configureWithNewConfigApi();
+  }
+
+  private configureWithNewConfigApi() {
+    this.oauthService.configure(<AuthConfig>environment.idp);
+    this.oauthService.tokenValidationHandler = new JwksValidationHandler();
+    this.oauthService.showDebugInformation = true;
+
+    this.authService.runInitialLoginSequence();
   }
 
   ngOnInit() {
     this.setTheme(localStorage.getItem(Constants.ThemeKey) || "dark-theme");
-
-    this.authService
-      .isAuthenticated()
-      .pipe(distinctUntilChanged())
-      .subscribe(isAuth => {
-        console.log(
-          `----------- JwtInterceptor 401 isAuth = ${isAuth} current url ${this.router.routerState.snapshot.url} this.authService.redirectUrl: ${
-            this.authService.redirectUrl
-          }`
-        );
-        if (
-          !isAuth &&
-          this.router.routerState.snapshot.url != "" &&
-          (this.router.routerState.snapshot.url != variables.SIGN_IN_URL && this.router.routerState.snapshot.url != variables.REGISTER_URL)
-        ) {
-          this.authService.redirectUrl = this.router.routerState.snapshot.url == variables.SIGN_IN_URL ? "/home" : this.router.routerState.snapshot.url;
-          this.router.navigate(["signin"]);
-        }
-      });
-
-    this.authService.authenticated.pipe(distinctUntilChanged()).subscribe(isAuth => {
-      if (!isAuth && this.router.url != variables.SIGN_IN_URL && this.router.url != variables.REGISTER_URL) {
-        this.authService.redirectUrl = this.router.routerState.snapshot.url;
-        this.router.navigate(["signin"]);
-      }
-    });
-
+   
     this.commonService.loaderStatus
       .pipe(
         distinctUntilChanged(),
@@ -113,18 +108,19 @@ export class AppComponent implements OnInit, OnDestroy {
     overlayContainerClasses.add(theme);
   }
 
-  handelSubscribeToWebPush(event:any) {
+  handelSubscribeToWebPush(event: any) {
     this.swPush
       .requestSubscription({
-        serverPublicKey: this.VAPID_PUBLIC_KEY
+        serverPublicKey: VAPID_PUBLIC_KEY
       })
       .then(sub => {
         console.log('PushSubscription: ', JSON.stringify(sub));
-        return this.deviceService.create(sub).subscribe();} )
+        return this.deviceService.create(sub).subscribe();
+      })
       .catch(err => console.error("Could not subscribe to notifications", err));
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void { }
 
   ngAfterViewInit() {
     this.router.events.subscribe(event => {

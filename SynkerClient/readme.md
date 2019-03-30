@@ -1,10 +1,5 @@
 ﻿# TODO
 
-- [ ] ng add @angular/material cli
-- [ ] migrate
-	- [ ] components/modules/services
-	- [ ] styles/font/assets
-	- [ ] appsettings
-	- [ ] travis build
-	- [ ] docker image
-	- [ ] Rxjs
+- [x] [OIDC][openid] implementation
+
+[openid]:https://manfredsteyer.github.io/angular-oauth2-oidc/docs/additional-documentation/callback-after-login.html

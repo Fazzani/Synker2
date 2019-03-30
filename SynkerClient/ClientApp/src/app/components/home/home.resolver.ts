@@ -10,6 +10,7 @@ export class HomeResolver implements Resolve<Observable<PagedResult<PlaylistMode
   constructor(private playlistService: PlaylistService) {}
 
   resolve(route: ActivatedRouteSnapshot) {
+    console.log('_____________________In Home Resolver __________________');
     return this.playlistService.list(<QueryListBaseModel>{ pageNumber: 0, pageSize: 20 });
     //return this.playlistService.listWithHealthStatus(<QueryListBaseModel>{ pageNumber: 0, pageSize: 20 });
   }

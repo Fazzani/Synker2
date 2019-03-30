@@ -6,22 +6,21 @@
     </span>
   </a>
   <!-- This fills the remaining space of the current row -->
-  <div fxLayout="row" fxShow="false" fxShow.gt-sm>
+  <div *ngIf="isAuthenticated" fxLayout="row" fxShow="false" fxShow.gt-sm>
     <a mat-button routerLink="/epg">Tv guide</a>
     <a mat-button routerLink="/sitepack">Sites Pack</a>
-    <a mat-button *ngIf="(authorizedGuard.canActivate(null,null) | async)" routerLink="/admin">Admin</a>
+    <a mat-button *ngIf="(isAdmin$ | async)" routerLink="/admin">Admin</a>
   </div>
   <span class="fill-remaining-space"></span>
-  <a mat-icon-button [matMenuTriggerFor]="menuNotif" *ngIf="(isAuthenticated | async)" aria-hidden="true">
+  <a mat-icon-button [matMenuTriggerFor]="menuNotif" *ngIf="isAuthenticated" aria-hidden="true">
     <span class="notif-number">{{notificationsCount$ | async}}</span>
     <mat-icon>notifications</mat-icon>
     <!--<span class="mderial-icons mdl-badge mdl-badge--overlap" matTooltip="You have {{messages?.rowCount}} messages !" [attr.data-badge]="messages?.rowCount">message</span>-->
   </a>
-
-  <a routerLink="/me" class="dropdown-toggle" data-toggle="dropdown" *ngIf="(isAuthenticated | async)">
-    <img [src]="(user | async)?.photo" class="profile-image img-circle" [alt]="(user | async)?.firstName">
+  <a routerLink="/me" class="dropdown-toggle" data-toggle="dropdown" *ngIf="isAuthenticated && user">
+    <img [src]="user.photo" class="profile-image img-circle" [alt]="user.firstName">
   </a>
-  <a mat-icon-button [matMenuTriggerFor]="menu" *ngIf="(isAuthenticated | async)" fxHide="false">
+  <a mat-icon-button [matMenuTriggerFor]="menu" *ngIf="isAuthenticated" fxHide="false">
     <mat-icon>more_vert</mat-icon>
   </a>
   <mat-menu x-position="before" #menuNotif="matMenu">
@@ -34,32 +33,32 @@
   </mat-menu>
   <mat-menu x-position="before" #menu="matMenu">
 
-    <button mat-menu-item *ngIf="(isAuthenticated | async)" class="profile-image-menu">
-      <img [src]="(user | async)?.photo" class="img-circle" [alt]="(user | async)?.firstName">
-      <span>{{(user | async)?.firstName}} {{(user | async)?.lastName}}</span>
+    <button mat-menu-item *ngIf="isAuthenticated && user" class="profile-image-menu">
+      <img [src]="user.photo" class="img-circle" [alt]="user.firstName">
+      <span>{{user.firstName}} {{user.lastName}}</span>
     </button>
-    <button mat-menu-item *ngIf="(isAuthenticated | async)" (click)="toggleNotification()">
+    <button mat-menu-item *ngIf="isAuthenticated " (click)="toggleNotification()">
       <mat-icon *ngIf="(notificationOn )">notifications_off</mat-icon>
       <mat-icon *ngIf="(!notificationOn )">notifications_on</mat-icon>
       <span>Disable alerts</span>
     </button>
     <!-- Mobile actions Menu-->
-    <button mat-menu-item routerLink="/epg" *ngIf="(isAuthenticated | async)" fxHide.gt-sm>
+    <button mat-menu-item routerLink="/epg" *ngIf="isAuthenticated" fxHide.gt-sm>
       <mat-icon>event</mat-icon>
       <span>Tv guide</span>
     </button>
-    <button mat-menu-item routerLink="/sitepack" *ngIf="(isAuthenticated | async)" fxHide.gt-sm>
+    <button mat-menu-item routerLink="/sitepack" *ngIf="isAuthenticated" fxHide.gt-sm>
       <mat-icon>description</mat-icon>
       <span>Sites Pack</span>
     </button>
 
-    <button mat-menu-item routerLink="/admin" *ngIf="(isAuthenticated | async)" fxHide.gt-sm>
+    <button mat-menu-item routerLink="/admin" *ngIf="isAuthenticated" fxHide.gt-sm>
       <mat-icon>settings</mat-icon>
       <span>Admin</span>
     </button>
     <button mat-menu-item [matMenuTriggerFor]="subMenuTheme">Themes</button>
     <!-- Logout -->
-    <button mat-menu-item (click)="signout()" *ngIf="(isAuthenticated | async)">
+    <button mat-menu-item (click)="signout()" *ngIf="isAuthenticated">
       <mat-icon>power_settings_new</mat-icon>
       <span>Sign out</span>
     </button>

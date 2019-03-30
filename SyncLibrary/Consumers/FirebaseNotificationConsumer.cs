@@ -31,7 +31,7 @@
         {
             try
             {
-                await SaveAsync(context.Message);
+                await SaveAsync(context.Message).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -58,7 +58,8 @@
                   Title = nameof(TraceEvent),
                   UserId = message.UserId,
                   UnixTimestamp = message.UnixTimestamp
-              }, true);
+              }, true)
+              .ConfigureAwait(false);
 
             _logger.LogInformation($"{nameof(FirebaseNotificationConsumer)}: Key for the new notification: {notif.Key}");
         }
@@ -87,7 +88,8 @@
 
                 await firebase
                  .Child($"{nameof(PlaylistHealthState).ToLowerInvariant()}/{context.Message.Id}")
-                 .PutAsync(context.Message);
+                 .PutAsync(context.Message)
+                 .ConfigureAwait(false);
             }
             catch (Exception e)
             {
