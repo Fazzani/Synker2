@@ -9,7 +9,7 @@ import { NgModule } from "@angular/core";
 import { AppModuleMaterialModule } from "../../app.module.material.module";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { CommonModule } from "@angular/common";
-import { AdminAuthRouteGuard } from '../../services/auth/adminAuthRouteGuard';
+import { AdminAuthRouteGuard } from '../../services/auth/adminAuthGuard';
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { authModuleConfig } from '../../../environments/environment';
 
