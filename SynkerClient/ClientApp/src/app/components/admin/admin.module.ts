@@ -9,7 +9,7 @@ import { NgModule } from "@angular/core";
 import { AppModuleMaterialModule } from "../../app.module.material.module";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { CommonModule } from "@angular/common";
-import { AuthGuard } from '../../services/auth/AuthGuard';
+import { AdminAuthRouteGuard } from '../../services/auth/adminAuthRouteGuard';
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { authModuleConfig } from '../../../environments/environment';
 
@@ -17,7 +17,7 @@ const adminRoutes: Routes = [
   {
     path: "",
     component: AdminComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AdminAuthRouteGuard],
     children: [
       {
         path: "",

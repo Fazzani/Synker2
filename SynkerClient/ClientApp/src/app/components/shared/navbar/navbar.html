@@ -6,10 +6,10 @@
     </span>
   </a>
   <!-- This fills the remaining space of the current row -->
-  <div fxLayout="row" fxShow="false" fxShow.gt-sm>
+  <div *ngIf="isAuthenticated" fxLayout="row" fxShow="false" fxShow.gt-sm>
     <a mat-button routerLink="/epg">Tv guide</a>
     <a mat-button routerLink="/sitepack">Sites Pack</a>
-    <!--<a mat-button *ngIf="(authorizedGuard.canActivate(null,null) | async)" routerLink="/admin">Admin</a>-->
+    <a mat-button *ngIf="(isAdmin$ | async)" routerLink="/admin">Admin</a>
   </div>
   <span class="fill-remaining-space"></span>
   <a mat-icon-button [matMenuTriggerFor]="menuNotif" *ngIf="isAuthenticated" aria-hidden="true">
@@ -37,7 +37,7 @@
       <img [src]="user.photo" class="img-circle" [alt]="user.firstName">
       <span>{{user.firstName}} {{user.lastName}}</span>
     </button>
-    <button mat-menu-item *ngIf="isAuthenticated" (click)="toggleNotification()">
+    <button mat-menu-item *ngIf="isAuthenticated " (click)="toggleNotification()">
       <mat-icon *ngIf="(notificationOn )">notifications_off</mat-icon>
       <mat-icon *ngIf="(!notificationOn )">notifications_on</mat-icon>
       <span>Disable alerts</span>

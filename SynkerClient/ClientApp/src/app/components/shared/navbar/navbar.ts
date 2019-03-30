@@ -5,7 +5,7 @@ import { MatButtonModule, MatMenuModule } from "@angular/material";
 import { RouterModule } from "@angular/router";
 import { AppModuleMaterialModule } from "../../../app.module.material.module";
 import { User } from "../../../types/auth.type";
-import { Subscription, Observable } from "rxjs";
+import { Subscription, Observable, BehaviorSubject } from "rxjs";
 import { EqualValidator } from "../../../directives/equal-validator.directive";
 import { InitAppService } from "../../../services/initApp/InitAppService";
 import { AboutApplication } from "../../../types/aboutApplication.type";
@@ -13,6 +13,7 @@ import { NotificationService } from "../../../services/notification/notification
 import FirebaseNotification from "../../../types/firebase.type";
 import { OAuthService } from "angular-oauth2-oidc";
 import { AuthService } from '../../../services/auth/auth.service';
+import { AdminRole } from '../../../variables';
 
 @Component({
   selector: "app-navbar",
@@ -33,12 +34,12 @@ export class NavBar implements OnInit, OnDestroy {
   private _user: User;
   @Input()
   set user(user: User) {
-    console.log(`user   =>>>>>  ${(user || { email: '' }).email}`);
     this._user = user;
   }
   get user(): User { return this._user; }
 
   userSubscription: Subscription;
+  isAdmin$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   notifications$: Observable<FirebaseNotification[]>;
   @Output()
   onThemeChanged = new EventEmitter();
@@ -66,6 +67,7 @@ export class NavBar implements OnInit, OnDestroy {
         //TODO: Notifications by email Or getting userId from Synker API
         this.notifications$ = this.notificationService.list(user.id, 5).valueChanges();
         this.notificationsCount$ = this.notificationService.count(user.id);
+        this.isAdmin$.next(this.authService.hasRole(AdminRole) as boolean);
       }
     });
   }

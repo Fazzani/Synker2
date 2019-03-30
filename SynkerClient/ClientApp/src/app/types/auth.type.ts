@@ -31,14 +31,16 @@ export class User {
         lastName: userProfile.name,
         photo: userProfile.picture,
         gender: userProfile.gender,
-        birthdate: moment(userProfile.birthdate, "DD-MM-YYYY").toDate()
+        birthdate: moment(userProfile.birthdate, "DD-MM-YYYY").toDate(),
+        roles: userProfile.role,
+        id: userProfile.sub
       }
     }
     return null;
   }
 }
 
-export type roles = "Default" | "Guest" | "Administrator";
+export type roles = "Default" | "Guest" | "Administrators";
 
 export interface RegisterUser extends User, Login {
   confirmPassword: string;

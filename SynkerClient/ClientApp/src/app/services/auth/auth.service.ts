@@ -74,17 +74,12 @@ export class AuthService {
       .pipe(filter(e => ['token_received'].includes(e.type)))
       .subscribe(e => this.oauthService.loadUserProfile()
         .then((userProfile: any) =>
-          this.user$.next(<User>{
-            email: userProfile.email,
-            firstName: userProfile.given_name,
-            lastName: userProfile.name,
-            photo: userProfile.picture
-          })));
+          this.user$.next(User.FromUserProfile(userProfile))));
 
     //silent_refresh_timeout
     //token_expires
     this.oauthService.events
-      .pipe(filter(e => ['session_terminated', 'session_error'].includes(e.type)))
+      .pipe(filter(e => ['session_terminated', 'session_error', 'token_validation_error'].includes(e.type)))
       .subscribe(e => this.navigateToLoginPage());
 
     //this.oauthService.setupAutomaticSilentRefresh();
@@ -143,4 +138,14 @@ export class AuthService {
   public get identityClaims() { return this.oauthService.getIdentityClaims(); }
   public get idToken() { return this.oauthService.getIdToken(); }
   public get logoutUrl() { return this.oauthService.logoutUrl; }
+
+
+  hasRole(role: string): boolean | Observable<boolean> | Promise<boolean> {
+    const user = this.user$.getValue();
+    if (user && user.roles) {
+      return user.roles.indexOf(role) > -1;
+    }
+    return false;
+  }
+
 }
