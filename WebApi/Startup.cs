@@ -54,6 +54,7 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.WebSockets;
@@ -273,7 +274,7 @@ namespace hfa.WebApi
                 c.AddSecurityDefinition("oauth2", new OAuth2Scheme
                 {
                     Type = "oauth2",
-                    Description= "OAuth2 Implicit Grant",
+                    Description = "OAuth2 Implicit Grant",
                     Flow = "implicit",
                     AuthorizationUrl = $"{jwtOptions.Authority}/connect/authorize",
                     TokenUrl = $"{jwtOptions.Authority}/connect/token",
@@ -284,7 +285,7 @@ namespace hfa.WebApi
                     }
 
                 });
-               
+
                 c.OperationFilter<SecurityRequirementsOperationFilter>();
                 c.DescribeAllEnumsAsStrings();
                 c.DescribeStringEnumsInCamelCase();
@@ -496,6 +497,7 @@ namespace hfa.WebApi
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
             })
+            .AddCookie()
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtBearerOptions =>
              {
                  var jwtOptions = Configuration.GetSection(nameof(JwtBearerOptions)).Get<JwtBearerOptions>();
@@ -536,7 +538,8 @@ namespace hfa.WebApi
             {
                 authorizationOptions.AddPolicy(AuthorizePolicies.ADMIN, policyBuilder => policyBuilder.RequireRole(AuthorizePolicies.ADMIN));
                 authorizationOptions.AddPolicy(AuthorizePolicies.FULLACCESS, policyBuilder => policyBuilder.RequireClaim("scope", "synkerapi.full_access"));
-                authorizationOptions.AddPolicy(AuthorizePolicies.READER, policyBuilder => policyBuilder.RequireClaim("scope", "synkerapi.readonly"));
+                authorizationOptions.AddPolicy(AuthorizePolicies.READER_ONLY, policyBuilder => policyBuilder.RequireClaim("scope", "synkerapi.readonly"));
+                authorizationOptions.AddPolicy(AuthorizePolicies.READER, policyBuilder => policyBuilder.RequireAssertion(a => a.User.Claims.Where(c => c.Type == "scope").Any(scope => scope.Value == "synkerapi.full_access" || scope.Value == "synkerapi.readonly")));
                 authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
             });
         }

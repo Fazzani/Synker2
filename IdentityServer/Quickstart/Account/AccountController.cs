@@ -158,12 +158,12 @@ namespace IdentityServer4.Quickstart.UI
                     }
                 }
 
-                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials"));
+                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials")).ConfigureAwait(false);
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
 
             // something went wrong, show form with error
-            var vm = await BuildLoginViewModelAsync(model);
+            var vm = await BuildLoginViewModelAsync(model).ConfigureAwait(false);
             return View(vm);
         }
 
@@ -175,13 +175,13 @@ namespace IdentityServer4.Quickstart.UI
         public async Task<IActionResult> Logout(string logoutId)
         {
             // build a model so the logout page knows what to display
-            var vm = await BuildLogoutViewModelAsync(logoutId);
+            var vm = await BuildLogoutViewModelAsync(logoutId).ConfigureAwait(false);
 
-            if (vm.ShowLogoutPrompt == false)
+            if (!vm.ShowLogoutPrompt)
             {
                 // if the request for logout was properly authenticated from IdentityServer, then
                 // we don't need to show the prompt and can just log the user out directly.
-                return await Logout(vm);
+                return await Logout(vm).ConfigureAwait(false);
             }
 
             return View(vm);
