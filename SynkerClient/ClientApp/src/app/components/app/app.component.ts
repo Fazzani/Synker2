@@ -5,17 +5,16 @@ import "hammerjs";
 import "./app.component.css";
 import { MatSnackBar } from "@angular/material";
 import { CommonService, Constants } from "../../services/common/common.service";
-//import { AuthService } from "../../services/auth/auth.service";
 import { Exception } from "../../types/common.type";
-//import * as variables from "../../variables";
 import { OverlayContainer } from "@angular/cdk/overlay";
 import { SwUpdate, SwPush } from "@angular/service-worker";
 import { DeviceService } from "../../services/device/device.service";
-import { OAuthService, JwksValidationHandler, AuthConfig, OAuthEvent } from 'angular-oauth2-oidc';
+import { OAuthService, JwksValidationHandler, AuthConfig } from 'angular-oauth2-oidc';
 import { environment } from '../../../environments/environment';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { User } from "../../types/auth.type";
 import { AuthService } from '../../services/auth/auth.service';
+import { VAPID_PUBLIC_KEY } from '../../variables';
 
 @Component({
   selector: "app",
@@ -26,7 +25,6 @@ export class AppComponent implements OnInit, OnDestroy {
   color = "primary";
   objLoaderStatus: boolean;
   loading: boolean;
-  readonly VAPID_PUBLIC_KEY = "BBxqxISU8686kkJSKc_DQdjHWQUG6THMmKai6QKHDS_RuA_dYCR9EwaNpWQzhRUViLpV_ttEmiJfxNvHjE7F7Rc";
   user: Observable<User>;
   isAuthenticated: Observable<boolean>;
   isDoneLoading: Observable<boolean>;
@@ -113,7 +111,7 @@ export class AppComponent implements OnInit, OnDestroy {
   handelSubscribeToWebPush(event: any) {
     this.swPush
       .requestSubscription({
-        serverPublicKey: this.VAPID_PUBLIC_KEY
+        serverPublicKey: VAPID_PUBLIC_KEY
       })
       .then(sub => {
         console.log('PushSubscription: ', JSON.stringify(sub));
