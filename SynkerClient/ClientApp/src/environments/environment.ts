@@ -26,7 +26,7 @@ export const environment = {
     redirectUri: 'http://localhost:56810/index.html',
     postLogoutRedirectUri: 'http://localhost:5000/',
     responseType: "id_token token",
-    scope: "openid profile synkerapi.full_access",
+    scope: "openid profile synkerapi.full_access synkerapi.read_only",
     filterProtocolClaims: true,
     loadUserInfo: true,
     automaticSilentRenew: true,

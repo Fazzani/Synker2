@@ -21,13 +21,13 @@ export const environment = {
     redirectUri: 'https://synker.ovh/index.html',
     postLogoutRedirectUri: 'https://synker.ovh/',
     responseType: "id_token token",
-    scope: "openid profile synkerapi.full_access offline_access",
+    scope: "openid profile synkerapi.full_access synkerapi.read_only",
     filterProtocolClaims: true,
     loadUserInfo: true,
-    automaticSilentRenew: true,
+    automaticSilentRenew: false,
     silent_redirect_uri: 'https://synker.ovh/silent-refresh.html',
     sessionChecksEnabled: true,
-    showDebugInformation: true, // Also requires enabling "Verbose" level in devtools
+    showDebugInformation: false, // Also requires enabling "Verbose" level in devtools
     clearHashAfterLogin: false, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,
     silentRefreshTimeout: 5000, // For faster testing
     timeoutFactor: 0.25, // For faster testing
