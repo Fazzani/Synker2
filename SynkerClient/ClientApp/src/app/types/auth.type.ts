@@ -18,6 +18,7 @@ export class User {
   firstName: string;
   lastName: string;
   email: string;
+  emailHash: string;
   birthdate: Date;
   photo: string | ArrayBuffer;
   roles: roles = "Default";
@@ -33,7 +34,8 @@ export class User {
         gender: userProfile.gender,
         birthdate: moment(userProfile.birthdate, "DD-MM-YYYY").toDate(),
         roles: userProfile.role,
-        id: userProfile.sub
+        id: userProfile.sub,
+        emailHash: userProfile.email_hash
       }
     }
     return null;

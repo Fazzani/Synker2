@@ -61,12 +61,12 @@ export class NavBar implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.userSubscription = this.authService.user$.subscribe(user => {
+    this.userSubscription = this.authService.user$.subscribe((user: User) => {
       if (user != undefined) {
-        console.log(`User ${user.firstName} is authenticated...${user.email}`);
+        console.log(`User ${user.firstName} is authenticated...${user.emailHash}`);
         //TODO: Notifications by email Or getting userId from Synker API
-        this.notifications$ = this.notificationService.list(user.email, 5).valueChanges();
-        this.notificationsCount$ = this.notificationService.count(user.email);
+        this.notifications$ = this.notificationService.list(user.emailHash, 5).valueChanges();
+        this.notificationsCount$ = this.notificationService.count(user.emailHash);
         this.isAdmin$.next(this.authService.hasRole(AdminRole) as boolean);
       }
     });
