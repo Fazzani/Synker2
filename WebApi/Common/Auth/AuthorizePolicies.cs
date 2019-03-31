@@ -4,11 +4,11 @@
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     public class AuthorizePolicies
     {
-        public const string ADMIN = "Administrators";
-        public const string READER = "Reader";
+        public const string ADMIN = "administrators";
+        public const string READER = "reader";
         public const string FULLACCESS = "fullaccess";
 
-        public static string READER_ONLY = "ReaderOnly";
+        public static string READER_ONLY = "readerOnly";
     }
 
     public class Authentication
