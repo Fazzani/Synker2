@@ -28,10 +28,10 @@
         //public string EndPoint => $"http://rabbitmq.synker.ovh/diff_playlist_{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}_queue";
         //public string TraceEndPoint => $"http://rabbitmq.synker.ovh/trace_{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}_queue";
 
-        public DiffHostedService(ILoggerFactory loggerFactory, IPlaylistService playlistService, SynkerDbContext synkerDbContext,
+        public DiffHostedService(ILogger<DiffHostedService> logger, IPlaylistService playlistService, SynkerDbContext synkerDbContext,
             IBus requestClient, IProviderFactory providerFactory)
         {
-            _logger = loggerFactory.CreateLogger<DiffHostedService>();
+            _logger = logger;
             _playlistService = playlistService;
             _dbContext = synkerDbContext;
             _bus = requestClient;

@@ -265,6 +265,7 @@
                 MediaCount = pl.TvgMedias?.Count ?? 0,
                 IsOnline = false,
             };
+
             using (var client = new HttpClient())
             {
                 try

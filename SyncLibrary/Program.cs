@@ -33,18 +33,32 @@
 
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static Action<IConfigurationBuilder> BuildConfiguration =
+            builder => builder
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("hostsettings.json", optional: true)
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("environment") ?? "Production"}.json", optional: true)
+                .AddEnvironmentVariables();
+
+        public static async Task<int> Main(string[] args)
         {
-            IHostBuilder builder = new HostBuilder()
+            var builderConfig = new ConfigurationBuilder();
+            BuildConfiguration(builderConfig);
+
+            Log.Logger = new LoggerConfiguration()
+                    .ReadFrom.Configuration(builderConfig.Build())
+                    .Enrich.FromLogContext()
+                    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+                    .CreateLogger();
+
+            Log.Information("Start Synker batch");
+
+            try
+            {
+                IHostBuilder builder = new HostBuilder()
                 .ConfigureServices(async (hostContext, services) =>
                 {
-                    Log.Logger = new LoggerConfiguration()
-                    .ReadFrom.Configuration(hostContext.Configuration)
-                    .Enrich.FromLogContext()
-                    .WriteTo.Console(outputTemplate:"[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
-                    .CreateLogger();
-                    ILoggerFactory loggerFactory = new LoggerFactory().AddSerilog(Log.Logger);
-
                     services.AddOptions();
                     services
                     .Configure<RabbitMQConfiguration>(hostContext.Configuration.GetSection(nameof(RabbitMQConfiguration)))
@@ -61,9 +75,6 @@
                     .AddScoped<RabbitNotificationConsumer, RabbitNotificationConsumer>()
                     .AddScoped<RabbitSynchronizeConsumer, RabbitSynchronizeConsumer>()
                     .AddScoped<FirebaseNotificationConsumer, FirebaseNotificationConsumer>()
-                    .AddSingleton(loggerFactory)
-                    .AddLogging(loggingBuilder =>
-                         loggingBuilder.AddSerilog(dispose: true))
                     .AddScheduler((sender, a) =>
                      {
                          Console.Write(a.Exception.Message);
@@ -80,7 +91,13 @@
                         });
                     });
 
-                    await ConfigureRabbitMQAsync(services);
+                    await ConfigureRabbitMQAsync(services).ConfigureAwait(false);
+                }).ConfigureHostConfiguration(configHost =>
+                {
+                    configHost.SetBasePath(Directory.GetCurrentDirectory());
+                    configHost.AddJsonFile("hostsettings.json", optional: true);
+                    configHost.AddEnvironmentVariables();
+                    configHost.AddCommandLine(args);
                 })
                 .ConfigureAppConfiguration((host, config) =>
                 {
@@ -88,25 +105,34 @@
                     config.AddJsonFile("appsettings.json", optional: true);
                     config.AddJsonFile($"appsettings.{host.HostingEnvironment.EnvironmentName}.json", optional: true);
                     config.AddEnvironmentVariables();
-                    config.AddUserSecrets<Program>();
+                    if (host.HostingEnvironment.EnvironmentName.Equals("Development", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        config.AddUserSecrets<Program>();
+                    }
 
                     if (args != null)
                     {
                         config.AddCommandLine(args);
                     }
-                })
-                .ConfigureHostConfiguration(config =>
-                {
-                    config.SetBasePath(Directory.GetCurrentDirectory());
-                    config.AddEnvironmentVariables();
-                })
-                .ConfigureLogging((hostingContext, logging) =>
-                {
-                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    logging.AddConsole();
                 });
 
-            await builder.RunConsoleAsync();
+                await builder
+                    .UseConsoleLifetime()
+                    .UseSerilog()
+                    .RunConsoleAsync()
+                    .ConfigureAwait(false);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Synker Host terminated unexpectedly");
+                return 1;
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         private static async Task ConfigureRabbitMQAsync(IServiceCollection services, CancellationToken cancellationToken = default)
@@ -115,8 +141,7 @@
             {
                 ServiceProvider sp = services.BuildServiceProvider();
                 IOptions<RabbitMQConfiguration> rabbitConfig = sp.GetService<IOptions<RabbitMQConfiguration>>();
-                ILoggerFactory _loggerFactory = sp.GetService<ILoggerFactory>();
-                Microsoft.Extensions.Logging.ILogger _logger = _loggerFactory.CreateLogger(typeof(Program));
+                var _logger = sp.GetService<ILogger<Program>>();
 
                 _logger.LogInformation($"Connected to rabbit host: {rabbitConfig.Value.Hostname}{rabbitConfig.Value.VirtualHost}:{rabbitConfig.Value.Port}");
 
@@ -142,13 +167,13 @@
                     ep.Handler<DiffPlaylistEvent>(async context =>
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
-                        await Console.Out.WriteLineAsync($"{nameof(DiffPlaylistEvent)}: {context.Message}");
+                        await Console.Out.WriteLineAsync($"{nameof(DiffPlaylistEvent)}: {context.Message}").ConfigureAwait(false);
                         Console.ResetColor();
                     });
                     ep.Handler<TraceEvent>(async context =>
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        await Console.Out.WriteLineAsync($"{nameof(TraceEvent)}: {context.Message}");
+                        await Console.Out.WriteLineAsync($"{nameof(TraceEvent)}: {context.Message}").ConfigureAwait(false);
                         Console.ResetColor();
                     });
 

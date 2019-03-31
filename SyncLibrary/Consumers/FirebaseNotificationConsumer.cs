@@ -48,7 +48,7 @@
 
             var notif = await firebase
               .Child(FirebaseNotifications.TableName)
-              .Child($"{message.UserId}")
+              .Child($"{message.UserId.GetHashCode()}")
               .PostAsync(new FirebaseNotifications.FirebaseNotification
               {
                   Date = message.CreatedDate.ToString(),
@@ -56,7 +56,7 @@
                   Source = nameof(TraceEvent),
                   Body = message.Message,
                   Title = nameof(TraceEvent),
-                  UserId = message.UserId,
+                  UserId = message.UserId.GetHashCode().ToString(),
                   UnixTimestamp = message.UnixTimestamp
               }, true)
               .ConfigureAwait(false);

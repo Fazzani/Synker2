@@ -2,11 +2,7 @@
   "profiles": {
     "SyncLibrary": {
       "commandName": "Project",
-      "commandLineArgs": "diff",
-      "environmentVariables": {
-        "VERSION": "1.0.0",
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      "commandLineArgs": "diff"
     }
   }
 }
