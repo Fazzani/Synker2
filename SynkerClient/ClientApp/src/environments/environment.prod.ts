@@ -27,10 +27,7 @@ export const environment = {
     automaticSilentRenew: false,
     silent_redirect_uri: 'https://synker.ovh/silent-refresh.html',
     sessionChecksEnabled: true,
-    showDebugInformation: false, // Also requires enabling "Verbose" level in devtools
-    clearHashAfterLogin: false, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,
-    silentRefreshTimeout: 5000, // For faster testing
-    timeoutFactor: 0.25, // For faster testing
+    clearHashAfterLogin: false // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,
   },
   authModuleConfig: {
     // Inject "Authorization: Bearer ..." header for these APIs:
