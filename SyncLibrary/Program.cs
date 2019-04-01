@@ -48,8 +48,6 @@
 
             Log.Logger = new LoggerConfiguration()
                     .ReadFrom.Configuration(builderConfig.Build())
-                    .Enrich.FromLogContext()
-                    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
                     .CreateLogger();
 
             Log.Information("Start Synker batch");
