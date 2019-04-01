@@ -94,17 +94,12 @@
                     await ConfigureRabbitMQAsync(services).ConfigureAwait(false);
                 }).ConfigureHostConfiguration(configHost =>
                 {
-                    configHost.SetBasePath(Directory.GetCurrentDirectory());
-                    configHost.AddJsonFile("hostsettings.json", optional: true);
-                    configHost.AddEnvironmentVariables();
+                    BuildConfiguration(configHost);
                     configHost.AddCommandLine(args);
                 })
                 .ConfigureAppConfiguration((host, config) =>
                 {
-                    config.SetBasePath(Directory.GetCurrentDirectory());
-                    config.AddJsonFile("appsettings.json", optional: true);
-                    config.AddJsonFile($"appsettings.{host.HostingEnvironment.EnvironmentName}.json", optional: true);
-                    config.AddEnvironmentVariables();
+                    BuildConfiguration(config);
                     if (host.HostingEnvironment.EnvironmentName.Equals("Development", StringComparison.CurrentCultureIgnoreCase))
                     {
                         config.AddUserSecrets<Program>();
