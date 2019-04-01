@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { MatSnackBar } from "@angular/material";
-import { ActivatedRoute } from "@angular/router";
 import { NotificationService } from "../../services/notification/notification.service";
 import FirebaseNotification from "../../types/firebase.type";
 import { User } from "../../types/auth.type";
@@ -28,7 +27,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     this.authService.user$.subscribe((user: User) => {
       this.user = user;
       this.notifications$ = this.notificationService
-        .list(this.user.email, 100)
+        .list(this.user.emailHash, 100)
         .snapshotChanges()
         .pipe(
           map(changes =>
@@ -37,19 +36,19 @@ export class NotificationsComponent implements OnInit, OnDestroy {
               return <FirebaseNotification>{ Key: c.payload.key, Since: moment.utc(val.Date).fromNow(), ...val };
             })
           )
-        );
-      this.notificationsCount$ = this.notificationService.count(this.user.email);
+      );
+      this.notificationsCount$ = this.notificationService.count(this.user.emailHash);
     });
   }
 
   markAsRead(notif: FirebaseNotification): void {
     if (this.user)
-      this.notificationService.remove(this.user.email, notif.Key);
+      this.notificationService.remove(this.user.emailHash, notif.Key);
   }
 
   markAllAsRead(): void {
     if (this.user)
-      this.notificationService.removeAll(this.user.email);
+      this.notificationService.removeAll(this.user.emailHash);
   }
 
   ngOnDestroy() { }
