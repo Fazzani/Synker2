@@ -31,9 +31,9 @@ export const environment = {
     loadUserInfo: true,
     automaticSilentRenew: true,
     silent_redirect_uri: 'http://localhost:56810/silent-refresh.html',
-    sessionChecksEnabled: true,
+    sessionChecksEnabled: false,
     showDebugInformation: true, // Also requires enabling "Verbose" level in devtools
-    clearHashAfterLogin: false, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,
+    clearHashAfterLogin: true, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,
     silentRefreshTimeout: 5000, // For faster testing
     timeoutFactor: 0.25, // For faster testing
   },

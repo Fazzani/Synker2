@@ -1,7 +1,23 @@
 ﻿namespace hfa.Brokers.Messages.Contracts
 {
+    using NETCore.Encrypt;
+
     public class TraceEvent : ApplicationEvent
     {
+        private string _userEmailHash;
+
+        public string UserIdHash
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_userEmailHash))
+                {
+                    _userEmailHash = EncryptProvider.Md5(UserId);
+                }
+                return _userEmailHash;
+            }
+        }
+
         public string UserId { get; set; }
 
         public string Message { get; set; }

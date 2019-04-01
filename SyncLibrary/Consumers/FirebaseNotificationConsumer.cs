@@ -46,9 +46,11 @@
                 AuthTokenAsyncFactory = () => Task.FromResult(_firebaseOptions.Secret)
             });
 
+            _logger.LogInformation($"{nameof(FirebaseNotificationConsumer)}: new message for the user {message.UserId} that has Hash => {message.UserIdHash} ");
+
             var notif = await firebase
               .Child(FirebaseNotifications.TableName)
-              .Child($"{message.UserId.GetHashCode()}")
+              .Child($"{message.UserIdHash}")
               .PostAsync(new FirebaseNotifications.FirebaseNotification
               {
                   Date = message.CreatedDate.ToString(),
@@ -56,7 +58,7 @@
                   Source = nameof(TraceEvent),
                   Body = message.Message,
                   Title = nameof(TraceEvent),
-                  UserId = message.UserId.GetHashCode().ToString(),
+                  UserId = message.UserIdHash,
                   UnixTimestamp = message.UnixTimestamp
               }, true)
               .ConfigureAwait(false);
