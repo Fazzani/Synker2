@@ -538,8 +538,8 @@ namespace hfa.WebApi
             {
                 authorizationOptions.AddPolicy(AuthorizePolicies.ADMIN, policyBuilder => policyBuilder.RequireRole(AuthorizePolicies.ADMIN));
                 authorizationOptions.AddPolicy(AuthorizePolicies.FULLACCESS, policyBuilder => policyBuilder.RequireClaim("scope", "synkerapi.full_access"));
-                authorizationOptions.AddPolicy(AuthorizePolicies.READER_ONLY, policyBuilder => policyBuilder.RequireClaim("scope", "synkerapi.readonly"));
-                authorizationOptions.AddPolicy(AuthorizePolicies.READER, policyBuilder => policyBuilder.RequireAssertion(a => a.User.Claims.Where(c => c.Type == "scope").Any(scope => scope.Value == "synkerapi.full_access" || scope.Value == "synkerapi.readonly")));
+                authorizationOptions.AddPolicy(AuthorizePolicies.READER_ONLY, policyBuilder => policyBuilder.RequireClaim("scope", "synkerapi.read_only"));
+                authorizationOptions.AddPolicy(AuthorizePolicies.READER, policyBuilder => policyBuilder.RequireAssertion(a => a.User.Claims.Where(c => c.Type == "scope").Any(scope => scope.Value == "synkerapi.full_access" || scope.Value == "synkerapi.read_only")));
                 authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
             });
         }

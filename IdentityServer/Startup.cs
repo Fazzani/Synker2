@@ -13,6 +13,7 @@ using IdentityServer4.Models;
 using System.Collections.Generic;
 using System.Linq;
 using IdentityModel;
+using IdentityServer4.Services;
 
 namespace IdentityServer
 {
@@ -24,13 +25,14 @@ namespace IdentityServer
         public Startup(IHostingEnvironment environment, IConfiguration configuration)
         {
             Environment = environment;
-          
             Configuration = configuration;
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
+
+            services.AddTransient<IProfileService, SynkerProfileService>();
 
             services.Configure<IISOptions>(options =>
             {
@@ -60,6 +62,8 @@ namespace IdentityServer
             {
                 throw new Exception("need to configure key material");
             }
+
+            builder.AddProfileService<SynkerProfileService>();
 
             services.AddAuthentication()
                 .AddGoogle(options =>
