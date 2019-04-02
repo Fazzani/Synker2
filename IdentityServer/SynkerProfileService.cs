@@ -18,7 +18,7 @@
             if (user != null)
             {
                 var claims = user.Claims;
-                claims.Add(new Claim(JwtClaimTypes.GivenName, user.Username));
+                claims.Add(new Claim(JwtClaimTypes.PreferredUserName, user.Username));
                 claims.Add(new Claim("email_hash", user.Username.GetHashCode().ToString()));
 
                 context.IssuedClaims.AddRange(claims);

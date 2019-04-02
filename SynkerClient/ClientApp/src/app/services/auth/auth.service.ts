@@ -49,7 +49,8 @@ export class AuthService {
 
     this.oauthService.events
       .pipe(filter(e => ['token_received', 'discovery_document_loaded'].includes(e.type)))
-      .subscribe(e => this.oauthService.loadUserProfile().then((userProfile: any) => this.user$.next(User.FromUserProfile(userProfile))));
+      .subscribe(e => this.oauthService.loadUserProfile()
+      .then((userProfile: any) => this.user$.next(User.FromUserProfile(userProfile))));
 
     //silent_refresh_timeout
     //token_expires
