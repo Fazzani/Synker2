@@ -52,7 +52,7 @@
       <span>Sites Pack</span>
     </button>
 
-    <button mat-menu-item routerLink="/admin" *ngIf="isAuthenticated" fxHide.gt-sm>
+    <button mat-menu-item *ngIf="((isAdmin$ | async) && isAuthenticated)" routerLink="/admin" fxHide.gt-sm>
       <mat-icon>settings</mat-icon>
       <span>Admin</span>
     </button>

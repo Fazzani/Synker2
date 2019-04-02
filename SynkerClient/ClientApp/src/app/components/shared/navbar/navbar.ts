@@ -11,7 +11,6 @@ import { InitAppService } from "../../../services/initApp/InitAppService";
 import { AboutApplication } from "../../../types/aboutApplication.type";
 import { NotificationService } from "../../../services/notification/notification.service";
 import FirebaseNotification from "../../../types/firebase.type";
-import { OAuthService } from "angular-oauth2-oidc";
 import { AuthService } from '../../../services/auth/auth.service';
 import { AdminRole } from '../../../variables';
 
@@ -53,8 +52,7 @@ export class NavBar implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private initAppService: InitAppService,
-    private notificationService: NotificationService,
-    private oauthService: OAuthService
+    private notificationService: NotificationService
   ) {
 
     this.aboutApp = this.initAppService.about;
@@ -81,7 +79,7 @@ export class NavBar implements OnInit, OnDestroy {
   }
 
   signout(): void {
-    this.oauthService.logOut(true);
+    this.authService.logout();
   }
 
   toggleNotification = () => {

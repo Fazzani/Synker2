@@ -1,28 +1,28 @@
-import { Component, OnInit, OnDestroy, HostBinding } from "@angular/core";
-import { filter, distinctUntilChanged, debounceTime } from "rxjs/operators";
-import { Router, NavigationStart, NavigationCancel, NavigationEnd, NavigationError } from "@angular/router";
-import "hammerjs";
-import "./app.component.css";
-import { MatSnackBar } from "@angular/material";
-import { CommonService, Constants } from "../../services/common/common.service";
-import { Exception } from "../../types/common.type";
-import { OverlayContainer } from "@angular/cdk/overlay";
-import { SwUpdate, SwPush } from "@angular/service-worker";
-import { DeviceService } from "../../services/device/device.service";
+import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
+import { filter, distinctUntilChanged, debounceTime } from 'rxjs/operators';
+import { Router, NavigationStart, NavigationCancel, NavigationEnd, NavigationError } from '@angular/router';
+import 'hammerjs';
+import './app.component.css';
+import { MatSnackBar } from '@angular/material';
+import { CommonService, Constants } from '../../services/common/common.service';
+import { Exception } from '../../types/common.type';
+import { OverlayContainer } from '@angular/cdk/overlay';
+import { SwUpdate, SwPush } from '@angular/service-worker';
+import { DeviceService } from '../../services/device/device.service';
 import { OAuthService, JwksValidationHandler, AuthConfig } from 'angular-oauth2-oidc';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import { User } from "../../types/auth.type";
+import { User } from '../../types/auth.type';
 import { AuthService } from '../../services/auth/auth.service';
 import { VAPID_PUBLIC_KEY } from '../../variables';
 
 @Component({
-  selector: "app",
-  templateUrl: "./app.component.html"
+  selector: 'app',
+  templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit, OnDestroy {
-  @HostBinding("class") componentCssClass;
-  color = "primary";
+  @HostBinding('class') componentCssClass;
+  color = 'primary';
   objLoaderStatus: boolean;
   loading: boolean;
   user: Observable<User>;
@@ -39,7 +39,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private router: Router,
     private overlayContainer: OverlayContainer,
     private oauthService: OAuthService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {
     this.objLoaderStatus = false;
     this.isAuthenticated = this.authService.isAuthenticated$;
@@ -54,38 +54,38 @@ export class AppComponent implements OnInit, OnDestroy {
   private configureWithNewConfigApi() {
     this.oauthService.configure(<AuthConfig>environment.idp);
     this.oauthService.tokenValidationHandler = new JwksValidationHandler();
-    this.oauthService.showDebugInformation = true;
+    this.oauthService.showDebugInformation = !environment.production;
 
     this.authService.runInitialLoginSequence();
   }
 
   ngOnInit() {
-    this.setTheme(localStorage.getItem(Constants.ThemeKey) || "dark-theme");
-   
+    this.setTheme(localStorage.getItem(Constants.ThemeKey) || 'dark-theme');
+
     this.commonService.loaderStatus
       .pipe(
         distinctUntilChanged(),
-        debounceTime(2000)
+        debounceTime(2000),
       )
       .subscribe((val: boolean) => {
-        console.log("new loader data : ", val);
+        console.log('new loader data : ', val);
         this.objLoaderStatus = val;
       });
 
     this.commonService.error
       .pipe(
         distinctUntilChanged(),
-        filter(err => err != null)
+        filter(err => err != null),
       )
       .subscribe((err: Exception) => {
-        this.commonService.displayError(err.message, err.title);
+        this.commonService.displayError(err.title, err.message);
       });
 
     //angular-service-worker for progressive app
     // auto refresh when new version is available
     this.swUpdate.available.subscribe(event => {
-      console.log("[App] Update available: current version is", event.current, "available version is", event.available);
-      let snackBarRef = this.snackBar.open("Newer version of the app is available", "Refresh");
+      console.log('[App] Update available: current version is', event.current, 'available version is', event.available);
+      let snackBarRef = this.snackBar.open('Newer version of the app is available', 'Refresh');
 
       snackBarRef.onAction().subscribe(() => {
         window.location.reload();
@@ -101,7 +101,7 @@ export class AppComponent implements OnInit, OnDestroy {
   setTheme(theme: string): void {
     this.componentCssClass = theme;
     const overlayContainerClasses = this.overlayContainer.getContainerElement().classList;
-    const themeClassesToRemove: string[] = Array.from(Constants.ThemesList).filter((item: string) => item.includes("-theme"));
+    const themeClassesToRemove: string[] = Array.from(Constants.ThemesList).filter((item: string) => item.includes('-theme'));
     if (themeClassesToRemove.length) {
       overlayContainerClasses.remove(...themeClassesToRemove);
     }
@@ -111,16 +111,16 @@ export class AppComponent implements OnInit, OnDestroy {
   handelSubscribeToWebPush(event: any) {
     this.swPush
       .requestSubscription({
-        serverPublicKey: VAPID_PUBLIC_KEY
+        serverPublicKey: VAPID_PUBLIC_KEY,
       })
       .then(sub => {
         console.log('PushSubscription: ', JSON.stringify(sub));
         return this.deviceService.create(sub).subscribe();
       })
-      .catch(err => console.error("Could not subscribe to notifications", err));
+      .catch(err => console.error('Could not subscribe to notifications', err));
   }
 
-  ngOnDestroy(): void { }
+  ngOnDestroy(): void {}
 
   ngAfterViewInit() {
     this.router.events.subscribe(event => {
