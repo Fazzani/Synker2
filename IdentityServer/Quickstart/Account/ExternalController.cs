@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Principal;
-using System.Threading.Tasks;
 using IdentityModel;
 using IdentityServer4.Events;
 using IdentityServer4.Quickstart.UI;
@@ -14,6 +8,12 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Security.Principal;
+using System.Threading.Tasks;
 
 namespace Host.Quickstart.Account
 {
@@ -220,6 +220,17 @@ namespace Host.Quickstart.Account
             if (sid != null)
             {
                 localClaims.Add(new Claim(JwtClaimTypes.SessionId, sid.Value));
+            }
+
+            //Updating Gender claim
+            var gender = externalResult.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Gender);
+            if (gender != null)
+            {
+                if (externalResult.Principal.Identity is ClaimsIdentity claimsIdentity)
+                {
+                    claimsIdentity.RemoveClaim(gender);
+                    localClaims.Add(new Claim(JwtClaimTypes.Gender, gender.Value == "male" ? "Mr" : "Mrs"));
+                }
             }
 
             // if the external provider issued an id_token, we'll keep it for signout

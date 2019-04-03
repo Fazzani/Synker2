@@ -3,17 +3,15 @@
 
 
 using System;
-using IdentityServer4;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using IdentityServer4.Models;
-using System.Collections.Generic;
-using System.Linq;
-using IdentityModel;
 using IdentityServer4.Services;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using Newtonsoft.Json.Linq;
 
 namespace IdentityServer
 {
@@ -68,9 +66,22 @@ namespace IdentityServer
             services.AddAuthentication()
                 .AddGoogle(options =>
                 {
-                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
                     options.ClientId = Configuration.GetValue<string>("StsAuthentificationConfiguration:Google:ClientId");
                     options.ClientSecret = Configuration.GetValue<string>("StsAuthentificationConfiguration:Google:Secret");
+
+                    options.Scope.Add("profile");
+
+                    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "sub");
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
+                    options.ClaimActions.MapJsonKey(ClaimTypes.GivenName, "given_Name");
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Surname, "family_Name");
+                    options.ClaimActions.MapJsonKey("picture", "picture");
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Locality, "locale");
+                    options.ClaimActions.MapJsonKey("profile", "urn:google:profile");
+                    options.ClaimActions.MapCustomJson("gender", jobject =>
+                    jobject["gender"].Value<string>().Equals("male", StringComparison.InvariantCultureIgnoreCase) ? "Mr" : "Mrs");
+
+                    options.SaveTokens = true;
                 });
         }
 
