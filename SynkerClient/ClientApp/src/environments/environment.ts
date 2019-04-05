@@ -22,7 +22,7 @@ export const environment = {
   },
   idp: {
     issuer: 'http://localhost:5000',
-    clientId: 'synkerclient',
+    clientId: 'SynkerClient.dev',
     redirectUri: 'http://localhost:56810/index.html',
     postLogoutRedirectUri: 'http://localhost:5000/',
     responseType: "id_token token",

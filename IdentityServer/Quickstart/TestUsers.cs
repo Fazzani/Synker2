@@ -12,7 +12,9 @@ namespace IdentityServer4.Quickstart.UI
     public class TestUsers
     {
         public static List<TestUser> Users = new List<TestUser>
-        { new TestUser{SubjectId = "818721", Username = "tunisienheni@gmail.com", Password = "password",
+        {
+            new TestUser{SubjectId = "818721", Username = "tunisienheni@gmail.com", Password = "password", ProviderName="Google",ProviderSubjectId="" },
+            new TestUser{SubjectId = "818721", Username = "tunisienheni@gmail.com", Password = "password",
                 Claims =
                 {
                     new Claim(JwtClaimTypes.Name, "Heni Fazzani"),
@@ -28,8 +30,8 @@ namespace IdentityServer4.Quickstart.UI
                     new Claim(JwtClaimTypes.Address, @"{ 'street_address': '2 Passage Paillé', 'locality': 'Clichy', 'postal_code': 92110, 'country': 'France' }", IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json)
                 }
             },
-            new TestUser{SubjectId = "818727", Username = "alice", Password = "alice", 
-                Claims = 
+            new TestUser{SubjectId = "818727", Username = "alice", Password = "alice",
+                Claims =
                 {
                     new Claim(JwtClaimTypes.Name, "Alice Smith"),
                     new Claim(JwtClaimTypes.Gender, "Mrs"),
@@ -43,8 +45,8 @@ namespace IdentityServer4.Quickstart.UI
                     new Claim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json)
                 }
             },
-            new TestUser{SubjectId = "88421113", Username = "bob", Password = "bob", 
-                Claims = 
+            new TestUser{SubjectId = "88421113", Username = "bob", Password = "bob",
+                Claims =
                 {
                     new Claim(JwtClaimTypes.Name, "Bob Smith"),
                     new Claim(JwtClaimTypes.Gender, "Mr"),
