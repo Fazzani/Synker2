@@ -78,12 +78,16 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         [Authorize(Policy = AuthorizePolicies.READER)]
-        public async Task<IActionResult> ListAsync([FromBody] QueryListBaseModel query, [FromQuery] bool light = true, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ListAsync([FromBody] QueryListBaseModel query, [FromQuery] bool light = true, 
+            CancellationToken cancellationToken = default)
         {
             //TODO: A virer apres la migration de l'auth
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
-            if (user == null) return BadRequest($"User {this.UserEmail} not found");
-
+            if (user == null)
+            {
+                _logger.LogError($"User {this.UserEmail} not founded");
+                return BadRequest($"User {this.UserEmail} not found");
+            }
             var plCacheKey = $"{UserCachePlaylistKey}_{query.GetHashCode()}_{light}";
             var playlists = await _memoryCache.GetOrCreateAsync(plCacheKey, async entry =>
             {
@@ -108,7 +112,7 @@ namespace Hfa.WebApi.Controllers
                    .GetPaged(query.PageNumber, query.PageSize);
                     return response;
                 });
-            }).ConfigureAwait(false);
+            });
 
             return new OkObjectResult(playlists);
         }
@@ -169,7 +173,9 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
-        public async Task<IActionResult> PutAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> PutAsync(string id,
+            [FromBody]PlaylistModel playlist,
+            CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
 
@@ -213,11 +219,12 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
-        public async Task<IActionResult> PutLightAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> PutLightAsync(string id, [FromBody]PlaylistModel playlist, 
+            CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
 
-            var playlistEntity = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+            var playlistEntity = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.UniqueId == idGuid, cancellationToken);
             if (playlistEntity == null)
                 return NotFound(playlistEntity);
 

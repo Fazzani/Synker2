@@ -7,23 +7,32 @@ import { ToastrService } from "ngx-toastr";
   providedIn: 'root',
 })
 export class CommonService {
+   
   /**
    * @constructor
    */
   constructor(private toastyService: ToastrService) {}
   public loaderStatus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-  public error: BehaviorSubject<Exception> = new BehaviorSubject<Exception>(null);
+  public errors: BehaviorSubject<Exception> = new BehaviorSubject<Exception>(null);
 
   info(title: string, message: string): void {
     this.toastyService.info(message, title);
+  }
+
+  warn(title: string, message: string): void {
+    this.toastyService.warning(message, title);
   }
 
   success(title: string, message: string): void {
     this.toastyService.success(message, title);
   }
 
+  error(title: string, message: string): void {
+    this.toastyService.error(message, title);
+  }
+
   displayError(title: string, message: string): void {
-    this.error.next(<Exception>{ title: title, message: message });
+    this.errors.next(<Exception>{ title: title, message: message });
   }
 
   displayLoader(value: boolean) {

@@ -24,8 +24,7 @@ export class XmltvService extends BaseService {
   getSitePackChannel(id: string): Observable<ElasticResponse<sitePackChannel>> {
     return this.http
       .get(environment.base_api_url + "xmltv/channels/" + id).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+      map(this.handleSuccess));
   }
 
   /**
@@ -36,8 +35,7 @@ export class XmltvService extends BaseService {
   listSitePack(query: ElasticQuery): Observable<ElasticResponse<sitePackChannel>> {
     return this.http
       .post(environment.base_api_url + "xmltv/channels/_search", query).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+      map(this.handleSuccess));
   }
 
   /**
@@ -48,7 +46,6 @@ export class XmltvService extends BaseService {
   webgrab(xmltv_id: string[]) {
     return this.http
       .post(environment.base_api_url + "xmltv/channels/webgrab", xmltv_id).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+      map(this.handleSuccess));
   }
 }

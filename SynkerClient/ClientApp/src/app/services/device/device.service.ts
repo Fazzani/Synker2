@@ -17,23 +17,20 @@ export class DeviceService extends BaseService {
 
   public get(id: string): Observable<PagedResult<Device>> {
     return this.http.get(`${this.FullBaseUrl}/${id}`).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError)
+      map(this.handleSuccess)
     );
   }
 
   public update(device: DeviceModel): Observable<number> {
     return this.http.put(`${this.FullBaseUrl}/${device.id}`, device).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError)
+      map(this.handleSuccess)
     );
   }
 
   public create(pushSubscription: PushSubscription): Observable<number> {
 
     return this.http.post(`${this.FullBaseUrl}`, pushSubscription.toJSON()).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError)
+      map(this.handleSuccess)
     );
   }
 
@@ -44,8 +41,7 @@ export class DeviceService extends BaseService {
         pageSize: pageSize
       })
       .pipe(
-        map(this.handleSuccess),
-        catchError(this.handleError)
+        map(this.handleSuccess)
       );
   }
 }

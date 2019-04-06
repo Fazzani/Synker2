@@ -22,15 +22,13 @@ export class TvgMediaService extends BaseService {
   get(id: string): Observable<ElasticResponse<TvgMedia>> {
     return this.http
       .get(environment.base_api_url + "tvgmedia/" + id).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+      map(this.handleSuccess));
   }
 
   list(query: ElasticQuery): Observable<ElasticResponse<TvgMedia>> {
     return this.http
       .post(environment.base_api_url + "tvgmedia/_search/", query).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+      map(this.handleSuccess));
   }
 
   addToToPlaylist(id: string, ...medias: TvgMedia[]) {
@@ -38,8 +36,7 @@ export class TvgMediaService extends BaseService {
       .post(environment.base_api_url + `${this._baseUrl}/${id}/insert`, medias, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
-      }).pipe(
-      catchError(this.handleError));
+      });
   }
 
   removeFromPlaylist(id: string, ...medias: TvgMedia[]) {
@@ -47,14 +44,13 @@ export class TvgMediaService extends BaseService {
       .post(`${environment.base_api_url}${this._baseUrl}/${id}/delete`, medias, {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
-      }).pipe(
-      catchError(this.handleError));
+      });
   }
 
   matchTvg(matchTvgPostModel: MatchTvgPostModel): Observable<sitePackChannel> {
     return this.http
       .post(`${environment.base_api_url}${this._baseUrl}/matchtvg`, matchTvgPostModel).pipe(
       map(this.handleSuccess),
-      catchError(this.handleError),);
+      );
   }
 }

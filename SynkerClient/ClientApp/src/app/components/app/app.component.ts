@@ -72,7 +72,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.objLoaderStatus = val;
       });
 
-    this.commonService.error
+    this.commonService.errors
       .pipe(
         distinctUntilChanged(),
         filter(err => err != null),

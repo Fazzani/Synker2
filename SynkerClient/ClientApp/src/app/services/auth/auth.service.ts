@@ -20,7 +20,7 @@ export class AuthService {
     // Useful for debugging:
     this.oauthService.events.subscribe(event => {
       if (event instanceof OAuthErrorEvent) {
-        this.commonService.error.next(<Exception>{ title: event.type, message: JSON.stringify(event.reason) });
+        this.commonService.displayError(event.type, JSON.stringify(event.reason));
       } else {
         console.warn('OAuth Events => ', event);
       }

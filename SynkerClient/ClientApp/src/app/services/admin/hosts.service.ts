@@ -18,21 +18,18 @@ export class HostsService extends BaseService {
   update(host: Host): Observable<Host> {
     return this.http
       .put(`${this.FullBaseUrl}/${host.id}`, host).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+        map(this.handleSuccess));
   }
 
   public get(id: number): Observable<Host> {
     return this.http
       .get(`${this.FullBaseUrl}/${id}`).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+        map(this.handleSuccess));
   }
 
   public list(queryModel: QueryListBaseModel): Observable<PagedResult<Host>> {
     return this.http
       .post(`${this.FullBaseUrl}/search`, queryModel).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+        map(this.handleSuccess));
   }
 }

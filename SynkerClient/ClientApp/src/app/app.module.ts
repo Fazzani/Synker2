@@ -1,4 +1,4 @@
-import { NgModule, APP_INITIALIZER } from "@angular/core";
+import { NgModule, APP_INITIALIZER, ErrorHandler } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
@@ -52,6 +52,7 @@ import { UnauthorizedComponent } from './components/unauthorized/unauthorized.co
 import { PlaylistService } from './services/playlists/playlist.service';
 import { LoaderHttpInterceptor } from "./infrastructure/LoaderHttpInterceptor";
 import { ShouldLoginComponent } from './components/login/should-login.component';
+import { ErrorsHandler } from './infrastructure/ErrorsHandler';
 
 export function getAboutApplication(initService: InitAppService) {
   return () => initService.getAboutApplication();
@@ -140,6 +141,10 @@ export function getAboutApplication(initService: InitAppService) {
       useFactory: getAboutApplication,
       multi: true,
       deps: [InitAppService]
+    },
+    {
+      provide: ErrorHandler,
+      useClass: ErrorsHandler,
     },
     PlaylistDetailResolver,
     HostsResolver,

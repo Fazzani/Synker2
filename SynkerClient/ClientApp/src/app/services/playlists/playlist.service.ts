@@ -27,15 +27,13 @@ export class PlaylistService extends BaseService {
         params: params
       })
       .pipe(
-        map(this.handleSuccess),
-        catchError(this.handleError)
+        map(this.handleSuccess)
       );
   }
 
   list(query: QueryListBaseModel): Observable<PagedResult<PlaylistModel>> {
     return this.http.post(`${environment.base_api_url}${this._baseUrl}/search`, query).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError)
+      map(this.handleSuccess)
     );
   }
 
@@ -56,36 +54,31 @@ export class PlaylistService extends BaseService {
 
   synk(model: PlaylistPostModel): Observable<PlaylistModel> {
     return this.http.post(`${environment.base_api_url}${this._baseUrl}/synk`, model).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError)
+      map(this.handleSuccess)
     );
   }
 
   executeHandlers(model: TvgMedia[]): Observable<TvgMedia[]> {
     return this.http.post(`${environment.base_api_url}${this._baseUrl}/handlers`, model).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError)
+      map(this.handleSuccess)
     );
   }
 
   match(id: string): Observable<PlaylistModel> {
     return this.http.post(`${environment.base_api_url}${this._baseUrl}/match/$${id}`, null).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError)
+      map(this.handleSuccess)
     );
   }
 
   matchtvg(id: string, onlyNotMatched: boolean = true): Observable<PlaylistModel> {
     return this.http.post(`${environment.base_api_url}${this._baseUrl}/matchtvg/${id}?onlyNotMatched=${onlyNotMatched}`, null).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError)
+      map(this.handleSuccess)
     );
   }
 
   matchFiltredTvgSites(id: string, onlyNotMatched: boolean = true): Observable<PlaylistModel> {
     return this.http.post(`${environment.base_api_url}${this._baseUrl}/matchfiltred/${id}?onlyNotMatched=${onlyNotMatched}`, null).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError)
+      map(this.handleSuccess)
     );
   }
 
@@ -96,8 +89,7 @@ export class PlaylistService extends BaseService {
    */
   matchVideosByPlaylist(id: string): Observable<PlaylistModel> {
     return this.http.post(`${environment.base_api_url}${this._baseUrl}/matchvideos/${id}`, null).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError)
+      map(this.handleSuccess)
     );
   }
 
@@ -108,8 +100,7 @@ export class PlaylistService extends BaseService {
    */
   matchVideos(...medias: TvgMedia[]): Observable<TvgMedia[]> {
     return this.http.post(`${environment.base_api_url}${this._baseUrl}/matchvideos`, medias).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError)
+      map(this.handleSuccess)
     );
   }
 
@@ -120,8 +111,7 @@ export class PlaylistService extends BaseService {
    */
   matchVideo(mediaName: string): Observable<any> {
     return this.http.post(`${environment.base_api_url}${this._baseUrl}/matchvideo/${mediaName}`, null).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError)
+      map(this.handleSuccess)
     );
   }
 
@@ -133,8 +123,7 @@ export class PlaylistService extends BaseService {
 
   diff(model: PlaylistPostModel): Observable<PlaylistModel> {
     return this.http.post(`${environment.base_api_url}${this._baseUrl}/diff`, model).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError)
+      map(this.handleSuccess)
     );
   }
 
@@ -145,8 +134,7 @@ export class PlaylistService extends BaseService {
         responseType: "text"
       })
       .pipe(
-        map(this.handleSuccess),
-        catchError(this.handleError)
+        map(this.handleSuccess)
       );
   }
 
@@ -157,8 +145,7 @@ export class PlaylistService extends BaseService {
         responseType: "text"
       })
       .pipe(
-        map(this.handleSuccess),
-        catchError(this.handleError)
+        map(this.handleSuccess)
       );
   }
 
@@ -169,8 +156,7 @@ export class PlaylistService extends BaseService {
         responseType: "text"
       })
       .pipe(
-        map(this.handleSuccess),
-        catchError(this.handleError)
+        map(this.handleSuccess)
       );
   }
 
@@ -182,7 +168,7 @@ export class PlaylistService extends BaseService {
         headers: new HttpHeaders().set("Content-Type", "application/json"),
         responseType: "text"
       })
-      .pipe(catchError(this.handleError));
+      .pipe();
   }
 
   /**
@@ -191,8 +177,7 @@ export class PlaylistService extends BaseService {
    */
   groups(id: string): Observable<MediaGroup[]> {
     return this.http.get(`${environment.base_api_url}${this._baseUrl}/${id}/groups`).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError)
+      map(this.handleSuccess)
     );
   }
 
@@ -203,8 +188,7 @@ export class PlaylistService extends BaseService {
    */
   childrenGroups(id: string, group: string): Observable<TvgMedia[]> {
     return this.http.get(`${environment.base_api_url}${this._baseUrl}/${id}/groups/${group}`).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError)
+      map(this.handleSuccess)
     );
   }
 }

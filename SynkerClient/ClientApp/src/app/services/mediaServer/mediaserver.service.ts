@@ -19,35 +19,30 @@ export class MediaServerService extends BaseService {
   public server(): Observable<MediaServerStats> {
     return this.http
       .get(`${this.FullBaseUrl}/server`).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError));
+        map(this.handleSuccess));
   }
 
   public streams(): Observable<MediaServerStreamsStats> {
-     return this.http
+    return this.http
       .get(`${this.FullBaseUrl}/streams`).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError));
+        map(this.handleSuccess));
   }
 
   public config(): Observable<MediaServerOptions> {
     return this.http
       .get(`${this.FullBaseUrl}/config`).pipe(
-        map(this.handleSuccess),
-        catchError(this.handleError));
+        map(this.handleSuccess));
   }
 
   public live(stream: string): Observable<MediaServerLiveResponse> {
     return this.http
       .post(`${this.FullBaseUrl}/live`, { stream: stream }).pipe(
-        map(this.handleSuccess),
-        catchError(this.handleError));
+        map(this.handleSuccess));
   }
 
   public stop(id: string): Observable<MediaServerLiveResponse> {
     return this.http
       .post(`${this.FullBaseUrl}/stop`, { stream: id }).pipe(
-        map(this.handleSuccess),
-        catchError(this.handleError));
+        map(this.handleSuccess));
   }
 }

@@ -19,14 +19,12 @@ export class EpgService extends BaseService {
   get(id: string): Observable<ElasticResponse<tvChannel>> {
     return this.http
       .get(environment.base_api_url + `${this._baseUrl}/${id}`).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+        map(this.handleSuccess));
   }
 
   list(query: ElasticQuery): Observable<ElasticResponse<tvChannel>> {
     return this.http
       .post(environment.base_api_url + "epg/_search/", query).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+        map(this.handleSuccess));
   }
 }

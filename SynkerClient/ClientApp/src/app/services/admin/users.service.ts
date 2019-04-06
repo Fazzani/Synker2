@@ -1,4 +1,4 @@
-import { catchError, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BaseService } from "../base/base.service";
@@ -18,28 +18,24 @@ export class UsersService extends BaseService {
   update(user: User): Observable<User> {
     return this.http
       .put(`${this.FullBaseUrl}/${user.id}`, user).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+        map(this.handleSuccess));
   }
 
   public me(): Observable<User> {
     return this.http
       .get(`${this.FullBaseUrl}`).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+        map(this.handleSuccess));
   }
 
   public get(id: number): Observable<User> {
     return this.http
       .get(`${this.FullBaseUrl}/${id}`).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+        map(this.handleSuccess));
   }
 
   public list(queryModel: QueryListBaseModel): Observable<PagedResult<User>> {
     return this.http
       .post(`${this.FullBaseUrl}/search`, queryModel).pipe(
-      map(this.handleSuccess),
-      catchError(this.handleError),);
+        map(this.handleSuccess));
   }
 }

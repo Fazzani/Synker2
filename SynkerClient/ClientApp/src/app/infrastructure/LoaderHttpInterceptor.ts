@@ -18,22 +18,22 @@ export class LoaderHttpInterceptor implements HttpInterceptor {
 
     return next
       .handle(request).pipe(
-      tap(
-        (event: HttpEvent<any>) => {
-          console.log("IN LoaderHttpInterceptor", event);
-          if (event instanceof HttpResponse) {
-            // do stuff with response if you want
-          }
-        },
-        (err: any) => {
-          console.log("error in JwtInterceptor", err);
-          if (err instanceof HttpErrorResponse) {
-            let e = err as HttpErrorResponse;
-            if (e.status == 401) this.commonService.displayError(err.statusText, "Unauthorized User");
-            else this.commonService.displayError(err.statusText, typeof err.error === "string" ? err.error : err.error.Message);
-          }
-        }
-      ),
-      finalize(() => this.commonService.displayLoader(false)),);
+      //tap(
+      //  (event: HttpEvent<any>) => {
+      //    console.log("IN LoaderHttpInterceptor", event);
+      //    if (event instanceof HttpResponse) {
+      //      // do stuff with response if you want
+      //    }
+      //  },
+      //  (err: any) => {
+      //    console.log("error in LoaderHttpInterceptor", err);
+      //    if (err instanceof HttpErrorResponse) {
+      //      let e = err as HttpErrorResponse;
+      //      if (e.status == 401) this.commonService.displayError(err.statusText, "Unauthorized User");
+      //      else this.commonService.displayError(err.statusText, typeof err.error === "string" ? err.error : err.error.Message);
+      //    }
+      //  }
+      //),
+      finalize(() => this.commonService.displayLoader(false)));
   }
 }
