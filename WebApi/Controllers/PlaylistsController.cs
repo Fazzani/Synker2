@@ -77,7 +77,7 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(typeof(PagedResult<PlaylistModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        [Authorize( Policy = AuthorizePolicies.READER)]
+        [Authorize(Policy = AuthorizePolicies.READER)]
         public async Task<IActionResult> ListAsync([FromBody] QueryListBaseModel query, [FromQuery] bool light = true, CancellationToken cancellationToken = default)
         {
             //TODO: A virer apres la migration de l'auth
@@ -98,7 +98,7 @@ namespace Hfa.WebApi.Controllers
 
                 _memoryCache.Set(UserCachePlaylistKey, list);
                 entry.SlidingExpiration = TimeSpan.FromHours(2);
-               
+
                 return await Task.Run(() =>
                 {
                     var response = _dbContext.Playlist
@@ -117,7 +117,7 @@ namespace Hfa.WebApi.Controllers
         //[ResponseCache(CacheProfileName = "Long", VaryByQueryKeys = new string[] { "id", "light" })]
         [ProducesResponseType(typeof(PlaylistModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize( Policy = AuthorizePolicies.READER)]
+        [Authorize(Policy = AuthorizePolicies.READER)]
         public async Task<IActionResult> GetAsync(string id, [FromQuery] bool light = true, CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -168,7 +168,7 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize( Policy = AuthorizePolicies.FULLACCESS)]
+        [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
         public async Task<IActionResult> PutAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -212,7 +212,7 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize( Policy = AuthorizePolicies.FULLACCESS)]
+        [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
         public async Task<IActionResult> PutLightAsync(string id, [FromBody]PlaylistModel playlist, CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -255,18 +255,18 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(Playlist), StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        [Authorize( Policy = AuthorizePolicies.FULLACCESS)]
+        [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
         public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
 
-            var playlist = _dbContext.Playlist.FirstOrDefault(x => x.UniqueId == idGuid);
+            var playlist = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.UniqueId == idGuid, cancellationToken);
             if (playlist == null)
                 return NotFound(playlist);
 
             _dbContext.Playlist.Remove(playlist);
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(cancellationToken);
             ClearCache();
             return NoContent();
         }
@@ -298,6 +298,8 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> SynkAsync([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken = default)
         {
             //TODO: A virer apres la migration de l'auth
@@ -349,7 +351,8 @@ namespace Hfa.WebApi.Controllers
                 var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
                 if (user == null) return BadRequest($"User {this.UserEmail} not found");
 
-                var playlist = await _dbContext.Playlist.FirstOrDefaultAsync(x => x.SynkConfig.Url == playlistPostModel.Url, cancellationToken) ?? new Playlist
+                var playlist = await _dbContext.Playlist
+                    .FirstOrDefaultAsync(x => x.SynkConfig.Url == playlistPostModel.Url, cancellationToken) ?? new Playlist
                 {
                     UserId = user.Id,
                     Freindlyname = playlistPostModel.Freindlyname,
@@ -359,7 +362,8 @@ namespace Hfa.WebApi.Controllers
 
                 using (providerInstance)
                 {
-                    var pl = await _playlistService.DiffWithSourceAsync(() => playlist, providerInstance, cancellationToken: cancellationToken);
+                    var pl = await _playlistService
+                        .DiffWithSourceAsync(() => playlist, providerInstance, cancellationToken: cancellationToken);
                     return Ok(pl);
                 }
             }
@@ -381,7 +385,7 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         [ProducesResponseType(typeof(PlaylistModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> MatchFiltredByTvgSitesAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, 
+        public async Task<IActionResult> MatchFiltredByTvgSitesAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true,
             CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -437,7 +441,7 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         [ProducesResponseType(typeof(PlaylistModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> MatchTvgAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, 
+        public async Task<IActionResult> MatchTvgAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true,
             CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -495,7 +499,7 @@ namespace Hfa.WebApi.Controllers
         [ValidateModel]
         [ProducesResponseType(typeof(PlaylistModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> MatchVideosByPlaylistAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true, 
+        public async Task<IActionResult> MatchVideosByPlaylistAsync([FromRoute] string id, [FromQuery] bool onlyNotMatched = true,
             CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -566,9 +570,9 @@ namespace Hfa.WebApi.Controllers
            {
                var matched = _mediaScraper.SearchAsync(media.DisplayName, _globalOptions.TmdbAPI, _globalOptions.TmdbPosterBaseUrl, cancellationToken).GetAwaiter().GetResult();
 
-               if (matched != null && matched.Any())
+               if (matched?.Any() == true)
                {
-                   media.Tvg.Logo = matched.FirstOrDefault().PosterPath;
+                   media.Tvg.Logo = matched.FirstOrDefault()?.PosterPath;
                }
            });
             return Ok(tvgmedias);
@@ -782,6 +786,7 @@ namespace Hfa.WebApi.Controllers
             return Ok(playlist.TvgMedias
                 .Where(x => x.MediaGroup.Name.Equals(group, StringComparison.InvariantCultureIgnoreCase)));
         }
+
         private void ClearCache()
         {
             if (_memoryCache.TryGetValue(UserCachePlaylistKey, out List<string> list))

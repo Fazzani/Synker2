@@ -36,9 +36,6 @@ namespace hfa.Synker.Services.Dal
             .HasIndex(b => b.Email)
             .IsUnique();
 
-            modelBuilder.Entity<User>()
-            .HasIndex(b => b.Email);
-
             modelBuilder.Entity<Host>()
             .HasIndex(b => new { b.Address, b.Port });
 
