@@ -23,7 +23,7 @@
     [Produces("application/json")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = Authentication.AuthSchemes, Policy = AuthorizePolicies.ADMIN)]
     [ApiController]
 
     public class MediaServerController : BaseController
@@ -50,7 +50,6 @@
         /// <returns></returns>
         [HttpGet("server")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [Authorize(Policy = AuthorizePolicies.ADMIN)]
         public async Task<IActionResult> GetServerAsync(CancellationToken cancellationToken)
         {
             var response = await _mediaServerService.GetServerStatsAsync(cancellationToken);

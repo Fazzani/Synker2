@@ -22,7 +22,7 @@ namespace hfa.WebApi.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
     [Produces("application/json")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = Common.Auth.Authentication.AuthSchemes)]
     [ApiController]
     public class XtreamController : BaseController
     {

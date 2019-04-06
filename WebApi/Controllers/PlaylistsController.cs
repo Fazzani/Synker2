@@ -108,7 +108,7 @@ namespace Hfa.WebApi.Controllers
                    .GetPaged(query.PageNumber, query.PageSize);
                     return response;
                 });
-            });
+            }).ConfigureAwait(false);
 
             return new OkObjectResult(playlists);
         }
@@ -472,7 +472,7 @@ namespace Hfa.WebApi.Controllers
                 list = list.Where(x => x.Tvg == null || string.IsNullOrEmpty(x.Tvg.Logo)).ToList();
 
             list
-                .Where(x => x.Tvg != null && x.Tvg.TvgSource != null)
+                .Where(x => x.Tvg?.TvgSource != null)
                 .AsParallel()
                 .WithCancellation(cancellationToken)
                 .ForAll(media =>
@@ -480,7 +480,7 @@ namespace Hfa.WebApi.Controllers
                     var matched = _mediaScraper.SearchAsync(media.DisplayName, _globalOptions.TmdbAPI, _globalOptions.TmdbPosterBaseUrl, cancellationToken).GetAwaiter().GetResult();
                     if (matched != null)
                     {
-                        media.Tvg.Logo = matched.FirstOrDefault().PosterPath;
+                        media.Tvg.Logo = matched.FirstOrDefault()?.PosterPath;
                     }
                 });
 
@@ -530,7 +530,7 @@ namespace Hfa.WebApi.Controllers
                     var matched = _mediaScraper.SearchAsync(media.DisplayName, _globalOptions.TmdbAPI, _globalOptions.TmdbPosterBaseUrl, cancellationToken).GetAwaiter().GetResult();
                     if (matched != null)
                     {
-                        media.Tvg.Logo = matched.FirstOrDefault().PosterPath;
+                        media.Tvg.Logo = matched.FirstOrDefault()?.PosterPath;
                     }
                 });
 

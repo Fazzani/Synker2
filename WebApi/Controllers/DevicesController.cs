@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using hfa.Brokers.Messages.Models;
 using hfa.synker.entities.Notifications;
 using hfa.Synker.Service.Elastic;
-using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Services.Dal;
 using hfa.WebApi.Common.Auth;

@@ -21,14 +21,13 @@ namespace Hfa.WebApi.Controllers
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-
-#if !DEBUG
     using Microsoft.AspNetCore.Authorization;
-    [Authorize]
-#endif
+    using hfa.WebApi.Common.Auth;
+
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = Authentication.AuthSchemes)]
     public class PiconsController : BaseController
     {
         private readonly IPiconsService _piconsService;
@@ -46,6 +45,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [Route("_search")]
+        [Authorize(Policy = AuthorizePolicies.READER)]
         public async Task<IActionResult> SearchAsync([FromBody]dynamic request, CancellationToken cancellationToken = default)
         {
             return await SearchAsync<Picon, PiconModel>(request.ToString(), nameof(MediaRef).ToLowerInvariant(), cancellationToken);
@@ -53,6 +53,7 @@ namespace Hfa.WebApi.Controllers
 
         [HttpPost]
         [Route("_searchstring")]
+        [Authorize(Policy = AuthorizePolicies.READER)]
         public async Task<IActionResult> SearchStringAsync([FromBody]SimpleQueryElastic request,
             CancellationToken cancellationToken = default)
         {
@@ -64,6 +65,7 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
+        [Authorize(Policy = AuthorizePolicies.READER)]
         public async Task<IActionResult> Get(string id, CancellationToken cancellationToken = default)
         {
             var response = await _elasticConnectionClient.Client.Value.GetAsync(new DocumentPath<Picon>(id), null, cancellationToken);
@@ -85,6 +87,7 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesDefaultResponseType]
+        [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
         public async Task<IActionResult> Synk([FromQuery] bool reset, CancellationToken cancellationToken = default)
         {
             var picons = await _piconsService.GetPiconsFromGithubRepoAsync(new SynkPiconConfig(), cancellationToken);
@@ -106,6 +109,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("match")]
+        [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
         public IActionResult Match([FromBody]List<TvgMedia> tvgmedias,
             [FromQuery] int distance = 90,
             [FromQuery] bool shouldMatchChannelNumber = true,
@@ -142,6 +146,7 @@ namespace Hfa.WebApi.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("match/{mediaName}")]
+        [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
         public async Task<IActionResult> Match([FromRoute]string mediaName, CancellationToken cancellationToken = default)
         {
             var picons = await _piconsService.MatchAsync(mediaName, Media.GetChannelNumber(mediaName), 90, cancellationToken);

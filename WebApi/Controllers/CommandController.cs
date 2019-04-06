@@ -23,7 +23,7 @@ namespace hfa.WebApi.Controllers
     [Produces("application/json")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = Authentication.AuthSchemes, Policy = AuthorizePolicies.ADMIN)]
     [ApiController]
     public class CommandController : BaseController
     {

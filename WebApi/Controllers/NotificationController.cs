@@ -4,6 +4,7 @@ using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Services.Dal;
 using hfa.WebApi.Common;
+using hfa.WebApi.Common.Auth;
 using hfa.WebApi.Common.Filters;
 using hfa.WebApi.Hubs;
 using hfa.WebApi.Models.Notifications;
@@ -25,7 +26,7 @@ namespace hfa.WebApi.Controllers
 {
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = Common.Auth.Authentication.AuthSchemes)]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class NotificationController : BaseController
@@ -44,6 +45,7 @@ namespace hfa.WebApi.Controllers
         }
 
         /// <summary>
+        /// Create new Notification
         /// </summary>
         /// <param name="notification"></param>
         /// <param name="cancellationToken"></param>
@@ -51,6 +53,9 @@ namespace hfa.WebApi.Controllers
         [HttpPost]
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
         public async Task<IActionResult> Post([FromBody] NotificationModel notification, CancellationToken cancellationToken = default)
         {
             //TODO: A virer apres la migration de l'auth
@@ -110,6 +115,7 @@ namespace hfa.WebApi.Controllers
         [ValidateModel]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
         public async Task<IActionResult> PostWebPushAsync([FromBody] WebPushModel webPushModel, CancellationToken cancellationToken = default)
         {
             synker.entities.Notifications.Device device = await _dbContext.Devices.FirstOrDefaultAsync(x => x.Id == webPushModel.Id, cancellationToken);
@@ -133,13 +139,14 @@ namespace hfa.WebApi.Controllers
         [Route("keys")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Policy = AuthorizePolicies.READER)]
         public async Task<IActionResult> GetKeysAsync(CancellationToken cancellationToken = default)
         {
             return await Task.Run(() =>
             {
                 VapidDetails keys = VapidHelper.GenerateVapidKeys();
                 return Ok(keys);
-            }, cancellationToken);
+            }, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
