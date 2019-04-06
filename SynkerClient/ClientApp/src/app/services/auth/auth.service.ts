@@ -49,12 +49,18 @@ export class AuthService {
 
     this.oauthService.events
       .pipe(filter(e => ['token_received', 'discovery_document_loaded'].includes(e.type)))
-      .subscribe(e => this.oauthService.loadUserProfile()
-      .then((userProfile: any) => this.user$.next(User.FromUserProfile(userProfile))));
+      .subscribe(e => {
+        if (this.oauthService.hasValidAccessToken()) {
+          this.oauthService.loadUserProfile()
+            .then((userProfile: any) => this.user$.next(User.FromUserProfile(userProfile)));
+        }
+      });
 
     //silent_refresh_timeout
     //token_expires
-    this.oauthService.events.pipe(filter(e => ['session_terminated', 'session_error', 'token_validation_error'].includes(e.type))).subscribe(e => this.navigateToLoginPage());
+    this.oauthService.events
+      .pipe(filter(e => ['session_terminated', 'session_error', 'token_validation_error']
+      .includes(e.type))).subscribe(e => this.navigateToLoginPage());
 
     //this.oauthService.setupAutomaticSilentRefresh();
   }
