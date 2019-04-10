@@ -7,6 +7,7 @@ using hfa.PlaylistBaseLibrary.Options;
 using hfa.PlaylistBaseLibrary.Providers;
 using hfa.Synker.Service;
 using hfa.Synker.Service.Elastic;
+using hfa.Synker.Service.Entities.Auth;
 using hfa.Synker.Service.Services;
 using hfa.Synker.Service.Services.Elastic;
 using hfa.Synker.Service.Services.MediaRefs;
@@ -53,12 +54,14 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.WebSockets;
 using System.Reflection;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -74,7 +77,7 @@ namespace hfa.WebApi
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment CurrentEnvironment;
         private static IServiceCollection _serviceDescriptors;
         public static IServiceProvider Provider => _serviceDescriptors.BuildServiceProvider();
-
+        private SynkerDbContext _synkerDbContext;
         /// <summary>
         /// Assembly version
         /// </summary>
@@ -180,8 +183,8 @@ namespace hfa.WebApi
                     //RelationalEventId.QueryClientEvaluationWarning));
                 });
 
-                SynkerDbContext DB = Provider.GetService<SynkerDbContext>();
-                DB.Database.EnsureCreated();
+                _synkerDbContext = Provider.GetService<SynkerDbContext>();
+                _synkerDbContext.Database.EnsureCreated();
             }
 
             #region Compression
@@ -511,6 +514,7 @@ namespace hfa.WebApi
                      ValidateAudience = true
                  };
 
+                 var sp = services.BuildServiceProvider();
                  // We have to hook the OnMessageReceived event in order to
                  // allow the JWT authentication handler to read the access
                  // token from the query string when a WebSocket or 
@@ -524,11 +528,34 @@ namespace hfa.WebApi
                          // If the request is for our hub...
                          var path = context.HttpContext.Request.Path;
                          if (!string.IsNullOrEmpty(accessToken) &&
-                             (path.StartsWithSegments("/hubs/notification")))
+                             path.StartsWithSegments("/hubs/notification"))
                          {
                              // Read the token out of the query string
                              context.Token = accessToken;
                          }
+                         return Task.CompletedTask;
+                     },
+                     OnTokenValidated = context =>
+                     {
+                         // Add the access_token as a claim, as we may actually need it
+                         if (context.SecurityToken is JwtSecurityToken accessToken)
+                         {
+                             var identity = context.Principal.Identity as ClaimsIdentity;
+                             var db = Provider.GetService<SynkerDbContext>();
+                             var userEmail = identity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email);
+                             if (userEmail != null)
+                             {
+                                 var dbUser = db.Users.FirstOrDefault(u => u.Email.Equals(userEmail.Value, StringComparison.CurrentCultureIgnoreCase));
+                                 if (dbUser == null)
+                                 {
+                                     db.Users.Add(new User { Email = userEmail.Value });
+                                     db.SaveChanges();
+                                     dbUser = db.Users.FirstOrDefault(u => u.Email.Equals(userEmail.Value, StringComparison.CurrentCultureIgnoreCase));
+                                 }
+                                 identity.AddClaim(new Claim("localId", dbUser.Id.ToString(), ClaimValueTypes.Integer32));
+                             }
+                         }
+
                          return Task.CompletedTask;
                      }
                  };

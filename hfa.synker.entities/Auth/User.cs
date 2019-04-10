@@ -12,11 +12,6 @@
         [Required]
         public string Email { get; set; }
 
-        public int ConnectionStateId { get; set; }
-
-        [ForeignKey(nameof(ConnectionStateId))]
-        public virtual ConnectionState ConnectionState { get; set; }
-
         public virtual ICollection<Command> Commands { get; set; } = new List<Command>();
         public virtual ICollection<Playlist> Playlists { get; set; }
 

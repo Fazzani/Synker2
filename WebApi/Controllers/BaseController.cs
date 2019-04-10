@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading;
-using Nest;
-using Hfa.WebApi.Models;
-using Microsoft.Extensions.Logging;
+﻿using hfa.Synker.Service.Elastic;
+using hfa.Synker.Service.Services.Elastic;
+using hfa.Synker.Services.Dal;
+using hfa.WebApi.Models.Elastic;
 using Hfa.WebApi.Common;
+using Hfa.WebApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Nest;
+using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using Microsoft.Extensions.Options;
-using hfa.Synker.Services.Dal;
-using hfa.Synker.Service.Services.Elastic;
-using hfa.Synker.Service.Elastic;
-using hfa.WebApi.Models.Elastic;
-using System.Text;
 using System.Security.Claims;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Hfa.WebApi.Controllers
 {
@@ -123,7 +122,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         protected string UserEmail => User.FindFirst(ClaimTypes.Email)?.Value;
-        //protected int? UserId => Convert.ToInt32(User.FindFirst("id")?.Value);
+        protected int UserId => Int32.Parse(User.FindFirst("localId")?.Value);
     }
 
     public class Constants

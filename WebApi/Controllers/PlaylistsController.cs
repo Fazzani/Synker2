@@ -78,11 +78,10 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         [Authorize(Policy = AuthorizePolicies.READER)]
-        public async Task<IActionResult> ListAsync([FromBody] QueryListBaseModel query, [FromQuery] bool light = true, 
+        public async Task<IActionResult> ListAsync([FromBody] QueryListBaseModel query, [FromQuery] bool light = true,
             CancellationToken cancellationToken = default)
         {
-            //TODO: A virer apres la migration de l'auth
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
+            var user = await _dbContext.Users.FindAsync(new object[] { UserId }, cancellationToken);
             if (user == null)
             {
                 _logger.LogError($"User {this.UserEmail} not founded");
@@ -219,7 +218,7 @@ namespace Hfa.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
-        public async Task<IActionResult> PutLightAsync(string id, [FromBody]PlaylistModel playlist, 
+        public async Task<IActionResult> PutLightAsync(string id, [FromBody]PlaylistModel playlist,
             CancellationToken cancellationToken = default)
         {
             var idGuid = GetInternalPlaylistId(id);
@@ -309,8 +308,7 @@ namespace Hfa.WebApi.Controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> SynkAsync([FromBody]PlaylistPostModel playlistPostModel, CancellationToken cancellationToken = default)
         {
-            //TODO: A virer apres la migration de l'auth
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
+            var user = await _dbContext.Users.FindAsync(new object[] { UserId }, cancellationToken);
             if (user == null) return BadRequest($"User {this.UserEmail} not found");
 
             var playlist = _dbContext.Playlist.AsNoTracking().FirstOrDefault(x => x.SynkConfig.Url == playlistPostModel.Url) ?? new Playlist
@@ -354,18 +352,17 @@ namespace Hfa.WebApi.Controllers
 
             try
             {
-                //TODO: A virer apres la migration de l'auth
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
+                var user = await _dbContext.Users.FindAsync(new object[] { UserId }, cancellationToken);
                 if (user == null) return BadRequest($"User {this.UserEmail} not found");
 
                 var playlist = await _dbContext.Playlist
                     .FirstOrDefaultAsync(x => x.SynkConfig.Url == playlistPostModel.Url, cancellationToken) ?? new Playlist
-                {
-                    UserId = user.Id,
-                    Freindlyname = playlistPostModel.Freindlyname,
-                    Status = playlistPostModel.Status,
-                    SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
-                };
+                    {
+                        UserId = user.Id,
+                        Freindlyname = playlistPostModel.Freindlyname,
+                        Status = playlistPostModel.Status,
+                        SynkConfig = new SynkConfig { Url = playlistPostModel.Url, Provider = playlistPostModel.Provider }
+                    };
 
                 using (providerInstance)
                 {
@@ -693,8 +690,7 @@ namespace Hfa.WebApi.Controllers
 
             using (providerInstance)
             {
-                //TODO: A virer apres la migration de l'auth
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
+                var user = await _dbContext.Users.FindAsync(new object[] { UserId }, cancellationToken);
                 if (user == null) return BadRequest($"User {this.UserEmail} not found");
 
                 var pl = await _playlistService.SynkPlaylistAsync(() => new Playlist
@@ -742,8 +738,7 @@ namespace Hfa.WebApi.Controllers
 
             using (providerInstance)
             {
-                //TODO: A virer apres la migration de l'auth
-                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
+                var user = await _dbContext.Users.FindAsync(new object[] { UserId }, cancellationToken);
                 if (user == null) return BadRequest($"User {this.UserEmail} not found");
 
                 var pl = await _playlistService.SynkPlaylistAsync(() => new Playlist

@@ -57,7 +57,7 @@ namespace hfa.WebApi.Controllers
             }
 
             //TODO: A virer apres la migration de l'auth
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
+            var user = await _dbContext.Users.FindAsync(new object[] { UserId }, cancellationToken);
             if (user == null) return BadRequest($"User {this.UserEmail} not found");
 
             return new OkObjectResult((await _dbContext
@@ -74,7 +74,8 @@ namespace hfa.WebApi.Controllers
         [Authorize(Policy = AuthorizePolicies.READER)]
         public async Task<IActionResult> GetCommandsByUser([FromRoute] int userId, [FromQuery] bool? all, CancellationToken cancellationToken = default)
         {
-            if (await _dbContext.Users.FindAsync(userId) == null)
+            var user = await _dbContext.Users.FindAsync(new object[] { userId }, cancellationToken);
+            if (user == null)
             {
                 return BadRequest("User doesn't exist");
             }

@@ -58,8 +58,7 @@ namespace hfa.WebApi.Controllers
         [Authorize(Policy = AuthorizePolicies.FULLACCESS)]
         public async Task<IActionResult> Post([FromBody] NotificationModel notification, CancellationToken cancellationToken = default)
         {
-            //TODO: A virer apres la migration de l'auth
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(this.UserEmail), cancellationToken);
+            var user = await _dbContext.Users.FindAsync(new object[] { UserId }, cancellationToken);
             if (user == null) return BadRequest($"User {this.UserEmail} not found");
 
             switch (notification.NotificationType)
