@@ -108,7 +108,6 @@ namespace hfa.WebApi
             services.
                AddSingleton<IElasticConnectionClient, ElasticConnectionClient>()
                .AddSingleton<IPasteBinService, PasteBinService>()
-               //.AddScoped<IAuthentificationService, AuthentificationService>()
                .AddSingleton<IProviderFactory, ProviderFactory>()
                .AddSingleton<IContextTvgMediaHandler, ContextTvgMediaHandler>()
                .AddScoped<IXmltvService, XmltvService>()
@@ -154,8 +153,6 @@ namespace hfa.WebApi
 
             services.AddHttpContextAccessor();
             services.AddSignalR();
-            ConfigureRabbitMQ(services);
-
             services.AddMemoryCache();
 
             if (isTestEnv)
@@ -188,6 +185,9 @@ namespace hfa.WebApi
                 _synkerDbContext.Database.EnsureCreated();
             }
 
+            services.AddRabbitMq();
+            services.AddSecurity();
+
             #region Compression
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
             services.AddResponseCompression(options =>
@@ -208,8 +208,6 @@ namespace hfa.WebApi
                 };
             });
             #endregion
-
-            ConfigSecurity(services);
 
             //Logger
             LoggerFactory loggerFactory = new LoggerFactory();
@@ -433,143 +431,6 @@ namespace hfa.WebApi
                       await context.Response.WriteAsync(ex.StackTrace).ConfigureAwait(false);
                   });
             }
-        }
-
-        /// <summary>
-        /// Configure RabbitMq bus
-        /// </summary>
-        /// <param name="services"></param>
-        private void ConfigureRabbitMQ(IServiceCollection services)
-        {
-            //services.AddScoped<DiffPlaylistConsumer>();
-            //services.AddScoped<TraceConsumer>();
-
-            services.AddMassTransit(x =>
-            {
-                // x.AddConsumer<DiffPlaylistConsumer>();
-                // x.AddConsumer<TraceConsumer>();
-            });
-
-            services.AddSingleton(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
-            {
-                IOptions<RabbitMQConfiguration> rabbitConfig = Provider.GetService<IOptions<RabbitMQConfiguration>>();
-                ILoggerFactory _loggerFactory = Provider.GetService<ILoggerFactory>();
-                ILogger _logger = _loggerFactory.CreateLogger(typeof(Startup));
-
-                _logger.LogInformation($"Connected to rabbit host: {rabbitConfig.Value.Hostname}{rabbitConfig.Value.VirtualHost}:{rabbitConfig.Value.Port}");
-
-                MassTransit.RabbitMqTransport.IRabbitMqHost host = cfg.Host(rabbitConfig.Value.Hostname, rabbitConfig.Value.Port, rabbitConfig.Value.VirtualHost, h =>
-                {
-                    h.Username(rabbitConfig.Value.Username);
-                    h.Password(rabbitConfig.Value.Password);
-                });
-
-                cfg.ExchangeType = ExchangeType.Fanout;
-
-                cfg.ReceiveEndpoint(host, ep =>
-                {
-                    ep.UseCircuitBreaker(cb =>
-                    {
-                        cb.TrackingPeriod = TimeSpan.FromMinutes(1);
-                        cb.TripThreshold = 15;
-                        cb.ActiveThreshold = 10;
-                        cb.ResetInterval = TimeSpan.FromMinutes(5);
-                    });
-
-                    ep.UseRateLimit(1000, TimeSpan.FromSeconds(5));
-                    ep.LoadFrom(Provider);
-                });
-            }));
-
-            services.AddSingleton<IPublishEndpoint>(provider => provider.GetRequiredService<IBusControl>());
-            services.AddSingleton<ISendEndpointProvider>(provider => provider.GetRequiredService<IBusControl>());
-            services.AddSingleton<IBus>(provider => provider.GetRequiredService<IBusControl>());
-
-            services.AddSingleton<IHostedService, MassTransitHostedService>();
-        }
-
-        /// <summary>
-        /// Configure Security
-        /// </summary>
-        /// <param name="services"></param>
-        private void ConfigSecurity(IServiceCollection services)
-        {
-            services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddCookie()
-            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtBearerOptions =>
-             {
-                 var jwtOptions = Configuration.GetSection(nameof(JwtBearerOptions)).Get<JwtBearerOptions>();
-                 jwtBearerOptions.SaveToken = jwtOptions.SaveToken;
-                 jwtBearerOptions.Authority = jwtOptions.Authority;
-                 jwtBearerOptions.RequireHttpsMetadata = jwtOptions.RequireHttpsMetadata;
-                 jwtBearerOptions.Audience = jwtOptions.Audience;
-                 jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
-                 {
-                     ValidateIssuer = true,
-                     ValidateAudience = true
-                 };
-
-                 var sp = services.BuildServiceProvider();
-                 // We have to hook the OnMessageReceived event in order to
-                 // allow the JWT authentication handler to read the access
-                 // token from the query string when a WebSocket or 
-                 // Server-Sent Events request comes in.
-                 jwtBearerOptions.Events = new JwtBearerEvents
-                 {
-                     OnMessageReceived = context =>
-                     {
-                         var accessToken = context.Request.Query["access_token"];
-
-                         // If the request is for our hub...
-                         var path = context.HttpContext.Request.Path;
-                         if (!string.IsNullOrEmpty(accessToken) &&
-                             path.StartsWithSegments("/hubs/notification"))
-                         {
-                             // Read the token out of the query string
-                             context.Token = accessToken;
-                         }
-                         return Task.CompletedTask;
-                     },
-                     OnTokenValidated = context =>
-                     {
-                         // Add the access_token as a claim, as we may actually need it
-                         if (context.SecurityToken is JwtSecurityToken accessToken)
-                         {
-                             var identity = context.Principal.Identity as ClaimsIdentity;
-                             var db = Provider.GetService<SynkerDbContext>();
-                             var userEmail = identity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email);
-                             if (userEmail != null)
-                             {
-                                 var dbUser = db.Users.FirstOrDefault(u => u.Email.Equals(userEmail.Value, StringComparison.CurrentCultureIgnoreCase));
-                                 if (dbUser == null)
-                                 {
-                                     db.Users.Add(new User { Email = userEmail.Value });
-                                     db.SaveChanges();
-                                     dbUser = db.Users.FirstOrDefault(u => u.Email.Equals(userEmail.Value, StringComparison.CurrentCultureIgnoreCase));
-                                 }
-                                 identity.AddClaim(new Claim(Constants.CLAIM_LOCAL_ID, dbUser.Id.ToString(), ClaimValueTypes.Integer32));
-                             }
-                         }
-
-                         return Task.CompletedTask;
-                     }
-                 };
-             });
-
-            services.AddAuthorization(authorizationOptions =>
-            {
-                authorizationOptions.AddPolicy(AuthorizePolicies.ADMIN, policyBuilder => policyBuilder.RequireRole(AuthorizePolicies.ADMIN));
-                authorizationOptions.AddPolicy(AuthorizePolicies.FULLACCESS, policyBuilder => policyBuilder.RequireClaim("scope", "synkerapi.full_access"));
-                authorizationOptions.AddPolicy(AuthorizePolicies.READER_ONLY, policyBuilder => policyBuilder.RequireClaim("scope", "synkerapi.read_only"));
-                authorizationOptions.AddPolicy(AuthorizePolicies.READER, policyBuilder => policyBuilder.RequireAssertion(a => a.User.Claims.Where(c => c.Type == "scope").Any(scope => scope.Value == "synkerapi.full_access" || scope.Value == "synkerapi.read_only")));
-                authorizationOptions.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
-            });
         }
 
         #region WebHook Action
