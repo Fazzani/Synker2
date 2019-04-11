@@ -27,7 +27,7 @@
             {
                 IOptions<RabbitMQConfiguration> rabbitConfig = Startup.Provider.GetService<IOptions<RabbitMQConfiguration>>();
                 ILoggerFactory _loggerFactory = Startup.Provider.GetService<ILoggerFactory>();
-                Microsoft.Extensions.Logging.ILogger _logger = _loggerFactory.CreateLogger(typeof(Startup));
+                ILogger _logger = _loggerFactory.CreateLogger(typeof(Startup));
 
                 _logger.LogInformation($"Connected to rabbit host: {rabbitConfig.Value.Hostname}{rabbitConfig.Value.VirtualHost}:{rabbitConfig.Value.Port}");
 
