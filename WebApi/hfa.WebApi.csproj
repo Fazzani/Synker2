@@ -8,7 +8,7 @@
     <Version>1.0.0.0</Version>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
     <LangVersion>7.1</LangVersion>
-    <StartupObject>Web.Program</StartupObject>
+    <StartupObject>hfa.WebApi.Program</StartupObject>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

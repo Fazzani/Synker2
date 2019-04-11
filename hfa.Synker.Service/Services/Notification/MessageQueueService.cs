@@ -1,19 +1,16 @@
-﻿using hfa.Brokers.Messages.Configuration;
-using hfa.Brokers.Messages.Models;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using RabbitMQ.Client;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Mail;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace hfa.Synker.Service.Services
+﻿namespace hfa.Synker.Service.Services
 {
+    using hfa.Brokers.Messages.Configuration;
+    using hfa.Brokers.Messages.Models;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
+    using Newtonsoft.Json;
+    using RabbitMQ.Client;
+    using System;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+
     public class MessageQueueService : IMessageQueueService
     {
         private IConnectionFactory _connectionFactory;
@@ -73,17 +70,19 @@ namespace hfa.Synker.Service.Services
             }
         }
 
-        public async Task SendPushBrowerAsync(CancellationToken cancellationToken)
+        public Task SendPushBrowerAsync(CancellationToken cancellationToken)
         {
-
+            return Task.CompletedTask;
         }
-        public async Task SendPushAsync(CancellationToken cancellationToken)
-        {
 
+        public Task SendPushAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
         }
-        public async Task SendSmsAsync(CancellationToken cancellationToken)
-        {
 
+        public Task SendSmsAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
         }
     }
 }

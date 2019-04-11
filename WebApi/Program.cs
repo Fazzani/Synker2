@@ -1,6 +1,5 @@
-﻿namespace Web
+﻿namespace hfa.WebApi
 {
-    using hfa.WebApi;
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -50,7 +49,7 @@
                 .UseStartup<Startup>()
                 .UseKestrel()
                 .UseSerilog()
-                .UseUrls("http://*:56800")
+                .UseUrls("http://*:56800", "https://*:56801")
             .Build();
                
     }
