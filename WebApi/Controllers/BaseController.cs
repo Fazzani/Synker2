@@ -122,7 +122,7 @@ namespace Hfa.WebApi.Controllers
         }
 
         protected string UserEmail => User.FindFirst(ClaimTypes.Email)?.Value;
-        protected int UserId => Int32.Parse(User.FindFirst(Constants.CLAIM_LOCAL_ID)?.Value);
+        protected int UserId => int.Parse(User.FindFirst(Constants.CLAIM_LOCAL_ID)?.Value);
     }
 
     public class Constants
