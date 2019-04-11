@@ -31,7 +31,7 @@ namespace Hfa.WebApi.Controllers
         public BaseController(IOptions<ElasticConfig> elasticConfig, ILoggerFactory loggerFactory, IElasticConnectionClient elasticConnectionClient,
             SynkerDbContext context)
         {
-            _logger = loggerFactory.CreateLogger("BaseController");
+            _logger = loggerFactory.CreateLogger(nameof(BaseController));
             _elasticConnectionClient = elasticConnectionClient;
             _elasticConfig = elasticConfig.Value;
             _dbContext = context;
@@ -122,11 +122,12 @@ namespace Hfa.WebApi.Controllers
         }
 
         protected string UserEmail => User.FindFirst(ClaimTypes.Email)?.Value;
-        protected int UserId => Int32.Parse(User.FindFirst("localId")?.Value);
+        protected int UserId => Int32.Parse(User.FindFirst(Constants.CLAIM_LOCAL_ID)?.Value);
     }
 
     public class Constants
     {
         public const string ELK_KEYWORD_SUFFIX = "keyword";
+        public const string CLAIM_LOCAL_ID = "localId";
     }
 }

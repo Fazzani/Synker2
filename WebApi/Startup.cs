@@ -26,6 +26,7 @@ using hfa.WebApi.Common.Swagger;
 using hfa.WebApi.Http;
 using hfa.WebApi.Hubs;
 using hfa.WebApi.Services;
+using Hfa.WebApi.Controllers;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -552,7 +553,7 @@ namespace hfa.WebApi
                                      db.SaveChanges();
                                      dbUser = db.Users.FirstOrDefault(u => u.Email.Equals(userEmail.Value, StringComparison.CurrentCultureIgnoreCase));
                                  }
-                                 identity.AddClaim(new Claim("localId", dbUser.Id.ToString(), ClaimValueTypes.Integer32));
+                                 identity.AddClaim(new Claim(Constants.CLAIM_LOCAL_ID, dbUser.Id.ToString(), ClaimValueTypes.Integer32));
                              }
                          }
 
