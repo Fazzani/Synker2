@@ -59,6 +59,7 @@
                 {
                     services.AddOptions();
                     services
+                    .Configure<EmailSettings>(hostContext.Configuration.GetSection(nameof(EmailSettings)))
                     .Configure<RabbitMQConfiguration>(hostContext.Configuration.GetSection(nameof(RabbitMQConfiguration)))
                     .Configure<FirebaseConfiguration>(hostContext.Configuration.GetSection(nameof(FirebaseConfiguration)))
                     .Configure<List<PlaylistProviderOption>>(hostContext.Configuration.GetSection(PlaylistProviderOption.PlaylistProvidersConfigurationKeyName))

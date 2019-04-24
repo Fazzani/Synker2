@@ -1,18 +1,15 @@
-﻿using hfa.Brokers.Messages.Models;
-using hfa.Notification.Brokers.Emailing;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace hfa.Notification.Brokers.Consumers
+﻿namespace hfa.Notification.Brokers.Consumers
 {
+    using hfa.Brokers.Messages.Models;
+    using hfa.Notification.Brokers.Emailing;
+    using Microsoft.Extensions.Logging;
+    using Newtonsoft.Json;
+    using RabbitMQ.Client;
+    using RabbitMQ.Client.Events;
+    using System;
+    using System.Text;
+    using System.Threading;
+
     public class NotificationConsumer : INotificationConsumer, IDisposable
     {
         private readonly ILogger _logger;
@@ -45,7 +42,7 @@ namespace hfa.Notification.Brokers.Consumers
                 //ack message
                 _mailChannel.BasicAck(ea.DeliveryTag, true);
 
-                _logger.LogInformation($"Mail from {mail.From} to {mail.To}");
+                _logger.LogInformation($"Mail from {mail.From} to {mail.To} with template: {mail.IsWithTemplate}");
             }
             catch (Exception e)
             {
@@ -82,8 +79,8 @@ namespace hfa.Notification.Brokers.Consumers
 
         public void Dispose()
         {
-                _mailChannel?.Close();
-                _mailChannel?.Dispose();
+            _mailChannel?.Close();
+            _mailChannel?.Dispose();
         }
     }
 }

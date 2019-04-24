@@ -18,7 +18,6 @@ namespace hfa.WebApi.Common.Middlewares
             _currentUserId = null;
         }
 
-
         public async Task Invoke(HttpContext context)
         {
             var path = context.Request.Path;

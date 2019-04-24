@@ -13,6 +13,7 @@ namespace hfa.Notification.Brokers.Emailing
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task SendMailAsync(EmailNotification emailNotification, CancellationToken cancellationToken);
+
         Task SendPushAsync(CancellationToken cancellationToken);
         Task SendPushBrowerAsync(CancellationToken cancellationToken);
         Task SendSmsAsync(CancellationToken cancellationToken);

@@ -64,7 +64,6 @@ namespace hfa.WebApi.Controllers
             switch (notification.NotificationType)
             {
                 case NotificationTypeEnum.Email:
-
                     await _notificationService.SendMailAsync(new EmailNotification
                     {
                         Body = notification.Body,
@@ -76,7 +75,15 @@ namespace hfa.WebApi.Controllers
                         FromDisplayName = notification.FromDisplayName,
                         IsBodyHtml = notification.IsBodyHtml,
                         AppId = Assembly.GetExecutingAssembly().FullName,
-                        UserId = user.Id.ToString()
+                        UserId = user.Id.ToString(),
+                        TemplateId = "d-46b66e30d388448d955ec0b73630eb21",
+                        TemplateData = new
+                        {
+                            header = "Reset Password",
+                            text = notification.Body,
+                            c2a_link = "",
+                            c2a_button = "Reset Password"
+                        }
                     }, cancellationToken);
                     break;
                 case NotificationTypeEnum.Sms:

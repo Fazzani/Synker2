@@ -13,13 +13,13 @@
 
     public class MessageQueueService : IMessageQueueService
     {
-        private IConnectionFactory _connectionFactory;
-        private ILogger _logger;
+        private readonly IConnectionFactory _connectionFactory;
+        private readonly ILogger _logger;
 #if DEBUG
-        const string MailExchangeName = "synker.dev.mail.queue";
+        private const string MailExchangeName = "synker.dev.mail.queue";
         private const string MailRoutingKey = "synker.dev.mail.*";
 #else
-        const string MailExchangeName = "synker.mail.queue";
+        private const string MailExchangeName = "synker.mail.queue";
         private const string MailRoutingKey = "synker.mail.*";
 #endif
         public MessageQueueService(IOptions<RabbitMQConfiguration> rabbitmqOptions, ILoggerFactory loggerFactory)

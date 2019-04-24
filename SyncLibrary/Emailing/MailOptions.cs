@@ -14,5 +14,13 @@ namespace hfa.Notification.Brokers.Emailing
         public string Password { get; set; }
 
         public override string ToString() => $"Smtp => {SmtpServer}:{SmtpPort} Pop => {PopServer}:{PopPort}";
+
+        
+    }
+
+    public class EmailSettings
+    {
+        public string SendGridApiKey { get; set; }
+        public string SenderEmailAddress { get; set; }
     }
 }
