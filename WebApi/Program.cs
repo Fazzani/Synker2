@@ -49,7 +49,7 @@
                 .UseStartup<Startup>()
                 .UseKestrel()
                 .UseSerilog()
-                .UseUrls("http://*:56800", "https://*:56801")
+                .UseUrls("http://*:56800")
             .Build();
                
     }
