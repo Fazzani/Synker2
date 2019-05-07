@@ -21,7 +21,7 @@
         "VERSION": "1.0.1",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:56801/swagger"
+      "applicationUrl": "http://localhost:56801/swagger"
     }
   }
 }
